@@ -1,0 +1,123 @@
+{
+  "app_slug": "answer-once",
+  "app_name": "Answer Once",
+  "copy": {
+    "framework_dirs": [
+      ".framework/cli",
+      ".framework/functions",
+      ".framework/migrations",
+      ".framework/public",
+      ".framework/scripts",
+      ".framework/seeds",
+      ".framework/src",
+      ".framework/tests",
+      ".framework/docs",
+      ".framework/mcp",
+      ".framework/templates"
+    ],
+    "framework_files": [
+      ".framework/index.html",
+      ".framework/README.md"
+    ],
+    "app_dirs": [
+      "custom/apps/answer-once"
+    ],
+    "custom_migrations": [
+      "062"
+    ],
+    "custom_tests": [
+      "custom/tests/answer-once-export.test.ts",
+      "custom/tests/answer-once-seeds.test.ts",
+      "custom/tests/answer-once-journey.test.ts",
+      "custom/tests/answer-once-security.test.ts",
+      "custom/tests/answer-once-ui.test.ts"
+    ],
+    "config_files": [
+      "config/vite.config.ts",
+      "config/tsconfig.json",
+      "config/tsconfig.node.json",
+      "config/tsconfig.cli.json",
+      "config/tsconfig.functions.json",
+      "config/tailwind.config.cjs",
+      "config/postcss.config.cjs",
+      "config/components.json",
+      "vitest.config.ts",
+      ".env.example",
+      ".gitignore",
+      "LICENSE.md"
+    ],
+    "root_scripts": [
+      "scripts/assemble.sh",
+      "scripts/assemble-frontend.sh",
+      "scripts/assemble-functions.sh",
+      "scripts/dev-netlify.sh",
+      "scripts/dev-clean.sh",
+      "scripts/netlify-dev-wrapper.sh",
+      "scripts/verify-integrity.sh",
+      "scripts/build-manifest.sh",
+      "scripts/checksum-manifest.mts",
+      "scripts/verify-manifest.mts",
+      "scripts/boundary-check.sh",
+      "scripts/verify-install.ts",
+      "scripts/export-standalone.ts"
+    ],
+    "bin": [
+      "bin/spine-framework.cjs",
+      "bin/spine-framework.js"
+    ]
+  },
+  "exclude_globs": [
+    "**/.env*",
+    "**/.xenv*",
+    "**/node_modules/**",
+    "**/.DS_Store",
+    "**/dist/**",
+    "**/.assembled/**",
+    "**/*.tsbuildinfo",
+    "**/migrations/archive/**",
+    ".framework/functions/_quarantine/**",
+    ".framework/tests/integration/**",
+    ".framework/public/spine.config.json"
+  ],
+  "netlify": {
+    "scheduled_functions": [
+      { "name": "custom_answeronce-autoresolve-cron", "schedule": "0 0 * * *" }
+    ]
+  },
+  "spine_config": {
+    "default_app": "answer-once",
+    "default_role": "member_admin",
+    "allow_url_override": true,
+    "app_roles": [
+      "member",
+      "member_admin",
+      "support",
+      "support_admin"
+    ],
+    "route_prefix": "/answer-once",
+    "account_strategy": "new",
+    "parent_account": "spine-system",
+    "allow_domain_join": false
+  },
+  "package": {
+    "name": "answer-once",
+    "version": "0.1.0",
+    "description": "Answer Once — standalone Spine Framework app (frozen framework snapshot)",
+    "scripts": {
+      "dev": "vite --config config/vite.config.ts",
+      "dev:netlify": "bash scripts/dev-netlify.sh",
+      "dev:stop": "bash scripts/dev-clean.sh",
+      "predev:netlify": "npm run assemble",
+      "assemble": "bash scripts/assemble.sh",
+      "prebuild": "npm run verify && npm run assemble",
+      "build": "vite build --config config/vite.config.ts",
+      "verify": "bash scripts/verify-integrity.sh",
+      "manifest": "bash scripts/build-manifest.sh",
+      "verify:install": "tsx scripts/verify-install.ts",
+      "typecheck": "tsc -b config/tsconfig.json",
+      "typecheck:functions": "tsc --noEmit -p config/tsconfig.functions.json",
+      "test": "vitest run",
+      "spine-framework": "tsx .framework/cli/index.ts"
+    }
+  }
+}

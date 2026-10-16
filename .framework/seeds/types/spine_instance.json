@@ -1,0 +1,163 @@
+{
+  "slug": "spine_instance",
+  "kind": "item",
+  "name": "CLI Instance",
+  "description": "Tracks npm package installations per device",
+  "design_schema": {
+    "fields": {
+      "title": {
+        "data_type": "text",
+        "label": "Title",
+        "required": true,
+        "system": true
+      },
+      "serial": {
+        "data_type": "text",
+        "label": "Install Serial",
+        "required": true,
+        "validation": {
+          "pattern": "^sf_inst_[a-z0-9-]+$"
+        }
+      },
+      "app_slug": {
+        "data_type": "text",
+        "label": "App",
+        "required": true
+      },
+      "version": {
+        "data_type": "text",
+        "label": "Version",
+        "required": true
+      },
+      "claimed_by_person_id": {
+        "data_type": "reference",
+        "label": "Claimed By",
+        "required": false,
+        "validation": {
+          "reference_kind": "person"
+        }
+      },
+      "claimed_at": {
+        "data_type": "datetime",
+        "label": "Claimed At",
+        "required": false
+      },
+      "first_seen_at": {
+        "data_type": "datetime",
+        "label": "First Seen",
+        "required": true
+      },
+      "last_signal_at": {
+        "data_type": "datetime",
+        "label": "Last Signal",
+        "required": false
+      }
+    },
+    "views": {
+      "default_list": {
+        "type": "list",
+        "display": "table",
+        "label": "CLI Instances",
+        "fields": {
+          "title": {
+            "sortable": true,
+            "display_type": "text"
+          },
+          "app_slug": {
+            "sortable": true,
+            "display_type": "badge"
+          },
+          "version": {
+            "sortable": true,
+            "display_type": "text"
+          },
+          "claimed_at": {
+            "sortable": true,
+            "display_type": "timestamp"
+          },
+          "last_signal_at": {
+            "sortable": true,
+            "display_type": "timestamp"
+          }
+        },
+        "default_sort": {
+          "field": "created_at",
+          "direction": "desc"
+        }
+      },
+      "default_detail": {
+        "type": "detail",
+        "label": "Instance Detail",
+        "sections": [
+          {
+            "title": "Instance",
+            "fields": {
+              "serial": {
+                "display_type": "input"
+              },
+              "app_slug": {
+                "display_type": "select"
+              },
+              "version": {
+                "display_type": "input"
+              }
+            }
+          },
+          {
+            "title": "Claim",
+            "fields": {
+              "claimed_by_person_id": {
+                "display_type": "reference_picker"
+              },
+              "claimed_at": {
+                "display_type": "timestamp"
+              }
+            }
+          },
+          {
+            "title": "Activity",
+            "fields": {
+              "first_seen_at": {
+                "display_type": "timestamp"
+              },
+              "last_signal_at": {
+                "display_type": "timestamp"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "record_permissions": {
+      "system_admin": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "support_admin": [
+        "create",
+        "read",
+        "update"
+      ],
+      "support": [
+        "create",
+        "read",
+        "update"
+      ],
+      "member_admin": [
+        "create",
+        "read",
+        "update"
+      ],
+      "member": [
+        "create",
+        "read",
+        "update"
+      ]
+    }
+  },
+  "validation_schema": {},
+  "ownership": "pack",
+  "is_active": true
+}

@@ -1,0 +1,37 @@
+-- CIL[BEGIN stable_id="~/.framework/migrations/017_cil_stable_ids.sql:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+-- CIL[DOC-MACRO purpose="Deprecated migration header for CIL stable IDs"]
+-- CIL[DOC-RESPONSIBILITY responsibility="Document the migration purpose and deprecation status"]
+-- CIL[DOC-CONTEXT module="migrations" layer="database" related_files=".framework/migrations/017_cil_stable_ids.sql"]
+-- CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
+-- CIL[DOC-MICRO logic_summary="Contains a deprecation notice and a no-op SELECT statement for applied databases" notable_decisions="[]"]
+-- CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+-- CIL[DOC-STABILITY stability="deprecated"]
+-- CIL[DOC-AUDIENCE audience="installer"]
+-- 017_cil_stable_ids.sql
+-- Deprecated: stable IDs and versions are now generated at ingest time.
+-- The old hard-coded backfill is no longer run on new installs.
+-- Existing databases that already applied this migration are unaffected.
+-- CIL[DOC-VECTOR type="context" content="purpose='Deprecated migration header for CIL stable IDs'; No verified external callers; imports: none"]
+-- CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
+-- CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
+-- CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
+-- CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
+-- CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+-- CIL[END stable_id="~/.framework/migrations/017_cil_stable_ids.sql:module_header:module_header"]
+
+-- CIL[BEGIN stable_id="~/.framework/migrations/017_cil_stable_ids.sql:noop:statement" type="statement" identity="noop" parent="none"]
+-- CIL[DOC-MACRO purpose="No-op migration placeholder statement"]
+-- CIL[DOC-RESPONSIBILITY responsibility="Satisfy migration runner with a harmless SELECT"]
+-- CIL[DOC-CONTEXT module="migrations" layer="database" related_files=".framework/migrations/017_cil_stable_ids.sql"]
+-- CIL[DOC-CONTRACT inputs="none" outputs="scalar 1" errors="none" side_effects="none"]
+-- CIL[DOC-MICRO logic_summary="Executes SELECT 1 to mark the migration as applied" notable_decisions="[]"]
+-- CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+-- CIL[DOC-STABILITY stability="deprecated"]
+SELECT 1;
+-- CIL[DOC-VECTOR type="context" content="purpose='No-op migration placeholder statement'; No verified external callers; imports: none"]
+-- CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
+-- CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
+-- CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
+-- CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
+-- CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+-- CIL[END stable_id="~/.framework/migrations/017_cil_stable_ids.sql:noop:statement"]

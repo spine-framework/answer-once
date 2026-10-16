@@ -1,0 +1,153 @@
+{
+  "slug": "funnel_signal_use",
+  "kind": "item",
+  "name": "Usage Signal",
+  "description": "Tracks CLI and app usage signals from npm installations",
+  "design_schema": {
+    "fields": {
+      "title": {
+        "data_type": "text",
+        "label": "Title",
+        "required": true,
+        "system": true
+      },
+      "source": {
+        "data_type": "select",
+        "label": "Source",
+        "required": true,
+        "options": [
+          "use"
+        ]
+      },
+      "stage": {
+        "data_type": "select",
+        "label": "Stage",
+        "required": true,
+        "options": [
+          "installed",
+          "claimed",
+          "active"
+        ]
+      },
+      "action_type": {
+        "data_type": "text",
+        "label": "Action Type",
+        "required": true
+      },
+      "action_value": {
+        "data_type": "number",
+        "label": "Action Value",
+        "required": true
+      },
+      "serial": {
+        "data_type": "text",
+        "label": "Install Serial",
+        "required": true
+      },
+      "app_slug": {
+        "data_type": "text",
+        "label": "App",
+        "required": false
+      },
+      "app_version": {
+        "data_type": "text",
+        "label": "App Version",
+        "required": false
+      }
+    },
+    "views": {
+      "default_list": {
+        "type": "list",
+        "display": "table",
+        "label": "Usage Signals",
+        "fields": {
+          "title": {
+            "sortable": true,
+            "display_type": "text"
+          },
+          "action_type": {
+            "sortable": true,
+            "display_type": "badge"
+          },
+          "stage": {
+            "sortable": true,
+            "display_type": "badge"
+          },
+          "serial": {
+            "sortable": true,
+            "display_type": "text"
+          },
+          "created_at": {
+            "sortable": true,
+            "display_type": "timestamp"
+          }
+        }
+      },
+      "default_detail": {
+        "type": "detail",
+        "label": "Signal Detail",
+        "sections": [
+          {
+            "title": "Signal",
+            "fields": {
+              "action_type": {
+                "display_type": "input"
+              },
+              "action_value": {
+                "display_type": "input"
+              },
+              "stage": {
+                "display_type": "select"
+              }
+            }
+          },
+          {
+            "title": "Instance",
+            "fields": {
+              "serial": {
+                "display_type": "input"
+              },
+              "app_slug": {
+                "display_type": "select"
+              },
+              "app_version": {
+                "display_type": "input"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "record_permissions": {
+      "system_admin": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ],
+      "support_admin": [
+        "create",
+        "read",
+        "update"
+      ],
+      "support": [
+        "create",
+        "read",
+        "update"
+      ],
+      "member_admin": [
+        "create",
+        "read",
+        "update"
+      ],
+      "member": [
+        "create",
+        "read",
+        "update"
+      ]
+    }
+  },
+  "validation_schema": {},
+  "ownership": "pack",
+  "is_active": true
+}

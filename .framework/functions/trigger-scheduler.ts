@@ -1,0 +1,10 @@
+// CIL[BEGIN stable_id="~/.framework/functions/trigger-scheduler.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/trigger-scheduler.ts"]
+// CIL[DOC-MACRO purpose="Scheduled entry point that invokes the shared system-cron runner so Netlify's every-minute trigger dispatches due scheduled actions."]
+// CIL[DOC-RESPONSIBILITY responsibility="Re-export the system-cron handler under the function name registered in netlify.toml."]
+// CIL[DOC-CONTEXT module="trigger-scheduler" layer="functions" related_files=".framework/functions/system-cron.ts, netlify.toml"]
+// CIL[DOC-CONTRACT inputs="Netlify scheduled invocation" outputs="system-cron sweep result" errors="none (delegates)" side_effects="runs due schedule actions across accounts"]
+// CIL[DOC-MICRO logic_summary="Thin alias: netlify.toml schedules trigger-scheduler every minute; the handler is system-cron's." notable_decisions="Separate file so the schedule name stays stable if system-cron internals change."]
+// CIL[DOC-STABILITY stable]
+// CIL[DOC-AUDIENCE audience="framework maintainers"]
+export { handler } from './system-cron'
+// CIL[END stable_id="~/.framework/functions/trigger-scheduler.ts:module_header:module_header"]

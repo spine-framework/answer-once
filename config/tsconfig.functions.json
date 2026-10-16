@@ -1,0 +1,42 @@
+{
+  // Typecheck for the ASSEMBLED functions layout.
+  //
+  // Function sources (.framework/functions, custom/functions,
+  // custom/apps/<app>/functions) are merged flat into
+  // .assembled/netlify/functions by scripts/assemble-functions.sh. Their
+  // imports only resolve in that layout:
+  //   - './_shared/*' resolves to the assembled _shared/ sibling dir
+  //   - './<other-function>' resolves to other flat-assembled files
+  //   - '@shared/*' is a runtime/bundler alias → assembled _shared/
+  // So this config checks the assembled output, not the source trees. Run:
+  //   npx tsc --noEmit -p config/tsconfig.functions.json
+  // (Intentionally NOT in tsconfig.json's references — `tsc -b` would require
+  // composite+emit and fail the vite build on unrelated functions errors.)
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "types": ["node"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["../.assembled/netlify/functions/_shared/*"],
+      "@/*": ["../.assembled/netlify/functions/*"]
+    }
+  },
+  "include": ["../.assembled/netlify/functions"],
+  "exclude": [
+    "../node_modules",
+    "../.assembled/netlify/functions/_quarantine"
+  ]
+}

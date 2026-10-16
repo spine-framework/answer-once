@@ -1,0 +1,2716 @@
+[
+  {
+    "kind": "item",
+    "slug": "ao_support_ticket",
+    "name": "Support Ticket",
+    "description": "Answer Once support request with AI-first escalation and knowledge-loop metadata",
+    "icon": "ticket",
+    "color": "#EF4444",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "required": true
+        },
+        "description": {
+          "data_type": "textarea",
+          "required": true
+        },
+        "status": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Open",
+              "value": "open"
+            },
+            {
+              "label": "AI Responding",
+              "value": "ai_responding"
+            },
+            {
+              "label": "Awaiting Confirmation",
+              "value": "pending_resolution"
+            },
+            {
+              "label": "Human Assigned",
+              "value": "human_assigned"
+            },
+            {
+              "label": "In Progress",
+              "value": "in_progress"
+            },
+            {
+              "label": "Resolved",
+              "value": "resolved"
+            },
+            {
+              "label": "Closed",
+              "value": "closed"
+            }
+          ]
+        },
+        "context": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Support",
+              "value": "support"
+            }
+          ]
+        },
+        "priority": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Low",
+              "value": "low"
+            },
+            {
+              "label": "Medium",
+              "value": "medium"
+            },
+            {
+              "label": "High",
+              "value": "high"
+            },
+            {
+              "label": "Urgent",
+              "value": "urgent"
+            }
+          ]
+        },
+        "escalated": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "ai_response": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "ai_confidence": {
+          "data_type": "number",
+          "required": false
+        },
+        "aim_triage_agent_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "aim_escalation_reason": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Low Confidence",
+              "value": "low_confidence"
+            },
+            {
+              "label": "Thumbs Down",
+              "value": "thumbs_down"
+            },
+            {
+              "label": "Customer Request",
+              "value": "customer_request"
+            },
+            {
+              "label": "No Response",
+              "value": "no_response"
+            },
+            {
+              "label": "Agent Requested",
+              "value": "agent_requested"
+            },
+            {
+              "label": "None",
+              "value": "none"
+            }
+          ]
+        },
+        "aim_human_assignee_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "aim_confidence_threshold": {
+          "data_type": "number",
+          "required": false
+        },
+        "aim_confidence_at_response": {
+          "data_type": "number",
+          "required": false
+        },
+        "aim_retrieval_confidence": {
+          "data_type": "number",
+          "required": false
+        },
+        "aim_resolved_by_ai": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "human_resolution_message_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "ca_true_problem": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_reported_issue": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_final_solution": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_solution_steps": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_diagnostic_steps": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_analysis_tags": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_escalation_required": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_customer_temperature": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Positive",
+              "value": "positive"
+            },
+            {
+              "label": "Neutral",
+              "value": "neutral"
+            },
+            {
+              "label": "Negative",
+              "value": "negative"
+            },
+            {
+              "label": "Frustrated",
+              "value": "frustrated"
+            }
+          ]
+        },
+        "ca_time_to_resolution": {
+          "data_type": "number",
+          "required": false
+        },
+        "ca_back_and_forth_count": {
+          "data_type": "number",
+          "required": false
+        },
+        "ca_automation_potential": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "High",
+              "value": "high"
+            },
+            {
+              "label": "Medium",
+              "value": "medium"
+            },
+            {
+              "label": "Low",
+              "value": "low"
+            }
+          ]
+        },
+        "ca_sentiment_progression": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_kb_candidate": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_correctness_state": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Validated",
+              "value": "validated"
+            },
+            {
+              "label": "Incomplete",
+              "value": "incomplete"
+            },
+            {
+              "label": "Unearned",
+              "value": "unearned"
+            }
+          ]
+        },
+        "ca_validation_checks": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_validation_issues": {
+          "data_type": "json",
+          "required": false
+        },
+        "ca_generalizable": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_confidence_score": {
+          "data_type": "number",
+          "required": false
+        },
+        "kb_article_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "analysis_timestamp": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "aim_human_assignee_name": {
+          "data_type": "text",
+          "required": false
+        },
+        "resolved_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "reopened_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "last_activity_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "aim_answered_from_kb": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "aim_kb_source_article_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "aim_kb_source_ids": {
+          "data_type": "json",
+          "required": false
+        },
+        "pending_proposed_by": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI",
+              "value": "ai"
+            },
+            {
+              "label": "Human",
+              "value": "human"
+            }
+          ]
+        },
+        "resolve_pending_since": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "resolved_via": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI · Customer Confirmed",
+              "value": "ai_confirmed"
+            },
+            {
+              "label": "AI · Auto Resolved",
+              "value": "ai_auto"
+            },
+            {
+              "label": "Human · Customer Confirmed",
+              "value": "human_confirmed"
+            },
+            {
+              "label": "Human · Auto Resolved",
+              "value": "human_auto"
+            },
+            {
+              "label": "Human · Direct",
+              "value": "human"
+            }
+          ]
+        },
+        "reopen_reason": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Customer Returned",
+              "value": "customer_returned"
+            },
+            {
+              "label": "Thumbs Down",
+              "value": "thumbs_down"
+            },
+            {
+              "label": "Manual",
+              "value": "manual"
+            },
+            {
+              "label": "Human Correction",
+              "value": "human_correction"
+            },
+            {
+              "label": "System / Workflow",
+              "value": "system_workflow"
+            },
+            {
+              "label": "Other",
+              "value": "other"
+            }
+          ]
+        },
+        "demand_class": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI Validated",
+              "value": "ai_validated"
+            },
+            {
+              "label": "Human Action",
+              "value": "human_action"
+            },
+            {
+              "label": "Known Exception",
+              "value": "exception"
+            },
+            {
+              "label": "Knowledge Gap",
+              "value": "knowledge_gap"
+            },
+            {
+              "label": "Unclassified",
+              "value": "unclassified"
+            }
+          ]
+        },
+        "ha_article_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "human_minutes": {
+          "data_type": "number",
+          "required": false
+        }
+      }
+    },
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Support Tickets",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "status": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "priority": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "escalated": {
+              "sortable": true,
+              "display_type": "checkbox"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Support Ticket",
+          "sections": [
+            {
+              "title": "Request",
+              "fields": {
+                "title": {},
+                "description": {},
+                "status": {},
+                "priority": {},
+                "context": {}
+              }
+            },
+            {
+              "title": "AI Handling",
+              "fields": {
+                "ai_response": {},
+                "ai_confidence": {},
+                "escalated": {},
+                "aim_triage_agent_id": {},
+                "aim_escalation_reason": {},
+                "aim_human_assignee_id": {},
+                "aim_confidence_threshold": {},
+                "aim_confidence_at_response": {},
+                "aim_retrieval_confidence": {},
+                "aim_resolved_by_ai": {},
+                "pending_proposed_by": {},
+                "resolve_pending_since": {},
+                "resolved_via": {},
+                "reopen_reason": {}
+              }
+            },
+            {
+              "title": "Analysis",
+              "fields": {
+                "ca_true_problem": {},
+                "ca_reported_issue": {},
+                "ca_final_solution": {},
+                "ca_solution_steps": {},
+                "ca_diagnostic_steps": {},
+                "ca_analysis_tags": {},
+                "ca_customer_temperature": {},
+                "ca_time_to_resolution": {},
+                "ca_back_and_forth_count": {},
+                "ca_automation_potential": {},
+                "ca_sentiment_progression": {},
+                "ca_kb_candidate": {},
+                "ca_correctness_state": {},
+                "ca_validation_checks": {},
+                "ca_validation_issues": {},
+                "ca_generalizable": {},
+                "ca_confidence_score": {}
+              }
+            },
+            {
+              "title": "Knowledge",
+              "fields": {
+                "human_resolution_message_id": {},
+                "kb_article_id": {}
+              }
+            }
+          ]
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "description": {
+          "label": "Description",
+          "system": true,
+          "required": true,
+          "data_type": "textarea"
+        },
+        "status": {
+          "label": "Status",
+          "system": true,
+          "required": true,
+          "data_type": "select",
+          "default": "open",
+          "options": [
+            {
+              "label": "Open",
+              "value": "open"
+            },
+            {
+              "label": "AI Responding",
+              "value": "ai_responding"
+            },
+            {
+              "label": "Awaiting Confirmation",
+              "value": "pending_resolution"
+            },
+            {
+              "label": "Human Assigned",
+              "value": "human_assigned"
+            },
+            {
+              "label": "In Progress",
+              "value": "in_progress"
+            },
+            {
+              "label": "Resolved",
+              "value": "resolved"
+            },
+            {
+              "label": "Closed",
+              "value": "closed"
+            }
+          ]
+        },
+        "context": {
+          "label": "Context",
+          "required": true,
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Support",
+              "value": "support"
+            }
+          ]
+        },
+        "priority": {
+          "label": "Priority",
+          "data_type": "select",
+          "default": "medium",
+          "options": [
+            {
+              "label": "Low",
+              "value": "low"
+            },
+            {
+              "label": "Medium",
+              "value": "medium"
+            },
+            {
+              "label": "High",
+              "value": "high"
+            },
+            {
+              "label": "Urgent",
+              "value": "urgent"
+            }
+          ],
+          "required": false
+        },
+        "escalated": {
+          "label": "Escalated to Human",
+          "data_type": "boolean",
+          "default": false,
+          "required": false
+        },
+        "ai_response": {
+          "label": "AI Response",
+          "data_type": "textarea",
+          "required": false
+        },
+        "ai_confidence": {
+          "label": "AI Confidence",
+          "data_type": "number",
+          "required": false
+        },
+        "aim_triage_agent_id": {
+          "label": "Triage Agent ID",
+          "data_type": "text",
+          "required": false
+        },
+        "aim_escalation_reason": {
+          "label": "Escalation Reason",
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Low Confidence",
+              "value": "low_confidence"
+            },
+            {
+              "label": "Thumbs Down",
+              "value": "thumbs_down"
+            },
+            {
+              "label": "Customer Request",
+              "value": "customer_request"
+            },
+            {
+              "label": "No Response",
+              "value": "no_response"
+            },
+            {
+              "label": "Agent Requested",
+              "value": "agent_requested"
+            },
+            {
+              "label": "None",
+              "value": "none"
+            }
+          ],
+          "required": false
+        },
+        "aim_human_assignee_id": {
+          "label": "Human Assignee",
+          "data_type": "text",
+          "required": false
+        },
+        "aim_confidence_threshold": {
+          "label": "Confidence Threshold",
+          "data_type": "number",
+          "default": 0.75,
+          "required": false
+        },
+        "aim_confidence_at_response": {
+          "label": "Confidence at Response",
+          "data_type": "number",
+          "required": false
+        },
+        "aim_retrieval_confidence": {
+          "label": "AI Retrieval Confidence",
+          "data_type": "number",
+          "required": false
+        },
+        "aim_resolved_by_ai": {
+          "label": "Resolved by AI",
+          "data_type": "boolean",
+          "required": false
+        },
+        "human_resolution_message_id": {
+          "label": "Human Resolution Message ID",
+          "data_type": "text",
+          "required": false
+        },
+        "ca_true_problem": {
+          "label": "True Problem Identified",
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_reported_issue": {
+          "label": "Reported Issue",
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_final_solution": {
+          "label": "Final Solution Summary",
+          "data_type": "textarea",
+          "required": false
+        },
+        "ca_solution_steps": {
+          "label": "Steps to Solve",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_diagnostic_steps": {
+          "label": "Steps to Diagnose",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_analysis_tags": {
+          "label": "Analysis Tags",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_escalation_required": {
+          "label": "Escalated to Human Agent",
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_customer_temperature": {
+          "label": "Customer Temperature",
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Positive",
+              "value": "positive"
+            },
+            {
+              "label": "Neutral",
+              "value": "neutral"
+            },
+            {
+              "label": "Negative",
+              "value": "negative"
+            },
+            {
+              "label": "Frustrated",
+              "value": "frustrated"
+            }
+          ],
+          "required": false
+        },
+        "ca_time_to_resolution": {
+          "label": "Time to Resolution (minutes)",
+          "data_type": "number",
+          "required": false
+        },
+        "ca_back_and_forth_count": {
+          "label": "Back and Forth Count",
+          "data_type": "number",
+          "required": false
+        },
+        "ca_automation_potential": {
+          "label": "Automation Potential",
+          "data_type": "select",
+          "options": [
+            {
+              "label": "High",
+              "value": "high"
+            },
+            {
+              "label": "Medium",
+              "value": "medium"
+            },
+            {
+              "label": "Low",
+              "value": "low"
+            }
+          ],
+          "required": false
+        },
+        "ca_sentiment_progression": {
+          "label": "Customer Sentiment Progression",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_kb_candidate": {
+          "label": "KB Candidate",
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_correctness_state": {
+          "label": "Correctness State",
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Validated",
+              "value": "validated"
+            },
+            {
+              "label": "Incomplete",
+              "value": "incomplete"
+            },
+            {
+              "label": "Unearned",
+              "value": "unearned"
+            }
+          ],
+          "required": false
+        },
+        "ca_validation_checks": {
+          "label": "Analysis Validation Checks",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_validation_issues": {
+          "label": "Analysis Validation Issues",
+          "data_type": "json",
+          "required": false
+        },
+        "ca_generalizable": {
+          "label": "Generalizable",
+          "data_type": "boolean",
+          "required": false
+        },
+        "ca_confidence_score": {
+          "label": "Analysis Confidence Score",
+          "data_type": "number",
+          "required": false
+        },
+        "kb_article_id": {
+          "label": "Linked KB Article ID",
+          "data_type": "text",
+          "required": false
+        },
+        "analysis_timestamp": {
+          "data_type": "datetime",
+          "label": "Analyzed At",
+          "required": false
+        },
+        "aim_human_assignee_name": {
+          "data_type": "text",
+          "label": "Assignee Name",
+          "required": false
+        },
+        "resolved_at": {
+          "data_type": "datetime",
+          "label": "Resolved At",
+          "required": false
+        },
+        "reopened_at": {
+          "data_type": "datetime",
+          "label": "Reopened At",
+          "required": false
+        },
+        "last_activity_at": {
+          "label": "Last Activity",
+          "data_type": "datetime",
+          "required": false
+        },
+        "aim_answered_from_kb": {
+          "label": "Answered From KB",
+          "data_type": "boolean",
+          "required": false
+        },
+        "aim_kb_source_article_id": {
+          "label": "KB Source Article ID",
+          "data_type": "text",
+          "required": false
+        },
+        "aim_kb_source_ids": {
+          "label": "KB Source IDs",
+          "data_type": "json",
+          "required": false
+        },
+        "pending_proposed_by": {
+          "label": "Resolution Proposed By",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI",
+              "value": "ai"
+            },
+            {
+              "label": "Human",
+              "value": "human"
+            }
+          ]
+        },
+        "resolve_pending_since": {
+          "label": "Resolution Pending Since",
+          "data_type": "datetime",
+          "required": false
+        },
+        "resolved_via": {
+          "label": "Resolved Via",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI · Customer Confirmed",
+              "value": "ai_confirmed"
+            },
+            {
+              "label": "AI · Auto Resolved",
+              "value": "ai_auto"
+            },
+            {
+              "label": "Human · Customer Confirmed",
+              "value": "human_confirmed"
+            },
+            {
+              "label": "Human · Auto Resolved",
+              "value": "human_auto"
+            },
+            {
+              "label": "Human · Direct",
+              "value": "human"
+            }
+          ]
+        },
+        "reopen_reason": {
+          "label": "Reopen Reason",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Customer Returned",
+              "value": "customer_returned"
+            },
+            {
+              "label": "Thumbs Down",
+              "value": "thumbs_down"
+            },
+            {
+              "label": "Manual",
+              "value": "manual"
+            },
+            {
+              "label": "Human Correction",
+              "value": "human_correction"
+            },
+            {
+              "label": "System / Workflow",
+              "value": "system_workflow"
+            },
+            {
+              "label": "Other",
+              "value": "other"
+            }
+          ]
+        },
+        "demand_class": {
+          "label": "Demand Class",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI Validated",
+              "value": "ai_validated"
+            },
+            {
+              "label": "Human Action",
+              "value": "human_action"
+            },
+            {
+              "label": "Known Exception",
+              "value": "exception"
+            },
+            {
+              "label": "Knowledge Gap",
+              "value": "knowledge_gap"
+            },
+            {
+              "label": "Unclassified",
+              "value": "unclassified"
+            }
+          ]
+        },
+        "ha_article_id": {
+          "label": "Procedure Article",
+          "data_type": "text",
+          "required": false
+        },
+        "human_minutes": {
+          "label": "Human Minutes (est)",
+          "data_type": "number",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": null
+    }
+  },
+  {
+    "kind": "item",
+    "slug": "ao_kb_article",
+    "name": "Knowledge Article",
+    "description": "Organizational knowledge learned from resolved support interactions",
+    "icon": "book-open",
+    "color": "#3B82F6",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "required": true
+        },
+        "status": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Candidate",
+              "value": "candidate"
+            },
+            {
+              "label": "In Review",
+              "value": "in_review"
+            },
+            {
+              "label": "Published",
+              "value": "published"
+            },
+            {
+              "label": "Archived",
+              "value": "archived"
+            },
+            {
+              "label": "Rejected",
+              "value": "rejected"
+            }
+          ]
+        },
+        "content": {
+          "data_type": "textarea",
+          "required": true
+        },
+        "tags": {
+          "data_type": "multiselect",
+          "required": false,
+          "options": [
+            {
+              "label": "Support",
+              "value": "support"
+            },
+            {
+              "label": "How-To",
+              "value": "how-to"
+            },
+            {
+              "label": "FAQ",
+              "value": "faq"
+            },
+            {
+              "label": "Tutorial",
+              "value": "tutorial"
+            },
+            {
+              "label": "Troubleshooting",
+              "value": "troubleshooting"
+            }
+          ]
+        },
+        "source_ticket_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "source_resolution_message_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "approved_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "approved_by": {
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_content_hash": {
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "analysis_summary": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "correctness_state": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Validated",
+              "value": "validated"
+            },
+            {
+              "label": "Incomplete",
+              "value": "incomplete"
+            },
+            {
+              "label": "Unearned",
+              "value": "unearned"
+            }
+          ]
+        },
+        "generalizable": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "confidence_score": {
+          "data_type": "number",
+          "required": false
+        },
+        "is_ai_generated": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "embedding_state": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            "processing",
+            "embedded",
+            "error"
+          ]
+        },
+        "embedding_pending_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "embedding_error": {
+          "data_type": "text",
+          "required": false
+        },
+        "validation_checks": {
+          "data_type": "json",
+          "required": false
+        },
+        "validation_issues": {
+          "data_type": "json",
+          "required": false
+        },
+        "validation_acknowledged_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "validation_acknowledged_by": {
+          "data_type": "text",
+          "required": false
+        },
+        "learning_scope": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Private",
+              "value": "private"
+            },
+            {
+              "label": "Internal",
+              "value": "internal"
+            },
+            {
+              "label": "Shared",
+              "value": "shared"
+            }
+          ]
+        },
+        "shared_article_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "republish_of": {
+          "data_type": "text",
+          "required": false
+        },
+        "republish_source_scope": {
+          "data_type": "text",
+          "required": false
+        },
+        "target_flavor": {
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_by": {
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "resolution_mode": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "AI Resolvable",
+              "value": "ai_resolvable"
+            },
+            {
+              "label": "Human Action Required",
+              "value": "human_action_required"
+            },
+            {
+              "label": "Conditional",
+              "value": "conditional"
+            },
+            {
+              "label": "Informational",
+              "value": "informational"
+            }
+          ]
+        },
+        "est_minutes": {
+          "data_type": "number",
+          "required": false
+        },
+        "automation_score": {
+          "data_type": "number",
+          "required": false
+        }
+      }
+    },
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Knowledge Articles",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "status": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Knowledge Article",
+          "sections": [
+            {
+              "title": "Article",
+              "fields": {
+                "title": {},
+                "content": {},
+                "tags": {},
+                "status": {}
+              }
+            },
+            {
+              "title": "Provenance",
+              "fields": {
+                "source_ticket_id": {},
+                "source_resolution_message_id": {},
+                "approved_at": {},
+                "approved_by": {},
+                "embedded_content_hash": {},
+                "embedded_at": {},
+                "learning_scope": {}
+              }
+            },
+            {
+              "title": "Analysis",
+              "fields": {
+                "analysis_summary": {},
+                "correctness_state": {},
+                "generalizable": {},
+                "confidence_score": {}
+              }
+            }
+          ]
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "status": {
+          "label": "Status",
+          "system": true,
+          "required": true,
+          "data_type": "select",
+          "default": "candidate",
+          "options": [
+            {
+              "label": "Candidate",
+              "value": "candidate"
+            },
+            {
+              "label": "In Review",
+              "value": "in_review"
+            },
+            {
+              "label": "Published",
+              "value": "published"
+            },
+            {
+              "label": "Archived",
+              "value": "archived"
+            },
+            {
+              "label": "Rejected",
+              "value": "rejected"
+            }
+          ]
+        },
+        "content": {
+          "label": "Content",
+          "data_type": "textarea",
+          "required": true
+        },
+        "tags": {
+          "label": "Tags",
+          "data_type": "multiselect",
+          "required": false,
+          "options": [
+            {
+              "label": "Support",
+              "value": "support"
+            },
+            {
+              "label": "How-To",
+              "value": "how-to"
+            },
+            {
+              "label": "FAQ",
+              "value": "faq"
+            },
+            {
+              "label": "Tutorial",
+              "value": "tutorial"
+            },
+            {
+              "label": "Troubleshooting",
+              "value": "troubleshooting"
+            }
+          ]
+        },
+        "source_ticket_id": {
+          "label": "Source Ticket ID",
+          "data_type": "text",
+          "required": false
+        },
+        "source_resolution_message_id": {
+          "label": "Source Resolution Message ID",
+          "data_type": "text",
+          "required": false
+        },
+        "approved_at": {
+          "label": "Approved At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "approved_by": {
+          "label": "Approved By",
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_content_hash": {
+          "label": "Embedded Content Hash",
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_at": {
+          "label": "Embedded At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "analysis_summary": {
+          "label": "Analysis Summary",
+          "data_type": "textarea",
+          "required": false
+        },
+        "correctness_state": {
+          "label": "Correctness State",
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Validated",
+              "value": "validated"
+            },
+            {
+              "label": "Incomplete",
+              "value": "incomplete"
+            },
+            {
+              "label": "Unearned",
+              "value": "unearned"
+            }
+          ],
+          "required": false
+        },
+        "generalizable": {
+          "label": "Generalizable",
+          "data_type": "boolean",
+          "required": false
+        },
+        "confidence_score": {
+          "label": "Confidence Score",
+          "data_type": "number",
+          "required": false
+        },
+        "is_ai_generated": {
+          "data_type": "boolean",
+          "label": "AI Generated",
+          "required": false
+        },
+        "embedding_state": {
+          "data_type": "select",
+          "label": "Embedding State",
+          "required": false,
+          "options": [
+            "processing",
+            "embedded",
+            "error"
+          ]
+        },
+        "embedding_pending_at": {
+          "data_type": "datetime",
+          "label": "Embedding Pending At",
+          "required": false
+        },
+        "embedding_error": {
+          "data_type": "text",
+          "label": "Embedding Error",
+          "required": false
+        },
+        "validation_checks": {
+          "data_type": "json",
+          "label": "Validation Checks",
+          "required": false
+        },
+        "validation_issues": {
+          "data_type": "json",
+          "label": "Validation Issues",
+          "required": false
+        },
+        "validation_acknowledged_at": {
+          "data_type": "datetime",
+          "label": "Validation Acknowledged At",
+          "required": false
+        },
+        "validation_acknowledged_by": {
+          "data_type": "text",
+          "label": "Validation Acknowledged By",
+          "required": false
+        },
+        "learning_scope": {
+          "label": "Learning Scope",
+          "data_type": "select",
+          "required": false,
+          "default": "private",
+          "options": [
+            {
+              "label": "Private",
+              "value": "private"
+            },
+            {
+              "label": "Internal",
+              "value": "internal"
+            },
+            {
+              "label": "Shared",
+              "value": "shared"
+            }
+          ]
+        },
+        "shared_article_id": {
+          "label": "Shared Article ID",
+          "data_type": "text",
+          "required": false
+        },
+        "republish_of": {
+          "label": "Republished From",
+          "data_type": "text",
+          "required": false
+        },
+        "republish_source_scope": {
+          "label": "Republish Source Scope",
+          "data_type": "text",
+          "required": false
+        },
+        "target_flavor": {
+          "label": "Target Flavor",
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_by": {
+          "label": "Superseded By",
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_at": {
+          "label": "Superseded At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "resolution_mode": {
+          "label": "Resolution Mode",
+          "data_type": "select",
+          "required": false,
+          "default": "ai_resolvable",
+          "options": [
+            {
+              "label": "AI Resolvable",
+              "value": "ai_resolvable"
+            },
+            {
+              "label": "Human Action Required",
+              "value": "human_action_required"
+            },
+            {
+              "label": "Conditional",
+              "value": "conditional"
+            },
+            {
+              "label": "Informational",
+              "value": "informational"
+            }
+          ]
+        },
+        "est_minutes": {
+          "label": "Avg Human Time (min)",
+          "data_type": "number",
+          "required": false
+        },
+        "automation_score": {
+          "label": "Automation Score (0-100)",
+          "data_type": "number",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": {
+        "kb": {
+          "vector_fields": [
+            "title",
+            "content"
+          ],
+          "chunk_field": "content",
+          "security_level": "external"
+        }
+      }
+    }
+  },
+  {
+    "kind": "thread",
+    "slug": "ao_ticket_thread",
+    "name": "Ticket Thread",
+    "description": "Conversation thread attached to an Answer Once support ticket",
+    "icon": "message-square",
+    "color": "#6366F1",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {},
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Ticket Threads",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "visibility": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "desc"
+          }
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "visibility": {
+          "label": "Visibility",
+          "system": true,
+          "required": true,
+          "data_type": "select",
+          "default": "external",
+          "options": [
+            {
+              "label": "External",
+              "value": "external"
+            },
+            {
+              "label": "Internal",
+              "value": "internal"
+            }
+          ]
+        },
+        "target_id": {
+          "label": "Target ID",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "agent_id": {
+          "label": "Agent ID",
+          "required": false,
+          "data_type": "text"
+        },
+        "prompt_config_id": {
+          "label": "Prompt Config ID",
+          "required": false,
+          "data_type": "text"
+        },
+        "research_state": {
+          "label": "Research State",
+          "required": false,
+          "data_type": "json"
+        },
+        "thread_purpose": {
+          "label": "Thread Purpose",
+          "required": false,
+          "data_type": "text"
+        }
+      },
+      "record_permissions": {
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": {
+        "thread": {
+          "reply_type_slug": "ao_ticket_message"
+        }
+      }
+    }
+  },
+  {
+    "kind": "message",
+    "slug": "ao_ticket_message",
+    "name": "Ticket Message",
+    "description": "Message on an Answer Once support ticket thread",
+    "icon": "message-circle",
+    "color": "#8B5CF6",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {},
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Ticket Messages",
+          "fields": {
+            "content": {
+              "sortable": false,
+              "display_type": "text"
+            },
+            "direction": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "asc"
+          }
+        }
+      },
+      "fields": {
+        "content": {
+          "label": "Content",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "direction": {
+          "label": "Direction",
+          "system": true,
+          "required": true,
+          "data_type": "select",
+          "options": [
+            {
+              "label": "Inbound",
+              "value": "inbound"
+            },
+            {
+              "label": "Outbound",
+              "value": "outbound"
+            }
+          ]
+        },
+        "message_type": {
+          "label": "Message Type",
+          "data_type": "text",
+          "required": false
+        },
+        "sender_type": {
+          "label": "Sender Type",
+          "data_type": "text",
+          "required": false
+        },
+        "human_reply": {
+          "label": "Human Reply",
+          "data_type": "boolean",
+          "required": false
+        },
+        "feedback": {
+          "label": "Feedback",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Helpful",
+              "value": "helpful"
+            },
+            {
+              "label": "Not Helpful",
+              "value": "not_helpful"
+            }
+          ]
+        },
+        "feedback_reason": {
+          "label": "Feedback Reason",
+          "data_type": "textarea",
+          "required": false
+        },
+        "feedback_diagnosis": {
+          "label": "Feedback Diagnosis",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Missing Knowledge",
+              "value": "missing_knowledge"
+            },
+            {
+              "label": "Retrieval Miss",
+              "value": "retrieval_miss"
+            },
+            {
+              "label": "Reasoning Error",
+              "value": "reasoning_error"
+            },
+            {
+              "label": "Wrong Answer",
+              "value": "wrong_answer"
+            }
+          ]
+        },
+        "needs_review": {
+          "label": "Needs Review",
+          "data_type": "boolean",
+          "required": false
+        },
+        "confidence": {
+          "label": "Confidence",
+          "data_type": "number",
+          "required": false
+        },
+        "evidence_found": {
+          "label": "Evidence Found",
+          "data_type": "boolean",
+          "required": false
+        },
+        "evidence_state": {
+          "label": "Evidence State",
+          "data_type": "text",
+          "required": false
+        },
+        "mean_similarity": {
+          "label": "Mean Similarity",
+          "data_type": "number",
+          "required": false
+        },
+        "retrieval_confidence": {
+          "label": "Retrieval Confidence",
+          "data_type": "number",
+          "required": false
+        },
+        "retrieved_sources": {
+          "label": "Retrieved Sources",
+          "data_type": "json",
+          "required": false
+        },
+        "cited_sources": {
+          "label": "Cited Sources",
+          "data_type": "json",
+          "required": false
+        },
+        "tools_used": {
+          "label": "Tools Used",
+          "data_type": "json",
+          "required": false
+        },
+        "tool_calls": {
+          "label": "Tool Calls",
+          "data_type": "json",
+          "required": false
+        },
+        "agent_id": {
+          "label": "Agent ID",
+          "data_type": "text",
+          "required": false
+        },
+        "prompt_config_id": {
+          "label": "Prompt Config ID",
+          "data_type": "text",
+          "required": false
+        },
+        "suggested_title": {
+          "label": "Suggested Title",
+          "data_type": "text",
+          "required": false
+        },
+        "escalated": {
+          "label": "Escalated",
+          "data_type": "boolean",
+          "required": false
+        },
+        "escalation_notice": {
+          "label": "Escalation Notice",
+          "data_type": "boolean",
+          "required": false
+        },
+        "question": {
+          "label": "Question",
+          "data_type": "text",
+          "required": false
+        },
+        "tool": {
+          "label": "Tool",
+          "data_type": "text",
+          "required": false
+        },
+        "args": {
+          "label": "Args",
+          "data_type": "json",
+          "required": false
+        },
+        "result": {
+          "label": "Result",
+          "data_type": "json",
+          "required": false
+        },
+        "error": {
+          "label": "Error",
+          "data_type": "text",
+          "required": false
+        },
+        "plan": {
+          "label": "Plan",
+          "data_type": "json",
+          "required": false
+        },
+        "analysis_summary": {
+          "data_type": "textarea",
+          "label": "Analysis Summary",
+          "required": false
+        },
+        "confidence_score": {
+          "data_type": "number",
+          "label": "Confidence Score",
+          "required": false
+        },
+        "author_name": {
+          "label": "Author Name",
+          "data_type": "text",
+          "required": false
+        },
+        "author_role": {
+          "label": "Author Role",
+          "data_type": "text",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": null
+    }
+  },
+  {
+    "kind": "item",
+    "slug": "ao_kb_shared",
+    "name": "Shared Knowledge Article",
+    "description": "Published learning shared with all customer accounts — lives in the platform corpus",
+    "icon": "book-open",
+    "color": "#10B981",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {},
+    "design_schema": {
+      "scope": "platform",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Shared Knowledge Articles",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "status": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Shared Knowledge Article",
+          "sections": [
+            {
+              "title": "Article",
+              "fields": {
+                "title": {},
+                "content": {},
+                "tags": {},
+                "status": {}
+              }
+            },
+            {
+              "title": "Provenance",
+              "fields": {
+                "source_article_id": {},
+                "source_ticket_id": {},
+                "source_resolution_message_id": {},
+                "approved_at": {},
+                "approved_by": {},
+                "embedded_content_hash": {},
+                "embedded_at": {}
+              }
+            },
+            {
+              "title": "Analysis",
+              "fields": {
+                "analysis_summary": {},
+                "correctness_state": {},
+                "generalizable": {},
+                "confidence_score": {}
+              }
+            }
+          ]
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "system": true,
+          "required": true,
+          "data_type": "text"
+        },
+        "status": {
+          "label": "Status",
+          "system": true,
+          "required": true,
+          "data_type": "select",
+          "default": "published",
+          "options": [
+            {
+              "label": "Published",
+              "value": "published"
+            },
+            {
+              "label": "Archived",
+              "value": "archived"
+            }
+          ]
+        },
+        "content": {
+          "label": "Content",
+          "data_type": "textarea",
+          "required": true
+        },
+        "tags": {
+          "label": "Tags",
+          "data_type": "multiselect",
+          "required": false,
+          "options": [
+            {
+              "label": "Support",
+              "value": "support"
+            },
+            {
+              "label": "How-To",
+              "value": "how-to"
+            },
+            {
+              "label": "FAQ",
+              "value": "faq"
+            },
+            {
+              "label": "Tutorial",
+              "value": "tutorial"
+            },
+            {
+              "label": "Troubleshooting",
+              "value": "troubleshooting"
+            }
+          ]
+        },
+        "source_ticket_id": {
+          "label": "Source Ticket ID",
+          "data_type": "text",
+          "required": false
+        },
+        "source_article_id": {
+          "label": "Source Article ID",
+          "data_type": "text",
+          "required": false
+        },
+        "source_resolution_message_id": {
+          "label": "Source Resolution Message ID",
+          "data_type": "text",
+          "required": false
+        },
+        "approved_at": {
+          "label": "Approved At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "approved_by": {
+          "label": "Approved By",
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_content_hash": {
+          "label": "Embedded Content Hash",
+          "data_type": "text",
+          "required": false
+        },
+        "embedded_at": {
+          "label": "Embedded At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "analysis_summary": {
+          "label": "Analysis Summary",
+          "data_type": "textarea",
+          "required": false
+        },
+        "correctness_state": {
+          "label": "Correctness State",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Validated",
+              "value": "validated"
+            },
+            {
+              "label": "Incomplete",
+              "value": "incomplete"
+            },
+            {
+              "label": "Unearned",
+              "value": "unearned"
+            }
+          ]
+        },
+        "generalizable": {
+          "label": "Generalizable",
+          "data_type": "boolean",
+          "required": false
+        },
+        "confidence_score": {
+          "label": "Confidence Score",
+          "data_type": "number",
+          "required": false
+        },
+        "is_ai_generated": {
+          "label": "AI Generated",
+          "data_type": "boolean",
+          "required": false
+        },
+        "embedding_state": {
+          "label": "Embedding State",
+          "data_type": "select",
+          "required": false,
+          "options": [
+            "processing",
+            "embedded",
+            "error"
+          ]
+        },
+        "embedding_pending_at": {
+          "label": "Embedding Pending At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "embedding_error": {
+          "label": "Embedding Error",
+          "data_type": "text",
+          "required": false
+        },
+        "validation_checks": {
+          "label": "Validation Checks",
+          "data_type": "json",
+          "required": false
+        },
+        "validation_issues": {
+          "label": "Validation Issues",
+          "data_type": "json",
+          "required": false
+        },
+        "validation_acknowledged_at": {
+          "label": "Validation Acknowledged At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "validation_acknowledged_by": {
+          "label": "Validation Acknowledged By",
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_by": {
+          "label": "Superseded By",
+          "data_type": "text",
+          "required": false
+        },
+        "superseded_at": {
+          "label": "Superseded At",
+          "data_type": "datetime",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": {
+        "kb": {
+          "vector_fields": [
+            "title",
+            "content"
+          ],
+          "chunk_field": "content",
+          "security_level": "external"
+        }
+      }
+    }
+  },
+  {
+    "kind": "item",
+    "slug": "ao_change_marker",
+    "name": "Change Marker",
+    "description": "An intentional operational change or consequential event annotated on Reporting trends",
+    "icon": "flag",
+    "color": "#EFC36B",
+    "ownership": "tenant",
+    "is_active": true,
+    "design_schema": {
+      "scope": "platform",
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "label": "Change",
+          "required": true,
+          "system": true
+        },
+        "marker_date": {
+          "data_type": "datetime",
+          "label": "When",
+          "required": true
+        },
+        "change_type": {
+          "data_type": "select",
+          "label": "Change Type",
+          "required": true,
+          "options": [
+            {
+              "label": "Process",
+              "value": "process"
+            },
+            {
+              "label": "Kb Overhaul",
+              "value": "kb_overhaul"
+            },
+            {
+              "label": "Automation",
+              "value": "automation"
+            },
+            {
+              "label": "Staffing",
+              "value": "staffing"
+            },
+            {
+              "label": "Incident",
+              "value": "incident"
+            },
+            {
+              "label": "Release",
+              "value": "release"
+            },
+            {
+              "label": "Routing",
+              "value": "routing"
+            },
+            {
+              "label": "Policy",
+              "value": "policy"
+            },
+            {
+              "label": "Tooling",
+              "value": "tooling"
+            },
+            {
+              "label": "Other",
+              "value": "other"
+            }
+          ]
+        },
+        "metric": {
+          "data_type": "select",
+          "label": "Primary Metric",
+          "required": true,
+          "options": [
+            {
+              "label": "Answer Once %",
+              "value": "ao_pct"
+            },
+            {
+              "label": "Reopen Rate",
+              "value": "reopen_rate"
+            },
+            {
+              "label": "Human Hours",
+              "value": "human_hours"
+            },
+            {
+              "label": "Customer Wait",
+              "value": "wait_time"
+            },
+            {
+              "label": "Ticket Volume",
+              "value": "volume"
+            },
+            {
+              "label": "Customer Friction",
+              "value": "friction"
+            }
+          ]
+        },
+        "expected_direction": {
+          "data_type": "select",
+          "label": "Expected Direction",
+          "required": false,
+          "options": [
+            {
+              "label": "Up",
+              "value": "up"
+            },
+            {
+              "label": "Down",
+              "value": "down"
+            }
+          ]
+        },
+        "expected_magnitude": {
+          "data_type": "text",
+          "label": "Expected Impact",
+          "required": false
+        },
+        "evaluation_days": {
+          "data_type": "number",
+          "label": "Evaluation Window (days)",
+          "required": false,
+          "default": 30
+        },
+        "why": {
+          "data_type": "textarea",
+          "label": "Why this change",
+          "required": false
+        },
+        "eval_status": {
+          "data_type": "select",
+          "label": "Status",
+          "required": false,
+          "default": "pending",
+          "options": [
+            {
+              "label": "Pending",
+              "value": "pending"
+            },
+            {
+              "label": "Met",
+              "value": "met"
+            },
+            {
+              "label": "Exceeded",
+              "value": "exceeded"
+            },
+            {
+              "label": "Underperformed",
+              "value": "underperformed"
+            },
+            {
+              "label": "No Impact",
+              "value": "no_impact"
+            },
+            {
+              "label": "Inconclusive",
+              "value": "inconclusive"
+            }
+          ]
+        },
+        "observed_impact": {
+          "data_type": "text",
+          "label": "Observed Impact",
+          "required": false
+        }
+      },
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Change Markers",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "change_type": {
+              "display_type": "badge"
+            },
+            "metric": {
+              "display_type": "badge"
+            },
+            "created_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "created_at",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Detail",
+          "sections": [
+            {
+              "title": "Change",
+              "fields": {
+                "title": {},
+                "marker_date": {},
+                "change_type": {},
+                "metric": {}
+              }
+            },
+            {
+              "title": "Hypothesis",
+              "fields": {
+                "why": {},
+                "expected_direction": {},
+                "expected_magnitude": {},
+                "evaluation_days": {}
+              }
+            },
+            {
+              "title": "Outcome",
+              "fields": {
+                "eval_status": {},
+                "observed_impact": {}
+              }
+            }
+          ]
+        }
+      },
+      "record_permissions": {
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ]
+      },
+      "functionality": null
+    },
+    "validation_schema": {
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "required": true
+        },
+        "marker_date": {
+          "data_type": "datetime",
+          "required": true
+        },
+        "change_type": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Process",
+              "value": "process"
+            },
+            {
+              "label": "Kb Overhaul",
+              "value": "kb_overhaul"
+            },
+            {
+              "label": "Automation",
+              "value": "automation"
+            },
+            {
+              "label": "Staffing",
+              "value": "staffing"
+            },
+            {
+              "label": "Incident",
+              "value": "incident"
+            },
+            {
+              "label": "Release",
+              "value": "release"
+            },
+            {
+              "label": "Routing",
+              "value": "routing"
+            },
+            {
+              "label": "Policy",
+              "value": "policy"
+            },
+            {
+              "label": "Tooling",
+              "value": "tooling"
+            },
+            {
+              "label": "Other",
+              "value": "other"
+            }
+          ]
+        },
+        "metric": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Answer Once %",
+              "value": "ao_pct"
+            },
+            {
+              "label": "Reopen Rate",
+              "value": "reopen_rate"
+            },
+            {
+              "label": "Human Hours",
+              "value": "human_hours"
+            },
+            {
+              "label": "Customer Wait",
+              "value": "wait_time"
+            },
+            {
+              "label": "Ticket Volume",
+              "value": "volume"
+            },
+            {
+              "label": "Customer Friction",
+              "value": "friction"
+            }
+          ]
+        },
+        "expected_direction": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Up",
+              "value": "up"
+            },
+            {
+              "label": "Down",
+              "value": "down"
+            }
+          ]
+        },
+        "expected_magnitude": {
+          "data_type": "text",
+          "required": false
+        },
+        "evaluation_days": {
+          "data_type": "number",
+          "required": false
+        },
+        "why": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "eval_status": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Pending",
+              "value": "pending"
+            },
+            {
+              "label": "Met",
+              "value": "met"
+            },
+            {
+              "label": "Exceeded",
+              "value": "exceeded"
+            },
+            {
+              "label": "Underperformed",
+              "value": "underperformed"
+            },
+            {
+              "label": "No Impact",
+              "value": "no_impact"
+            },
+            {
+              "label": "Inconclusive",
+              "value": "inconclusive"
+            }
+          ]
+        },
+        "observed_impact": {
+          "data_type": "text",
+          "required": false
+        }
+      }
+    }
+  }
+]

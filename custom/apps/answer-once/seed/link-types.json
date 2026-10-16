@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "ao_source_ticket",
+    "name": "Source Ticket",
+    "description": "Provenance link from a knowledge article back to the support ticket that generated it",
+    "is_active": true,
+    "config": {
+      "source_kind": "item",
+      "target_kind": "item"
+    }
+  }
+]

@@ -1,0 +1,82 @@
+[build]
+  command = "npm run assemble && npm run build"
+  publish = "dist"
+  functions = ".assembled/netlify/functions"
+
+  [build.environment]
+    # Supabase VITE variables are meant to be public in the browser
+    SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY,VITE_DB_SCHEMA,VITE_APP_NAME,VITE_ENVIRONMENT,SUPABASE_URL,DB_SCHEMA"
+    SECRETS_SCAN_OMIT_PATHS = ".framework/.xenv,.framework/.xenv.test"
+
+# Spine functions configuration - assembled from .framework + custom
+[functions]
+  directory = ".assembled/netlify/functions"
+  included_files = [".assembled/netlify/functions/_shared/**"]
+  node_bundler = "esbuild"
+  # typescript.js trips a flaky esbuild printer panic under parallel function
+  # bundling (cil-*, ai-agents, custom_case_analysis). Ship it unbundled —
+  # it's a real dependency loaded lazily at runtime.
+  external_node_modules = ["typescript"]
+
+[dev]
+  command = "bash scripts/netlify-dev-wrapper.sh"
+  framework = "#custom"
+  port = 8888
+  targetPort = 3001
+  autoLaunch = false
+  startTimeout = 300
+
+[functions."trigger-scheduler"]
+  schedule = "* * * * *"
+
+# NOTE: app-specific schedules (e.g. answer-once's autoresolve cron) were removed —
+# the root netlify.toml serves the monorepo and must stay generic. Scheduled
+# functions belong to each app's own deployed Netlify config; the standalone
+# exporter generates per-app config from installed app manifests.
+
+# CIL ingestion passes are long-running — extend timeout for local dev
+# TODO: migrate to background functions for production
+[functions."cil-ingest"]
+  timeout = 300
+
+[functions."cil-embeddings"]
+  timeout = 300
+
+[functions."cil-callmap"]
+  timeout = 60
+
+# CIL agent can need multiple LLM tool-call rounds for broad questions
+[functions."cil-agent"]
+  timeout = 120
+
+# ai-agents run action drives multi-turn research steps (retrieval + tools + LLM)
+[functions."ai-agents"]
+  timeout = 120
+
+# kb reindex ingests an entire published corpus (batched, ~10 items in flight)
+[functions."kb"]
+  timeout = 120
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    X-XSS-Protection = "1; mode=block"
+    # CSP: 'unsafe-inline' in script-src is required by the Vite dev
+    # preamble and module-preload; challenges.cloudflare.com covers
+    # Turnstile. Supabase needs https + wss for realtime. No
+    # upgrade-insecure-requests — local dev runs over plain HTTP.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.netlify.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+# Scheduled function declared by the app profile
+[functions."custom_answeronce-autoresolve-cron"]
+  schedule = "0 0 * * *"

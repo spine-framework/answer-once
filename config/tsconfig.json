@@ -1,0 +1,69 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../.assembled/src/*"],              // Assembled frontend
+      "@core/*": ["../.framework/src/*"],          // Core source (same tree as .assembled/src base layer)
+      "@custom/*": ["../custom/*"],                // Custom source
+      "@shared/*": ["../.framework/functions/_shared/*"] // Shared functions (resolved at runtime via assembly)
+    }
+  },
+  // NOTE: include/exclude paths are relative to THIS directory (config/), so
+  // everything real needs a "../" prefix — the previous values silently
+  // matched nothing and typecheck covered zero files.
+  //
+  // Coverage: assembled frontend, framework source, and every custom app's
+  // index.tsx + source tree (components/pages/hooks/lib/utils/views).
+  // Function code is deliberately EXCLUDED here — both .framework/functions
+  // and custom/apps/​*/functions assume the assembled flat layout
+  // (./_shared/* sibling imports only resolve post-assembly). Typecheck them
+  // separately against the assembled output:
+  //   npx tsc --noEmit -p config/tsconfig.functions.json
+  "include": [
+    "../.assembled/src",
+    "../.framework/src",
+    "../custom/apps",
+    "../custom/components",
+    "../custom/hooks"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "../node_modules",
+    "../dist",
+    "../netlify",
+    "../supabase",
+    "../scripts",
+    "../.netlify",
+    "../.framework/functions",
+    "../.assembled/netlify",
+    "../custom/functions",
+    "../custom/apps/*/functions",
+    "../custom/apps/*/seed",
+    "../custom/apps/*/public",
+    "../custom/apps/*/docs",
+    "../custom/apps/*/mcp",
+    "../custom/apps/*/migrations-archive",
+    "../custom/apps/*/node_modules",
+    "../custom/apps/*/dist"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

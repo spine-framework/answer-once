@@ -1,0 +1,350 @@
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-MACRO purpose="Module header for admin presentation"]
+// CIL[DOC-RESPONSIBILITY responsibility="Exports the AIAgentsPage component and AIAgent interface for managing AI agents"]
+// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Module header with React imports for the AI agents admin page" notable_decisions="[]"]
+// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+// CIL[DOC-AUDIENCE audience="internal"]
+// CIL[DOC-VECTOR type="context" content="purpose='Module header for admin presentation'; responsibilities include exports the aiagentspage component and aiagent interface for managing ai agents. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
+// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
+// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
+// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+
+
+
+
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Cpu, CheckCircle, Clock } from 'lucide-react';
+import { formatDateTime } from '../../lib/utils'
+import { useApi } from '../../hooks/useApi'
+import { apiFetch } from '../../lib/api'
+import { AdminListPage } from '../../components/admin/AdminListPage'
+import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
+import { Badge } from '../../components/ui/badge'
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header"]
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagent:interface" type="interface" identity="aiagent" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-MACRO purpose="Defines the aiagent interface"]
+// CIL[DOC-RESPONSIBILITY responsibility="Defines the TypeScript interface for AI agent records"]
+// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-CONTRACT inputs="none" outputs="AIAgent interface" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Describes the shape and fields of an AI agent object" notable_decisions="[]"]
+// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+// CIL[DOC-VECTOR type="context" content="purpose='Defines the aiagent interface'; responsibilities include defines the typescript interface for ai agent records. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
+// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
+// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
+// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+interface AIAgent {
+  id: string
+  name: string
+  description?: string
+  agent_type: 'chat' | 'analysis' | 'automation' | 'custom'
+  model_config: {
+    model: string
+    max_tokens?: number
+    temperature?: number
+  }
+  system_prompt: string
+  tools: string[]
+  capabilities?: Record<string, any>
+  constraints?: Record<string, any>
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  created_by: string
+  account_id: string
+  app_id?: string
+  metadata?: Record<string, any>
+}
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagent:interface"]
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagentspage:function" type="function" identity="aiagentspage" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-MACRO purpose="Render AI agents admin page"]
+// CIL[DOC-RESPONSIBILITY responsibility="Displays a searchable, filterable, sortable list of AI agents"]
+// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
+// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="React state, console logging, URL navigation"]
+// CIL[DOC-MICRO logic_summary="Fetches agents, applies filters and sorting, and renders an admin list table" notable_decisions="[]"]
+// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+// CIL[DOC-VECTOR type="context" content="purpose='Render AI agents admin page'; responsibilities include displays a searchable, filterable, sortable list of ai agents. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
+// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
+// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
+// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
+// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+export function AIAgentsPage() {
+  const navigate = useNavigate()
+  
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedType, setSelectedType] = useState('all')
+  const [selectedModel, setSelectedModel] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [sortKey, setSortKey] = useState('name')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
+  const { data: agents, loading } = useApi<AIAgent[]>(
+    async (params) => {
+      const response = await apiFetch('/api/ai-agents?action=list', { signal: params?.signal })
+      if (!response.ok) throw new Error('Failed to fetch AI agents')
+      const result = await response.json()
+      return result.data || []
+    },
+    { immediate: true }
+  )
+
+  const agentTypes = [
+    { value: 'all', label: 'All Types' },
+    { value: 'chat', label: 'Chat' },
+    { value: 'analysis', label: 'Analysis' },
+    { value: 'automation', label: 'Automation' },
+    { value: 'custom', label: 'Custom' }
+  ]
+
+  const models = [
+    { value: 'all', label: 'All Models' },
+    { value: 'gpt-4', label: 'GPT-4' },
+    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+    { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet' },
+    { value: 'claude-3-opus', label: 'Claude 3 Opus' }
+  ]
+
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
+  ]
+
+  const filteredAgents = (agents || []).filter(agent => {
+    const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (agent.description && agent.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    const matchesType = selectedType === 'all' || agent.agent_type === selectedType
+    const matchesModel = selectedModel === 'all' || (agent.model_config?.model) === selectedModel
+    const matchesStatus = selectedStatus === 'all' || 
+                         (selectedStatus === 'active' && agent.is_active) ||
+                         (selectedStatus === 'inactive' && !agent.is_active)
+    return matchesSearch && matchesType && matchesModel && matchesStatus
+  })
+
+  console.log('AIAgentsPage - agents:', agents)
+  console.log('AIAgentsPage - filteredAgents:', filteredAgents)
+
+  const getAgentBadgeColor = (agentType: string) => {
+    switch (agentType) {
+      case 'chat':
+        return 'bg-accent-blue/10 text-accent-blue'
+      case 'analysis':
+        return 'bg-green-100 text-green-800'
+      case 'automation':
+        return 'bg-purple-100 text-purple-800'
+      case 'custom':
+        return 'bg-orange-100 text-orange-800'
+      default:
+        return 'bg-slate-100 text-slate-800'
+    }
+  }
+
+  const getStatusBadgeColor = (isActive: boolean) => {
+    return isActive ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'
+  }
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(key)
+      setSortDirection('asc')
+    }
+  }
+
+  const handleRowClick = (agent: AIAgent) => {
+    navigate(`/spine-framework/admin/configs/ai-agents/${agent.id}`)
+  }
+
+  const sortedAgents = [...(filteredAgents || [])].sort((a, b) => {
+    let aValue: any = a[sortKey as keyof AIAgent]
+    let bValue: any = b[sortKey as keyof AIAgent]
+    
+    if (sortKey === 'model_config') {
+      aValue = a.model_config?.model || ''
+      bValue = b.model_config?.model || ''
+    }
+    
+    if (typeof aValue === 'string') {
+      return sortDirection === 'asc' 
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue)
+    }
+    
+    if (typeof aValue === 'number') {
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
+    }
+    
+    return 0
+  })
+
+  const statsCards = [
+    {
+      title: 'Total Agents',
+      value: agents?.length || 0,
+      icon: Cpu,
+      iconColor: 'text-blue-500'
+    },
+    {
+      title: 'Active',
+      value: (agents || []).filter(a => a.is_active).length,
+      icon: CheckCircle,
+      iconColor: 'text-green-500'
+    },
+    {
+      title: 'Executions Today',
+      value: '24',
+      icon: Clock,
+      iconColor: 'text-orange-500'
+    }
+  ]
+
+  const filters = [
+    {
+      label: 'Type',
+      value: selectedType,
+      options: agentTypes,
+      onChange: setSelectedType
+    },
+    {
+      label: 'Model',
+      value: selectedModel,
+      options: models,
+      onChange: setSelectedModel
+    },
+    {
+      label: 'Status',
+      value: selectedStatus,
+      options: statusOptions,
+      onChange: setSelectedStatus
+    }
+  ]
+
+  return (
+    <AdminListPage
+      title="AI Agents"
+      description="Manage AI agents and their configurations"
+      newButtonText="New Agent"
+      newButtonHref="/spine-framework/admin/configs/ai-agents/new"
+      statsCards={statsCards}
+      searchPlaceholder="Search agents..."
+      searchValue={searchTerm}
+      onSearchChange={setSearchTerm}
+      filters={filters}
+      loading={loading}
+      emptyMessage="No AI agents found"
+      emptyIcon={Cpu}
+    >
+      {sortedAgents.length === 0 ? (
+        <div className="p-8 text-center">
+          <Cpu className="mx-auto h-12 w-12 text-slate-400" />
+          <h3 className="mt-2 text-sm font-medium text-slate-900">No agents found</h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Try adjusting your search or filters
+          </p>
+        </div>
+      ) : (
+        <table className="min-w-full divide-y divide-slate-200">
+          <thead className="bg-slate-50">
+            <tr>
+              <SortableTableHeader
+                title="Agent"
+                sortKey="name"
+                currentSortKey={sortKey}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortableTableHeader
+                title="Type"
+                sortKey="agent_type"
+                currentSortKey={sortKey}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortableTableHeader
+                title="Model"
+                sortKey="model_config"
+                currentSortKey={sortKey}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortableTableHeader
+                title="Status"
+                sortKey="is_active"
+                currentSortKey={sortKey}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortableTableHeader
+                title="Created"
+                sortKey="created_at"
+                currentSortKey={sortKey}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <th className="relative px-6 py-3">
+                <span className="sr-only">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-slate-200">
+            {sortedAgents.map((agent) => (
+              <tr 
+                key={agent.id} 
+                className="hover:bg-slate-50 cursor-pointer transition-colors"
+                onClick={() => handleRowClick(agent)}
+              >
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div>
+                    <div className="font-medium text-slate-900">
+                      <span className="text-accent-blue hover:text-navy">
+                        {agent.name}
+                      </span>
+                    </div>
+                    {agent.description && (
+                      <div className="text-sm text-slate-500">{agent.description}</div>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <Badge variant={getAgentBadgeColor(agent.agent_type) as any}>
+                    {agent.agent_type}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <Badge variant="default">
+                    {agent.model_config?.model || 'Unknown'}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <Badge variant={getStatusBadgeColor(agent.is_active) as any}>
+                    {agent.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                  {formatDateTime(agent.created_at)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <span className="text-slate-400">→</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </AdminListPage>
+  )
+}
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagentspage:function"]

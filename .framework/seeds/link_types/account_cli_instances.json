@@ -1,0 +1,9 @@
+{
+  "slug": "account_cli_instances",
+  "source_kind": "account",
+  "target_kind": "item",
+  "target_type_slug": "spine_instance",
+  "name": "Account CLI Instances",
+  "description": "Links accounts to their CLI installations",
+  "is_active": true
+}

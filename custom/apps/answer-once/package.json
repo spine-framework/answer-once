@@ -1,0 +1,38 @@
+{
+  "name": "@spine-framework/answer-once",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
+  "type": "module",
+  "license": "UNLICENSED",
+  "publishConfig": { "access": "public" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spine-framework/answer-once",
+    "directory": "custom/apps/answer-once"
+  },
+  "peerDependencies": {
+    "spine-framework": ">=0.1.0"
+  },
+  "dependencies": {},
+  "files": [
+    "index.tsx",
+    "manifest.json",
+    "seed/",
+    "pages/",
+    "components/",
+    "hooks/",
+    "utils/",
+    "functions/",
+    "public/",
+    "README.md"
+  ],
+  "scripts": {
+    "validate": "npx spine-framework validate-app ."
+  },
+  "spine": {
+    "type": "app",
+    "slug": "answer-once",
+    "manifestPath": "manifest.json"
+  }
+}

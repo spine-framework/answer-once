@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "member",
+    "name": "Member",
+    "description": "Answer Once customer member with standard access",
+    "permissions": ["*"],
+    "is_system": false,
+    "is_active": true,
+    "is_protected": false
+  },
+  {
+    "slug": "member_admin",
+    "name": "Member Admin",
+    "description": "Account administrator — can invite and manage customer users",
+    "permissions": ["*"],
+    "is_system": false,
+    "is_active": true,
+    "is_protected": false
+  },
+  {
+    "slug": "support",
+    "name": "Support",
+    "description": "Answer Once support operator — can resolve tickets, review and publish knowledge",
+    "permissions": ["*"],
+    "is_system": false,
+    "is_active": true,
+    "is_protected": false
+  },
+  {
+    "slug": "support_admin",
+    "name": "Support Admin",
+    "description": "Support administrator — same operational access as support plus administrative privileges",
+    "permissions": ["*"],
+    "is_system": false,
+    "is_active": true,
+    "is_protected": false
+  }
+]
