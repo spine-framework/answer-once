@@ -15,14 +15,14 @@
           "member",
           "member_admin",
           "support",
-          "support_admin",
-          "system_admin"
+          "support_admin"
         ],
         "default_role": "member_admin",
         "path": "/answer-once",
         "enabled": true,
         "account_strategy": "new",
-        "parent_account": "spine-system"
+        "parent_account": "spine-system",
+        "allow_domain_join": false
       }
     }
   }

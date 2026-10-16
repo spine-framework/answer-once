@@ -4363,6 +4363,17 @@ export async function runAgent(
         state.driver_heartbeat_at = new Date().toISOString()
       }
       let currentMessage = userMessage
+      // Driving an episode that already reached a terminal state must be a
+      // no-op: a caller whose state read raced the episode's final write
+      // would otherwise trigger another full inference turn — re-running
+      // side-effect tools (e.g. escalate_to_human) and persisting a
+      // duplicate final message. Calls carrying a userMessage are unaffected:
+      // 'complete'/'failed' were reset to a fresh episode above and
+      // 'awaiting_input' replies continue the pending clarification.
+      if (!currentMessage?.trim() &&
+          (state.status === 'complete' || state.status === 'awaiting_input' || state.status === 'failed')) {
+        return lastMessage
+      }
       if (mode === 'step') {
         // Step mode bounds via the caller's request loop, so the turn budget
         // must be enforced here — otherwise a 'gathering' episode can be

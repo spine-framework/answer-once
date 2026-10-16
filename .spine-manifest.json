@@ -3,7 +3,7 @@
   "frozen": true,
   "framework_version": "0.3.145",
   "source_commit": null,
-  "tree_digest": "sha256:21d4801cc795ec7050ffd04c343a7cfd44b0c8a46655e38afe46bc50966cce6e",
+  "tree_digest": "sha256:80e51d31126f3301378f927de6f61f71c5dd9a4b6e7f215e060c44c66374a90f",
   "node": ">=22.13.0",
   "npm": ">=10.0.0",
   "files": {
@@ -55,7 +55,7 @@
     ".framework/docs/v2-compatibility-audit.md": "sha256:bd2eb5ac0b947ec43331c4a3d7a3f7cd7e984770ea698f8066e3baf751b90e95",
     ".framework/functions/.gitkeep": "sha256:c66fb35a3c879953c9dce6963e7e674e80713f02e1f76a01c2600bcd81e20525",
     ".framework/functions/_shared/access.ts": "sha256:b8f8ec426bb9757cbec119a449e38641847193fbddd5ac84c3aadca25d70fcee",
-    ".framework/functions/_shared/agent-runner.ts": "sha256:6be8c9acea92ac32fe561b40503ebf6efec42bad7f5d659586dca28658b17aab",
+    ".framework/functions/_shared/agent-runner.ts": "sha256:a453054943cfaf7b3003d215688c619d074befcc84e647ab0ee53813f0953512",
     ".framework/functions/_shared/app-manifest.ts": "sha256:42adfc520d6f78a0a2d9b3a2fba83cb48153aa520a340ec6623fb95b1c13bebd",
     ".framework/functions/_shared/ast.ts": "sha256:8f820e1537b7e30bfbd3af10e8885c6e7ca6aa13a7d72686e3c94f6ab3fac3bc",
     ".framework/functions/_shared/audit.ts": "sha256:22cae31746c8896703db6538cc08233a01d0c532c8880833982d115ea7e0b471",
