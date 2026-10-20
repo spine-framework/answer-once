@@ -1,0 +1,87 @@
+{
+  "framework_dirs": [
+    ".framework/cli",
+    ".framework/functions",
+    ".framework/migrations",
+    ".framework/public",
+    ".framework/scripts",
+    ".framework/seeds",
+    ".framework/src",
+    ".framework/tests",
+    ".framework/docs",
+    ".framework/mcp",
+    ".framework/templates"
+  ],
+  "framework_files": [
+    ".framework/index.html",
+    ".framework/README.md"
+  ],
+  "config_files": [
+    "config/vite.config.ts",
+    "config/tsconfig.json",
+    "config/tsconfig.node.json",
+    "config/tsconfig.cli.json",
+    "config/tsconfig.functions.json",
+    "config/tailwind.config.cjs",
+    "config/postcss.config.cjs",
+    "config/components.json",
+    "vitest.config.ts",
+    ".env.example",
+    "LICENSE.md"
+  ],
+  "root_scripts": [
+    "scripts/assemble.sh",
+    "scripts/assemble-frontend.sh",
+    "scripts/assemble-functions.sh",
+    "scripts/dev-netlify.sh",
+    "scripts/dev-clean.sh",
+    "scripts/netlify-dev-wrapper.sh",
+    "scripts/verify-integrity.sh",
+    "scripts/build-manifest.sh",
+    "scripts/checksum-manifest.mts",
+    "scripts/verify-manifest.mts",
+    "scripts/boundary-check.sh",
+    "scripts/verify-install.ts"
+  ],
+  "bin": [
+    "bin/spine-framework.cjs",
+    "bin/spine-framework.js",
+    "bin/ws-shim.mts",
+    "bin/ws-shim.ts"
+  ],
+  "exclude_globs": [
+    "**/.env",
+    "**/.env.local",
+    "**/.env.production",
+    "**/.env.development",
+    "**/.env.test",
+    "**/.xenv",
+    "**/.xenv.*",
+    "**/node_modules/**",
+    "**/.DS_Store",
+    "**/dist/**",
+    "**/.assembled/**",
+    "**/*.tsbuildinfo",
+    ".framework/migrations/archive/**",
+    ".framework/functions/_quarantine/**",
+    ".framework/tests/integration/**",
+    ".framework/public/spine.config.json"
+  ],
+  "package_scripts": {
+    "dev": "vite --config config/vite.config.ts",
+    "dev:netlify": "bash scripts/dev-netlify.sh",
+    "dev:stop": "bash scripts/dev-clean.sh",
+    "predev:netlify": "npm run assemble",
+    "assemble": "bash scripts/assemble.sh",
+    "prebuild": "npm run verify && npm run assemble",
+    "build": "vite build --config config/vite.config.ts",
+    "verify": "bash scripts/verify-integrity.sh",
+    "manifest": "bash scripts/build-manifest.sh",
+    "verify:install": "tsx scripts/verify-install.ts",
+    "typecheck": "tsc -b config/tsconfig.json",
+    "typecheck:functions": "tsc --noEmit -p config/tsconfig.functions.json",
+    "test": "vitest run",
+    "upgrade": "spine-framework upgrade",
+    "spine-framework": "tsx .framework/cli/index.ts"
+  }
+}

@@ -15,6 +15,7 @@ import { resolveCredential } from './_shared/resolve-credentials'
 import { get as adminDataGet, update as adminDataUpdate } from './admin-data'
 import * as openaiOutbound from './adapters/openai-outbound'
 import * as genericWebhookOutbound from './adapters/generic-webhook-outbound'
+import * as resendOutbound from './adapters/resend-outbound'
 // CIL[DOC-VECTOR type="context" content="purpose='Module header: imports and adapter registration for outbound integration delivery'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -368,7 +369,8 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
 // CIL[DOC-STABILITY stability="stable"]
 const builtInOutboundAdapters: Record<string, any> = {
   'adapters/openai-outbound': openaiOutbound,
-  'adapters/generic-webhook-outbound': genericWebhookOutbound
+  'adapters/generic-webhook-outbound': genericWebhookOutbound,
+  'adapters/resend-outbound': resendOutbound
 }
 // CIL[DOC-VECTOR type="context" content="purpose='Registry of built-in outbound adapter modules'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]

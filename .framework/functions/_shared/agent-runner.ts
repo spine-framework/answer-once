@@ -4256,7 +4256,23 @@ export async function runAgent(
       const threadVisibility = thread?.visibility || 'external'
       let state = getResearchState(thread)
       if (userMessage?.trim()) {
-        await saveMessage(threadId, userMessage.trim(), 'human', null, ctx, replyTypeSlug, threadVisibility)
+        // Idempotent insert: the caller (ticket creation, sendMessage) often
+        // persists the inbound row itself. When the thread's latest inbound
+        // already carries this text the row exists — skip the insert so a
+        // re-fired kick/step can never double-post the question. New-turn
+        // semantics below (episode reset, user_question) are unaffected.
+        const { data: lastInboundRows } = await adminDb
+          .from('messages')
+          .select('content')
+          .eq('thread_id', threadId)
+          .eq('direction', 'inbound')
+          .order('sequence', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(1)
+        const lastInbound = Array.isArray(lastInboundRows) ? lastInboundRows[0] : lastInboundRows
+        if ((lastInbound?.content || '').trim() !== userMessage.trim()) {
+          await saveMessage(threadId, userMessage.trim(), 'human', null, ctx, replyTypeSlug, threadVisibility)
+        }
         if (!state.user_question) state.user_question = userMessage.trim()
       }
       if (!userMessage?.trim() && !state.user_question) {

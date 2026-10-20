@@ -1,23 +1,32 @@
 {
   "name": "@spine-framework/answer-once",
-  "version": "0.1.0",
+  "version": "0.2.5",
   "private": false,
   "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
   "type": "module",
-  "license": "UNLICENSED",
-  "publishConfig": { "access": "public" },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/spine-framework/answer-once",
     "directory": "custom/apps/answer-once"
   },
+  "bin": {
+    "answer-once": "installer/index.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
   "peerDependencies": {
-    "spine-framework": ">=0.1.0"
+    "spine-framework": ">=0.4.0 <0.5.0"
   },
   "dependencies": {},
   "files": [
     "index.tsx",
     "manifest.json",
+    "standalone.config.json",
     "seed/",
     "pages/",
     "components/",
@@ -25,10 +34,15 @@
     "utils/",
     "functions/",
     "public/",
-    "README.md"
+    "docs/",
+    "installer/",
+    "README.md",
+    "LICENSE.md"
   ],
   "scripts": {
-    "validate": "npx spine-framework validate-app ."
+    "validate": "npx spine-framework validate-app .",
+    "prepack": "node ../../npm/scripts/prepack-app.mjs stage",
+    "postpack": "node ../../npm/scripts/prepack-app.mjs clean"
   },
   "spine": {
     "type": "app",

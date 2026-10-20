@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "ao_ticket_reply_notify",
+    "name": "ao_ticket_reply_notify",
+    "description": "Fires when support posts an external reply on a ticket thread. Notifies the ticket owner in-app and emails them when the transactional-email integration (Resend) is configured.",
+    "trigger_type": "event",
+    "config": { "event": "message_created", "scope": "account" },
+    "stages": [
+      {
+        "stage_type": "send_notification",
+        "continue_on_error": true,
+        "config": {
+          "message": "Support replied to your ticket — open Answer Once to read it.",
+          "entity_type": "items",
+          "entity_id": "target",
+          "recipients": ["owner"]
+        }
+      },
+      {
+        "stage_type": "send_email",
+        "continue_on_error": true,
+        "config": {
+          "integration_slug": "transactional-email",
+          "template": "ticket_reply",
+          "recipients": ["owner"],
+          "exclude_actor": true
+        }
+      }
+    ],
+    "metadata": {
+      "note": "send_email no-ops until RESEND_API_KEY is configured; recipients 'owner' resolves the ticket creator. Recipients list accepts 'owner', 'watchers', 'self', 'role:<slug>', person UUIDs, or literal emails."
+    },
+    "ownership": "platform",
+    "is_system": true,
+    "is_active": true
+  }
+]

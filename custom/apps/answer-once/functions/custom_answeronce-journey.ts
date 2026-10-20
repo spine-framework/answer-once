@@ -166,6 +166,23 @@ async function createTicket(ctx: any, body: any) {
   })
   if (!thread?.id) throw new Error('Failed to create thread')
 
+  // The customer's opening message lands with creation — not inside the
+  // kicked episode — so the thread renders it before the agent's first
+  // beat, and injection-escalated tickets (which never kick) still retain
+  // the question. runAgent skips re-inserting an identical latest inbound,
+  // so the kick below carrying `message` cannot produce a second row.
+  await create(ctx, {
+    entity: 'messages',
+    type_id: ids.message,
+    thread_id: thread.id,
+    person_id: ctx.principal.id,
+    content: message,
+    direction: 'inbound',
+    sequence: 1,
+    visibility: 'external',
+    data: { message_type: 'human' },
+  })
+
   if (injectionEscalated) {
     // Same escalation notice finalizeTicket posts — the customer sees a
     // normal handoff; only the audit trail records the detection reason.
@@ -175,7 +192,7 @@ async function createTicket(ctx: any, body: any) {
       thread_id: thread.id,
       content: "I've passed this to our support team — a person will follow up in this conversation shortly.",
       direction: 'outbound',
-      sequence: 1,
+      sequence: 2,
       visibility: 'external',
       data: { message_type: 'escalation', escalation_notice: true },
     }).catch((e) => console.warn('escalation notice failed:', e?.message))
@@ -260,6 +277,14 @@ async function finalizeTicket(ctx: any, body: any) {
   const answeredByAi = !escalated && !!agentMsg
   const suggestedTitle = agentMsg?.data?.suggested_title || ticketCheck.title
 
+  // A human-owned ticket must never be demoted by a late triage finalize. A
+  // stale client (remounted while the ticket still read ai_responding) can
+  // legitimately re-run supervise→finalize after support already assigned,
+  // progressed, or resolved the case — re-stamping the agent outcome would
+  // silently revert that human work while leaving the resolution metadata
+  // behind (observed: resolved → human_assigned with resolved_at intact).
+  const humanOwned = ['in_progress', 'resolved', 'closed'].includes(ticketCheck.status)
+
   // True reuse signal: prefer cited_sources (articles the answer actually cited),
   // fall back to retrieved_sources only when nothing was cited. document_id for
   // regular records is the item UUID; verify against published ao_kb_* items so
@@ -287,10 +312,12 @@ async function finalizeTicket(ctx: any, body: any) {
 
   await adminDataUpdate(ctx, 'items', ticket_id, {
     title: suggestedTitle,
-    status: escalated ? 'human_assigned' : answeredByAi ? 'pending_resolution' : (ticketCheck.status || 'ai_responding'),
+    ...(humanOwned ? {} : {
+      status: escalated ? 'human_assigned' : answeredByAi ? 'pending_resolution' : (ticketCheck.status || 'ai_responding'),
+    }),
     data: {
       ...(ticketCheck.data || {}),
-      last_activity_at: new Date().toISOString(),
+      ...(humanOwned ? {} : { last_activity_at: new Date().toISOString() }),
       aim_triage_agent_id: ids.triageAgentId,
       aim_confidence_at_response: confidence,
       aim_retrieval_confidence: agentMsg?.data?.retrieval_confidence ?? agentMsg?.data?.mean_similarity ?? null,
@@ -303,18 +330,20 @@ async function finalizeTicket(ctx: any, body: any) {
       // A confident answer enters the pending-confirmation window, not resolved.
       // resolve_pending_since resets on every confident answer — the 72h
       // auto-resolve clock always measures silence after the LAST answer.
-      ...(answeredByAi
-        ? {
-            pending_proposed_by: 'ai',
-            resolve_pending_since: new Date().toISOString(),
-            // Pending is not resolved — clear any stale resolution claims.
-            resolved_at: null,
-            resolved_via: null,
-            aim_resolved_by_ai: false,
-          }
-        : escalated
-          ? { pending_proposed_by: null, resolve_pending_since: null }
-          : {}),
+      ...(humanOwned
+        ? {}
+        : answeredByAi
+          ? {
+              pending_proposed_by: 'ai',
+              resolve_pending_since: new Date().toISOString(),
+              // Pending is not resolved — clear any stale resolution claims.
+              resolved_at: null,
+              resolved_via: null,
+              aim_resolved_by_ai: false,
+            }
+          : escalated
+            ? { pending_proposed_by: null, resolve_pending_since: null }
+            : {}),
     },
   })
 

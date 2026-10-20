@@ -29,17 +29,16 @@ async function fetchJSON(path: string, options?: RequestInit) {
 
 // CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useWatchers.ts:normalizedataforwrite:function" type="function" identity="normalizeDataForWrite" parent="~/custom/apps/answer-once/hooks/useWatchers.ts"]
 // CIL[DOC-MACRO purpose="Convert display-formatted timestamps back to ISO before a data PATCH"]
-// CIL[DOC-MICRO logic_summary="admin-data returns *_at fields display-formatted; sending them back verbatim fails datetime validation — normalize or null them first" notable_decisions="same normalization KBArticlePage applies before saving articles"]
+// CIL[DOC-MICRO logic_summary="admin-data returns datetime fields display-formatted ('October 19, 2026 at 03:57 PM'); sending them back verbatim fails datetime validation — normalize or null them first" notable_decisions="detection is by key suffix OR by the display-stamp value shape so fields like resolve_pending_since (no _at suffix) are still normalized; same helper KBArticlePage uses before saving articles"]
+const DISPLAY_STAMP_RE = /^[A-Z][a-z]+ \d{1,2}, \d{4} at \d{2}:\d{2} [AP]M$/
 export function normalizeDataForWrite(data: Record<string, any>): Record<string, any> {
   const out: Record<string, any> = { ...data }
   for (const key of Object.keys(out)) {
-    if (!/(_at|_timestamp|_date|_time)$/.test(key)) continue
     const v = out[key]
-    if (typeof v === 'string' && v && !/^\d{4}-\d{2}-\d{2}T/.test(v)) {
-      let t = new Date(v)
-      if (Number.isNaN(t.getTime())) t = new Date(v.replace(/ at /i, ' '))
-      out[key] = Number.isNaN(t.getTime()) ? null : t.toISOString()
-    }
+    if (typeof v !== 'string' || !v || /^\d{4}-\d{2}-\d{2}T/.test(v)) continue
+    if (!/(_at|_timestamp|_date|_time|_since|_until)$/.test(key) && !DISPLAY_STAMP_RE.test(v)) continue
+    const t = parseStamp(v)
+    out[key] = t ? new Date(t).toISOString() : null
   }
   return out
 }
@@ -129,11 +128,16 @@ export async function touchTicketActivity(ticketId: string, extraData?: Record<s
 // CIL[DOC-MACRO purpose="Decide whether a watched ticket has unread activity"]
 // CIL[DOC-CONTRACT inputs="ticket { data }, watcher" outputs="boolean" errors="none" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="Compares ticket.data.last_activity_at to watcher.data.last_seen_at (fallback watcher.created_at). Both arrive display-formatted from admin-data when declared in design_schema, so parsing tolerates the 'Month D, YYYY at h:mm AM' shape" notable_decisions="a timestamp that cannot be parsed is treated as no-activity rather than unread — false negatives are safer than a permanently-lit queue"]
-function parseStamp(v: any): number {
+export function parseStamp(v: any): number {
   if (typeof v !== 'string' || !v) return 0
   let t = new Date(v).getTime()
   if (Number.isNaN(t)) t = new Date(v.replace(/ at /i, ' ')).getTime()
   return Number.isNaN(t) ? 0 : t
+}
+
+export function formatStamp(v: any): string {
+  const ts = parseStamp(v)
+  return ts ? new Date(ts).toLocaleString() : (v ? String(v) : '')
 }
 
 export function hasUnreadActivity(ticket: any, watcher: Watcher | undefined): boolean {

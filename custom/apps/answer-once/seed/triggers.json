@@ -1,0 +1,21 @@
+[
+  {
+    "slug": "ao_staff_reply_notify",
+    "name": "ao_staff_reply_notify",
+    "description": "Staff reply on a customer-facing ticket thread → ao_ticket_reply_notify pipeline. data.sender_type = 'staff' keeps agent messages and system markers out.",
+    "trigger_type": "event",
+    "event_type": "message_created",
+    "pipeline_slug": "ao_ticket_reply_notify",
+    "is_active": true,
+    "config": {
+      "entity_type": "messages",
+      "filters": {
+        "direction": "outbound",
+        "visibility": "external",
+        "data.human_reply": true
+      }
+    },
+    "metadata": {},
+    "is_system": true
+  }
+]

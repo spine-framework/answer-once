@@ -142,7 +142,7 @@ function waitHours(t: any): number | null {
     ? (t.data?.resolve_pending_since || t.data?.resolved_at || t.updated_at)
     : (t.data?.resolved_at || t.updated_at)
   if (!end) return null
-  const ms = new Date(end).getTime() - new Date(t.created_at).getTime()
+  const ms = new Date(String(end).replace(/ at /i, ' ')).getTime() - new Date(t.created_at).getTime()
   return Number.isNaN(ms) || ms < 0 ? null : ms / 3600000
 }
 

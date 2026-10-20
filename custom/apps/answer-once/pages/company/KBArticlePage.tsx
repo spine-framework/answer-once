@@ -19,6 +19,7 @@ import { Skeleton } from '@core/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@core/components/ui/select'
 import { RichTextEditor } from '@core/components/ui/RichTextEditor'
 import { useDirectory } from '../../hooks/useDirectory'
+import { normalizeDataForWrite } from '../../hooks/useWatchers'
 import { decodeEntities } from '../../utils/text'
 import { ArrowLeft, Pencil, Check, X, Send, Archive, RefreshCw, AlertTriangle, Repeat } from 'lucide-react'
 // CIL[END stable_id="~/custom/apps/answer-once/pages/company/KBArticlePage.tsx:module_header:module_header"]
@@ -37,19 +38,6 @@ async function fetchJSON(path: string, options?: RequestInit) {
   return json.data
 }
 
-function normalizeDataForWrite(data: Record<string, any>): Record<string, any> {
-  const out: Record<string, any> = { ...data }
-  for (const key of Object.keys(out)) {
-    if (!/(_at|_timestamp|_date|_time)$/.test(key)) continue
-    const v = out[key]
-    if (typeof v === 'string' && v && !/^\d{4}-\d{2}-\d{2}T/.test(v)) {
-      let t = new Date(v)
-      if (Number.isNaN(t.getTime())) t = new Date(v.replace(/ at /i, ' '))
-      out[key] = Number.isNaN(t.getTime()) ? null : t.toISOString()
-    }
-  }
-  return out
-}
 
 const EMBED_LABEL: Record<string, string> = {
   processing: 'Embedding…',

@@ -146,7 +146,7 @@ export function TicketThread({
   onTriageStarted,
   onTriageFinished,
 }: TicketThreadProps) {
-  const { thread, messages, loading, error, sendMessage, refetch } = useTicketThread(ticketId)
+  const { thread, messages, loading, loaded, error, sendMessage, refetch } = useTicketThread(ticketId)
   const { runSteps, loading: agentLoading } = useAgentSteps()
   const { finalize, loading: finalizeLoading } = useFinalizeTicket()
   const { user } = useAuth()
@@ -162,16 +162,23 @@ export function TicketThread({
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // Start triage when a new ticket is created with a thread, or when a ticket
-  // is still in ai_responding with no messages (e.g. after a refresh).
+  // Start triage when a new ticket is created with a thread, or reconcile an
+  // ai_responding ticket after a remount. The gate requires a successful
+  // first load ('loaded' + no 'error') so a transient fetch failure can never
+  // masquerade as an empty thread and re-fire the episode. When messages
+  // already exist the episode is running or finished — runSteps is called
+  // with an empty message (supervise/takeover + finalize), which can never
+  // insert an inbound row or reset a completed episode. Only the genuinely
+  // empty-thread case kicks with the question text.
   useEffect(() => {
     if (triageStarted) return
-    const shouldAutoStart = !initialTriage && ticketStatus === 'ai_responding' && messages.length === 0 && !loading
-    const triage = initialTriage ?? (shouldAutoStart && thread?.id
-      ? { threadId: thread.id, firstMessage: ticketDescription || '' }
+    const shouldAutoStart =
+      !initialTriage && ticketStatus === 'ai_responding' && loaded && !error && !loading && !!thread?.id
+    const triage = initialTriage ?? (shouldAutoStart
+      ? { threadId: thread!.id, firstMessage: messages.length === 0 ? ticketDescription || '' : '' }
       : null)
     if (!triage?.threadId) return
-    if (!triage.firstMessage && !shouldAutoStart) return
+    if (initialTriage && !triage.firstMessage) return
 
     setTriageStarted(true)
     onTriageStarted?.()
@@ -180,7 +187,7 @@ export function TicketThread({
       .then(() => finalize(ticketId, triage.threadId))
       .then(() => onTriageFinished?.())
       .catch(() => onTriageFinished?.())
-  }, [initialTriage, triageStarted, ticketId, ticketStatus, messages.length, loading, thread?.id, runSteps, finalize, refetch, onTriageStarted, onTriageFinished])
+  }, [initialTriage, triageStarted, ticketId, ticketStatus, messages.length, loading, loaded, error, thread?.id, ticketDescription, runSteps, finalize, refetch, onTriageStarted, onTriageFinished])
 
   const handleSend = useCallback(async () => {
     const content = input.trim()
@@ -198,15 +205,27 @@ export function TicketThread({
           body: JSON.stringify(fields),
         }).then(() => onStatusChange?.(fields.status))
 
+      // Branch on the live record, not props — support can assign/resolve
+      // while this page is open, and a stale status here writes the wrong
+      // transition (observed: a stale 'human_assigned' prop demoted a ticket
+      // support had just resolved, without reopen metadata).
+      let liveStatus = ticketStatus
+      let liveData = ticketData
+      try {
+        const res = await apiFetch(`/api/admin-data?entity=items&id=${ticketId}`)
+        const fresh = await res.json().then((j) => j?.data ?? j)
+        if (fresh?.status) { liveStatus = fresh.status; liveData = fresh.data || liveData }
+      } catch { /* fall back to props */ }
+
       // A comment on a resolved/closed ticket is a definitive negative
       // outcome: reopen and hand straight to a human — no AI second chance
       // on a case it already declared closed.
-      if (ticketStatus === 'resolved' || ticketStatus === 'closed') {
+      if (liveStatus === 'resolved' || liveStatus === 'closed') {
         const now = new Date().toISOString()
         void patchTicket({
           status: 'human_assigned',
           data: {
-            ...normalizeDataForWrite(ticketData || {}),
+            ...normalizeDataForWrite(liveData || {}),
             reopened_at: now,
             reopen_reason: 'customer_returned',
             resolved_at: null,
@@ -218,7 +237,7 @@ export function TicketThread({
             last_activity_at: now,
           },
         })
-      } else if (ticketStatus === 'in_progress' || ticketStatus === 'human_assigned') {
+      } else if (liveStatus === 'in_progress' || liveStatus === 'human_assigned') {
         // A reply on a human-owned ticket pops it back into the support queue
         // (assignee preserved); AI-owned tickets just get activity.
         void patchTicket({ status: 'human_assigned' })
@@ -229,14 +248,14 @@ export function TicketThread({
       // AI-proposed → a reply continues the conversation (re-run triage —
       // a confident follow-up re-enters pending, a weak one escalates);
       // human-proposed → the case returns to its human owner.
-      if (ticketStatus === 'pending_resolution' && thread?.id) {
-        if (ticketData?.pending_proposed_by === 'human') {
+      if (liveStatus === 'pending_resolution' && thread?.id) {
+        if (liveData?.pending_proposed_by === 'human') {
           void patchTicket({ status: 'in_progress' })
         } else {
           const now = new Date().toISOString()
           await patchTicket({
             status: 'ai_responding',
-            data: { ...normalizeDataForWrite(ticketData || {}), last_activity_at: now },
+            data: { ...normalizeDataForWrite(liveData || {}), last_activity_at: now },
           })
           onTriageStarted?.()
           await runSteps(thread.id, content, refetch)
@@ -244,7 +263,7 @@ export function TicketThread({
           await finalize(ticketId, thread.id)
           onTriageFinished?.()
         }
-      } else if (ticketStatus === 'ai_responding' && thread?.id) {
+      } else if (liveStatus === 'ai_responding' && thread?.id) {
         // If the ticket was already triaged and is waiting on the customer,
         // a new inbound message should resume the agent episode.
         onTriageStarted?.()

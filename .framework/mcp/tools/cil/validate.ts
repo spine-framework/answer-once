@@ -1012,6 +1012,8 @@ async function validateProjectFiles(
 // CIL[DOC-MICRO logic_summary="Implements the register function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[DOC-LEARNING topic="caution" content="spine_cil_reindex_chunk hashes lines.slice(lineStart+1, lineEnd) (inner lines only) while spine_cil_validate_file hashes the inclusive range — a reindex can never clear drift_detection on its own, and neither tool updates stale line ranges. The correct post-edit sync is spine_cil_store_markers, which re-derives ranges from CIL[BEGIN/END] markers on disk"]
+// CIL[DOC-LEARNING topic="convention" content="cil_validate_docs param check: input_spec is split on commas/newlines at depth 0 and only each entry's FIRST identifier counts as a documented param; only the FIRST '(function|const|let|var) name(' signature inside a chunk (including comment text) is checked — phrases like 'function sections (with comments)' in DOC lines parse as signatures. List every param as its own 'name: type' entry"]
 export function register(server: McpServer) {
   const splitParameterList = (text: string): string[] => {
     const parts: string[] = []

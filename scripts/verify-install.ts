@@ -8,7 +8,7 @@
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 // CIL[END stable_id="~/scripts/verify-install.ts:module_header:module_header"]
@@ -220,28 +220,39 @@ async function main(): Promise<void> {
   // 5c. Migration inventory — every filename the export shipped must appear
   // in the _spine_migrations tracking table (no silent skips on a virgin DB).
   const exportManifestPath = join(repoRoot, '.spine-export-manifest.json')
+  // npm-created projects have no export manifest — the inventory falls back to
+  // the migration files on disk (.framework + custom).
+  let expectedMigrations: string[] | null = null
   if (existsSync(exportManifestPath)) {
     try {
       const em = JSON.parse(readFileSync(exportManifestPath, 'utf8'))
-      const expectedFiles: string[] = [
+      expectedMigrations = [
         ...(em.migrations?.framework ?? []),
         ...(em.migrations?.custom ?? []),
       ]
-      const { data: applied, error: migErr } = await db
-        .from('_spine_migrations')
-        .select('filename')
-      if (migErr) {
-        check('migration tracking table readable', false, migErr.message)
-      } else {
-        const appliedSet = new Set((applied ?? []).map((r: any) => r.filename))
-        check('migration inventory complete', expectedFiles.every((f) => appliedSet.has(f)),
-          `${expectedFiles.filter((f) => !appliedSet.has(f)).length} of ${expectedFiles.length} not applied`)
-      }
     } catch (e: any) {
       check('export manifest readable', false, e?.message ?? '')
     }
   } else {
-    console.log('  ○ .spine-export-manifest.json absent — migration inventory check skipped')
+    const listDir = (rel: string): string[] => {
+      const dir = join(repoRoot, rel)
+      return existsSync(dir)
+        ? readdirSync(dir).filter((n) => n.endsWith('.sql')).sort()
+        : []
+    }
+    expectedMigrations = [...listDir('.framework/migrations'), ...listDir('custom/migrations')]
+  }
+  if (expectedMigrations) {
+    const { data: applied, error: migErr } = await db
+      .from('_spine_migrations')
+      .select('filename')
+    if (migErr) {
+      check('migration tracking table readable', false, migErr.message)
+    } else {
+      const appliedSet = new Set((applied ?? []).map((r: any) => r.filename))
+      check('migration inventory complete', expectedMigrations.every((f) => appliedSet.has(f)),
+        `${expectedMigrations.filter((f) => !appliedSet.has(f)).length} of ${expectedMigrations.length} not applied`)
+    }
   }
 
   // 5d. No unexpected installed apps — builtin framework apps plus exactly

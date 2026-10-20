@@ -13,6 +13,9 @@
 // CIL[DOC-AUDIENCE audience="developer"]
 import './env-loader.ts'
 import { Command } from 'commander'
+import { readFileSync } from 'fs'
+import { resolve, dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 // CIL[DOC-VECTOR type="context" content="purpose='Import CLI dependencies and environment loader'; No verified external callers; imports: .framework/cli/env-loader.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -30,10 +33,25 @@ import { Command } from 'commander'
 // CIL[DOC-STABILITY stability="stable"]
 const program = new Command()
 
+// Version: the spine-framework package.json when running from the package,
+// otherwise the project's frozen manifest (vendored CLI copy).
+function cliVersion(): string {
+  const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../')
+  try {
+    const pkg = JSON.parse(readFileSync(join(pkgRoot, 'package.json'), 'utf8'))
+    if (pkg.name === 'spine-framework' && typeof pkg.version === 'string') return pkg.version
+  } catch { /* fall through */ }
+  try {
+    const manifest = JSON.parse(readFileSync(join(process.cwd(), '.spine-manifest.json'), 'utf8'))
+    if (typeof manifest.framework_version === 'string') return manifest.framework_version
+  } catch { /* fall through */ }
+  return '0.0.0'
+}
+
 program
   .name('spine-framework')
   .description('Spine Framework CLI — install, migrate, and manage your Spine instance')
-  .version('2.0.0')
+  .version(cliVersion())
   .option('--account <id>', 'Override the account ID for this command')
 // CIL[DOC-VECTOR type="context" content="purpose='Initialize CLI program with basic configuration'; No verified external callers; imports: .framework/cli/env-loader.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -67,6 +85,7 @@ const [
   { registerGenerateCommands },
   { registerCreateAppCommands },
   { registerValidateAppCommands },
+  { registerUpgradeCommands },
 ] = await Promise.all([
   import('./commands/init.ts'),
   import('./commands/migrate.ts'),
@@ -84,6 +103,7 @@ const [
   import('./commands/generate.ts'),
   import('./commands/create-app.ts'),
   import('./commands/validate-app.ts'),
+  import('./commands/upgrade.ts'),
 ])
 // CIL[DOC-VECTOR type="context" content="purpose='Dynamically import all CLI command modules'; No verified external callers; imports: .framework/cli/env-loader.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -116,6 +136,7 @@ registerSystemCommands(program)
 registerGenerateCommands(program)
 registerCreateAppCommands(program)
 registerValidateAppCommands(program)
+registerUpgradeCommands(program)
 // CIL[DOC-VECTOR type="context" content="purpose='Register all CLI commands with the program'; No verified external callers; imports: .framework/cli/env-loader.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]

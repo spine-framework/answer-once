@@ -644,6 +644,64 @@ async function resolveAccountId(ctx: CoreContext, slug: string): Promise<string>
 // CIL[DOC-MICRO logic_summary="Template-bearing id fields resolve against config._triggerData then dynamic-import their engine — kb_ingest/kb_revoke import _shared/kb (canonical typed path with document lease); generate_embeddings/revoke_embeddings import functions/embeddings (legacy engine) and remain for cortex pipelines." notable_decisions="kb_ingest accepts item_id or document_id; kb_revoke accepts document_id or item_id — matching the seeded demo pipeline configs"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// Entity-scoped recipient handles understood by send_notification/send_email.
+// 'owner' = created_by of the record the trigger fired on (for a message, the
+// record its thread points at); 'watchers' = watchers rows on that record;
+// 'self' = the person who created the triggering record.
+const ENTITY_RECIPIENTS = new Set(['owner', 'watchers', 'self'])
+
+// Walks message -> thread -> target so entity handles resolve against the
+// owning record (e.g. the ticket item behind a reply), not just the event row.
+async function resolveEntityTarget(entity: any): Promise<{ targetTable: string | null, targetId: string | null }> {
+  if (!entity?.type || !entity?.id) return { targetTable: null, targetId: null }
+  if (entity.type === 'messages' && entity?.data?.thread_id) {
+    const { data: th } = await adminDb
+      .from('threads')
+      .select('target_type, target_id')
+      .eq('id', entity.data.thread_id)
+      .maybeSingle()
+    if (th?.target_id) {
+      return { targetTable: th.target_type || 'items', targetId: th.target_id }
+    }
+    return { targetTable: 'threads', targetId: entity.data.thread_id }
+  }
+  return { targetTable: entity.type, targetId: entity.id }
+}
+
+async function resolveEntityRecipients(recipients: any[], entity: any): Promise<string[]> {
+  const wanted = (recipients || []).filter((r: any) => ENTITY_RECIPIENTS.has(r))
+  if (!wanted.length) return []
+
+  const ids: string[] = []
+  if (wanted.includes('self') && entity?.data?.created_by) {
+    ids.push(entity.data.created_by)
+  }
+
+  if (wanted.includes('owner') || wanted.includes('watchers')) {
+    const { targetTable, targetId } = await resolveEntityTarget(entity)
+    if (targetTable && targetId) {
+      if (wanted.includes('owner')) {
+        const { data: rec } = await adminDb
+          .from(targetTable)
+          .select('created_by')
+          .eq('id', targetId)
+          .maybeSingle()
+        if (rec?.created_by) ids.push(rec.created_by)
+      }
+      if (wanted.includes('watchers')) {
+        const { data: ws } = await adminDb
+          .from('watchers')
+          .select('person_id')
+          .eq('target_id', targetId)
+        for (const w of ws || []) {
+          if (w?.person_id) ids.push(w.person_id)
+        }
+      }
+    }
+  }
+  return [...new Set(ids)]
+}
+
 const stageHandlers: Record<string, Function> = {
   'update_item': async (ctx: CoreContext, config: any) => {
     const triggerData = config._triggerData || {}
@@ -764,14 +822,46 @@ const stageHandlers: Record<string, Function> = {
   },
 
   'send_notification': async (ctx: CoreContext, config: any) => {
-    const { message, entity_type, entity_id, recipients = [] } = config
+    const triggerData = config._triggerData
+    const recipients = resolveTemplates(config.recipients ?? [], triggerData)
+    const entity = triggerData?.entity
+
+    // Entity-scoped handles ('owner', 'watchers', 'self') resolve through the
+    // record the trigger fired on; role:/UUID entries go through notify.ts.
+    const entityPersonIds = await resolveEntityRecipients(recipients, entity)
+    const personIds = [
+      ...entityPersonIds,
+      ...(await resolveNotificationRecipients(ctx, recipients.filter((r: any) => typeof r === 'string' && !ENTITY_RECIPIENTS.has(r))))
+    ]
+    const message = resolveTemplates(config.message, triggerData)
+    const entity_type = config.entity_type
+    // entity_id 'target' resolves the record behind the event (e.g. the ticket
+    // a reply was posted on) so notifications deep-link to it.
+    let entity_id = resolveTemplates(config.entity_id, triggerData)
+    if (entity_id === 'target') {
+      entity_id = (await resolveEntityTarget(entity)).targetId || null
+    }
 
     // watchers is the subscription table (who follows what) — deliveries go to
     // the notifications table, one row per recipient. Migration 050 adds it.
-    // CIL[DOC-NOTE type="behavior" content="Recipients may be person UUIDs or 'role:<slug>' handles — resolveNotificationRecipients maps role slugs to this account's active people ids; a role matching nobody is a valid 0-notification result, not an error."]
-    const personIds = await resolveNotificationRecipients(ctx, recipients)
-    const notifications = personIds.map((recipientId: string) => ({
-      account_id: ctx.accountId,
+    // Recipient account scoping: entity handles (owner/watchers/self) can point
+    // at people outside ctx.accountId — e.g. a staff reply in the support
+    // account notifying a customer — so each row is stamped with the
+    // recipient's own account_id, falling back to ctx.accountId.
+    // CIL[DOC-NOTE type="behavior" content="Recipients may be person UUIDs, 'role:<slug>' handles, or entity handles 'owner'/'watchers'/'self' — resolveNotificationRecipients maps role slugs to this account's active people ids; a role matching nobody is a valid 0-notification result, not an error."]
+    const uniquePersonIds = [...new Set(personIds)]
+    const personAccounts = new Map<string, string>()
+    if (uniquePersonIds.length) {
+      const { data: peopleRows } = await adminDb
+        .from('people')
+        .select('id, account_id')
+        .in('id', uniquePersonIds)
+      for (const p of peopleRows || []) {
+        if (p?.id && p?.account_id) personAccounts.set(p.id, p.account_id)
+      }
+    }
+    const notifications = uniquePersonIds.map((recipientId: string) => ({
+      account_id: personAccounts.get(recipientId) || ctx.accountId,
       person_id: recipientId,
       message,
       source_type: 'pipeline_execution',
@@ -790,6 +880,96 @@ const stageHandlers: Record<string, Function> = {
     }
 
     return { success: true, notified_count: notifications.length }
+  },
+
+  // Sends email through an outbound integration (e.g. Resend) to resolved
+  // recipients. Recipients accept literal emails plus the same handles as
+  // send_notification (role:<slug>, person UUID, 'owner', 'watchers', 'self').
+  // 'exclude_actor' (default true) drops the person who wrote the triggering
+  // record so a support rep never emails themselves. A missing/inactive
+  // integration is reported as success with emailed_count 0 — pipelines stay
+  // green until the customer configures a provider.
+  'send_email': async (ctx: CoreContext, config: any) => {
+    const triggerData = config._triggerData
+    const entity = triggerData?.entity
+    const integrationSlug = config.integration_slug || 'transactional-email'
+
+    const { data: integration } = await adminDb
+      .from('integrations')
+      .select('id, config')
+      .eq('slug', integrationSlug)
+      .eq('is_active', true)
+      .limit(1)
+      .maybeSingle()
+
+    // No configured provider → no-op so seeded pipelines stay green on installs
+    // that never set up email.
+    if (!integration) {
+      return { success: true, emailed_count: 0, skipped: 'integration not configured' }
+    }
+
+    // Named templates live on the integration (integration.config.templates.<key>
+    // = {subject, html, text}); inline stage config supplies them otherwise.
+    let { subject, html, text } = config
+    const named = config.template && integration?.config?.templates?.[config.template]
+    if (named) {
+      subject = named.subject ?? subject
+      html = named.html ?? html
+      text = named.text ?? text
+    }
+    subject = resolveTemplates(subject, triggerData)
+    html = resolveTemplates(html, triggerData)
+    text = resolveTemplates(text, triggerData)
+
+    if (!subject || (!html && !text)) {
+      throw new Error('send_email: subject and html or text are required (inline or via integration template)')
+    }
+
+    const recipients = resolveTemplates(config.recipients ?? [], triggerData)
+    const personIds = new Set([
+      ...(await resolveEntityRecipients(recipients, entity)),
+      ...(await resolveNotificationRecipients(ctx, recipients.filter((r: any) => typeof r === 'string' && !ENTITY_RECIPIENTS.has(r) && !r.includes('@')))),
+    ])
+    if (config.exclude_actor !== false && entity?.data?.created_by) {
+      personIds.delete(entity.data.created_by)
+    }
+
+    const emails = new Set(recipients.filter((r: any) => typeof r === 'string' && r.includes('@')))
+    if (personIds.size) {
+      const { data: people } = await adminDb
+        .from('people')
+        .select('id, email')
+        .in('id', [...personIds])
+      for (const p of people || []) {
+        if (p?.email) emails.add(p.email)
+      }
+    }
+
+    if (!emails.size) return { success: true, emailed_count: 0 }
+
+    try {
+      const result = await executeOutbound(ctx, {
+        integration_slug: integrationSlug,
+        action_config: {
+          action_slug: 'send_email',
+          to: [...emails],
+          subject,
+          html,
+          text,
+          ...(config.from ? { from: config.from } : {}),
+          ...(config.reply_to ? { reply_to: config.reply_to } : {}),
+        },
+      })
+      return { success: !!result?.success, emailed_count: emails.size }
+    } catch (err: any) {
+      // Credential/env problems mean the provider was never configured — treat
+      // like "not configured" rather than failing the pipeline.
+      if (/credential|Environment variable|api_token/i.test(err?.message || '')) {
+        console.warn(`[send_email] skipped — ${err.message}`)
+        return { success: true, emailed_count: 0, skipped: err.message }
+      }
+      throw err
+    }
   },
 
   'run_pipeline': async (ctx: CoreContext, config: any) => {

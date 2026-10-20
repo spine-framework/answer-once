@@ -14,6 +14,7 @@ if (process.argv.length === 2) {
   console.log('Usage: spine-framework <command>\n')
   console.log('Commands:')
   console.log('  init          Scaffold a new Spine Framework project')
+  console.log('  upgrade       Sync framework files to the installed spine-framework version')
   console.log('  migrate       Apply database migrations')
   console.log('  install-app   Install a Spine Framework app from npm')
   console.log('  status        Show installed apps and framework version')

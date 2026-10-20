@@ -184,7 +184,7 @@ class _PermissionEngineInternal {
 // CIL[DOC-CONTEXT module="permissions" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts"]
 // CIL[DOC-CONTRACT inputs="none" outputs="none" errors="May return error results or throw on permission resolution failure" side_effects="May log debug information to console"]
 // CIL[DOC-MICRO logic_summary="Implements the _PermissionEngineInternal.resolveFirstSurfacePermissions logic for the permissions module" notable_decisions="[]"]
-// CIL[DOC-LEARNING topic="invariant" content="record_permissions keys are matched verbatim against the seeded roles.slug — nothing normalizes hyphens. 'system-admin' is a dead key that silently denies system_admin; only real slugs (system_admin, member, support, ...) or the 'all' wildcard are valid. Proven by a shipped answer-once defect (403 on create for system_admin)."]
+// CIL[DOC-LEARNING topic="invariant" content="record_permissions keys are matched verbatim against the seeded roles.slug — nothing normalizes hyphens. 'system-admin' is a dead key that silently denies system_admin; only real slugs (system_admin, member, support, ...) or the 'all' wildcard are valid. Proven by a shipped downstream-app defect (403 on create for system_admin)."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
   async resolveFirstSurfacePermissions(

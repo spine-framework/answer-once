@@ -1377,24 +1377,28 @@ async function validatePipelineSeedStages(
       )
     }
 
-    if (stageType !== 'send_notification') continue
+    if (stageType !== 'send_notification' && stageType !== 'send_email') continue
     const recipients = stage.config?.recipients
     if (!Array.isArray(recipients)) {
-      throw new Error(`pipelines "${label}" (${file}) stage ${i} (send_notification): config.recipients must be an array`)
+      throw new Error(`pipelines "${label}" (${file}) stage ${i} (${stageType}): config.recipients must be an array`)
     }
     for (const recipient of recipients) {
       const roleMatch = typeof recipient === 'string' ? recipient.match(NOTIFICATION_ROLE_RE) : null
       if (roleMatch) {
         roleSlugs ??= await getRoleSlugs()
         if (!roleSlugs.has(roleMatch[1])) {
-          throw new Error(`pipelines "${label}" (${file}) stage ${i} (send_notification): recipient "${recipient}" references a role that does not exist`)
+          throw new Error(`pipelines "${label}" (${file}) stage ${i} (${stageType}): recipient "${recipient}" references a role that does not exist`)
         }
         continue
       }
-      if (recipient === 'self' || (typeof recipient === 'string' && NOTIFICATION_UUID_RE.test(recipient))) continue
+      if (
+        recipient === 'self' || recipient === 'owner' || recipient === 'watchers' ||
+        (typeof recipient === 'string' && NOTIFICATION_UUID_RE.test(recipient)) ||
+        (stageType === 'send_email' && typeof recipient === 'string' && recipient.includes('@'))
+      ) continue
       throw new Error(
-        `pipelines "${label}" (${file}) stage ${i} (send_notification): invalid recipient ${JSON.stringify(recipient)} — ` +
-        `expected 'role:<slug>', 'self', or a person UUID`
+        `pipelines "${label}" (${file}) stage ${i} (${stageType}): invalid recipient ${JSON.stringify(recipient)} — ` +
+        `expected 'role:<slug>', 'self', 'owner', 'watchers', a person UUID${stageType === 'send_email' ? ', or an email address' : ''}`
       )
     }
   }

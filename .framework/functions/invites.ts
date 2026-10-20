@@ -821,17 +821,21 @@ export const createInvite = createHandler(async (ctx, body) => {
   const appBaseUrl = resolveInviteBaseUrl(base_url)
   const inviteUrl = `${appBaseUrl}/register?t=${token}`
 
-  // Email delivery: when an 'invite-email' integration is configured, send the
-  // invite through the outbound broker. Always return invite_url so the UI can
-  // fall back to a copyable link when no provider is configured.
+  // Email delivery: when an 'invite-email' integration (or the shared
+  // 'transactional-email' one) is configured, send the invite through the
+  // outbound broker. Always return invite_url so the UI can fall back to a
+  // copyable link when no provider is configured.
   let emailSent = false
   try {
-    const { data: emailIntegration } = await adminDb
+    const { data: emailIntegrations } = await adminDb
       .from('integrations')
-      .select('id')
-      .eq('slug', 'invite-email')
+      .select('id, slug, config')
+      .in('slug', ['invite-email', 'transactional-email'])
       .eq('is_active', true)
-      .maybeSingle()
+
+    const emailIntegration =
+      (emailIntegrations || []).find((i: any) => i.slug === 'invite-email') ||
+      (emailIntegrations || [])[0]
 
     if (emailIntegration) {
       const { data: account } = await adminDb
@@ -839,14 +843,36 @@ export const createInvite = createHandler(async (ctx, body) => {
         .select('display_name')
         .eq('id', account_id)
         .maybeSingle()
+      const accountName = account?.display_name || ''
+
+      // Email body: integration.config.templates.invite overrides the default.
+      // Template placeholders are {{to_name}}, {{invite_url}}, {{account_name}},
+      // {{expires_at}}.
+      const tpl = emailIntegration.config?.templates?.invite || {}
+      const render = (s: string) =>
+        (s || '')
+          .replace(/\{\{\s*to_name\s*\}\}/g, stubName || '')
+          .replace(/\{\{\s*invite_url\s*\}\}/g, inviteUrl)
+          .replace(/\{\{\s*account_name\s*\}\}/g, accountName)
+          .replace(/\{\{\s*expires_at\s*\}\}/g, expiresAt || '')
+      const subject = render(tpl.subject) ||
+        `You're invited to join ${accountName || 'your team'}`
+      const html = render(tpl.html) ||
+        `<p>Hi${stubName ? ' ' + stubName : ''},</p>` +
+        `<p>You've been invited to join <strong>${accountName || 'the team'}</strong>.</p>` +
+        `<p><a href="${inviteUrl}">Accept your invitation</a></p>` +
+        `<p>This link expires ${expiresAt || 'soon'}. If the button doesn't work, paste this into your browser:<br>${inviteUrl}</p>`
+
       await checkRateLimit(ctx, 'invite_email', { identifier: `acct:${account_id}` })
       const result = await executeOutbound(ctx, {
-        integration_slug: 'invite-email',
+        integration_slug: emailIntegration.slug,
         action_config: {
           to: email,
-          to_name: stubName,
+          subject,
+          html,
           invite_url: inviteUrl,
-          account_name: account?.display_name || '',
+          to_name: stubName,
+          account_name: accountName,
           invited_by: ctx.principal.id,
           expires_at: expiresAt,
         }

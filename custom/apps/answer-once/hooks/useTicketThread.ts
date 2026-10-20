@@ -85,6 +85,10 @@ export function useTicketThread(ticketId: string | null) {
   const [thread, setThread] = useState<TicketThread | null>(null)
   const [messages, setMessages] = useState<TicketMessage[]>([])
   const [loading, setLoading] = useState(false)
+  // 'loaded' flips only after a load completes without error — a transient
+  // fetch failure leaves messages at [] but must not look like an empty
+  // thread to auto-start logic in consumers.
+  const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -107,6 +111,7 @@ export function useTicketThread(ticketId: string | null) {
       } else {
         setMessages([])
       }
+      setLoaded(true)
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -139,6 +144,6 @@ export function useTicketThread(ticketId: string | null) {
     return msg
   }, [thread, messages])
 
-  return { thread, messages, loading, error, sendMessage, refetch: load }
+  return { thread, messages, loading, loaded, error, sendMessage, refetch: load }
 }
 // CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:useticketthread:function"]

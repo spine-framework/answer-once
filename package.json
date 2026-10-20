@@ -18,7 +18,8 @@
     "typecheck": "tsc -b config/tsconfig.json",
     "typecheck:functions": "tsc --noEmit -p config/tsconfig.functions.json",
     "test": "vitest run",
-    "spine-framework": "tsx .framework/cli/index.ts"
+    "spine-framework": "tsx .framework/cli/index.ts",
+    "upgrade": "spine-framework upgrade"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -40,6 +41,7 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@spine-framework/answer-once": "0.2.5",
     "@supabase/supabase-js": "^2.49.1",
     "@tanstack/react-query": "^5.95.2",
     "@tiptap/extension-code-block-lowlight": "^3.20.0",
@@ -92,6 +94,7 @@
     "remark-gfm": "^4.0.1",
     "shadcn": "^4.7.0",
     "sonner": "^2.0.7",
+    "spine-framework": "0.4.3",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
     "tiptap-markdown": "^0.9.0",
@@ -99,7 +102,8 @@
     "tw-animate-css": "^1.4.0",
     "typescript": "~5.6.2",
     "vaul": "^1.1.2",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "commander": "^12.0.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

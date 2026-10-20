@@ -13,7 +13,7 @@ import { useAuth } from '@core/contexts/AuthContext'
 import { apiFetch } from '@core/lib/api'
 import { useTicket, useUpdateTicket, useAgentSteps } from '../../hooks/useTickets'
 import { useSupportThreads } from '../../hooks/useSupportThreads'
-import { useWatch, ensureWatching, touchTicketActivity, normalizeDataForWrite } from '../../hooks/useWatchers'
+import { useWatch, ensureWatching, touchTicketActivity, normalizeDataForWrite, formatStamp } from '../../hooks/useWatchers'
 import { useDirectory } from '../../hooks/useDirectory'
 import { StatusBadge } from '../../components/StatusBadge'
 import { AgentActivityBox, AgentRunCard, describeStep, fmtThreadTime } from '../../components/TicketThread'
@@ -246,6 +246,7 @@ export default function TicketPage() {
         resolved_at: now,
         resolved_via: 'human',
         aim_resolved_by_ai: false,
+        resolve_pending_since: null,
         last_activity_at: now,
         ...(ticket?.data?.human_resolution_message_id || !lastHuman
           ? {}
@@ -509,7 +510,7 @@ export default function TicketPage() {
               <p>Resolved via: <span className="font-medium">{String(ticket.data.resolved_via).replace(/_/g, ' ')}</span></p>
             )}
             {ticket.status === 'pending_resolution' && ticket.data.resolve_pending_since && (
-              <p>Pending since: <span className="font-medium">{new Date(ticket.data.resolve_pending_since).toLocaleDateString()}</span></p>
+              <p>Pending since: <span className="font-medium">{formatStamp(ticket.data.resolve_pending_since)}</span></p>
             )}
             {ticket.data.reopen_reason && (
               <p className="text-brand-navy text-xs">Reopened — {String(ticket.data.reopen_reason).replace(/_/g, ' ')}</p>

@@ -29,10 +29,9 @@
 [functions."trigger-scheduler"]
   schedule = "* * * * *"
 
-# NOTE: app-specific schedules (e.g. answer-once's autoresolve cron) were removed —
-# the root netlify.toml serves the monorepo and must stay generic. Scheduled
-# functions belong to each app's own deployed Netlify config; the standalone
-# exporter generates per-app config from installed app manifests.
+# NOTE: app-specific schedules were removed — the root netlify.toml serves the
+# monorepo and must stay generic. Scheduled functions belong to each app's own
+# deployed Netlify config; app installers declare their own custom_* sections.
 
 # CIL ingestion passes are long-running — extend timeout for local dev
 # TODO: migrate to background functions for production

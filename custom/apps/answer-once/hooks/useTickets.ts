@@ -231,9 +231,38 @@ export function useAgentSteps() {
       let last: any = null
       let deadSteps = 0
       for (let i = 0; i < maxSteps; i++) {
-        const before = new Set(
-          (await fetchThreadMessages(threadId).catch(() => [])).map((m: any) => m.id)
-        )
+        const msgs = await fetchThreadMessages(threadId).catch(() => null)
+        // Transient read failure — retry next iteration. Stepping on stale or
+        // missing state bypasses every guard below and can re-insert the
+        // inbound / re-run an episode that already finished.
+        if (msgs === null) {
+          await new Promise((r) => setTimeout(r, 1500))
+          continue
+        }
+        const before = new Set<string>(msgs.map((m: any) => m.id))
+        const pendingMessage = userMessage.trim()
+        // Idempotent re-fire check: when the caller's text already landed as
+        // the latest inbound and a terminal agent message answered it, this
+        // call is a remount/retry — not a new turn. A fresh episode for a
+        // non-empty userMessage would re-run side-effect tools and persist
+        // duplicate output even though runAgent dedupes the inbound insert.
+        if (pendingMessage) {
+          const lastInboundIdx = msgs.reduce(
+            (idx: number, m: any, i: number) => (m.direction === 'inbound' ? i : idx),
+            -1
+          )
+          const lastInbound = lastInboundIdx >= 0 ? msgs[lastInboundIdx] : null
+          const answered =
+            !!lastInbound &&
+            (lastInbound.content || '').trim() === pendingMessage &&
+            msgs
+              .slice(lastInboundIdx + 1)
+              .some((m: any) => AGENT_TERMINAL_MESSAGE_TYPES.has(m.data?.message_type))
+          if (answered) {
+            last = { status: 'complete' }
+            break
+          }
+        }
         // A detached server-side driver (the create_ticket episode kick or a
         // mode:'episode' POST) holds a lease in research_state. While it is
         // live this loop supervises by watching persisted messages — a step
@@ -241,12 +270,19 @@ export function useAgentSteps() {
         // episode would burn a duplicate turn. When the lease goes stale the
         // loop falls through and takes over with step mode, as before.
         const threadRow = await fetchJSON(`/api/admin-data?entity=threads&id=${threadId}`).catch(() => null)
+        if (threadRow === null) {
+          await new Promise((r) => setTimeout(r, 1500))
+          continue
+        }
         const rs = threadRow?.data?.research_state
         const leaseFresh =
           !!rs?.driver_id &&
           Number.isFinite(Date.parse(rs?.driver_heartbeat_at || '')) &&
           Date.now() - Date.parse(rs.driver_heartbeat_at) < 60000
-        if (rs && AGENT_TERMINAL_STATUSES.has(rs.status) && userMessage.trim() && rs.user_question === userMessage.trim()) {
+        // Terminal episodes end the loop for a bare supervise call ('' = a
+        // remount reconciling a finished episode) and for a re-fire of the
+        // same question. A different message continues as a new turn.
+        if (rs && AGENT_TERMINAL_STATUSES.has(rs.status) && (!pendingMessage || rs.user_question === pendingMessage)) {
           last = { status: rs.status }
           break
         }

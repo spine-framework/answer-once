@@ -37,7 +37,7 @@ See `.windsurf/workflows/run-tests.md` for the full step-by-step workflow.
 Integration, API, and UI tests need credentials in `v2-core/.xenv` or `v2-core/.xenv.test`:
 
 ```env
-SUPABASE_URL=https://uyokuiibztwfasdprsov.supabase.co
+SUPABASE_URL=https://<your-project-ref>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
 SPINE_TEST_ACCOUNT_ID=<uuid>
 DB_SCHEMA=public

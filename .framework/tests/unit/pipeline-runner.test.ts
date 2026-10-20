@@ -16,7 +16,8 @@ vi.mock('../../functions/_shared/db.ts', () => ({
 
 vi.mock('../../functions/_shared/audit.ts', () => ({
   emitAudit: vi.fn().mockResolvedValue(undefined),
-  emitSpan: vi.fn().mockResolvedValue(undefined)
+  emitSpan: vi.fn().mockResolvedValue(undefined),
+  emitLog: vi.fn().mockResolvedValue(undefined)
 }))
 
 vi.mock('../../functions/embeddings.ts', () => ({
@@ -610,7 +611,7 @@ describe('send_notification — writes to notifications, not watchers', () => {
           insert: vi.fn(() => Promise.resolve({ data: null, error: { message: 'watchers must not receive notification payloads' } }))
         } as any
       }
-      return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), insert: vi.fn().mockReturnThis(), update: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) } as any
+      return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), in: vi.fn().mockReturnThis(), is: vi.fn().mockReturnThis(), not: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), order: vi.fn().mockReturnThis(), maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }), insert: vi.fn().mockReturnThis(), update: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) } as any
     })
   }
 
@@ -666,6 +667,10 @@ describe('send_notification — role:<slug> recipient resolution', () => {
     const peopleQ: any = {
       select: vi.fn(() => peopleQ),
       eq: vi.fn(() => peopleQ),
+      in: vi.fn(() => peopleQ),
+      is: vi.fn(() => peopleQ),
+      limit: vi.fn(() => peopleQ),
+      maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
       then: (onF: any, onR: any) =>
         Promise.resolve({ data: peopleRows, error: peopleError ?? null }).then(onF, onR)
     }
@@ -708,7 +713,7 @@ describe('send_notification — role:<slug> recipient resolution', () => {
           })
         } as any
       }
-      return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), insert: vi.fn().mockReturnThis(), update: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) } as any
+      return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), in: vi.fn().mockReturnThis(), is: vi.fn().mockReturnThis(), not: vi.fn().mockReturnThis(), limit: vi.fn().mockReturnThis(), order: vi.fn().mockReturnThis(), maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }), insert: vi.fn().mockReturnThis(), update: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) } as any
     })
   }
 
@@ -753,3 +758,165 @@ describe('send_notification — role:<slug> recipient resolution', () => {
   })
 })
 // CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sendNotification_roleRecipients:block"]
+// send_email — resolves entity recipients through message->thread->target,
+// composes from integration templates or inline config, and skips cleanly when
+// no provider is configured.
+describe('send_email — recipient resolution + outbound send', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+
+  const OWNER_ID = '33333333-3333-4333-8333-333333333333'
+  const ACTOR_ID = '44444444-4444-4444-8444-444444444444'
+  const triggerData = {
+    entity: {
+      type: 'messages',
+      id: 'm-1',
+      data: { thread_id: 'th-1', created_by: ACTOR_ID, content: 'reply body', direction: 'outbound', visibility: 'external' },
+    },
+  }
+
+  function mockEmailPipeline(stageConfig: any, integrationRow: any) {
+    const chain: any = {
+      select: vi.fn(() => chain),
+      eq: vi.fn(() => chain),
+      in: vi.fn(() => chain),
+      is: vi.fn(() => chain),
+      not: vi.fn(() => chain),
+      limit: vi.fn(() => chain),
+      order: vi.fn(() => chain),
+      insert: vi.fn(() => chain),
+      update: vi.fn(() => chain),
+      single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      then: (onF: any, onR: any) => Promise.resolve({ data: null, error: null }).then(onF, onR),
+    }
+    vi.mocked(adminDb.from).mockImplementation((table: string) => {
+      if (table === 'pipelines') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'pipe-1', stages: [{ stage_type: 'send_email', config: stageConfig }], is_active: true },
+            error: null,
+          }),
+        } as any
+      }
+      if (table === 'pipeline_executions') {
+        return {
+          insert: vi.fn().mockReturnThis(),
+          update: vi.fn().mockReturnThis(),
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockResolvedValue({ data: null, error: null }),
+          single: vi.fn().mockResolvedValue({ data: { id: EXEC_ID }, error: null }),
+        } as any
+      }
+      if (table === 'actions') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { id: 'a-2', handler: 'send_email', handler_module: 'functions', config: {} },
+            error: null,
+          }),
+        } as any
+      }
+      if (table === 'integrations') {
+        const q: any = {
+          select: vi.fn(() => q), eq: vi.fn(() => q), in: vi.fn(() => q), is: vi.fn(() => q),
+          limit: vi.fn(() => q),
+          single: vi.fn(() => Promise.resolve({ data: integrationRow, error: null })),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: integrationRow, error: null })),
+        }
+        return q
+      }
+      if (table === 'threads') {
+        const q: any = {
+          select: vi.fn(() => q), eq: vi.fn(() => q),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: { target_type: 'items', target_id: 'item-1' }, error: null })),
+        }
+        return q
+      }
+      if (table === 'items') {
+        const q: any = {
+          select: vi.fn(() => q), eq: vi.fn(() => q),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: { created_by: OWNER_ID }, error: null })),
+        }
+        return q
+      }
+      if (table === 'people') {
+        const ALL_PEOPLE = [
+          { id: OWNER_ID, email: 'owner@x.test', account_id: 'acct-cust' },
+          { id: ACTOR_ID, email: 'staff@x.test', account_id: 'acct-staff' },
+        ]
+        let idsFilter: string[] | null = null
+        const q: any = {
+          select: vi.fn(() => q), eq: vi.fn(() => q),
+          in: vi.fn((_col: string, ids: string[]) => { idsFilter = ids; return q }),
+          then: (onF: any, onR: any) =>
+            Promise.resolve({ data: ALL_PEOPLE.filter(p => !idsFilter || idsFilter.includes(p.id)), error: null }).then(onF, onR),
+        }
+        return q
+      }
+      if (table === 'webhook_deliveries') {
+        const q: any = {
+          select: vi.fn(() => q), eq: vi.fn(() => q), in: vi.fn(() => q),
+          insert: vi.fn(() => q), update: vi.fn(() => q),
+          single: vi.fn(() => Promise.resolve({ data: { id: 'del-1' }, error: null })),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+          then: (onF: any, onR: any) => Promise.resolve({ data: null, error: null }).then(onF, onR),
+        }
+        return q
+      }
+      return chain
+    })
+  }
+
+  const resendIntegration = {
+    id: 'int-1',
+    slug: 'transactional-email',
+    config: {
+      outbound_adapter: 'adapters/resend-outbound',
+      api_url: 'https://api.resend.com/emails',
+      from: 'Support <noreply@x.test>',
+      templates: { ticket_reply: { subject: 'Re: ticket', text: 'staff said: {{record.content}}' } },
+    },
+    credentials: { api_token: { source: 'value', value: 're_test' } },
+  }
+
+  it("emails the ticket owner via Resend and excludes the actor", async () => {
+    mockEmailPipeline(
+      { integration_slug: 'transactional-email', template: 'ticket_reply', recipients: ['owner'], exclude_actor: true },
+      resendIntegration
+    )
+    const fetchSpy = vi.fn().mockResolvedValue(new Response('{"id":"em_1"}', { status: 200 }))
+    vi.stubGlobal('fetch', fetchSpy)
+
+    const result = await runPipeline('pipe-1', triggerData, makeCtx())
+    expect(result.stages[0].status).toBe('success')
+    expect(result.stages[0].output.emailed_count).toBe(1)
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
+    const [url, init] = fetchSpy.mock.calls[0]
+    expect(url).toBe('https://api.resend.com/emails')
+    const body = JSON.parse(init.body)
+    expect(body.to).toEqual(['owner@x.test'])           // owner resolved through message->thread->item
+    expect(body.to).not.toContain('staff@x.test')       // actor excluded
+    expect(body.from).toBe('Support <noreply@x.test>')
+    expect(body.subject).toBe('Re: ticket')
+    expect(init.headers.Authorization).toBe('Bearer re_test')
+    vi.unstubAllGlobals()
+  })
+
+  it('no-ops with emailed_count 0 when the integration is not configured', async () => {
+    mockEmailPipeline(
+      { integration_slug: 'transactional-email', subject: 'x', text: 'y', recipients: ['owner'] },
+      null
+    )
+    const result = await runPipeline('pipe-1', triggerData, makeCtx())
+    expect(result.stages[0].status).toBe('success')
+    expect(result.stages[0].output.emailed_count).toBe(0)
+    expect(result.stages[0].output.skipped).toMatch(/not configured/)
+  })
+})

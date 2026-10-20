@@ -10,23 +10,41 @@ automatically.
 
 ## Install
 
-For a standalone deployment (framework + Answer Once on a fresh Supabase project),
-use the source export — see **[docs/install.md](docs/install.md)** for the complete
-human-operated procedure:
-
 ```bash
-cd <monorepo>
-npx tsx scripts/export-standalone.ts --app answer-once --output <destination>
+npm create @spine-framework/answer-once@latest my-support
+cd my-support
+cp .env.example .env     # fill in your Supabase project credentials
+npm install
+npm run verify
+npm run spine-framework -- migrate
+npm run spine-framework -- seed-app answer-once
+npm run verify:install
+npm run dev:netlify
 ```
 
-The standalone starts with an **empty knowledge base** — no seeded articles, no CIL
-data. Knowledge is earned through real support work (escalate → resolve → analyze →
-publish → reuse).
+This scaffolds a fresh project: the framework file set plus the Answer Once
+app in `custom/apps/answer-once/`. See **[docs/install.md](docs/install.md)**
+for the complete procedure including the Supabase project setup.
 
-An npm-published package install (`install-app`) is planned but not yet verified —
-do not rely on it for new installs.
+The install starts with an **empty knowledge base** — no seeded articles, no CIL
+data. Knowledge is earned through real support work (escalate → resolve →
+analyze → publish → reuse).
+
+## Upgrading
+
+```bash
+# Framework (app-agnostic; owns .framework/, config/, scripts/, bin/)
+npm i spine-framework@latest && npx spine-framework upgrade
+
+# This app (owns custom/apps/answer-once/ and its custom/migrations/062_* files)
+npm i @spine-framework/answer-once@latest && npx answer-once upgrade
+```
+
+Both upgrade commands refuse to overwrite files you modified locally; pass
+`--dry-run` to preview or `--force` to overwrite.
 
 ## Status
 
-`0.1.x` — early release. The public API surface is the app manifest and its runtime
-record types; internals may change between minor versions.
+`0.2.x` — the npm install/upgrade path is the primary distribution. The public
+API surface is the app manifest and its runtime record types; internals may
+change between minor versions.

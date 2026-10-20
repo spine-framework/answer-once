@@ -23,7 +23,8 @@
       "custom/apps/answer-once"
     ],
     "custom_migrations": [
-      "062"
+      "062",
+      "063"
     ],
     "custom_tests": [
       "custom/tests/answer-once-export.test.ts",
@@ -77,11 +78,26 @@
     "**/migrations/archive/**",
     ".framework/functions/_quarantine/**",
     ".framework/tests/integration/**",
-    ".framework/public/spine.config.json"
+    ".framework/public/spine.config.json",
+    "custom/apps/answer-once/installer/**",
+    "custom/apps/answer-once/LICENSE.md",
+    "**/*.tgz"
   ],
   "netlify": {
     "scheduled_functions": [
       { "name": "custom_answeronce-autoresolve-cron", "schedule": "0 0 * * *" }
+    ]
+  },
+  "install": {
+    "symlinks": [
+      {
+        "path": "custom/apps/answer-once/functions/_shared",
+        "target": "../../../../.framework/functions/_shared"
+      },
+      {
+        "path": "custom/apps/answer-once/functions/admin-data.ts",
+        "target": "../../../../.framework/functions/admin-data.ts"
+      }
     ]
   },
   "spine_config": {
@@ -101,7 +117,7 @@
   },
   "package": {
     "name": "answer-once",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Answer Once — standalone Spine Framework app (frozen framework snapshot)",
     "scripts": {
       "dev": "vite --config config/vite.config.ts",

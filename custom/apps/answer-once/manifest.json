@@ -2,10 +2,16 @@
   "name": "Answer Once",
   "slug": "answer-once",
   "description": "Focused customer-support app that closes the loop between customers, AI, support, and organizational knowledge",
-  "version": "0.1.0",
+  "version": "0.2.5",
   "app_type": "full",
   "route_prefix": "/answer-once",
-  "required_roles": ["member", "member_admin", "support", "support_admin", "system_admin"],
+  "required_roles": [
+    "member",
+    "member_admin",
+    "support",
+    "support_admin",
+    "system_admin"
+  ],
   "routes": [
     "/",
     "/dashboard",
@@ -26,23 +32,88 @@
     "/company/reporting"
   ],
   "nav_items": [
-    { "title": "Dashboard", "path": "/dashboard", "icon": "LayoutDashboard", "order": 1 },
-    { "title": "Tickets", "path": "/tickets", "icon": "Ticket", "order": 2 },
-    { "title": "Knowledgebase", "path": "/kb", "icon": "BookOpen", "order": 3 },
-    { "title": "Team", "path": "/team", "icon": "Users", "order": 4 }
+    {
+      "title": "Dashboard",
+      "path": "/dashboard",
+      "icon": "LayoutDashboard",
+      "order": 1
+    },
+    {
+      "title": "Tickets",
+      "path": "/tickets",
+      "icon": "Ticket",
+      "order": 2
+    },
+    {
+      "title": "Knowledgebase",
+      "path": "/kb",
+      "icon": "BookOpen",
+      "order": 3
+    },
+    {
+      "title": "Team",
+      "path": "/team",
+      "icon": "Users",
+      "order": 4
+    }
   ],
-  "features": ["tickets", "kb", "team", "support", "accounts", "reporting"],
-  "dependencies": ["items", "threads", "messages", "accounts", "people", "links"],
+  "features": [
+    "tickets",
+    "kb",
+    "team",
+    "support",
+    "accounts",
+    "reporting"
+  ],
+  "dependencies": [
+    "items",
+    "threads",
+    "messages",
+    "accounts",
+    "people",
+    "links"
+  ],
   "entry_point": "./index.tsx",
   "sidebar_component": "./components/AnswerOnceSidebar.tsx",
   "is_public": false,
   "auth_required": true,
   "seed": [
-    { "file": "seed/roles.json", "table": "roles", "conflict": "slug" },
-    { "file": "seed/types.json", "table": "types", "conflict": "kind,slug", "inject_app_id": false },
-    { "file": "seed/link-types.json", "table": "link_types", "conflict": "app_id,slug" },
-    { "file": "seed/ai-agents.json", "table": "ai_agents", "conflict": "app_id,slug" },
-    { "file": "seed/prompt-configs.json", "table": "prompt_configs", "conflict": "app_id,slug" }
+    {
+      "file": "seed/roles.json",
+      "table": "roles",
+      "conflict": "slug"
+    },
+    {
+      "file": "seed/types.json",
+      "table": "types",
+      "conflict": "kind,slug",
+      "inject_app_id": false
+    },
+    {
+      "file": "seed/link-types.json",
+      "table": "link_types",
+      "conflict": "app_id,slug"
+    },
+    {
+      "file": "seed/ai-agents.json",
+      "table": "ai_agents",
+      "conflict": "app_id,slug"
+    },
+    {
+      "file": "seed/prompt-configs.json",
+      "table": "prompt_configs",
+      "conflict": "app_id,slug"
+    },
+    {
+      "file": "seed/pipelines.json",
+      "table": "pipelines",
+      "conflict": "app_id,slug"
+    },
+    {
+      "file": "seed/triggers.json",
+      "table": "triggers",
+      "conflict": "app_id,slug"
+    }
   ],
   "registration": {
     "enabled": true,
@@ -53,13 +124,36 @@
   },
   "config": {
     "knowledge": {
-      "account": { "item_types": ["ao_*"] },
-      "platform": { "sources": ["ao_kb_shared"] }
+      "account": {
+        "item_types": [
+          "ao_*"
+        ]
+      },
+      "platform": {
+        "sources": [
+          "ao_kb_shared"
+        ]
+      }
     },
     "rate_limits": {
-      "ao_ticket_create": [{ "limit": 20, "window_seconds": 3600 }],
-      "ao_ticket_message_create": [{ "limit": 120, "window_seconds": 3600 }],
-      "agent_step": [{ "limit": 200, "window_seconds": 3600 }]
+      "ao_ticket_create": [
+        {
+          "limit": 20,
+          "window_seconds": 3600
+        }
+      ],
+      "ao_ticket_message_create": [
+        {
+          "limit": 120,
+          "window_seconds": 3600
+        }
+      ],
+      "agent_step": [
+        {
+          "limit": 200,
+          "window_seconds": 3600
+        }
+      ]
     },
     "security": {
       "prompt_injection": "block"
