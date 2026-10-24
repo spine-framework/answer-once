@@ -317,9 +317,22 @@ export default function TicketPage() {
     }
     const nextStatus = ticket?.status === 'human_assigned' || ticket?.status === 'open' ? 'in_progress' : ticket?.status
     await updateTicket(id!, { status: nextStatus, data: nextData })
+    // Claiming the ticket makes the human the thread owner — stamp the
+    // framework's owner gate so no agent episode can re-claim it.
+    if (externalThread?.id) {
+      void (async () => {
+        const j = await apiFetch(`/api/admin-data?entity=threads&id=${externalThread.id}`).then(r => r.json()).catch(() => null)
+        const t = Array.isArray(j?.data) ? j.data[0] : (j?.data || j)
+        if (!t?.id) return
+        await apiFetch(`/api/admin-data?action=update&entity=threads&id=${t.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ data: { ...(t.data || {}), owner: 'human' } }),
+        }).catch(() => {})
+      })()
+    }
     void ensureWatching(id!, user.id)
     refetch()
-  }, [id, user, ticket?.data, ticket?.status, updateTicket, refetch])
+  }, [id, user, ticket?.data, ticket?.status, updateTicket, refetch, externalThread?.id])
 
   const handleRunAnalysis = useCallback(async () => {
     if (!id || analyzing) return

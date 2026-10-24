@@ -30,7 +30,7 @@ vi.mock('../../functions/ai-interactions.ts', () => ({
 
 import { adminDb } from '../../functions/_shared/db.ts'
 import { emitAudit } from '../../functions/_shared/audit.ts'
-import { runPipeline } from '../../functions/_shared/pipeline-runner.ts'
+import { runPipeline, sweepStaleExecutions } from '../../functions/_shared/pipeline-runner.ts'
 // CIL[DOC-VECTOR type="context" content="purpose='Test setup and imports for pipeline runner tests'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -275,6 +275,105 @@ describe('runPipeline — lifecycle', () => {
       expect.objectContaining({ type: 'pipeline_execution', id: EXEC_ID }),
       expect.objectContaining({ pipeline_id: 'pipe-1' })
     )
+  })
+
+  it('claims a pre-created queued execution row when opts.executionId is supplied', async () => {
+    mockPipeline([])
+    const PRE_CREATED_ID = 'exec-pre-created-1'
+    const updateSpy = vi.fn().mockReturnThis()
+    const eqSpy = vi.fn().mockReturnThis()
+    const claimSelectSpy = vi.fn().mockResolvedValue({ data: [{ id: PRE_CREATED_ID }], error: null })
+    const claimChain = { update: updateSpy, eq: eqSpy, select: claimSelectSpy, insert: vi.fn().mockReturnThis() }
+    vi.mocked(adminDb.from).mockImplementation((table: string) => {
+      if (table === 'pipelines') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'pipe-1', stages: [], is_active: true }, error: null })
+        } as any
+      }
+      if (table === 'pipeline_executions') return claimChain as any
+      return {
+        select: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: null })
+      } as any
+    })
+
+    const result = await runPipeline('pipe-1', { x: 1 }, makeCtx(), { executionId: PRE_CREATED_ID })
+    expect(result.executionId).toBe(PRE_CREATED_ID)
+    expect(result.status).toBe('completed')
+    // The claim path must call update, not insert.
+    expect(updateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'running' })
+    )
+    expect(eqSpy).toHaveBeenCalledWith('id', PRE_CREATED_ID)
+    expect(eqSpy).toHaveBeenCalledWith('status', 'queued')
+    // and it must NOT have inserted a fresh row
+    expect(claimChain.insert).not.toHaveBeenCalled()
+  })
+
+  it('inserts with the same id when the queued row is absent (fallback path)', async () => {
+    const PRE_CREATED_ID = 'exec-missing-1'
+    const insertSpy = vi.fn().mockReturnThis()
+    const singleSpy = vi.fn().mockResolvedValue({ data: { id: PRE_CREATED_ID }, error: null })
+    vi.mocked(adminDb.from).mockImplementation((table: string) => {
+      if (table === 'pipelines') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'pipe-1', stages: [], is_active: true }, error: null })
+        } as any
+      }
+      if (table === 'pipeline_executions') {
+        const chain: any = {
+          update: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          select: vi.fn().mockResolvedValue({ data: [], error: null }),   // claim finds no rows
+          insert: insertSpy,
+          single: singleSpy
+        }
+        // insert().select().single() — select must chain to an object with single
+        insertSpy.mockImplementation(() => ({
+          select: vi.fn().mockImplementation(() => ({ single: singleSpy }))
+        }))
+        return chain
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: null })
+      } as any
+    })
+
+    const result = await runPipeline('pipe-1', {}, makeCtx(), { executionId: PRE_CREATED_ID })
+    expect(result.executionId).toBe(PRE_CREATED_ID)
+    expect(insertSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ id: PRE_CREATED_ID, status: 'running' })
+    )
+  })
+
+  it('throws when claiming a queued execution row fails', async () => {
+    vi.mocked(adminDb.from).mockImplementation((table: string) => {
+      if (table === 'pipelines') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: 'pipe-1', stages: [], is_active: true }, error: null })
+        } as any
+      }
+      return {
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        select: vi.fn().mockResolvedValue({ data: null, error: { message: 'row not found' } })
+      } as any
+    })
+    await expect(
+      runPipeline('pipe-1', {}, makeCtx(), { executionId: 'missing-exec' })
+    ).rejects.toThrow('Failed to claim queued execution missing-exec')
   })
 })
 // CIL[DOC-VECTOR type="context" content="purpose='Test runPipeline lifecycle and error handling'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
@@ -920,3 +1019,56 @@ describe('send_email — recipient resolution + outbound send', () => {
     expect(result.stages[0].output.skipped).toMatch(/not configured/)
   })
 })
+
+// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sweepStaleExecutions:block" type="block" identity="describe_sweepStaleExecutions" parent="none"]
+// CIL[DOC-MACRO purpose="Test stale execution sweeper"]
+// CIL[DOC-RESPONSIBILITY responsibility="Verify sweepStaleExecutions marks stale rows failed and leaves fresh rows alone"]
+// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/pipeline-runner.ts"]
+// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests sweepStaleExecutions"]
+// CIL[DOC-MICRO logic_summary="Mocks adminDb.from('pipeline_executions').update chain and verifies the correct statuses and cutoff are targeted" notable_decisions="[]"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+describe('sweepStaleExecutions', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('marks running/pending/queued rows older than the stale window as failed', async () => {
+    const updateSpy = vi.fn().mockReturnThis()
+    const inSpy = vi.fn().mockReturnThis()
+    const ltSpy = vi.fn().mockResolvedValue({ error: null })
+    vi.mocked(adminDb.from).mockReturnValue({
+      update: updateSpy,
+      in: inSpy,
+      lt: ltSpy
+    } as any)
+
+    await sweepStaleExecutions()
+
+    expect(adminDb.from).toHaveBeenCalledWith('pipeline_executions')
+    expect(updateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'failed' })
+    )
+    expect(inSpy).toHaveBeenCalledWith('status', ['running', 'pending', 'queued'])
+    // lt cutoff must be ~10 minutes ago
+    const cutoffArg = ltSpy.mock.calls[0][1] as string
+    const cutoffMs = new Date(cutoffArg).getTime()
+    const expectedMs = Date.now() - 10 * 60 * 1000
+    expect(Math.abs(cutoffMs - expectedMs)).toBeLessThan(5000)
+  })
+
+  it('logs a warning but does not throw when the sweep update fails', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    vi.mocked(adminDb.from).mockReturnValue({
+      update: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      lt: vi.fn().mockResolvedValue({ error: { message: 'DB gone' } })
+    } as any)
+
+    await expect(sweepStaleExecutions()).resolves.toBeUndefined()
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('pipeline_executions stale sweep failed'),
+      'DB gone'
+    )
+    warnSpy.mockRestore()
+  })
+})
+// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sweepStaleExecutions:block"]

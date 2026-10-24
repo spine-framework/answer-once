@@ -3,7 +3,7 @@
 // CIL[DOC-RESPONSIBILITY responsibility="Owns the shared Supabase client exports and common query joins."]
 // CIL[DOC-CONTEXT module="functions/_shared/db" layer="data-access" related_files=".framework/functions/_shared/db.ts"]
 // CIL[DOC-CONTRACT inputs="[]" outputs="adminDb, getUserDb, DbResult, joins, constants" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Imports the Supabase client and WebSocket transport, then exports configured admin/user clients, a result type, and join mappings." notable_decisions="Falls back to placeholder credentials when environment values are absent."]
+// CIL[DOC-MICRO logic_summary="Imports the Supabase client and exports configured admin/user clients, a result type, and join mappings. WebSocket/ws realtime transport removed — server-side functions never subscribe to Supabase channels." notable_decisions="Falls back to placeholder credentials when environment values are absent. Realtime transport removed to reduce bundle size and eliminate unnecessary module-level initialization."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="human"]
@@ -14,7 +14,6 @@
 
 
 import { createClient } from '@supabase/supabase-js'
-import WebSocket from 'ws'
 // CIL[DOC-VECTOR type="context" content="purpose='Supabase client and database relation join module'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -241,12 +240,11 @@ const dbSchema: string = _env.DB_SCHEMA || 'public'
 // CIL[DOC-RESPONSIBILITY responsibility="Exports the admin-authorized Supabase client for backend use."]
 // CIL[DOC-CONTEXT module="functions/_shared/db" layer="data-access" related_files=".framework/functions/_shared/db.ts"]
 // CIL[DOC-CONTRACT inputs="[]" outputs="SupabaseClient adminDb" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Creates a createClient instance using supabaseUrl and supabaseServiceKey, sets the schema and WebSocket transport." notable_decisions="Uses service role key for elevated privileges and WebSocket for realtime."]
+// CIL[DOC-MICRO logic_summary="Creates a createClient instance using supabaseUrl and supabaseServiceKey and sets the schema. No realtime transport: server-side functions never subscribe to Supabase channels — omitting the ws transport shrinks every function bundle and eliminates an unnecessary module-level init." notable_decisions="Realtime transport removed: ws import added ~10KB to every bundle and could attempt a WebSocket handshake on module load. REST/PostgREST queries are unaffected."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const adminDb = createClient(supabaseUrl, supabaseServiceKey, {
   db: { schema: dbSchema },
-  realtime: { transport: WebSocket as any }
 })
 // CIL[DOC-VECTOR type="context" content="purpose='Admin Supabase client'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -262,14 +260,13 @@ export const adminDb = createClient(supabaseUrl, supabaseServiceKey, {
 // CIL[DOC-CONTEXT module="db" layer="functions" related_files=".framework/functions/_shared/db.ts"]
 // CIL[DOC-RESPONSIBILITY responsibility="Creates a Supabase client scoped to an end-user JWT."]
 // CIL[DOC-CONTRACT inputs="jwt: string" outputs="SupabaseClient" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Returns a createClient instance using supabaseUrl and supabaseAnonKey, schema, WebSocket transport, and an Authorization header." notable_decisions="Uses the anon key plus Bearer token for row-level security."]
+// CIL[DOC-MICRO logic_summary="Returns a createClient instance using supabaseUrl and supabaseAnonKey, schema, and an Authorization header." notable_decisions="Uses the anon key plus Bearer token for row-level security. Realtime transport omitted for same reasons as adminDb."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export function getUserDb(jwt: string) {
   return createClient(supabaseUrl, supabaseAnonKey, {
     db: { schema: dbSchema },
     global: { headers: { Authorization: `Bearer ${jwt}` } },
-    realtime: { transport: WebSocket as any }
   })
 }
 // CIL[END stable_id="~/.framework/functions/_shared/db.ts:getUserDb:function"]

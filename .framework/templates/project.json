@@ -4,6 +4,7 @@
     ".framework/functions",
     ".framework/migrations",
     ".framework/public",
+    ".framework/schemas",
     ".framework/scripts",
     ".framework/seeds",
     ".framework/src",

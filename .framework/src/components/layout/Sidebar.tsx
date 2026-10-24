@@ -18,6 +18,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { useBranding } from '../../hooks/useBranding'
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
 import { 
   Home, 
@@ -249,6 +250,7 @@ function classNames(...classes: (string | false | undefined)[]) {
 // CIL[DOC-NOTE type="param" content="open: boolean - whether the sidebar is open"]
 // CIL[DOC-NOTE type="param" content="onClose: () => void - callback to close the sidebar"]
 export function Sidebar({ open, onClose }: SidebarProps) {
+  const branding = useBranding()
   return (
     <>
       <div className={classNames(open && 'fixed inset-0 z-40 flex')}> 
@@ -271,8 +273,8 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </div>
               <div className="h-0 flex-1 overflow-y-auto pt-5">
                 <div className="flex flex-shrink-0 items-center gap-2 px-4">
-                  <img src="/spine-logo.svg" alt="Spine Framework" className="h-8 w-auto" />
-                  <span className="text-xl font-bold text-sidebar-foreground whitespace-nowrap">Spine Framework</span>
+                  <img src={branding.logo_url} alt={branding.app_name} className="h-8 w-auto" />
+                  <span className="text-xl font-bold text-sidebar-foreground whitespace-nowrap">{branding.title}</span>
                 </div>
                 <SidebarContent onNavClick={onClose} />
               </div>

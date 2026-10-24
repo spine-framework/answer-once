@@ -10,6 +10,7 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useBranding } from '../hooks/useBranding'
 // CIL[DOC-VECTOR type="context" content="purpose='Declare module-level imports for the Setup page'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -28,15 +29,17 @@ import { Link } from 'react-router-dom'
 // CIL[DOC-STABILITY stable]
 
 export function SetupPage() {
+  const branding = useBranding()
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-lg w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto flex items-center justify-center">
-            <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+            <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-slate-900">
-            Welcome to Spine
+            Welcome to {branding.app_name}
           </h2>
           <p className="mt-2 text-sm text-slate-600">
             Your project is running but no apps are installed yet.

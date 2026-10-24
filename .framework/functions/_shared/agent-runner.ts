@@ -1,4 +1,6 @@
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/agent-runner.ts"]
+
+
 /**
  * @module   agent-runner
  * @audience internal
@@ -61,6 +63,10 @@ import { resolveNotificationRecipients } from './notify'
 import { execute as executeOutbound } from '../integration-outbound'
 import { createHash } from 'crypto'
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:module_header:module_header"]
+
+
+
+
 
 
 
@@ -227,6 +233,10 @@ async function buildContext(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:DEFAULT_VECTOR_CONCURRENCY:constant" type="constant" identity="DEFAULT_VECTOR_CONCURRENCY" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * DEFAULT_VECTOR_CONCURRENCY defines the default level of concurrency for vector operations in the agent runner module. It provides a configurable parameter that can be adjusted based on performance needs.
@@ -253,6 +263,10 @@ async function buildContext(
 
 const DEFAULT_VECTOR_CONCURRENCY = 3
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:DEFAULT_VECTOR_CONCURRENCY:constant"]
+
+
+
+
 
 
 
@@ -325,6 +339,10 @@ const MAX_VECTOR_CONCURRENCY = 5
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveVectorConcurrency:function" type="function" identity="resolveVectorConcurrency" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Calculates the appropriate level of concurrency for vector processing based on the provided value and item count. It ensures that the concurrency does not exceed predefined limits and is at least one.
@@ -361,6 +379,10 @@ function resolveVectorConcurrency(value: unknown, itemCount: number): number {
   return Math.min(itemCount, Math.max(1, Math.min(MAX_VECTOR_CONCURRENCY, parsed)))
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveVectorConcurrency:function"]
+
+
+
+
 
 
 
@@ -445,6 +467,10 @@ async function mapWithConcurrency<T, R>(
   return results
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:mapWithConcurrency:function"]
+
+
+
+
 
 
 
@@ -793,6 +819,10 @@ export async function retrieveKnowledge(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:lexicalSearchEmbeddings:function" type="function" identity="lexicalSearchEmbeddings" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Performs a lexical search on embeddings based on a query and specified filters. This function retrieves relevant documents from the database while considering account permissions and project associations.
@@ -872,6 +902,10 @@ async function lexicalSearchEmbeddings(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:getConversationHistory:function" type="function" identity="getConversationHistory" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves the conversation history for a specific thread, limited to a specified number of messages. This function is essential for displaying past messages in a chat interface.
@@ -929,6 +963,10 @@ async function getConversationHistory(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:recoverUserQuestion:function" type="function" identity="recoverUserQuestion" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves the most recent inbound user question from the database based on the provided thread ID. It updates the state with the question if it is not already set.
@@ -956,6 +994,10 @@ async function recoverUserQuestion(threadId: string, state: ResearchState): Prom
   return question
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:recoverUserQuestion:function"]
+
+
+
+
 
 
 
@@ -1078,6 +1120,10 @@ async function callInference(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeInferenceHandler:function" type="function" identity="executeInferenceHandler" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes an inference request to a specified URL, returning the response or a mock response if no URL is configured. This function is designed to handle HTTP requests for inference processing in an agent context.
@@ -1132,6 +1178,10 @@ async function executeInferenceHandler(
   return result.response_body
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeInferenceHandler:function"]
+
+
+
+
 
 
 
@@ -1263,6 +1313,10 @@ async function dispatchTools(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:cilDenied:function" type="function" identity="cilDenied" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The cilDenied function checks if the retrieval policy denies CIL access based on the provided run context configuration. It exists to determine whether CIL should be denied for the current agent runner context.
@@ -1296,6 +1350,10 @@ function cilDenied(
   return runCtx?.config?.promptConfig?.metadata?.retrieval_policy?.deny_cil === true
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:cilDenied:function"]
+
+
+
+
 
 
 
@@ -1344,6 +1402,10 @@ function cilAllowedProjectIds(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CilAccess:interface" type="interface" identity="CilAccess" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The CilAccess interface defines the structure for managing access control by specifying associated account and project identifiers. It exists to facilitate the organization and retrieval of access-related information within the module.
@@ -1357,6 +1419,10 @@ export interface CilAccess {
   projectIds: string[]
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CilAccess:interface"]
+
+
+
+
 
 
 
@@ -1423,6 +1489,10 @@ async function resolveCilAccess(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalPolicy:type" type="type" identity="RetrievalPolicy" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalPolicy defines the criteria for retrieving items based on various attributes such as security level and project IDs. It provides a structured way to enforce retrieval constraints in the agent runner module.
@@ -1471,6 +1541,10 @@ export type RetrievalPolicy = {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCacheEntry:type" type="type" identity="RetrievalCacheEntry" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalCacheEntry represents an entry in a retrieval cache, storing documents and their similarity metrics. It is used to manage and evaluate cached retrieval results efficiently.
@@ -1487,6 +1561,10 @@ type RetrievalCacheEntry = {
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCacheEntry:type"]
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCache:type" type="type" identity="RetrievalCache" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalCache is a type that maps string keys to RetrievalCacheEntry objects, facilitating efficient storage and retrieval of cached data entries. It exists to provide a structured way to manage cached retrieval results in the module.
@@ -1498,6 +1576,10 @@ type RetrievalCacheEntry = {
 export type RetrievalCache = Record<string, RetrievalCacheEntry>
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCache:type"]
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RETRIEVAL_CACHE_MAX_ENTRIES:constant" type="constant" identity="RETRIEVAL_CACHE_MAX_ENTRIES" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RETRIEVAL_CACHE_MAX_ENTRIES defines the maximum number of entries allowed in the retrieval cache. This constant is used to limit the size of the cache for performance optimization.
@@ -1508,6 +1590,10 @@ export type RetrievalCache = Record<string, RetrievalCacheEntry>
  */
 const RETRIEVAL_CACHE_MAX_ENTRIES = 4
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RETRIEVAL_CACHE_MAX_ENTRIES:constant"]
+
+
+
+
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:normalizeRetrievalQuery:function" type="function" identity="normalizeRetrievalQuery" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -1524,6 +1610,10 @@ function normalizeRetrievalQuery(q: string): string {
   return (q || '').trim().toLowerCase().replace(/\s+/g, ' ')
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:normalizeRetrievalQuery:function"]
+
+
+
+
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheKey:function" type="function" identity="retrievalCacheKey" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -1563,6 +1653,10 @@ function retrievalCacheKey(
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheKey:function"]
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheStore:function" type="function" identity="retrievalCacheStore" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Stores an entry in the retrieval cache, ensuring that the cache does not exceed a maximum number of entries by removing the oldest entries. This function helps manage memory usage and maintain the relevance of cached data.
@@ -1585,6 +1679,10 @@ function retrievalCacheStore(cache: RetrievalCache, key: string, entry: Retrieva
   cache[key] = entry
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheStore:function"]
+
+
+
+
 
 
 
@@ -1644,6 +1742,10 @@ function resolveRetrievalPolicy(
   return policy
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveRetrievalPolicy:function"]
+
+
+
+
 
 
 
@@ -1803,6 +1905,10 @@ export async function executeToolAction(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeEscalateToHuman:function" type="function" identity="executeEscalateToHuman" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * This function escalates an agent's request to a human operator if certain conditions are met, ensuring that the escalation process is only initiated with an active agent thread context.
@@ -1849,14 +1955,18 @@ async function executeEscalateToHuman(
     .select('data')
     .eq('id', threadId)
     .single()
-  if (thread?.data?.escalation_status === 'pending') {
+  if (isHumanOwned(thread?.data)) {
     return { escalated: true, already_escalated: true }
   }
   const confidence = typeof params?.confidence === 'number' ? params.confidence : 0
-  await handleEscalation(threadId, confidence, promptConfig, ctx, 'agent_requested')
+  await handleEscalation(threadId, confidence, promptConfig, ctx, 'agent_requested', runCtx?.config?.leaseToken)
   return { escalated: true, already_escalated: false, reason: params?.reason || null }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeEscalateToHuman:function"]
+
+
+
+
 
 
 
@@ -1951,9 +2061,13 @@ async function executeSearchKnowledge(
 
 
 
+
+
 // Entities a model-driven query may read. Sensitive tables (api_keys,
 // integrations, triggers, pipelines, people, audit/logs) are excluded —
 // this tool exists for runtime records, not platform internals.
+
+
 
 
 
@@ -1989,6 +2103,10 @@ const QUERY_ITEMS_ENTITIES = new Set([
   'items', 'threads', 'messages', 'links', 'attachments', 'watchers',
 ])
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:QUERY_ITEMS_ENTITIES:constant"]
+
+
+
+
 
 
 
@@ -2076,6 +2194,10 @@ async function executeQueryItems(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCreateRecord:function" type="function" identity="executeCreateRecord" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Creates a new record in the specified database entity using provided data and context information. This function ensures that the record is associated with the correct account and user details.
@@ -2146,6 +2268,10 @@ async function executeCreateRecord(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeUpdateItem:function" type="function" identity="executeUpdateItem" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Updates a specified record in the database with new data and timestamps, ensuring that the record is modified by tracking who made the update.
@@ -2196,6 +2322,10 @@ async function executeUpdateItem(
   return { record: result }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeUpdateItem:function"]
+
+
+
+
 
 
 
@@ -2286,6 +2416,10 @@ async function executeSendNotification(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:handleEscalation:function" type="function" identity="handleEscalation" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Handles the escalation of a thread based on low confidence levels, updating the thread and item statuses accordingly. It also triggers an escalation pipeline if specified in the prompt configuration.
@@ -2326,23 +2460,32 @@ async function handleEscalation(
   confidence: number,
   promptConfig: any,
   ctx: CoreContext,
-  escalationReason: string = 'low_confidence'
+  escalationReason: string = 'low_confidence',
+  leaseToken?: string
 ): Promise<void> {
   return withSpan(ctx, 'agent.escalation', async (ctx) => {
-  const { data: currentThread } = await adminDb
-    .from('threads')
-    .select('data')
-    .eq('id', threadId)
-    .single()
-  await adminDb
-    .from('threads')
-    .update({
-      data: {
-        ...(currentThread?.data || {}),
-        escalation_status: 'pending'
-      }
-    })
-    .eq('id', threadId)
+  // Atomic key merge — a whole-blob read-modify-write here could clobber
+  // a research_state checkpoint written meanwhile (and vice versa).
+  // Lease-fenced when the caller holds the episode lease.
+  const merged = await mergeThreadData(threadId, { owner: 'human' }, leaseToken)
+  if (merged === false) throw new EpisodeLeaseLost(threadId)
+  if (merged === null) {
+    // RPC unavailable — legacy whole-blob write.
+    const { data: currentThread } = await adminDb
+      .from('threads')
+      .select('data')
+      .eq('id', threadId)
+      .single()
+    await adminDb
+      .from('threads')
+      .update({
+        data: {
+          ...(currentThread?.data || {}),
+          owner: 'human'
+        }
+      })
+      .eq('id', threadId)
+  }
   const { data: thread } = await adminDb
     .from('threads')
     .select('target_type, target_id')
@@ -2439,6 +2582,10 @@ async function handleEscalation(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:getReplyTypeSlug:function" type="function" identity="getReplyTypeSlug" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Resolves the reply message type for a thread based on its declared binding. If no binding is declared, it defaults to the generic 'message' type.
@@ -2471,6 +2618,8 @@ export function getReplyTypeSlug(threadType: any): string {
   return typeof declared === 'string' && declared ? declared : 'message'
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:getReplyTypeSlug:function"]
+
+
 
 
 
@@ -2530,6 +2679,8 @@ export function getReplyTypeSlug(threadType: any): string {
 // stays the correctness backstop: an out-of-band writer (customer message
 // mid-episode, second instance) makes a stale counter surface as 23505, which
 // triggers a reseed + retry inside saveMessage.
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqCounter:constant" type="constant" identity="threadSeqCounter" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The threadSeqCounter is a Map that associates string keys with numeric values, serving as a counter for thread sequences. It exists to efficiently track and manage the sequence numbers of threads in the agent runner module.
@@ -2540,6 +2691,10 @@ export function getReplyTypeSlug(threadType: any): string {
  */
 const threadSeqCounter = new Map<string, number>()
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqCounter:constant"]
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqSeeding:constant" type="constant" identity="threadSeqSeeding" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * A map that associates string keys with promises that resolve to void. It is used to manage asynchronous operations related to thread sequencing in the agent runner module.
@@ -2550,6 +2705,10 @@ const threadSeqCounter = new Map<string, number>()
  */
 const threadSeqSeeding = new Map<string, Promise<void>>()
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqSeeding:constant"]
+
+
+
+
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureSequenceCounter:function" type="function" identity="ensureSequenceCounter" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -2581,8 +2740,12 @@ async function ensureSequenceCounter(threadId: string): Promise<void> {
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureSequenceCounter:function"]
 
+
+
 // Sync allocation — callers that batch writes (tool_call markers) allocate all
 // sequences up front so a Promise.all of inserts preserves display order.
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:allocSequence:function" type="function" identity="allocSequence" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Allocates a sequence number for a given thread ID, ensuring unique sequence numbers for each thread. This function is essential for managing thread-specific operations in a concurrent environment.
@@ -2600,6 +2763,10 @@ function allocSequence(threadId: string): number {
   return next
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:allocSequence:function"]
+
+
+
+
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:saveMessage:function" type="function" identity="saveMessage" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -2691,6 +2858,10 @@ async function saveMessage(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:AgentConfig:interface" type="interface" identity="AgentConfig" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The AgentConfig interface defines the configuration settings required for an agent to operate within the system. It encapsulates various properties that dictate the agent's behavior and execution context.
@@ -2722,8 +2893,14 @@ export interface AgentConfig {
   threadType: any
   /** Episode lease owner — stamped into research_state on every checkpoint. */
   driverToken?: string
+  /** DB lease token from acquire_episode_lease — heartbeats per turn and fences takeover writes. */
+  leaseToken?: string
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:AgentConfig:interface"]
+
+
+
+
 
 
 
@@ -2791,6 +2968,10 @@ export interface InferenceResult {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolCall:interface" type="interface" identity="ToolCall" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The ToolCall interface defines the structure for a tool invocation, specifying the tool to be used, its parameters, and a unique identifier. This standardization facilitates consistent tool usage within the module.
@@ -2821,6 +3002,10 @@ export interface ToolCall {
   id: string
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolCall:interface"]
+
+
+
+
 
 
 
@@ -2870,6 +3055,10 @@ export interface ToolResult {
   id: string
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolResult:interface"]
+
+
+
+
 
 
 
@@ -3060,6 +3249,10 @@ const CIL_TOOLS: any[] = [
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOL_SLUGS:constant" type="constant" identity="CIL_TOOL_SLUGS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * CIL_TOOL_SLUGS is a Set that contains the names of tools defined in CIL_TOOLS, providing a quick reference for the tool names used in the module.
@@ -3086,6 +3279,10 @@ const CIL_TOOLS: any[] = [
 
 const CIL_TOOL_SLUGS = new Set(CIL_TOOLS.map(t => t.name))
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOL_SLUGS:constant"]
+
+
+
+
 
 
 
@@ -3121,8 +3318,12 @@ const CIL_ONLY_TOOL_SLUGS = new Set([...CIL_TOOL_SLUGS].filter((n: string) => n.
 
 
 
+
+
 // Tools that count as "research" for the ask_user gate: every built-in CIL tool
 // except ask_user itself and the always-available escalate_to_human handoff.
+
+
 
 
 
@@ -3159,6 +3360,10 @@ const RESEARCH_TOOLS = new Set(
   CIL_TOOLS.map((t: any) => t.name).filter((n: string) => n !== 'ask_user' && n !== 'escalate_to_human')
 )
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RESEARCH_TOOLS:constant"]
+
+
+
+
 
 
 
@@ -3224,6 +3429,10 @@ function computeCilChunkHash(content: string): string {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ResearchState:interface" type="interface" identity="ResearchState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The ResearchState interface defines the structure for managing the state of a research process, including its status and relevant metadata. It facilitates tracking and updating the progress of research tasks within the application.
@@ -3269,8 +3478,19 @@ interface ResearchState {
   // on every checkpoint so other drivers refuse to interleave writes.
   driver_id?: string
   driver_heartbeat_at?: string
+  // Set by the claim path when it writes the intake narration — runAgent
+  // skips its own narration when the flag was stamped by the same driver.
+  intake_announced?: boolean
+  // Stamped when the episode reaches 'complete'/'failed' — lets a later
+  // claim of the same question tell a replay (inbound predates the
+  // terminal write) from a genuine same-text re-ask (inbound is newer).
+  completed_at?: string
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ResearchState:interface"]
+
+
+
+
 
 
 
@@ -3348,6 +3568,10 @@ function getResearchState(thread: any): ResearchState {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCompositeConfidence:function" type="function" identity="computeCompositeConfidence" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Computes a composite confidence score based on a language model confidence and mean similarity. This function adjusts the score based on specific thresholds of mean similarity to ensure the output remains within a defined range.
@@ -3388,6 +3612,10 @@ function computeCompositeConfidence(llmConf: number, meanSimilarity: number): nu
   return Math.min(Math.max(composite, 0), 1)
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCompositeConfidence:function"]
+
+
+
+
 
 
 
@@ -3446,6 +3674,8 @@ export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_
 
 
 
+
+
 // Retrieval-time evidence state for a response. 'verified' is deliberately
 // unreachable here — it is reserved for downstream human approval or eval
 // confirmation; inference can never self-certify it.
@@ -3485,6 +3715,8 @@ export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_
 
 // A single rank-1 similarity at or above this is decisive evidence on its own —
 // below it, a lone top hit could still be a low-signal lexical floater.
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOP_HIT_SIMILARITY:constant" type="constant" identity="TOP_HIT_SIMILARITY" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * TOP_HIT_SIMILARITY defines a constant value used to determine the threshold for similarity in hit scoring. It exists to provide a standard reference point for comparison across the module.
@@ -3495,6 +3727,10 @@ export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_
  */
 const TOP_HIT_SIMILARITY = 0.5
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOP_HIT_SIMILARITY:constant"]
+
+
+
+
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:computeEvidenceState:function" type="function" identity="computeEvidenceState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -3525,6 +3761,10 @@ export function computeEvidenceState(
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:computeEvidenceState:function"]
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:hasInRangeCitationMarker:function" type="function" identity="hasInRangeCitationMarker" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Determines if the provided content contains at least one citation marker that corresponds to a valid source in the retrieved sources array. This function is essential for ensuring that evidence is properly cited in the content.
@@ -3553,6 +3793,10 @@ export function hasInRangeCitationMarker(content: string, sourceCount: number): 
   return false
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:hasInRangeCitationMarker:function"]
+
+
+
+
 
 
 
@@ -3622,6 +3866,10 @@ export function extractCitedSources(content: string, sources: any[]): any[] {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureInlineCitations:function" type="function" identity="ensureInlineCitations" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Ensures that inline citations are present in the provided content based on the given sources. If no citations are found, it appends a list of sources to the content.
@@ -3649,6 +3897,10 @@ export function ensureInlineCitations(content: string, sources: any[]): string {
   return `${text}\n\n**Sources**\n${list}`
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureInlineCitations:function"]
+
+
+
+
 
 
 
@@ -3720,6 +3972,10 @@ function shapeRetrievedSource(s: any): any {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:truncateForMessage:function" type="function" identity="truncateForMessage" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Truncate a value to a specified maximum character length for message display, ensuring that long values are shortened with a notice of truncation. This function is useful for maintaining readability in logs or messages where space is limited.
@@ -3771,6 +4027,10 @@ function truncateForMessage(value: any, maxChars: number): any {
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:setResearchState:function" type="function" identity="setResearchState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Updates the research state of a specified thread in the database, ensuring that the latest state is recorded along with the current data and a timestamp.
@@ -3804,13 +4064,27 @@ function truncateForMessage(value: any, maxChars: number): any {
 async function setResearchState(
   threadId: string,
   state: ResearchState,
-  currentData: any
+  currentData: any,
+  leaseToken?: string
 ): Promise<void> {
   // Mirror the write into the caller's in-memory thread data — multi-step
   // modes read getResearchState(config.thread) again on the next step and
   // must see the state just persisted, not a stale snapshot.
   if (currentData) currentData.research_state = state
-  await adminDb
+  // Atomic key-set via merge_thread_data: the previous read-modify-write
+  // of the whole `data` blob could resurrect a stale research_state over
+  // a terminal checkpoint when a concurrent writer (escalation stamp,
+  // message-trigger pipeline) landed in between. The lease token fences
+  // the write — a displaced driver's stale checkpoint is dropped.
+  const merged = await mergeThreadData(threadId, { research_state: state }, leaseToken)
+  if (merged === true) return
+  if (merged === false) {
+    // A takeover displaced this driver mid-run — its checkpoint must not
+    // overwrite the new owner's state.
+    throw new EpisodeLeaseLost(threadId)
+  }
+  // RPC unavailable (un-migrated deployment) — legacy whole-blob write.
+  const { error } = await adminDb
     .from('threads')
     .update({
       data: {
@@ -3820,8 +4094,13 @@ async function setResearchState(
       updated_at: new Date().toISOString()
     })
     .eq('id', threadId)
+  if (error) console.error(`setResearchState failed for thread ${threadId}:`, error.message)
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:setResearchState:function"]
+
+
+
+
 
 
 
@@ -3879,6 +4158,10 @@ function isEmptyToolResult(result: any): boolean {
   return false
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isEmptyToolResult:function"]
+
+
+
+
 
 
 
@@ -3960,10 +4243,16 @@ export async function runAgentStep(
     state.max_turns = maxTurns
     // Refresh the single-flight lease on every step checkpoint — a live
     // heartbeat tells other drivers (second mounts, step-mode fallbacks) to
-    // watch instead of interleaving writes.
+    // watch instead of interleaving writes. The DB lease is the atomic
+    // authority: a false heartbeat means an expired-lease takeover
+    // displaced this driver, so its remaining writes are fenced off.
     if (config.driverToken) {
       state.driver_id = config.driverToken
       state.driver_heartbeat_at = new Date().toISOString()
+    }
+    if (config.leaseToken) {
+      const owned = await heartbeatEpisodeLease(threadId, config.leaseToken)
+      if (owned === false) throw new EpisodeLeaseLost(threadId)
     }
 
     // Retrieval is keyed on the user question, which is fixed for the whole
@@ -4003,6 +4292,13 @@ export async function runAgentStep(
     const inferenceAgent = researchAttempted || !agent.model_config?.tools?.length
       ? agent
       : { ...agent, model_config: { ...agent.model_config, tools: agent.model_config.tools.filter((t: any) => t.function?.name !== 'ask_user') } }
+    // Heartbeat again after buildContext — it can take tens of seconds,
+    // and stale-gated detached steals key on heartbeat age. One extra RPC
+    // keeps a healthy long-build driver unstealable through inference.
+    if (config.leaseToken) {
+      const owned = await heartbeatEpisodeLease(threadId, config.leaseToken)
+      if (owned === false) throw new EpisodeLeaseLost(threadId)
+    }
     const inferenceResult = await callInference(context, inferenceAgent, promptConfig, ctx)
     const confidence = computeCompositeConfidence(inferenceResult.confidence ?? 0.70, meanSimilarity)
     const content = inferenceResult.content || ''
@@ -4075,6 +4371,23 @@ export async function runAgentStep(
       // the ticket is already in the human queue via handleEscalation.
       const escalated = toolResults.find((tr: any) => tr.tool === 'escalate_to_human' && tr.result?.escalated)
       if (escalated) {
+        state.status = 'complete'
+        state.completed_at = new Date().toISOString()
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
+        if (escalated.result?.already_escalated) {
+          // Re-escalation on an already human-owned thread — the handoff
+          // already happened and was already narrated; emit no second
+          // customer-facing final. Return the prior outbound message so
+          // callers still get terminal content, never a duplicate.
+          const { data: priorOutbound } = await adminDb
+            .from('messages')
+            .select('id, content, data')
+            .eq('thread_id', threadId)
+            .eq('direction', 'outbound')
+            .order('created_at', { ascending: false })
+            .limit(1)
+          return { message: (Array.isArray(priorOutbound) ? priorOutbound[0] : priorOutbound) || null, state, confidence, escalated: true }
+        }
         const escMsg = await saveMessage(threadId, "I've escalated this to a human support agent — they'll review your request and follow up shortly.", 'final', {
           escalated: true,
           escalation_notice: true,
@@ -4083,8 +4396,6 @@ export async function runAgentStep(
           prompt_config_id: promptConfig.id,
           sender_type: 'agent'
         }, ctx, replyTypeSlug, 'external')
-        state.status = 'complete'
-        await setResearchState(threadId, state, thread.data)
         return { message: escMsg, state, confidence, escalated: true }
       }
 
@@ -4098,12 +4409,12 @@ export async function runAgentStep(
         }, ctx, replyTypeSlug, 'external')
         state.status = 'awaiting_input'
         state.pending_question = question
-        await setResearchState(threadId, state, thread.data)
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
         return { message: askMsg, state }
       }
 
       state.status = 'gathering'
-      await setResearchState(threadId, state, thread.data)
+      await setResearchState(threadId, state, thread.data, config.leaseToken)
       return { message: lastToolMessage, state }
     }
 
@@ -4130,7 +4441,7 @@ export async function runAgentStep(
           result: 'You attempted to ask the customer a question before any research tool ran this episode (research_attempted=false). Research first with search_knowledge and/or cil_chunk_lookup — an empty result still counts as an attempt — then answer, or ask once research has been attempted.',
         })
         state.status = 'gathering'
-        await setResearchState(threadId, state, thread.data)
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
         return { message: nudgeMsg, state }
       }
       const questionMsg = await saveMessage(threadId, content, 'awaiting_input', {
@@ -4141,7 +4452,7 @@ export async function runAgentStep(
       }, ctx, replyTypeSlug, 'external')
       state.status = 'awaiting_input'
       state.pending_question = content
-      await setResearchState(threadId, state, thread.data)
+      await setResearchState(threadId, state, thread.data, config.leaseToken)
       return { message: questionMsg, state }
     }
 
@@ -4176,7 +4487,8 @@ export async function runAgentStep(
       sender_type: 'agent'
     }, ctx, replyTypeSlug, threadVisibility)
     state.status = 'complete'
-    await setResearchState(threadId, state, thread.data)
+    state.completed_at = new Date().toISOString()
+    await setResearchState(threadId, state, thread.data, config.leaseToken)
     // The message row comes back through createRecord → sanitizeRecordData,
     // which drops data.* keys the message type doesn't declare — so callers
     // must not read confidence/evidence_state off the returned record.
@@ -4184,6 +4496,10 @@ export async function runAgentStep(
   }, { onEnd: emitSpan })
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgentStep:function"]
+
+
+
+
 
 
 
@@ -4239,18 +4555,36 @@ export async function runAgent(
   userMessage: string,
   ctx: CoreContext,
   mode: 'step' | 'complete' = 'complete',
-  driverToken?: string
+  driverToken?: string,
+  leaseToken?: string,
+  opts?: { deadlineMs?: number }
 ): Promise<any> {
   return withSpan(ctx, 'agent.runAgent', async (ctx) => {
     const startTime = Date.now()
+    const deadlineMs = opts?.deadlineMs
     let lastMessage: any
     let lastStep: Awaited<ReturnType<typeof runAgentStep>> | undefined
+    // Terminal release: the holder frees the lease only when the episode
+    // reaches a terminal state or aborts — a nonterminal step-mode return
+    // keeps the lease so the same driver's next HTTP request renews it.
+    const releaseIfOwned = async (terminal: boolean) => {
+      if (leaseToken && terminal) await releaseEpisodeLease(threadId, leaseToken)
+    }
     try {
+      // Renew the lease before any prelude work — a detached driver that
+      // was CPU-throttled between claim and run start would otherwise
+      // risk its TTL expiring mid-prelude. A false heartbeat means a
+      // steal/takeover already displaced us: abort before writing.
+      if (leaseToken) {
+        const owned = await heartbeatEpisodeLease(threadId, leaseToken)
+        if (owned === false) throw new EpisodeLeaseLost(threadId)
+      }
       const config = await resolveAgentConfig(threadId, ctx)
       if (!config) {
         throw new Error(`Could not resolve agent configuration for thread ${threadId}`)
       }
       if (driverToken) config.driverToken = driverToken
+      if (leaseToken) config.leaseToken = leaseToken
       const { agent, promptConfig, thread, threadType } = config
       const replyTypeSlug = getReplyTypeSlug(threadType)
       const threadVisibility = thread?.visibility || 'external'
@@ -4278,6 +4612,22 @@ export async function runAgent(
       if (!userMessage?.trim() && !state.user_question) {
         await recoverUserQuestion(threadId, state)
       }
+      // Human-owner gate — re-validated at run start, after config resolve
+      // gives a fresh thread read. A driver that claimed before the handoff
+      // but resumes after it (a frozen serverless invocation waking into a
+      // changed world) must not narrate or run turns. The inbound row above
+      // already persisted — the human sees the message; the agent stays out.
+      if (isHumanOwned(thread?.data)) {
+        const { data: priorOutbound } = await adminDb
+          .from('messages')
+          .select('id, content, data')
+          .eq('thread_id', threadId)
+          .eq('direction', 'outbound')
+          .order('created_at', { ascending: false })
+          .limit(1)
+        await releaseIfOwned(true)
+        return (Array.isArray(priorOutbound) ? priorOutbound[0] : priorOutbound) || lastMessage
+      }
       const isMultiTurn = promptConfig.is_multi_turn !== false
       if (!isMultiTurn) {
         const { context, retrievedSources, meanSimilarity } = await buildContext(config, userMessage?.trim() || state.user_question || '', [], ctx)
@@ -4292,7 +4642,7 @@ export async function runAgent(
           confidence < (promptConfig.confidence_threshold || 0) &&
           evidenceState !== 'evidence_found'
         if (isEscalated) {
-          await handleEscalation(threadId, confidence, promptConfig, ctx)
+          await handleEscalation(threadId, confidence, promptConfig, ctx, 'low_confidence', config.leaseToken)
         }
         // Same deterministic citation repair as the episode-mode path — an
         // evidence_found answer must always carry an in-range [n] marker.
@@ -4340,22 +4690,34 @@ export async function runAgent(
           confidence,
           escalated: isEscalated
         })
+        await releaseIfOwned(true)
         return lastMessage
       }
+
+      // A re-delivered copy of the question this episode already answered
+      // (e.g. a late triage kick claiming the just-released lease) is not
+      // a new episode — skipping the reset lets the terminal no-op below
+      // return without re-running side-effect tools or duplicating finals.
+      const questionReplay = await isAnsweredQuestionReplay(threadId, state, userMessage)
 
       // When a new user message arrives after the previous research episode
       // reached a terminal state, start a fresh episode so the new question gets
       // its own turn budget and gathered_results. 'awaiting_input' is excluded so
       // the user's reply continues the pending clarification instead.
-      if (userMessage?.trim() && (state.status === 'complete' || state.status === 'failed')) {
+      if (userMessage?.trim() && !questionReplay && (state.status === 'complete' || state.status === 'failed')) {
         state = {
           status: 'planning',
           turn_count: 0,
           max_turns: state.max_turns,
           gathered_results: [],
+          // Carry intake/driver markers through the reset — the claim
+          // path may already have narrated this new question's intake.
+          intake_announced: state.intake_announced,
+          driver_id: state.driver_id,
+          driver_heartbeat_at: state.driver_heartbeat_at,
         }
         thread.data = { ...(thread.data || {}), research_state: state }
-        await setResearchState(threadId, state, thread.data)
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
       }
 
       const maxTurns = promptConfig.metadata?.max_turns ?? (promptConfig.metadata?.max_tool_iterations ?? 5) + 2
@@ -4364,7 +4726,12 @@ export async function runAgent(
       // start and the first inference result (~5–10s of buildContext + LLM
       // call). Internal-only: activity trails render it, transcript filters
       // skip it. Fire-and-forget so it never adds latency to the step.
-      if (state.turn_count === 0 && state.status === 'planning') {
+      // Skipped when the claim path already narrated this intake for the
+      // current driver (claimAgentEpisode writes it synchronously so the
+      // UI has progress even while a detached driver is CPU-throttled).
+      const alreadyAnnounced = state.intake_announced === true
+        && !!driverToken && state.driver_id === driverToken
+      if (state.turn_count === 0 && state.status === 'planning' && !alreadyAnnounced) {
         void saveMessage(threadId, 'Reviewing your question…', 'plan', {
           turn_count: 0,
           phase: 'intake',
@@ -4386,8 +4753,9 @@ export async function runAgent(
       // duplicate final message. Calls carrying a userMessage are unaffected:
       // 'complete'/'failed' were reset to a fresh episode above and
       // 'awaiting_input' replies continue the pending clarification.
-      if (!currentMessage?.trim() &&
+      if ((!currentMessage?.trim() || questionReplay) &&
           (state.status === 'complete' || state.status === 'awaiting_input' || state.status === 'failed')) {
+        await releaseIfOwned(true)
         return lastMessage
       }
       if (mode === 'step') {
@@ -4403,7 +4771,9 @@ export async function runAgent(
           }, ctx, replyTypeSlug, 'external')
           state.status = 'failed'
           state.error_message = `Research did not complete after ${state.turn_count} turns`
-          await setResearchState(threadId, state, thread.data)
+          state.completed_at = new Date().toISOString()
+          await setResearchState(threadId, state, thread.data, config.leaseToken)
+          await releaseIfOwned(true)
           return failMsg
         }
         const step = await runAgentStep(threadId, currentMessage, ctx, config)
@@ -4423,7 +4793,7 @@ export async function runAgent(
           if (!finalEscalated &&
               finalConfidence < (promptConfig.confidence_threshold || 0) &&
               finalEvidence !== 'evidence_found') {
-            await handleEscalation(threadId, finalConfidence, promptConfig, ctx)
+            await handleEscalation(threadId, finalConfidence, promptConfig, ctx, 'low_confidence', config.leaseToken)
           }
           await emitAudit(ctx, 'agent.inference.completed', {
             type: 'agent_message',
@@ -4442,10 +4812,28 @@ export async function runAgent(
             confidence: final.data?.confidence
           })
         }
+        await releaseIfOwned(
+          state.status === 'complete' || state.status === 'awaiting_input' || state.status === 'failed'
+        )
         return lastMessage
       }
 
-      for (let i = state.turn_count; i < maxTurns; i++) {
+      // opts.deadlineMs bounds a complete-mode run inside a single request
+      // (episode mode runs inline so the first turns execute at full
+      // request CPU instead of on a CPU-throttled detached driver). On
+      // expiry the episode keeps its lease and the caller's next step
+      // request continues it — not a failure, so the max-turns tail below
+      // is skipped.
+      let budgetExceeded = false
+      const loopStartTurn = state.turn_count
+      for (let i = loopStartTurn; i < maxTurns; i++) {
+        // Always run at least one step (progress guarantee), then stop
+        // once the wall-clock budget is spent. state.turn_count advances
+        // inside runAgentStep, so compare against the captured baseline.
+        if (deadlineMs && i > loopStartTurn && Date.now() - startTime > deadlineMs) {
+          budgetExceeded = true
+          break
+        }
         const step = await runAgentStep(threadId, currentMessage, ctx, config)
         lastMessage = step.message || lastMessage
         state = step.state
@@ -4454,6 +4842,13 @@ export async function runAgent(
           break
         }
         currentMessage = ''
+      }
+      if (budgetExceeded &&
+          state.status !== 'complete' && state.status !== 'awaiting_input' && state.status !== 'failed') {
+        // Nonterminal partial run — keep the lease. The driver (episode
+        // POST caller or a step-loop request) resumes with the same
+        // driver_token, which renews the lease rather than double-driving.
+        return lastMessage
       }
       if (state.status === 'complete') {
         const final = lastMessage || {}
@@ -4466,7 +4861,7 @@ export async function runAgent(
         if (!finalEscalated &&
             finalConfidence < (promptConfig.confidence_threshold || 0) &&
             finalEvidence !== 'evidence_found') {
-          await handleEscalation(threadId, finalConfidence, promptConfig, ctx)
+          await handleEscalation(threadId, finalConfidence, promptConfig, ctx, 'low_confidence', config.leaseToken)
         }
         await emitAudit(ctx, 'agent.inference.completed', {
           type: 'agent_message',
@@ -4493,11 +4888,23 @@ export async function runAgent(
         }, ctx, replyTypeSlug, 'external')
         state.status = 'failed'
         state.error_message = `Research did not complete after ${state.turn_count} turns`
-        await setResearchState(threadId, state, thread.data)
+        state.completed_at = new Date().toISOString()
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
         lastMessage = failMsg
       }
+      // The complete-mode tail is always terminal (complete /
+      // awaiting_input / failed-after-max-turns).
+      await releaseIfOwned(true)
       return lastMessage
     } catch (error: any) {
+      if (error instanceof EpisodeLeaseLost) {
+        // A takeover displaced this driver mid-run — quiet abort, not an
+        // inference failure; the new owner writes the terminal message.
+        console.warn(`[${ctx.requestId}] ${error.message} — aborting run; takeover owner continues`)
+        await releaseIfOwned(true)
+        return lastMessage
+      }
+      await releaseIfOwned(true)
       await emitAudit(ctx, 'agent.inference.failed', {
         type: 'agent_message',
         id: 'failed',
@@ -4515,6 +4922,10 @@ export async function runAgent(
   }, { onEnd: emitSpan })
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgent:function"]
+
+
+
+
 
 
 
@@ -4731,6 +5142,10 @@ export async function resolveAgentConfig(
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeAgentInference:function" type="function" identity="executeAgentInference" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes agent inference based on user input and configuration, managing tool iterations to refine results. This function is essential for integrating user queries with agent capabilities and retrieving relevant information.
@@ -4820,6 +5235,10 @@ async function executeAgentInference(
   }, { onEnd: emitSpan })
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeAgentInference:function"]
+
+
+
+
 
 
 
@@ -4972,6 +5391,8 @@ async function executeCilChunkLookup(params: any, ctx: CoreContext, cilAccess: C
 
 
 
+
+
 /**
  * Fetches a document based on the provided document ID and context, ensuring it adheres to project restrictions if specified. It retrieves the document's content and metadata, handling various data structures and types.
  *
@@ -4984,6 +5405,8 @@ async function executeCilChunkLookup(params: any, ctx: CoreContext, cilAccess: C
  * @outputSpec  Promise<any> — returns an object containing document metadata and content.
  * @throws      Error — document_id is required
 Error — Document not found: {document_id}
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilFetchDocument:function" type="function" identity="executeCilFetchDocument" parent="~/.framework/functions/_shared/agent-runner.ts"]
  * @sideEffects Database read operations to fetch document data.
  * @stability   stable
@@ -5054,6 +5477,10 @@ async function executeCilFetchDocument(params: any, ctx: CoreContext, cilAccess:
   return result
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilFetchDocument:function"]
+
+
+
+
 
 
 
@@ -5142,6 +5569,10 @@ async function executeCilGetContract(params: any, ctx: CoreContext, cilAccess: C
   }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilGetContract:function"]
+
+
+
+
 
 
 
@@ -5300,6 +5731,10 @@ async function executeCilBlastRadius(params: any, ctx: CoreContext, cilAccess: C
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilHashValidate:function" type="function" identity="executeCilHashValidate" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Validates the hash of a CIL chunk by retrieving it from the database and comparing the stored hash with a computed hash. This function ensures that the CIL chunk is valid and belongs to the allowed project IDs.
@@ -5362,6 +5797,10 @@ async function executeCilHashValidate(params: any, ctx: CoreContext, cilAccess: 
   }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilHashValidate:function"]
+
+
+
+
 
 
 
@@ -5487,6 +5926,10 @@ async function executeCilProjectStatus(params: any, ctx: CoreContext, cilAccess:
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchLogs:function" type="function" identity="executeSearchLogs" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a search on the logs based on the provided parameters, returning matching log entries and their count. This function facilitates querying logs for specific messages and levels within a given account context.
@@ -5532,6 +5975,10 @@ async function executeSearchLogs(params: any, ctx: CoreContext): Promise<any> {
   return { results: data || [], count: (data || []).length }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchLogs:function"]
+
+
+
+
 
 
 
@@ -5613,6 +6060,10 @@ async function executeSearchObservability(params: any, ctx: CoreContext): Promis
 
 
 
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DRIVER_LEASE_MS:constant" type="constant" identity="EPISODE_DRIVER_LEASE_MS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * EPISODE_DRIVER_LEASE_MS defines the duration in milliseconds for which a driver lease is valid. This constant is used to manage the timing of driver availability in the episode processing workflow.
@@ -5624,12 +6075,509 @@ async function executeSearchObservability(params: any, ctx: CoreContext): Promis
 const EPISODE_DRIVER_LEASE_MS = 60000
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DRIVER_LEASE_MS:constant"]
 
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_LEASE_TTL_SECONDS:constant" type="constant" identity="EPISODE_LEASE_TTL_SECONDS" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * EPISODE_LEASE_TTL_SECONDS is the database-lease TTL a driver holds per
+ * episode. Heartbeats extend it every turn; it must exceed the slowest
+ * single turn (config resolution + buildContext + one inference call —
+ * cold starts observed at ~45s) or a healthy driver would be fenced by
+ * its own expiry.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
+const EPISODE_LEASE_TTL_SECONDS = 90
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_LEASE_TTL_SECONDS:constant"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DETACHED_STALE_SECONDS:constant" type="constant" identity="EPISODE_DETACHED_STALE_SECONDS" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Heartbeat age (seconds) after which a 'detached:' lease holder counts as
+ * stalled and may be stolen by a request-bound driver. A healthy detached
+ * driver heartbeats at every turn boundary — the window tolerates one slow
+ * turn (~13s inference + tools observed) without letting a routine episode
+ * POST displace it mid-flight.
+ */
+const EPISODE_DETACHED_STALE_SECONDS = 30
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DETACHED_STALE_SECONDS:constant"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EpisodeLeaseLost:class" type="class" identity="EpisodeLeaseLost" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * EpisodeLeaseLost is thrown when a driver's lease_token no longer owns
+ * the thread's episode_lease — i.e. an expired-lease takeover displaced
+ * it mid-run. runAgent treats it as a quiet abort (the new owner
+ * produces the terminal message), not an inference failure.
+ *
+ * @stability   stable
+ * @cil-generated
+ */
+class EpisodeLeaseLost extends Error {
+  constructor(threadId: string) {
+    super(`episode lease lost for thread ${threadId}`)
+    this.name = 'EpisodeLeaseLost'
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EpisodeLeaseLost:class"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:acquireEpisodeLease:function" type="function" identity="acquireEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Atomically claims the episode lease for a thread via the
+ * acquire_episode_lease RPC (migration 063). Returns the RPC verdict:
+ * 'claimed' with a lease_token the caller must present to
+ * heartbeat/release, or 'held' with the live holder's driver_id.
+ * Returns null when the RPC is unavailable (migration not applied) so
+ * callers can fall back to the legacy research_state check.
+ *
+ * @inputSpec
+ *   threadId: string (required) — the thread whose episode is claimed.
+ *   accountId: string (required) — owning account for the lease row.
+ *   driverId: string (required) — the claiming driver's token.
+ *   ttlSeconds: number (optional) — lease TTL, default EPISODE_LEASE_TTL_SECONDS.
+ *   stealDetached: boolean (optional) — request-bound drivers pass true so a
+ *     live 'detached:'-prefixed holder (spawned background work) yields
+ *     immediately instead of forcing the caller to watch a throttled driver.
+ * @outputSpec  Promise<{outcome, lease_token?, holder_driver_id?} | null>
+ * @sideEffects Inserts or updates public.episode_leases.
+ * @stability   stable
+ * @calls       adminDb.rpc('acquire_episode_lease')
+ * @cil-generated
+ */
+export async function acquireEpisodeLease(
+  threadId: string,
+  accountId: string,
+  driverId: string,
+  ttlSeconds: number = EPISODE_LEASE_TTL_SECONDS,
+  stealDetached = false,
+  staleSeconds: number = EPISODE_DETACHED_STALE_SECONDS
+): Promise<{ outcome: 'claimed' | 'held'; lease_token?: string; holder_driver_id?: string } | null> {
+  const { data, error } = await adminDb.rpc('acquire_episode_lease', {
+    p_thread_id: threadId,
+    p_account_id: accountId,
+    p_driver_id: driverId,
+    p_ttl_seconds: ttlSeconds,
+    p_steal_detached: stealDetached,
+    p_stale_seconds: staleSeconds
+  })
+  if (error) {
+    // Fail-open: deployments that haven't applied 063 yet behave exactly
+    // as before (legacy research_state check-then-write path).
+    console.warn(`[episode-lease] acquire_episode_lease unavailable for ${threadId}: ${error.message}`)
+    return null
+  }
+  if (!data || (data.outcome !== 'claimed' && data.outcome !== 'held')) {
+    // Malformed verdict (unexpected RPC shape) — same fail-open path so
+    // a surprising response never silently grants or refuses a driver.
+    console.warn(`[episode-lease] acquire_episode_lease malformed response for ${threadId}`)
+    return null
+  }
+  return data as { outcome: 'claimed' | 'held'; lease_token?: string; holder_driver_id?: string }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:acquireEpisodeLease:function"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:heartbeatEpisodeLease:function" type="function" identity="heartbeatEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Extends the held lease's TTL. Returns true when the token still owns
+ * the lease, false when a takeover displaced this driver (the caller
+ * must stop writing — that false is the write fence), and null when the
+ * RPC is unavailable (fail-open so un-migrated deployments keep working).
+ *
+ * @inputSpec
+ *   threadId: string (required) — the leased thread.
+ *   leaseToken: string (required) — token returned by acquire_episode_lease.
+ * @outputSpec  Promise<boolean | null>
+ * @sideEffects Updates public.episode_leases.expires_at.
+ * @stability   stable
+ * @calls       adminDb.rpc('heartbeat_episode_lease')
+ * @cil-generated
+ */
+async function heartbeatEpisodeLease(
+  threadId: string,
+  leaseToken: string
+): Promise<boolean | null> {
+  const { data, error } = await adminDb.rpc('heartbeat_episode_lease', {
+    p_thread_id: threadId,
+    p_lease_token: leaseToken,
+    p_ttl_seconds: EPISODE_LEASE_TTL_SECONDS
+  })
+  if (error) {
+    console.warn(`[episode-lease] heartbeat_episode_lease unavailable for ${threadId}: ${error.message}`)
+    return null
+  }
+  // Only an explicit false is the takeover fence — malformed responses
+  // fail open rather than aborting a healthy driver.
+  return data === false ? false : data === true ? true : null
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:heartbeatEpisodeLease:function"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:mergeThreadData:function" type="function" identity="mergeThreadData" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Atomically shallow-merges a patch into threads.data via the
+ * merge_thread_data RPC (migration 066). Unlike the read-modify-write
+ * whole-blob update it replaces, the merge cannot resurrect stale keys:
+ * a writer holding a pre-checkpoint snapshot can no longer clobber a
+ * terminal research_state another writer persisted meanwhile.
+ *
+ * When leaseToken is provided the RPC drops the write if a
+ * differently-tokened lease holds the thread — a displaced driver's
+ * stale checkpoint becomes a no-op instead of overwriting the takeover
+ * owner's terminal state.
+ *
+ * Returns true when written, false when fenced (or the thread is gone),
+ * and null when the RPC is unavailable so callers can fall back to the
+ * legacy whole-blob update on un-migrated deployments.
+ *
+ * @inputSpec
+ *   threadId: string (required) — the thread to patch.
+ *   patch: Record<string, any> (required) — top-level data keys to merge.
+ *   leaseToken: string (optional) — fence the write to this lease holder.
+ * @outputSpec  Promise<boolean | null>
+ * @sideEffects Updates public.threads.data / updated_at.
+ * @stability   stable
+ * @calls       adminDb.rpc('merge_thread_data')
+ * @cil-generated
+ */
+async function mergeThreadData(
+  threadId: string,
+  patch: Record<string, any>,
+  leaseToken?: string
+): Promise<boolean | null> {
+  const { data, error } = await adminDb.rpc('merge_thread_data', {
+    p_thread_id: threadId,
+    p_patch: patch,
+    p_lease_token: leaseToken ?? null
+  })
+  if (error) {
+    console.warn(`[episode-lease] merge_thread_data unavailable for ${threadId}: ${error.message}`)
+    return null
+  }
+  return data === true ? true : data === false ? false : null
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:mergeThreadData:function"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:releaseEpisodeLease:function" type="function" identity="releaseEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Releases the held lease on terminal state (complete/awaiting_input/
+ * failed) or abort. Token-gated: a displaced driver's release returns
+ * false, which is warn-only — the takeover owner controls the lease now.
+ * Errors are swallowed (fail-open) so a missing migration never breaks
+ * an otherwise successful episode.
+ *
+ * @inputSpec
+ *   threadId: string (required) — the leased thread.
+ *   leaseToken: string (required) — token returned by acquire_episode_lease.
+ * @outputSpec  Promise<void>
+ * @sideEffects Deletes the public.episode_leases row when the token matches.
+ * @stability   stable
+ * @calls       adminDb.rpc('release_episode_lease')
+ * @cil-generated
+ */
+async function releaseEpisodeLease(
+  threadId: string,
+  leaseToken: string
+): Promise<void> {
+  const { data, error } = await adminDb.rpc('release_episode_lease', {
+    p_thread_id: threadId,
+    p_lease_token: leaseToken
+  })
+  if (error) {
+    console.warn(`[episode-lease] release_episode_lease unavailable for ${threadId}: ${error.message}`)
+    return
+  }
+  if (data !== true) {
+    console.warn(`[episode-lease] release_episode_lease fenced for ${threadId} — lease already superseded`)
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:releaseEpisodeLease:function"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isAnsweredQuestionReplay:function" type="function" identity="isAnsweredQuestionReplay" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Tells a re-delivered question from a genuine re-ask. A late claim can
+ * carry the same userMessage text the just-finished episode already
+ * answered — e.g. a queued triage kick claiming the freshly-released
+ * lease after the request driver completed inline. Without the check the
+ * claimant stamps fresh state and runs a whole second episode (the
+ * duplicate escalate→final cycle observed in production).
+ *
+ * Verdict needs all three: terminal state (complete/failed), the carried
+ * user_question text-identical to this message, and the latest inbound
+ * row predating the terminal write — a same-text re-ask posts a NEWER
+ * inbound, which is a new episode, not a replay.
+ *
+ * @inputSpec
+ *   threadId: string — the episode thread.
+ *   state: ResearchState | undefined — the persisted research_state.
+ *   userMessage: string — the message this claim/run carries.
+ * @outputSpec  Promise<boolean>
+ * @sideEffects Reads messages (latest inbound) only when the cheap checks pass.
+ * @stability   stable
+ * @calls       adminDb.from('messages')
+ * @cil-generated
+ */
+async function isAnsweredQuestionReplay(
+  threadId: string,
+  state: ResearchState | undefined,
+  userMessage: string
+): Promise<boolean> {
+  const question = (userMessage || '').trim()
+  if (!question || !state) return false
+  if (state.status !== 'complete' && state.status !== 'failed') return false
+  if ((state.user_question || '').trim() !== question) return false
+  const terminalAt = Date.parse(state.completed_at || state.driver_heartbeat_at || '')
+  const { data: lastInbound } = await adminDb
+    .from('messages')
+    .select('created_at')
+    .eq('thread_id', threadId)
+    .eq('direction', 'inbound')
+    .order('created_at', { ascending: false })
+    .limit(1)
+  const inboundAt = Date.parse((Array.isArray(lastInbound) ? lastInbound[0] : lastInbound)?.created_at || '')
+  // Unbounded comparisons can't prove a replay — run the episode rather
+  // than risk suppressing a real question. A 2s skew covers clock drift
+  // between the inbound insert and the terminal write in the same txn.
+  return Number.isFinite(inboundAt) && Number.isFinite(terminalAt) && inboundAt <= terminalAt + 2000
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isAnsweredQuestionReplay:function"]
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function" type="function" identity="isHumanOwned" parent="~/.framework/functions/_shared/agent-runner.ts"]
+// CIL[DOC-LEARNING topic="human_owner_gate" content="thread.data.owner:'human' is THE human/agent gate — while set, no agent episode may be claimed, narrated, or run. It is semantic ownership, orthogonal to the episode lease (who may write now). Both must hold for agent work: a free lease alone is not permission. The gate exists because serverless invocations freeze and resume into a changed world — a driver resuming after handoff found the lease free and re-escalated a thread waiting on a human (prod, Oct 2026)."]
+// CIL[DOC-NOTE type="caution" content="Core must NEVER gate on app-level item statuses (human_assigned, pending_resolution, human_action...) — core is domain-agnostic. Apps translate their workflow into the framework signal by stamping threads.data.owner:'human' themselves. The only core writer is handleEscalation."]
+/**
+ * The human/agent ownership gate. `thread.data.owner === 'human'` means a
+ * person owns this conversation and NO agent episode may be claimed,
+ * narrated, or stepped — regardless of lease state. This is a semantic
+ * gate, not a concurrency gate: the lease answers "who may write right
+ * now", this answers "should any agent act at all".
+ *
+ * Writers:
+ *   - handleEscalation (escalate_to_human tool) — the agent hands off.
+ *   - App code — e.g. a human-reply or assign-to-me path stamping
+ *     owner:'human' on the thread when a person takes over.
+ * Absence of the key means the thread is agent-eligible. The flag is never
+ * auto-cleared: once a human owns a thread it stays human-owned (human-to-
+ * human semantics); a new conversation means a new thread with fresh data.
+ *
+ * 'escalation_status: pending' is the pre-rename key — reads accept it so
+ * rows written before the rename still gate correctly. New writes only
+ * set 'owner'.
+ *
+ * @inputSpec
+ *   threadData: any — threads.data contents.
+ * @outputSpec  boolean — true when a human owns the thread.
+ * @stability   stable
+ * @cil-generated
+ */
+function isHumanOwned(threadData: any): boolean {
+  return threadData?.owner === 'human' || threadData?.escalation_status === 'pending'
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function"]
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:claimAgentEpisode:function" type="function" identity="claimAgentEpisode" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Atomically claims an episode for a driver: acquires the episode lease,
+ * stamps research_state via the fenced merge RPC, and writes the intake
+ * narration synchronously so the client has visible progress within the
+ * request — not whenever a throttled detached driver gets CPU.
+ *
+ * @macro       Shared claim primitive for all episode entry paths.
+ * @micro       RPC claim → fenced research_state merge → synchronous intake narration → returns lease_token for the caller's run.
+ * @inputSpec
+ *   threadId: string (required) — the unique identifier for the thread.
+ *   userMessage: string (required) — the message from the user to the agent.
+ *   ctx: CoreContext (required) — the context for the current request.
+ *   leaseId: string (required) — the identifier for the lease holder.
+ *   threadData: any (optional) — optional data associated with the thread.
+ *   opts.driverPrefix: string (optional) — e.g. 'detached:' marks stealable background drivers.
+ *   opts.stealDetached: boolean (optional) — take over a live 'detached:' holder.
+ * @outputSpec  Promise<{ claimed: boolean; driver_id?: string; lease_token?: string }> — claimed + the resolved driver id and lease token; on refusal driver_id is the live holder.
+ * @sideEffects Writes episode_leases + threads.data.research_state + an intake 'plan' message.
+ * @stability   stable
+ * @calls       acquireEpisodeLease, mergeThreadData, saveMessage
+ * @cil-generated
+ */
+export async function claimAgentEpisode(
+  threadId: string,
+  userMessage: string,
+  ctx: CoreContext,
+  leaseId: string,
+  threadData?: any,
+  opts?: { driverPrefix?: string; stealDetached?: boolean }
+): Promise<{ claimed: boolean; driver_id?: string; lease_token?: string; already_done?: boolean }> {
+  // CIL[DOC-NOTE type="ordering" content="The human-owner gate runs BEFORE the lease claim and from a fresh threads read — never the caller's threadData snapshot, which a frozen caller may have fetched before the handoff. Order matters: checking after claim would write an episode lease + narrate on a human-owned thread."]
+  // Human-owner gate FIRST — before any lease or narration work, and always
+  // from a fresh read rather than the caller's threadData snapshot: a
+  // serverless invocation frozen between the caller's fetch and this claim
+  // resumes into a world that may already be human-owned (observed in prod:
+  // a frozen episode POST resumed after escalation, minted a second
+  // episode, re-searched, and re-escalated a thread waiting on a human).
+  const { data: ownerRow } = await adminDb
+    .from('threads')
+    .select('data')
+    .eq('id', threadId)
+    .single()
+  if (isHumanOwned(ownerRow?.data)) {
+    return { claimed: false, already_done: true }
+  }
+
+  // Atomic claim — the episode_leases row carries a heartbeat from
+  // this point on, so stale-episode detectors see a live driver through
+  // the whole kick prelude (rate limit, injection scan, config resolve)
+  // instead of declaring the episode dead at ~20s of silence.
+  const driverId = (opts?.driverPrefix || '') + leaseId
+  const claim = ctx.accountId
+    ? await acquireEpisodeLease(threadId, ctx.accountId, driverId, EPISODE_LEASE_TTL_SECONDS, opts?.stealDetached ?? false)
+    : null
+  if (claim?.outcome === 'held') {
+    return { claimed: false, driver_id: claim.holder_driver_id }
+  }
+
+  // Prefer the fresh owner-read over a caller-provided snapshot — it can
+  // only be newer, and state/agent fields live on the same column.
+  const data = ownerRow?.data || threadData || {}
+  const existingState = data?.research_state
+  const heartbeatAt = Date.parse(existingState?.driver_heartbeat_at || '')
+  const leaseHolder = existingState?.driver_id
+  const leaseLive =
+    !!leaseHolder &&
+    leaseHolder !== driverId &&
+    !!existingState?.status &&
+    !['complete', 'awaiting_input', 'failed'].includes(existingState.status) &&
+    Number.isFinite(heartbeatAt) &&
+    Date.now() - heartbeatAt < EPISODE_DRIVER_LEASE_MS
+
+  // claim === null means the RPC isn't deployed — fall back to the
+  // legacy non-atomic check so un-migrated projects keep working.
+  if (claim === null && leaseLive) {
+    return { claimed: false, driver_id: leaseHolder }
+  }
+  // A claimed DB lease wins over a stale research_state mirror: another
+  // caller can hold the JSON lease marker while the atomic lease is
+  // free (e.g. it crashed before stamping) — the RPC verdict is
+  // authoritative, this check only filters the legacy fallback above.
+
+  const leaseToken = claim?.lease_token
+
+  // Replay guard: a late claim carrying the question the episode already
+  // answered (queued kick claiming the just-released lease) must not
+  // stamp fresh state, narrate, or spawn a second episode — it releases
+  // and reports already_done so the caller returns the existing result.
+  if (await isAnsweredQuestionReplay(threadId, existingState, userMessage)) {
+    if (leaseToken) await releaseEpisodeLease(threadId, leaseToken)
+    return { claimed: false, already_done: true, driver_id: driverId }
+  }
+  const stampedState = {
+    status: 'planning',
+    turn_count: 0,
+    max_turns: 5,
+    gathered_results: [],
+    ...(existingState || {}),
+    driver_id: driverId,
+    driver_heartbeat_at: new Date().toISOString(),
+    // The intake narration below was written for this driver — the
+    // runAgent narration gate keys on driver_id so a same-driver rerun
+    // never double-narrates and a different driver narrates fresh.
+    intake_announced: true,
+  }
+  // Atomic merge — a whole-blob write here could clobber sibling keys a
+  // concurrent writer set between our read and update.
+  const merged = await mergeThreadData(threadId, { research_state: stampedState }, leaseToken)
+  if (merged === false) {
+    // Stolen between claim and stamp — the new owner drives now.
+    return { claimed: false }
+  }
+  if (merged === null) {
+    const { error: stampErr } = await adminDb
+      .from('threads')
+      .update({
+        data: {
+          ...(data || {}),
+          research_state: stampedState,
+        },
+      })
+      .eq('id', threadId)
+    if (stampErr) console.error(`claimAgentEpisode research_state stamp failed for ${threadId}:`, stampErr.message)
+  }
+
+  // Intake narration is written synchronously inside the request — the
+  // client sees progress within ~1s instead of waiting on a detached
+  // driver whose first message can take 30s+ under CPU throttling.
+  // Skipped when continuing an already-announced live episode (a steal
+  // takeover re-claims mid-episode — re-narrating would double the
+  // intake message). Failure is cosmetic: warn-only so narration never
+  // fails the claim.
+  const isContinuation = !!existingState
+    && !['complete', 'awaiting_input', 'failed'].includes(existingState.status)
+    && existingState.intake_announced === true
+  if (!isContinuation) {
+    try {
+      await saveMessage(threadId, 'Reviewing your question…', 'plan', {
+        turn_count: 0,
+        phase: 'intake',
+        agent_id: data?.agent_id || null,
+        prompt_config_id: data?.prompt_config_id || null
+      }, ctx, 'message', 'internal')
+    } catch (narrErr: any) {
+      console.warn(`[${ctx.requestId}] intake narration failed for thread ${threadId}:`, narrErr?.message)
+    }
+  }
+  return { claimed: true, driver_id: driverId, lease_token: leaseToken }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:claimAgentEpisode:function"]
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:kickAgentEpisode:function" type="function" identity="kickAgentEpisode" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
- * Initiates a new episode for an agent by updating the thread's state and running the agent with the provided user message. This function ensures that the agent is not already active before claiming the lease.
+ * Claims the episode and spawns a detached complete-mode driver — the
+ * fallback path for episodes with no live client (ticket-creation kicks,
+ * trigger-fired starts). The 'detached:' driver prefix lets a
+ * request-bound caller steal the lease instantly rather than waiting on
+ * CPU-throttled background work.
  *
- * @macro       Async function that manages agent episode initiation and state management.
- * @micro       Checks for an existing lease and updates the thread's state in the database if no active lease is found.
+ * @micro       claimAgentEpisode(driverPrefix 'detached:') then void runAgent(complete).
  * @inputSpec
  *   threadId: string (required) — the unique identifier for the thread.
  *   userMessage: string (required) — the message from the user to the agent.
@@ -5639,7 +6587,7 @@ const EPISODE_DRIVER_LEASE_MS = 60000
  * @outputSpec  Promise<{ claimed: boolean; driver_id?: string }> — indicates whether the episode was claimed and optionally the driver ID.
  * @sideEffects Writes to the database to update the thread's state and initiates an agent run.
  * @stability   stable
- * @calls       adminDb.from('threads'), adminDb.update, runAgent
+ * @calls       claimAgentEpisode, runAgent
  * @errorHandling logs errors from the agent run without throwing.
  * @cil-generated
  */
@@ -5649,51 +6597,22 @@ export async function kickAgentEpisode(
   ctx: CoreContext,
   leaseId: string,
   threadData?: any
-): Promise<{ claimed: boolean; driver_id?: string }> {
-  let data = threadData
-  if (data === undefined) {
-    const { data: row } = await adminDb
-      .from('threads')
-      .select('data')
-      .eq('id', threadId)
-      .single()
-    data = row?.data || {}
+): Promise<{ claimed: boolean; driver_id?: string; already_done?: boolean }> {
+  // 'detached:' marks the holder as spawned background work — a
+  // request-bound driver claiming with steal_detached takes the lease
+  // over immediately instead of waiting out a throttled driver, and the
+  // detached run is fenced off at its next heartbeat.
+  const claim = await claimAgentEpisode(threadId, userMessage, ctx, leaseId, threadData, { driverPrefix: 'detached:' })
+  if (!claim.claimed) {
+    return { claimed: false, driver_id: claim.driver_id, already_done: claim.already_done }
   }
-  const existingState = data?.research_state
-  const heartbeatAt = Date.parse(existingState?.driver_heartbeat_at || '')
-  const leaseHolder = existingState?.driver_id
-  const leaseLive =
-    !!leaseHolder &&
-    leaseHolder !== leaseId &&
-    !!existingState?.status &&
-    !['complete', 'awaiting_input', 'failed'].includes(existingState.status) &&
-    Number.isFinite(heartbeatAt) &&
-    Date.now() - heartbeatAt < EPISODE_DRIVER_LEASE_MS
 
-  if (leaseLive) return { claimed: false, driver_id: leaseHolder }
-
-  await adminDb
-    .from('threads')
-    .update({
-      data: {
-        ...(data || {}),
-        research_state: {
-          status: 'planning',
-          turn_count: 0,
-          max_turns: 5,
-          gathered_results: [],
-          ...(existingState || {}),
-          driver_id: leaseId,
-          driver_heartbeat_at: new Date().toISOString(),
-        },
-      },
-    })
-    .eq('id', threadId)
-
-  void runAgent(threadId, userMessage, ctx, 'complete', leaseId).catch(err =>
+  void runAgent(threadId, userMessage, ctx, 'complete', claim.driver_id, claim.lease_token).catch(err =>
     console.error(`[${ctx.requestId}] detached episode run failed for thread ${threadId}:`, err)
   )
-  return { claimed: true }
+  return { claimed: true, driver_id: claim.driver_id }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:kickAgentEpisode:function"]
+
+
 

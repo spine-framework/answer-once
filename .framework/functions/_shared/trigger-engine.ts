@@ -37,7 +37,6 @@
 import { CoreContext } from './middleware'
 import { adminDb } from './db'
 import { emitAudit } from './audit'
-import { runPipeline } from './pipeline-runner'
 // CIL[END stable_id="~/.framework/functions/_shared/trigger-engine.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='This module serves as the trigger engine for processing events within the system, coordinating various actions based on incoming triggers.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
@@ -203,43 +202,102 @@ interface Trigger {
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="This function checks for active triggers based on the specified event type and fires them if their conditions are met."]
-// CIL[DOC-RESPONSIBILITY responsibility="This function checks for active triggers based on the specified event type and fires them if their conditions are met. It exists to facilitate the execution of defined actions in response to specific events within the system."]
-// CIL[DOC-CONTEXT module="trigger-engine" layer="app-specific" related_files=".framework/functions/_shared/middleware,.framework/functions/_shared/db,.framework/functions/_shared/audit,.framework/functions/_shared/pipeline-runner"]
-// CIL[DOC-CONTRACT inputs="- eventType: EventType (required) — the type of event that triggers the action.\\n- entityType: string (required) — the type of entity associated with the event.\\n- entityId: string (required) — the unique identifier of the entity.\\n- entityData: any (required) — the data associated with the entity.\\n- ctx: CoreContext (required) — the context for the current operation." outputs="Promise<void>" errors="none" side_effects="Database writes to update trigger last triggered time and count, RPC calls to increment trigger count, and audit log emissions. dependencies="adminDb.from('triggers'), adminDb.from('types'), runPipeline, emitAudit, adminDb.from('triggers').update"]
-// CIL[DOC-MICRO logic_summary="This function checks for active triggers based on the specified event type and fires them if their conditions are met. It exists to facilitate the execution of defined actions in response to specific events within the system." notable_decisions="Logs errors to the console and emits audit logs for failures."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
+// CIL[DOC-MACRO purpose="Dispatch a trigger pipeline to the background pipeline-runner function, returning immediately without awaiting execution"]
+// CIL[DOC-RESPONSIBILITY responsibility="POST the payload to /.netlify/functions/pipeline-runner-background with the internal invoke secret so the pipeline runs in an isolated process with its own connection budget"]
+// CIL[DOC-CONTEXT module="trigger-engine" layer="shared-core" related_files=".framework/functions/pipeline-runner-background.ts"]
+// CIL[DOC-CONTRACT inputs="pipelineId, triggerData, ctx, opts { executionId, triggerId }" outputs="Promise<void>" errors="Logs dispatch failure to console; caller's queued execution row is left for the sweeper" side_effects="HTTP POST to internal function"]
+// CIL[DOC-MICRO logic_summary="Builds the dispatch URL from SITE_URL/URL env (falling back to localhost for netlify dev), sends X-Internal-Secret for machine auth, and awaits only the 202 ack bounded by a 5s AbortSignal timeout — the caller never waits for pipeline completion" notable_decisions="Does NOT await runPipeline — that was the connection-pool starvation bug; moving execution to a separate function invocation is the fix. The 5s timeout bounds the caller when Netlify's queue ack stalls; an aborted dispatch may still deliver server-side, and the pre-created 'queued' row is the sweeper's safety net either way"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 /**
- * This function checks for active triggers based on the specified event type and fires them if their conditions are met. It exists to facilitate the execution of defined actions in response to specific events within the system.
+ * POST a pipeline dispatch to the internal background function.
+ * Returns immediately; the pipeline runs in a separate process.
+ * Any dispatch failure leaves the pre-created execution row 'queued' —
+ * the sweeper in pipeline-runner.ts marks it 'failed' after 10 minutes.
+ */
+export async function dispatchTriggerPipeline(
+  pipelineId: string,
+  triggerData: any,
+  ctx: CoreContext,
+  opts: { executionId: string; triggerId: string }
+): Promise<void> {
+  const secret = (globalThis as any).process?.env?.INTERNAL_INVOKE_SECRET
+  if (!secret) {
+    console.error(`[${ctx.requestId}] INTERNAL_INVOKE_SECRET not set — cannot dispatch trigger pipeline ${pipelineId}`)
+    return
+  }
+
+  const siteUrl = (globalThis as any).process?.env?.SITE_URL ||
+                  (globalThis as any).process?.env?.URL ||
+                  'http://localhost:8888'
+  const url = `${siteUrl.replace(/\/$/, '')}/.netlify/functions/pipeline-runner-background`
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Internal-Secret': secret,
+      },
+      body: JSON.stringify({
+        pipeline_id: pipelineId,
+        trigger_data: triggerData,
+        account_id: ctx.accountId,
+        execution_id: opts.executionId,
+        trigger_id: opts.triggerId,
+      }),
+      // Bound the caller's wait: the background function normally answers
+      // 202 in well under a second, but a stuck connection (deploy rollout,
+      // slow Netlify queue ack) once held a caller for ~34s.  Aborting only
+      // releases this caller — if Netlify already received the POST the
+      // queued invocation still runs; if not, the pre-created 'queued'
+      // execution row is left for the sweeper.
+      signal: AbortSignal.timeout(5000),
+    })
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => `HTTP ${response.status}`)
+      console.error(`[${ctx.requestId}] trigger dispatch failed for pipeline ${pipelineId} (execution ${opts.executionId}): HTTP ${response.status} — ${errText}`)
+    }
+  } catch (err: any) {
+    const timedOut = err?.name === 'AbortError' || err?.name === 'TimeoutError'
+    console.error(`[${ctx.requestId}] trigger dispatch ${timedOut ? 'timed out after 5s' : 'error'} for pipeline ${pipelineId} (execution ${opts.executionId}):`, err.message || err)
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/trigger-engine.ts:dispatchtriggerpipeline:function"]
+
+
+// CIL[DOC-MACRO purpose="Check for active triggers matching the event type, pre-create a queued pipeline_executions row, and dispatch to the background function"]
+// CIL[DOC-RESPONSIBILITY responsibility="Evaluate trigger conditions, reserve a queued execution row, dispatch to pipeline-runner-background, record trigger fire, and emit audit — returns without waiting for pipeline completion"]
+// CIL[DOC-CONTEXT module="trigger-engine" layer="shared-core" related_files=".framework/functions/_shared/middleware,.framework/functions/_shared/db,.framework/functions/_shared/audit,.framework/functions/pipeline-runner-background.ts"]
+// CIL[DOC-CONTRACT inputs="eventType, entityType, entityId, entityData, ctx, previousEntityData? (pre-update record snapshot for transition checks)" outputs="Promise<void>" errors="Logs errors; emits trigger.failed audit" side_effects="Inserts pipeline_executions row (status: queued), RPC record_trigger_fire, emits trigger.fired audit"]
+// CIL[DOC-MICRO logic_summary="Queries active triggers for the event type, resolves type_slug when needed for trigger filters, evaluates each trigger's conditions, then for matches: INSERTs a queued pipeline_executions row so the execution ID exists before dispatch, calls dispatchTriggerPipeline (which returns immediately), records the trigger fire, and emits the trigger.fired audit with execution_status='queued'" notable_decisions="Pre-creating the execution row is the key to preserving execution_id in the audit trail without awaiting pipeline completion; 'queued' rows left orphaned are swept by the stale-execution reaper"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Check for active triggers matching the event type and dispatch each to the
+ * background pipeline-runner function.  Returns immediately — pipeline
+ * completion is tracked in pipeline_executions independently.
  *
  * @inputSpec
- *   - eventType: EventType (required) — the type of event that triggers the action.
- *   - entityType: string (required) — the type of entity associated with the event.
- *   - entityId: string (required) — the unique identifier of the entity.
- *   - entityData: any (required) — the data associated with the entity.
- *   - ctx: CoreContext (required) — the context for the current operation.
+ *   - eventType: EventType — the event that occurred.
+ *   - entityType: string — the entity type (plural runtime table name).
+ *   - entityId: string — the affected entity ID.
+ *   - entityData: any — the entity snapshot at the time of the event.
+ *   - ctx: CoreContext — request context (account scope, request ID, principal).
  * @outputSpec  Promise<void>
- * @sideEffects Database writes to update trigger last triggered time and count, RPC calls to increment trigger count, and audit log emissions.
+ * @sideEffects INSERTs pipeline_executions rows (status: queued),
+ *              RPC record_trigger_fire per matching trigger,
+ *              emits trigger.fired / trigger.failed audit events.
  * @stability   stable
- * @calls       adminDb.from('triggers'), adminDb.from('types'), runPipeline, emitAudit, adminDb.from('triggers').update
- * @errorHandling Logs errors to the console and emits audit logs for failures.
- * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/trigger-engine.ts:checkandfiretriggers:function" type="function" identity="checkAndFireTriggers" parent="~/.framework/functions/_shared/trigger-engine.ts"]
-// CIL[DOC-MACRO purpose="checkAndFireTriggers function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the checkAndFireTriggers function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/trigger-engine.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the checkAndFireTriggers function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export async function checkAndFireTriggers(
   eventType: EventType,
   entityType: string,
   entityId: string,
   entityData: any,
-  ctx: CoreContext
+  ctx: CoreContext,
+  previousEntityData?: any
 ): Promise<void> {
   const { data: triggers, error } = await adminDb
     .from('triggers')
@@ -270,9 +328,28 @@ export async function checkAndFireTriggers(
   for (const trigger of triggers) {
     try {
       const shouldFire = evaluateTriggerConditions(trigger, entityType, entityData)
-      
+
       if (!shouldFire) {
         continue
+      }
+
+      // Transition-only triggers (config.fire_on_transition): fire only when
+      // the record moves INTO the matching state.  Without this, every
+      // update to an already-matching record re-fires the pipeline — e.g.
+      // each write to a published KB article re-dispatched auto_embed (3×
+      // per publish) and revoke fired on articles that never left
+      // 'published'.  When no previous snapshot is available the trigger
+      // fires normally (conservative: matches pre-flag behavior).
+      if (trigger.config?.fire_on_transition && previousEntityData) {
+        const prevEntityData = {
+          ...previousEntityData,
+          // Same record → same type; the slug was resolved on the new
+          // snapshot only, so carry it over for config.type_slug checks.
+          type_slug: previousEntityData.type_slug ?? entityData?.type_slug
+        }
+        if (evaluateTriggerConditions(trigger, entityType, prevEntityData)) {
+          continue
+        }
       }
 
       const triggerData = {
@@ -290,15 +367,46 @@ export async function checkAndFireTriggers(
         fired_at: new Date().toISOString()
       }
 
-      const result = await runPipeline(trigger.pipeline_id, triggerData, ctx)
-
-      await adminDb
-        .from('triggers')
-        .update({
-          last_triggered: new Date().toISOString(),
-          trigger_count: adminDb.rpc('increment_trigger_count', { p_trigger_id: trigger.id })
+      // Reserve the execution row before dispatch so the audit trail has a
+      // stable execution_id even though the pipeline has not started yet.
+      // The background function claims this row (queued → running) via
+      // runPipeline's opts.executionId parameter.  If dispatch fails, this
+      // row stays 'queued' and the sweeper marks it 'failed' after 10 min.
+      const { data: execRow } = await adminDb
+        .from('pipeline_executions')
+        .insert({
+          pipeline_id: trigger.pipeline_id,
+          status: 'queued',
+          trigger_data: triggerData,
+          account_id: ctx.accountId,
+          // Same guard as runPipeline's own insert: created_by is uuid-typed,
+          // non-UUID principals (machine ids like 'system', 'timer:*') → null.
+          created_by: ctx.principal?.id &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ctx.principal.id)
+            ? ctx.principal.id : null,
+          started_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
-        .eq('id', trigger.id)
+        .select('id')
+        .single()
+
+      const executionId = execRow?.id ?? crypto.randomUUID()
+
+      await dispatchTriggerPipeline(trigger.pipeline_id, triggerData, ctx, {
+        executionId,
+        triggerId: trigger.id,
+      })
+
+      // Atomic bookkeeping: the previous update embedded an
+      // adminDb.rpc() Promise as a column value, so the whole write
+      // failed silently — trigger_count stayed 0 and last_triggered
+      // stayed null on every fire.
+      const { error: fireError } = await adminDb.rpc('record_trigger_fire', {
+        p_trigger_id: trigger.id
+      })
+      if (fireError) {
+        console.error(`[${ctx.requestId}] record_trigger_fire failed for ${trigger.id}:`, fireError.message)
+      }
 
       await emitAudit(ctx, 'trigger.fired', {
         type: 'trigger',
@@ -309,13 +417,13 @@ export async function checkAndFireTriggers(
         entity_type: entityType,
         entity_id: entityId,
         pipeline_id: trigger.pipeline_id,
-        execution_id: result.executionId,
-        execution_status: result.status
+        execution_id: executionId,
+        execution_status: 'queued'
       })
 
     } catch (error: any) {
       console.error(`[${ctx.requestId}] Trigger ${trigger.id} failed:`, error)
-      
+
       await emitAudit(ctx, 'trigger.failed', {
         type: 'trigger',
         id: trigger.id,
@@ -602,10 +710,11 @@ export async function fireUpdateTriggers(
   entityType: string,
   entityId: string,
   entityData: any,
-  ctx: CoreContext
+  ctx: CoreContext,
+  previousEntityData?: any
 ): Promise<void> {
   const eventType = `${eventNameFor(entityType)}_updated` as EventType
-  await checkAndFireTriggers(eventType, entityType, entityId, entityData, ctx)
+  await checkAndFireTriggers(eventType, entityType, entityId, entityData, ctx, previousEntityData)
 }
 // CIL[END stable_id="~/.framework/functions/_shared/trigger-engine.ts:fireupdatetriggers:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Triggers an update event for a specified entity type and ID, allowing for associated actions to be executed.'; No verified external callers" status="ready"]

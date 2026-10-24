@@ -262,6 +262,47 @@ interface PipelineStage {
  * @errorHandling Handles errors at each stage and decides whether to continue based on stage configuration.
  * @cil-generated
  */
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function" type="function" identity="persistExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
+/**
+ * Writes the terminal status of a pipeline execution. The update result
+ * is checked and retried once — an unchecked failure is what previously
+ * left rows stuck 'running' forever while the audit span still claimed
+ * 'pipeline.completed'. A retry failure is logged loudly so the row can
+ * be found and reconciled.
+ *
+ * @inputSpec
+ *   ctx: CoreContext (required) — context for request-id logging.
+ *   executionId: string (required) — the pipeline_executions row to update.
+ *   patch: Record<string, any> (required) — terminal status payload.
+ * @outputSpec  Promise<void>
+ * @sideEffects Updates public.pipeline_executions; logs on failure.
+ * @stability   stable
+ * @calls       adminDb.from('pipeline_executions').update
+ * @cil-generated
+ */
+async function persistExecutionResult(
+  ctx: CoreContext,
+  executionId: string,
+  patch: Record<string, any>
+): Promise<void> {
+  let { error } = await adminDb
+    .from('pipeline_executions')
+    .update(patch)
+    .eq('id', executionId)
+  if (error) {
+    console.error(`[${ctx.requestId}] pipeline_executions final update failed for ${executionId}: ${error.message} — retrying`)
+    const retry = await adminDb
+      .from('pipeline_executions')
+      .update(patch)
+      .eq('id', executionId)
+    error = retry.error
+    if (error) {
+      console.error(`[${ctx.requestId}] pipeline_executions final update retry failed for ${executionId}: ${error.message}`)
+    }
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function"]
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:runpipeline:function" type="function" identity="runPipeline" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="runPipeline function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the runPipeline function."]
@@ -270,13 +311,39 @@ interface PipelineStage {
 // CIL[DOC-MICRO logic_summary="Implements the runPipeline function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// An execution row whose runner died mid-flight (detached process killed,
+// function timeout) can never write its own terminal status — it wedges
+// 'running' forever. Sweep rows that have not been touched within the
+// staleness window whenever a new pipeline run starts. Fire-and-forget:
+// the sweep is bookkeeping, never on the critical path, and a failed
+// sweep retries on the next run.
+const STALE_EXECUTION_MS = 10 * 60 * 1000
+
+export async function sweepStaleExecutions(): Promise<void> {
+  const cutoff = new Date(Date.now() - STALE_EXECUTION_MS).toISOString()
+  const { error } = await adminDb
+    .from('pipeline_executions')
+    .update({
+      status: 'failed',
+      error_message: 'stale execution: runner died before terminal write (swept)',
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .in('status', ['running', 'pending', 'queued'])
+    .lt('updated_at', cutoff)
+  if (error) console.warn('pipeline_executions stale sweep failed:', error.message)
+}
+
 export async function runPipeline(
   pipelineId: string,
   triggerData: any,
-  ctx: CoreContext
+  ctx: CoreContext,
+  opts?: { executionId?: string }
 ): Promise<ExecutionResult> {
   return withSpan(ctx, 'pipeline.run', async (ctx) => {
   const startTime = Date.now()
+
+  void sweepStaleExecutions().catch(() => {})
 
   const { data: pipeline, error: pipelineError } = await adminDb
     .from('pipelines')
@@ -289,24 +356,76 @@ export async function runPipeline(
     throw new Error(`Pipeline not found or inactive: ${pipelineId}`)
   }
 
-  const { data: execution, error: execError } = await adminDb
-    .from('pipeline_executions')
-    .insert({
-      pipeline_id: pipelineId,
-      status: 'running',
-      trigger_data: triggerData || {},
-      account_id: ctx.accountId,
-      created_by: isUuid(ctx.principal?.id) ? ctx.principal?.id : null,
-      started_at: new Date().toISOString()
-    })
-    .select()
-    .single()
+  // When a pre-created execution ID is supplied (dispatched trigger
+  // pipelines), claim that row — transitioning queued → running — rather
+  // than inserting a duplicate. The row was created by checkAndFireTriggers
+  // with status='queued' immediately before dispatch.
+  let executionId: string
+  if (opts?.executionId) {
+    const { data: claimed, error: claimError } = await adminDb
+      .from('pipeline_executions')
+      .update({
+        status: 'running',
+        trigger_data: triggerData || {},
+        started_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', opts.executionId)
+      .eq('status', 'queued')
+      .select('id')
 
-  if (execError || !execution) {
-    throw new Error(`Failed to create execution: ${execError?.message}`)
+    if (claimError) {
+      throw new Error(`Failed to claim queued execution ${opts.executionId}: ${claimError.message}`)
+    }
+    if (claimed && claimed.length > 0) {
+      executionId = opts.executionId
+    } else {
+      // Claimed nothing — either the queued insert never landed (caller's
+      // fallback UUID) or a duplicate/swept dispatch arrived. Try inserting
+      // the row ourselves with the same ID: succeeds only when the row is
+      // genuinely absent, so duplicate deliveries die on the PK conflict
+      // instead of running the pipeline twice.
+      const { data: execution, error: execError } = await adminDb
+        .from('pipeline_executions')
+        .insert({
+          id: opts.executionId,
+          pipeline_id: pipelineId,
+          status: 'running',
+          trigger_data: triggerData || {},
+          account_id: ctx.accountId,
+          created_by: isUuid(ctx.principal?.id) ? ctx.principal?.id : null,
+          started_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+      if (execError || !execution) {
+        throw new Error(`Failed to create execution: ${execError?.message}`)
+      }
+      executionId = execution.id
+    }
+  } else {
+    const { data: execution, error: execError } = await adminDb
+      .from('pipeline_executions')
+      .insert({
+        pipeline_id: pipelineId,
+        status: 'running',
+        trigger_data: triggerData || {},
+        account_id: ctx.accountId,
+        created_by: isUuid(ctx.principal?.id) ? ctx.principal?.id : null,
+        started_at: new Date().toISOString(),
+        // Seed updated_at so the stale-execution sweep has a baseline from
+        // t=0 — the row is 'running' the moment it exists.
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (execError || !execution) {
+      throw new Error(`Failed to create execution: ${execError?.message}`)
+    }
+    executionId = execution.id
   }
-
-  const executionId = execution.id
   const stageResults: StageResult[] = []
   const stages: PipelineStage[] = pipeline.stages || []
 
@@ -365,15 +484,12 @@ export async function runPipeline(
 
     const durationMs = Date.now() - startTime
     
-    await adminDb
-      .from('pipeline_executions')
-      .update({
-        status: 'completed',
-        result: { stages: stageResults },
-        completed_at: new Date().toISOString(),
-        duration_ms: durationMs
-      })
-      .eq('id', executionId)
+    await persistExecutionResult(ctx, executionId, {
+      status: 'completed',
+      result: { stages: stageResults },
+      completed_at: new Date().toISOString(),
+      duration_ms: durationMs
+    })
 
     await emitAudit(ctx, 'pipeline.completed', {
       type: 'pipeline_execution',
@@ -402,16 +518,13 @@ export async function runPipeline(
   } catch (error: any) {
     const durationMs = Date.now() - startTime
     
-    await adminDb
-      .from('pipeline_executions')
-      .update({
-        status: 'failed',
-        result: { stages: stageResults },
-        error_message: error.message,
-        completed_at: new Date().toISOString(),
-        duration_ms: durationMs
-      })
-      .eq('id', executionId)
+    await persistExecutionResult(ctx, executionId, {
+      status: 'failed',
+      result: { stages: stageResults },
+      error_message: error.message,
+      completed_at: new Date().toISOString(),
+      duration_ms: durationMs
+    })
 
     await emitAudit(ctx, 'pipeline.failed', {
       type: 'pipeline_execution',

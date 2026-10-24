@@ -218,6 +218,43 @@ function getFieldValue(record: any, field: string): string {
   }
   return ''
 }
+
+const UUID_TOKEN_RE = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi
+const HTML_TAG_RE = /<[^>]*>/g
+const HTML_LOOKS_LIKE_RE = /<\/?[a-z][^>]*>/i
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/kb.ts:getembeddablefieldvalue:function" type="function" identity="getEmbeddableFieldValue" parent="~/.framework/functions/_shared/kb.ts"]
+// CIL[DOC-MACRO purpose="Normalize a record field into embeddable plain text — strips rich-text HTML and bare UUID tokens"]
+// CIL[DOC-RESPONSIBILITY responsibility="Produce the exact text that feeds both the content-hash lease and the embedder so neither markup nor identifier-only chunks enter the corpus"]
+// CIL[DOC-CONTEXT module="functions/_shared" layer="kb" related_files=".framework/functions/_shared/kb.ts"]
+// CIL[DOC-CONTRACT inputs="record: any, field: string, designSchema: any" outputs="string — normalized text, '' when nothing embeddable remains" errors="[]" side_effects="[]"]
+// CIL[DOC-MICRO logic_summary="rich_text fields (or any value containing tags) run through an HTML-to-text pass; every field then drops bare UUID tokens — reference-id arrays like tag item ids collapse to empty and are skipped" notable_decisions="applied uniformly to all vector fields so the content hash dedupes on the same text the embedder sees"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
+// CIL[DOC-STABILITY stability="internal"]
+function getEmbeddableFieldValue(record: any, field: string, designSchema: any): string {
+  let text = getFieldValue(record, field)
+  if (!text) return ''
+  const dataType = designSchema?.fields?.[field]?.data_type
+  if (dataType === 'rich_text' || HTML_LOOKS_LIKE_RE.test(text)) {
+    text = text
+      .replace(/<\/(p|div|h[1-6]|li|ul|ol|section|article|header|footer|blockquote|tr|table)>/gi, '\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<li[^>]*>/gi, '\n- ')
+      .replace(HTML_TAG_RE, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#0?39;|&apos;/g, "'")
+  }
+  return text
+    .replace(UUID_TOKEN_RE, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+// CIL[END stable_id="~/.framework/functions/_shared/kb.ts:getembeddablefieldvalue:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Retrieves a flattened string value from a record or its data object.'; No verified external callers; imports: .framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -596,7 +633,7 @@ async function clearEmbeddingsForItem(documentId: string): Promise<number> {
 // CIL[DOC-RESPONSIBILITY responsibility="Processes a published KB item, chunks vector fields, and persists embeddings under a content-hash document lease."]
 // CIL[DOC-CONTEXT module="functions/_shared" layer="kb" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/kb.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/migrations/054_kb_ingest_lease.sql"]
 // CIL[DOC-CONTRACT inputs="ctx: CoreContext, body with id: string and optional account_id" outputs="ok: boolean; message: string; count?: number; in_progress?: boolean" errors="id is required; record not found; database errors" side_effects="revokes previous embeddings; inserts rows into embeddings table; acquires/releases a document_leases row; archives+revokes superseded documents"]
-// CIL[DOC-MICRO logic_summary="Fetches the item, validates status, hashes the declared vector-field values, acquires a document lease ('reused' skips unchanged work, 'processing' reports another worker owns it), then inside try/finally clears stale embeddings, batches chunks into one embeddings call, inserts, and runs supersede_keys-driven supersession before releasing the lease token." notable_decisions="Revokes existing embeddings via clearEmbeddingsForItem (not kbRevoke — that would delete the caller's own lease); supersession is driven by functionality.kb.supersede_keys declared data fields instead of a hardcoded type-slug gate; a fenced release (token mismatch) warns without throwing — the work was written but ownership was lost to a superseding acquire."]
+// CIL[DOC-MICRO logic_summary="Fetches the item, validates status, hashes the normalized vector-field values (rich_text HTML stripped, bare UUID tokens dropped), acquires a document lease ('reused' skips unchanged work, 'processing' reports another worker owns it), then inside try/finally clears stale embeddings, batches chunks into one embeddings call, inserts, and runs supersede_keys-driven supersession before releasing the lease token." notable_decisions="Revokes existing embeddings via clearEmbeddingsForItem (not kbRevoke — that would delete the caller's own lease); supersession is driven by functionality.kb.supersede_keys declared data fields instead of a hardcoded type-slug gate; a fenced release (token mismatch) warns without throwing — the work was written but ownership was lost to a superseding acquire."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="internal"]
 // CIL[DOC-NOTE type="contract" content="Lease outcomes: 'reused' returns a live-embeddings count so callers may stamp freshness; 'processing' returns in_progress:true with NO success marker — callers that stamp embedding state must not stamp success or failure for it, the owning worker's completion reconciles the corpus."]
@@ -660,11 +697,12 @@ export async function kbIngest(ctx: CoreContext, body: { id: string; account_id?
   const securityLevel = resolveSecurityLevel(designSchema)
 
   // Content-hash lease (document_leases, migration 054): sha256 over the
-  // declared vector-field values in order — the same text that feeds the
-  // embedder. The lease dedupes unchanged re-embeds and fences concurrent
-  // workers (publish trigger + detached ingest both arrive here).
+  // declared vector-field values in order — the same NORMALIZED text that
+  // feeds the embedder (HTML stripped, bare UUIDs dropped). The lease
+  // dedupes unchanged re-embeds and fences concurrent workers (publish
+  // trigger + detached ingest both arrive here).
   const contentHash = createHash('sha256')
-    .update(vectorFields.map((field: string) => getFieldValue(record, field)).join('\n'))
+    .update(vectorFields.map((field: string) => getEmbeddableFieldValue(record, field, designSchema)).join('\n'))
     .digest('hex')
 
   const { data: lease, error: leaseError } = await adminDb.rpc('acquire_document_lease', {
@@ -703,7 +741,7 @@ export async function kbIngest(ctx: CoreContext, body: { id: string; account_id?
 
     const toEmbed: Array<{ field: string; chunk: string }> = []
     for (const field of vectorFields) {
-      const raw = getFieldValue(record, field)
+      const raw = getEmbeddableFieldValue(record, field, designSchema)
       if (!raw.trim()) continue
 
       const isChunked = field === chunkField && raw.length > chunkSize
@@ -837,9 +875,25 @@ export async function kbIngest(ctx: CoreContext, body: { id: string; account_id?
  * @calls       clearEmbeddingsForItem, adminDb.from('document_leases').delete()
  * @cil-generated
  */
-export async function kbRevoke(ctx: CoreContext, body: { id: string }): Promise<{ ok: boolean; message: string; count?: number }> {
+export async function kbRevoke(ctx: CoreContext, body: { id: string }): Promise<{ ok: boolean; message: string; count?: number; skipped?: boolean }> {
   const { id } = body
   if (!id) throw new Error('id is required')
+
+  // Execution-time fence: a revoke queued by an intermediate
+  // item_updated event (e.g. auto_revoke_on_unpublish fired while a
+  // publish pipeline was mid-flight) executes long after the trigger
+  // condition was true. Re-check the document's CURRENT status — if it
+  // is published now, its embeddings are fresh and must be kept.
+  // Trigger-time evaluation is always stale by the time work runs.
+  const { data: doc } = await adminDb
+    .from('items')
+    .select('status, data')
+    .eq('id', id)
+    .maybeSingle()
+  const docStatus = doc?.status ?? doc?.data?.status
+  if (doc && docStatus === 'published') {
+    return { ok: true, skipped: true, message: 'document is published — embeddings retained', count: 0 }
+  }
 
   const count = await clearEmbeddingsForItem(id)
 

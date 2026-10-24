@@ -192,7 +192,8 @@ export function computeContentHash(raw: string): string {
            !trimmed.match(/^\/\*\*?\s*CIL\[DOC-/) &&
            !trimmed.match(/^<!--\s*CIL\[(BEGIN|END)/) &&
            !trimmed.match(/^<!--\s*CIL\[DOC-/) &&
-           !trimmed.match(/^#\s*CIL\[(BEGIN|END|DOC-)/)
+           !trimmed.match(/^#\s*CIL\[(BEGIN|END|DOC-)/) &&
+           !trimmed.match(/^--\s*CIL\[(BEGIN|END|DOC-)/)
   })
   const collapsed: string[] = []
   let lastBlank = false

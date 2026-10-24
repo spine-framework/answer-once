@@ -16,12 +16,15 @@ export const turnstileEnabled = !!SITE_KEY
 export function TurnstileWidget({ onToken }: { onToken: (token: string | null) => void }) {
   if (!SITE_KEY) return null
   return (
-    <Turnstile
-      siteKey={SITE_KEY}
-      onSuccess={onToken}
-      onExpire={() => onToken(null)}
-      onError={() => onToken(null)}
-    />
+    <div className="flex justify-center">
+      <Turnstile
+        siteKey={SITE_KEY}
+        options={{ theme: 'light' }}
+        onSuccess={onToken}
+        onExpire={() => onToken(null)}
+        onError={() => onToken(null)}
+      />
+    </div>
   )
 }
 // CIL[END stable_id="~/.framework/src/components/auth/TurnstileWidget.tsx:module_header:module_header"]

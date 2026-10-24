@@ -135,4 +135,19 @@ describe('resolvePrincipal human cache — mid-registration guard', () => {
     expect(mockPeopleSingle).toHaveBeenCalledTimes(1)
   })
 })
+
+describe('internal invoke secret', () => {
+  it('resolves a bare x-internal-secret to the system principal', async () => {
+    vi.stubEnv('INTERNAL_INVOKE_SECRET', 'test-secret')
+    const p = await resolvePrincipal({ headers: { 'x-internal-secret': 'test-secret' } })
+    expect(p.id).toBe('system')
+    expect(p.machineType).toBe('internal')
+  })
+
+  it('does not trust a wrong secret', async () => {
+    vi.stubEnv('INTERNAL_INVOKE_SECRET', 'test-secret')
+    const p = await resolvePrincipal({ headers: { 'x-internal-secret': 'wrong' } })
+    expect(p.id).toBe('anonymous')
+  })
+})
 // CIL[END stable_id="~/.framework/tests/unit/principal-cache.test.ts:module_header:module_header"]

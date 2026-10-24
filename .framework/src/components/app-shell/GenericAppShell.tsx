@@ -12,6 +12,7 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import { AppRecord } from '../../hooks/useApps'
 import { GenericListPage } from './GenericListPage'
 import { GenericDetailPage } from './GenericDetailPage'
+import { useBranding } from '../../hooks/useBranding'
 // CIL[DOC-VECTOR type="context" content="purpose='Module imports and re-exports for the GenericAppShell component'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -76,6 +77,7 @@ export function GenericAppShell({ app }: GenericAppShellProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const branding = useBranding()
 
   const navItems: NavItem[] = (app.nav_items || []) as NavItem[]
 
@@ -98,7 +100,7 @@ export function GenericAppShell({ app }: GenericAppShellProps) {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center gap-3 h-16 px-6 border-b border-slate-200">
-          <img src="/spine-logo.svg" alt="Spine Framework" className="h-8 w-auto shrink-0" />
+          <img src={branding.logo_url} alt={branding.app_name} className="h-8 w-auto shrink-0" />
           <div>
             <h2 className="font-semibold text-slate-900 text-sm">{app.name}</h2>
             {app.description && (

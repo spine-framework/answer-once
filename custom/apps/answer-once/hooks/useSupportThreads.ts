@@ -7,6 +7,7 @@
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[DOC-LEARNING topic="human_owner_gate" content="App-side of the framework human/agent gate (agent-runner isHumanOwned): a human posting on the customer thread stamps threads.data.owner='human' via admin-data PATCH. Core never reads AO item statuses — apps own the translation from domain state to the framework owner signal."]
 import { useState, useEffect, useCallback } from 'react'
 import { apiFetch } from '@core/lib/api'
 import { TicketMessage, TicketThread } from './useTicketThread'
@@ -124,6 +125,18 @@ export function useSupportThreads(ticketId: string | null) {
 
     if (visibility === 'external') {
       setExternalMessages((prev) => [...prev, msg])
+      // A human posting on the customer thread takes ownership of it —
+      // stamp the framework's thread-owner gate (thread.data.owner) so no
+      // agent episode can claim, narrate, or step this conversation while
+      // a person is working it. Re-read before merge so a live episode's
+      // research_state checkpoint isn't clobbered.
+      const fresh = await fetchJSON(`/api/admin-data?entity=threads&id=${targetThread.id}`).catch(() => null)
+      if (fresh) {
+        await fetchJSON(`/api/admin-data?action=update&entity=threads&id=${targetThread.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ data: { ...(fresh.data || {}), owner: 'human' } }),
+        }).catch(() => {})
+      }
     } else {
       setInternalMessages((prev) => [...prev, msg])
     }

@@ -13,6 +13,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { TurnstileWidget, turnstileEnabled } from '../../components/auth/TurnstileWidget'
+import { useBranding } from '../../hooks/useBranding'
 
 // CIL[DOC-VECTOR type="context" content="purpose='Module header for the LoginPage component: imports, dependencies, and module-level context.'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -37,6 +38,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   
   const { login } = useAuth()
+  const branding = useBranding()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,10 +76,10 @@ export function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex items-center justify-center">
-            <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+            <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-            Sign in to Spine
+            Sign in to {branding.app_name}
           </h2>
           <p className="mt-2 text-center text-sm text-slate-600">
             Or{' '}

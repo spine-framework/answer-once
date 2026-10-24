@@ -1,6 +1,6 @@
 {
   "name": "answer-once",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Answer Once — standalone Spine Framework app (frozen framework snapshot)",
@@ -18,8 +18,7 @@
     "typecheck": "tsc -b config/tsconfig.json",
     "typecheck:functions": "tsc --noEmit -p config/tsconfig.functions.json",
     "test": "vitest run",
-    "spine-framework": "tsx .framework/cli/index.ts",
-    "upgrade": "spine-framework upgrade"
+    "spine-framework": "tsx .framework/cli/index.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -41,7 +40,6 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
-    "@spine-framework/answer-once": "0.2.5",
     "@supabase/supabase-js": "^2.49.1",
     "@tanstack/react-query": "^5.95.2",
     "@tiptap/extension-code-block-lowlight": "^3.20.0",
@@ -61,6 +59,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "commander": "^12.0.0",
     "dagre": "^0.8.5",
     "date-fns": "^4.1.0",
     "dompurify": "^3.4.13",
@@ -94,7 +93,6 @@
     "remark-gfm": "^4.0.1",
     "shadcn": "^4.7.0",
     "sonner": "^2.0.7",
-    "spine-framework": "0.4.3",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
     "tiptap-markdown": "^0.9.0",
@@ -102,8 +100,7 @@
     "tw-animate-css": "^1.4.0",
     "typescript": "~5.6.2",
     "vaul": "^1.1.2",
-    "ws": "^8.18.0",
-    "commander": "^12.0.0"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -117,13 +114,11 @@
     "@vitejs/plugin-react": "^4.3.4",
     "ajv": "^8.12.0",
     "autoprefixer": "^10.4.20",
-    "commander": "^12.0.0",
     "js-yaml": "^4.1.0",
     "netlify-cli": "27.8.0",
     "postcss": "^8.5.1",
     "react-refresh": "^0.14.0",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.21.0",
     "typedoc": "^0.27.0",
     "vite": "^6.0.11",
     "vitest": "^2.1.9"

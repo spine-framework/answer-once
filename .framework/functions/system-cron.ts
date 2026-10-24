@@ -10,7 +10,7 @@
 import { createHandler, RequestContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitAudit } from './_shared/audit'
-import { runPipeline } from './_shared/pipeline-runner'
+import { runPipeline, sweepStaleExecutions } from './_shared/pipeline-runner'
 import { retryPendingDeliveries } from './_shared/retry-deliveries'
 // CIL[DOC-VECTOR type="context" content="purpose='Imports shared middleware, database, audit, pipeline and retry helpers for the system-cron Netlify function.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -77,6 +77,15 @@ export const handler = createHandler(async (ctx: RequestContext) => {
     durationMs: number
   }> = []
   
+  // Reap executions whose runner died mid-flight (detached process killed,
+  // function timeout, dispatched trigger never started). Runs every minute
+  // regardless of whether schedules/timers are due this tick.
+  try {
+    await sweepStaleExecutions()
+  } catch (sweepError) {
+    console.warn('[system-cron] stale-execution sweep failed:', sweepError)
+  }
+
   try {
     const { data: dueSchedules, error: schedulesError } = await adminDb.rpc('get_due_schedules', {
       p_now: new Date().toISOString()

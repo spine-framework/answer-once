@@ -230,6 +230,11 @@ export function useAgentSteps() {
       let userMessage = firstMessage
       let last: any = null
       let deadSteps = 0
+      // One lease identity for the whole step loop — the atomic episode
+      // lease keys on driver_id, so steps that each presented a fresh
+      // requestId would be refused ('running') once the first nonterminal
+      // step claimed the lease.
+      const driverToken = crypto.randomUUID()
       for (let i = 0; i < maxSteps; i++) {
         const msgs = await fetchThreadMessages(threadId).catch(() => null)
         // Transient read failure — retry next iteration. Stepping on stale or
@@ -274,6 +279,12 @@ export function useAgentSteps() {
           await new Promise((r) => setTimeout(r, 1500))
           continue
         }
+        // Human-owner gate (client mirror): the framework refuses episode
+        // claims on a human-owned thread — stop driving it the same way.
+        if (threadRow?.data?.owner === 'human' || threadRow?.data?.escalation_status === 'pending') {
+          last = { status: 'complete' }
+          break
+        }
         const rs = threadRow?.data?.research_state
         const leaseFresh =
           !!rs?.driver_id &&
@@ -299,7 +310,7 @@ export function useAgentSteps() {
         try {
           last = await fetchJSON('/api/ai-agents?action=run', {
             method: 'POST',
-            body: JSON.stringify({ thread_id: threadId, user_message: userMessage, mode: 'step' }),
+            body: JSON.stringify({ thread_id: threadId, user_message: userMessage, mode: 'step', driver_token: driverToken }),
           })
           deadSteps = 0
         } catch (stepErr) {

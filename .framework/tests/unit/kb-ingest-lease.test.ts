@@ -93,6 +93,13 @@ function resolveQuery(q: QueryLog, opts: any): any {
   if (q.table === 'items') {
     if (has('update')) return { data: null, error: null }
     if (has('or')) return { data: opts.staleItems ?? [], error: null }
+    // Per-id point reads: a superseded doc has already been archived by
+    // the time kbRevoke's execution-time status fence re-reads it.
+    const idEq = q.ops.find(([n, a]) => n === 'eq' && a?.[0] === 'id')?.[1]?.[1]
+    if (idEq && idEq !== ITEM_ID) {
+      const stale = (opts.staleItems ?? []).find((s: any) => s.id === idEq)
+      if (stale) return { data: { ...stale, status: 'archived' }, error: null }
+    }
     return { data: opts.record ?? null, error: null }
   }
   if (q.table === 'types') {
@@ -271,6 +278,18 @@ describe('kbRevoke — lease clearing', () => {
     expect(embDelete.ops.find(([n]) => n === 'eq')?.[1]).toEqual(['document_id', ITEM_ID])
     const [leaseDelete] = queriesWithOp(queries, 'document_leases', 'delete')
     expect(leaseDelete.ops.find(([n]) => n === 'eq')?.[1]).toEqual(['document_id', ITEM_ID])
+  })
+
+  it('skips revocation when the document is currently published — stale queued work fence', async () => {
+    const queries = setupDb({ record: makeRecord({ status: 'published' }) })
+    const rpcCalls = setupRpc({})
+
+    const res = await kbRevoke(ctx, { id: ITEM_ID })
+
+    expect(res).toMatchObject({ ok: true, skipped: true, count: 0 })
+    expect(rpcNamed(rpcCalls, 'revoke_embeddings_for_item')).toHaveLength(0)
+    expect(queriesWithOp(queries, 'embeddings', 'delete')).toHaveLength(0)
+    expect(queriesWithOp(queries, 'document_leases', 'delete')).toHaveLength(0)
   })
 
   it('non-published ingest routes through kbRevoke and clears the lease', async () => {

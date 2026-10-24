@@ -56,6 +56,11 @@
 [functions."kb"]
   timeout = 120
 
+# Dispatched trigger pipelines run as Netlify background functions (-background
+# suffix): the dispatcher gets a 202 immediately and each pipeline gets its own
+# 15-minute invocation budget in an isolated process with its own DB pool.
+# No timeout entry — background functions always get the fixed 15-minute budget.
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

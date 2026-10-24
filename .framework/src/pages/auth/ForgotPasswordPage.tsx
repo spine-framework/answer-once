@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { TurnstileWidget, turnstileEnabled } from '../../components/auth/TurnstileWidget'
+import { useBranding } from '../../hooks/useBranding'
 
 // CIL[DOC-VECTOR type="context" content="purpose='Provides imports and entry-point metadata for the ForgotPasswordPage component.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -36,6 +37,7 @@ export function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const branding = useBranding()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,7 +93,7 @@ export function ForgotPasswordPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex items-center justify-center">
-            <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+            <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
             Reset your password

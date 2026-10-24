@@ -16,6 +16,7 @@ import { create, update } from './admin-data'
 import { checkRateLimit } from './_shared/rate-limit'
 import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_shared/security'
 import { kickAgentEpisode } from './_shared/agent-runner'
+import { insertMessageSequenced } from './_shared/message-sequence'
 import { createHash } from 'crypto'
 // CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:module_header:module_header"]
 
@@ -162,6 +163,9 @@ async function createTicket(ctx: any, body: any) {
     data: {
       agent_id: ids.triageAgentId,
       prompt_config_id: ids.triagePromptId,
+      // Injection-escalated tickets are human-owned from creation — the AI
+      // never kicks on them, and the owner gate keeps it that way.
+      ...(injectionEscalated ? { owner: 'human' } : {}),
     },
   })
   if (!thread?.id) throw new Error('Failed to create thread')
@@ -355,20 +359,18 @@ async function finalizeTicket(ctx: any, body: any) {
       .eq('data->>escalation_notice', 'true')
       .limit(1)
     if (!existingAck?.length) {
-      const { count } = await adminDb
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .eq('thread_id', thread_id)
-      await create(ctx, {
-        entity: 'messages',
-        type_id: ids.message,
-        thread_id,
-        content: "I've passed this to our support team — a person will follow up in this conversation shortly.",
-        direction: 'outbound',
-        sequence: (count ?? 0) + 1,
-        visibility: 'external',
-        data: { message_type: 'escalation', escalation_notice: true },
-      })
+      await insertMessageSequenced(thread_id, sequence =>
+        create(ctx, {
+          entity: 'messages',
+          type_id: ids.message,
+          thread_id,
+          content: "I've passed this to our support team — a person will follow up in this conversation shortly.",
+          direction: 'outbound',
+          sequence,
+          visibility: 'external',
+          data: { message_type: 'escalation', escalation_notice: true },
+        })
+      )
     }
   }
 
@@ -653,20 +655,18 @@ async function finalizeAnalysis(ctx: any, body: any) {
       .update({ content: summaryContent, data: summaryData })
       .eq('id', existingSummary.id)
   } else {
-    const { count } = await adminDb
-      .from('messages')
-      .select('id', { count: 'exact', head: true })
-      .eq('thread_id', analysisThread.id)
-    await create(ctx, {
-      entity: 'messages',
-      type_id: ids.message,
-      thread_id: analysisThread.id,
-      content: summaryContent,
-      direction: 'outbound',
-      sequence: (count ?? 0) + 1,
-      visibility: 'internal',
-      data: summaryData,
-    })
+    await insertMessageSequenced(analysisThread.id, sequence =>
+      create(ctx, {
+        entity: 'messages',
+        type_id: ids.message,
+        thread_id: analysisThread.id,
+        content: summaryContent,
+        direction: 'outbound',
+        sequence,
+        visibility: 'internal',
+        data: summaryData,
+      })
+    )
   }
 
   // KB candidate: one ao_kb_article per source ticket, composed as markdown.
@@ -1230,20 +1230,18 @@ export async function autoResolvePending(ctx: any, body: any) {
       .limit(1)
       .maybeSingle()
     if (extThread) {
-      const { count } = await adminDb
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .eq('thread_id', extThread.id)
-      await create(scopedCtx, {
-        entity: 'messages',
-        type_id: ids.message,
-        thread_id: extThread.id,
-        content: "Marking this resolved since we haven't heard back — reply any time and our team will pick it up.",
-        direction: 'outbound',
-        sequence: (count ?? 0) + 1,
-        visibility: 'external',
-        data: { message_type: 'system', auto_resolved: true },
-      }).catch(() => {})
+      await insertMessageSequenced(extThread.id, sequence =>
+        create(scopedCtx, {
+          entity: 'messages',
+          type_id: ids.message,
+          thread_id: extThread.id,
+          content: "Marking this resolved since we haven't heard back — reply any time and our team will pick it up.",
+          direction: 'outbound',
+          sequence,
+          visibility: 'external',
+          data: { message_type: 'system', auto_resolved: true },
+        })
+      ).catch(() => {})
     }
     resolved.push(t.id)
   }

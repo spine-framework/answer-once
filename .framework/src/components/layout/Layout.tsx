@@ -11,6 +11,7 @@
 import React, { useState } from 'react'
 import { Sidebar, SidebarContent } from './Sidebar'
 import { useAuth } from '../../contexts/AuthContext'
+import { useBranding } from '../../hooks/useBranding'
 import { useLocation } from 'react-router-dom'
 // CIL[DOC-VECTOR type="context" content="purpose='Module imports and top-level declarations for the Layout component.'; No verified external callers; imports: .framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -50,6 +51,7 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { user, logout } = useAuth()
+  const branding = useBranding()
   const location = useLocation()
 
   const isActive = (href: string) =>
@@ -87,8 +89,8 @@ export function Layout({ children }: LayoutProps) {
           </svg>
         </button>
         <div className="flex items-center gap-3">
-          <img src="/spine-logo.svg" alt="Spine Framework" className="h-8 w-auto" />
-          <span className="text-lg font-semibold tracking-tight text-slate-900 whitespace-nowrap">Spine Framework</span>
+          <img src={branding.logo_url} alt={branding.app_name} className="h-8 w-auto" />
+          <span className="text-lg font-semibold tracking-tight text-slate-900 whitespace-nowrap">{branding.title}</span>
         </div>
       </div>
 

@@ -27,7 +27,7 @@
 
 import { getUserDb, adminDb } from './db'
 import { createClient } from '@supabase/supabase-js'
-import WebSocket from 'ws'
+
 import { timingSafeEqual, createHash } from 'crypto'
 // CIL[DOC-VECTOR type="context" content="purpose='Shared principal and authorization module for Spine functions'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -96,10 +96,10 @@ const env = (globalThis as any).process?.env || {}
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:supabase:constant" type="constant" identity="supabase" parent="~/.framework/functions/_shared/principal.ts"]
 // CIL[DOC-MACRO purpose="Create a Supabase client configured for function use"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide an authenticated Supabase client with realtime transport"]
+// CIL[DOC-RESPONSIBILITY responsibility="Provide an anon-key Supabase client for auth.getUser JWT verification"]
 // CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
 // CIL[DOC-CONTRACT inputs="none" outputs="Supabase client" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Instantiate createClient with URL, anon key and auth/realtime options" notable_decisions="[]"]
+// CIL[DOC-MICRO logic_summary="Instantiate createClient with URL, anon key, and auth options. Realtime transport omitted — this client is used only for supabase.auth.getUser; no realtime channels are opened server-side." notable_decisions="ws realtime transport removed to reduce bundle size and eliminate unnecessary module-level init overhead across every function"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 const supabase = createClient(
@@ -107,10 +107,7 @@ const supabase = createClient(
   env.SUPABASE_ANON_KEY || 'placeholder',
   {
     auth: { autoRefreshToken: false, persistSession: false },
-    realtime: { transport: WebSocket as any }
   }
-
-
 )
 // CIL[DOC-VECTOR type="context" content="purpose='Create a Supabase client configured for function use'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -269,6 +266,12 @@ export async function resolvePrincipal(event: any): Promise<Principal> {
     if (triggerId) {
       return resolveTriggerPrincipal(triggerId, event)
     }
+
+    // A bare internal-invoke secret is itself a first-class credential —
+    // function-to-function calls without a cron/trigger principal to
+    // impersonate (e.g. manual system-cron runs) get the privileged
+    // system principal rather than falling through to anonymous.
+    return SYSTEM_PRINCIPAL
   }
 
   const authHeader = event.headers?.authorization || event.headers?.Authorization

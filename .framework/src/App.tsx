@@ -14,6 +14,7 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
+import { useBranding } from './hooks/useBranding'
 import { LoadingSpinner } from './components/ui/LoadingSpinner'
 import { LoginPage } from './pages/auth/LoginPage'
 import { RegisterPage } from './pages/auth/RegisterPage'
@@ -65,13 +66,14 @@ const AdminApp = lazy(() => import('./apps/admin/index'))
 // CIL[DOC-NOTE type="change" content="Batch4b: authenticated-but-unplaced users (falsy account_id, not pending) are routed to /register?resume=1 for all paths so RegisterPage can finish placement — they no longer fall through to NotFound"]
 function App() {
   const { user, isLoading } = useAuth()
+  const branding = useBranding()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <LoadingSpinner className="w-8 h-8 mx-auto mb-4" />
-          <p className="text-slate-600">Loading Spine...</p>
+          <p className="text-slate-600">Loading {branding.app_name}...</p>
         </div>
       </div>
     )

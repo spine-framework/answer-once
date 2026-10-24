@@ -23,6 +23,7 @@ import {
   PendingRegistrationIntent,
 } from '../../lib/registration'
 import { TurnstileWidget, turnstileEnabled } from '../../components/auth/TurnstileWidget'
+import { useBranding } from '../../hooks/useBranding'
 // CIL[DOC-NOTE type="change" content="Batch4b: POST invites calls go through apiFetch (authenticated); pending-registration intent helpers imported for confirm-email resume"]
 // CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:module_header:module_header"]
 // CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:usetype:type" type="type" identity="UseType" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
@@ -270,6 +271,7 @@ export function RegisterPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { user, refreshUser, logout } = useAuth()
+  const branding = useBranding()
   const inviteToken = searchParams.get('t')
   const resumeRequested = searchParams.get('resume') === '1'
 
@@ -652,7 +654,7 @@ export function RegisterPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex items-center justify-center">
-            <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+            <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
             {isInvite ? 'Complete your registration' : 'Create your account'}

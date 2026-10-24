@@ -54,6 +54,12 @@ interface StandaloneProfile {
     account_strategy: string
     parent_account?: string
     allow_domain_join?: boolean
+    branding?: {
+      app_name?: string
+      title?: string
+      logo_url?: string
+      favicon_url?: string
+    }
   }
   package: {
     name: string
@@ -360,6 +366,7 @@ function main(): void {
   const byRole: Record<string, string> = {}
   for (const role of sc.app_roles) byRole[role] = sc.default_app
   const spineConfig = {
+    ...(sc.branding ? { branding: sc.branding } : {}),
     registration: {
       default_app: sc.default_app,
       default_role: sc.default_role,

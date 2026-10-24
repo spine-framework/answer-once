@@ -12,6 +12,7 @@ dist
 .DS_Store
 *.tsbuildinfo
 .vite
+config/vite.config.d.ts
 .vscode/
 .windsurf/
 .tsserver-logs/
@@ -41,3 +42,11 @@ __pycache__/
 test_*.mjs
 mobile-screenshot/
 Screen Shot *.png
+
+# --- monorepo-only: begin --- (stripped from templates/project/gitignore by prepack)
+# npm pack staging artifacts — recreated by prepack, removed by postpack
+templates/project/
+custom/apps/answer-once/installer/migrations/
+custom/apps/answer-once/LICENSE.md
+custom/npm/create-answer-once/LICENSE.md
+# --- monorepo-only: end ---

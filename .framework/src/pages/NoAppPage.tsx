@@ -10,6 +10,7 @@
 
 import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useBranding } from '../hooks/useBranding'
 // CIL[END stable_id="~/.framework/src/pages/NoAppPage.tsx:module_header:module_header"]
 
 // CIL[BEGIN stable_id="~/.framework/src/pages/NoAppPage.tsx:noapppage:component" type="component" identity="NoAppPage" parent="~/.framework/src/pages/NoAppPage.tsx"]
@@ -22,12 +23,13 @@ import { useAuth } from '../contexts/AuthContext'
 // CIL[DOC-STABILITY stability="experimental"]
 export function NoAppPage() {
   const { logout } = useAuth()
+  const branding = useBranding()
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="max-w-md w-full text-center space-y-6">
         <div className="mx-auto flex items-center justify-center">
-          <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+          <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
         </div>
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-slate-900">No apps yet</h1>

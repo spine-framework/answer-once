@@ -1,4 +1,10 @@
 {
+  "branding": {
+    "app_name": "Answer Once",
+    "title": "Answer Once",
+    "logo_url": "/answer-once-logo.svg",
+    "favicon_url": "/answer-once-icon.svg"
+  },
   "registration": {
     "default_app": "answer-once",
     "default_role": "member_admin",
@@ -15,14 +21,14 @@
           "member",
           "member_admin",
           "support",
-          "support_admin",
-          "system_admin"
+          "support_admin"
         ],
         "default_role": "member_admin",
         "path": "/answer-once",
         "enabled": true,
         "account_strategy": "new",
-        "parent_account": "spine-system"
+        "parent_account": "spine-system",
+        "allow_domain_join": false
       }
     }
   }

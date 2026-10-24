@@ -59,6 +59,7 @@ import {
   SidebarRail,
 } from "../ui/sidebar"
 import { Button } from "../ui/button"
+import { useBranding } from "../../hooks/useBranding"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
 // CIL[DOC-VECTOR type="context" content="purpose='Provides React, router, icons, and UI component imports for the admin sidebar module'; No verified external callers; imports: .framework/src/components/ui/sidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -175,6 +176,7 @@ const navigationSections = [
 // CIL[DOC-STABILITY stability="stable"]
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const branding = useBranding()
   const location = useLocation()
 
   const isActive = (url: string) => {
@@ -188,9 +190,9 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/spine-framework/admin/configs/types">
-                <img src="/spine-logo.svg" alt="Spine Framework" className="h-8 w-auto shrink-0" />
+                <img src={branding.logo_url} alt={branding.app_name} className="h-8 w-auto shrink-0" />
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold whitespace-nowrap">Spine Framework</span>
+                  <span className="font-semibold whitespace-nowrap">{branding.title}</span>
                 </div>
               </Link>
             </SidebarMenuButton>

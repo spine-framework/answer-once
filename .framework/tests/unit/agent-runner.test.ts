@@ -1370,7 +1370,7 @@ describe('executeToolAction — cil_chunk_lookup code content search', () => {
 describe('executeToolAction — escalate_to_human', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  function mockEscalationFlow(opts: { escalationStatus?: string } = {}) {
+  function mockEscalationFlow(opts: { escalationStatus?: string; owner?: string } = {}) {
     const updates: { table: string; payload: any }[] = []
     vi.mocked(adminDb.from).mockImplementation((table: string) => {
       const q: any = {
@@ -1381,7 +1381,7 @@ describe('executeToolAction — escalate_to_human', () => {
         update: vi.fn((payload: any) => { updates.push({ table, payload }); return q }),
         single: vi.fn(() => {
           if (table === 'threads' && q._cols === 'data') {
-            return Promise.resolve({ data: { data: { escalation_status: opts.escalationStatus } }, error: null })
+            return Promise.resolve({ data: { data: { owner: opts.owner, escalation_status: opts.escalationStatus } }, error: null })
           }
           if (table === 'threads' && q._cols === 'target_type, target_id') {
             return Promise.resolve({ data: { target_type: 'items', target_id: 'item-1' }, error: null })
@@ -1419,7 +1419,7 @@ describe('executeToolAction — escalate_to_human', () => {
     expect(res).toEqual({ escalated: true, already_escalated: false, reason: 'no relevant docs' })
     expect(updates).toContainEqual({
       table: 'threads',
-      payload: { data: { escalation_status: 'pending' } }
+      payload: { data: { owner: 'human' } }
     })
     expect(updates).toContainEqual({
       table: 'items',
@@ -1429,6 +1429,20 @@ describe('executeToolAction — escalate_to_human', () => {
 
   it('dedupes when the thread is already pending escalation', async () => {
     const updates = mockEscalationFlow({ escalationStatus: 'pending' })
+
+    const res = await executeToolAction(
+      { handler: 'escalate_to_human' },
+      { reason: 'still stuck' },
+      makeCtx(),
+      { threadId: THREAD_ID, config: escConfig }
+    )
+
+    expect(res.already_escalated).toBe(true)
+    expect(updates).toHaveLength(0)
+  })
+
+  it('dedupes when the thread is already human-owned', async () => {
+    const updates = mockEscalationFlow({ owner: 'human' })
 
     const res = await executeToolAction(
       { handler: 'escalate_to_human' },

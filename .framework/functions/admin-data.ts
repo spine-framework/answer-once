@@ -915,7 +915,7 @@ export const update = createHandler(async (ctx, body) => {
       if (err) throw err
 
       const entityData = { ...data, ...dataToUpdate }
-      fireUpdateTriggers(entity, id, entityData, ctx).catch(console.error)
+      fireUpdateTriggers(entity, id, entityData, ctx, existing).catch(console.error)
 
       return await sanitizeRecordData(ctx, data, entity)
     }

@@ -17,6 +17,7 @@ import {
   finalizeRegistration,
   readPendingRegistration,
 } from '../../lib/registration'
+import { useBranding } from '../../hooks/useBranding'
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the AuthConfirmPage React component for confirming email signup and password reset tokens.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -59,6 +60,7 @@ export function AuthConfirmPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { refreshUser } = useAuth()
+  const branding = useBranding()
 
   const tokenHash = searchParams.get('token_hash')
   const type = searchParams.get('type') as 'signup' | 'recovery' | string | null
@@ -275,7 +277,7 @@ export function AuthConfirmPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="mx-auto flex items-center justify-center">
-            <img src="/spine-logo.svg" alt="Spine Framework" className="h-14 w-auto" />
+            <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
             Set a new password

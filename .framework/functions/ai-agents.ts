@@ -30,7 +30,7 @@ import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { isSystemAdmin } from './_shared/principal'
 import { PermissionEngine, sanitizeRecordData } from './_shared/permissions'
-import { runAgent, kickAgentEpisode } from './_shared/agent-runner'
+import { runAgent, claimAgentEpisode, acquireEpisodeLease } from './_shared/agent-runner'
 import { checkRateLimit } from './_shared/rate-limit'
 import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_shared/security'
 // CIL[END stable_id="~/.framework/functions/ai-agents.ts:module_header:module_header"]
@@ -479,20 +479,27 @@ export const run = createHandler(async (ctx, body) => {
     }
   }
 
+  // Episode mode runs inline up to this budget — the first turns execute
+  // at full request CPU, then the client's step loop continues the
+  // episode under the same lease. Sized to leave headroom under the
+  // platform's synchronous request limit (~26s) even with a slow turn.
+  const EPISODE_INLINE_BUDGET_MS = 8000
+
   const runMode = (mode as 'step' | 'complete' | 'episode') || 'complete'
 
-  // Episode single-flight: the in-flight driver stamps driver_id +
-  // driver_heartbeat_at into research_state. A different driver asking to
-  // step/kick while the lease is fresh gets 'running' instead of a second
-  // interleaved write pass. The owner itself is never refused (its own
-  // staleness check is finer-grained), and a lease expires after
-  // DRIVER_LEASE_MS so a crashed driver can't wedge the thread.
-  const DRIVER_LEASE_MS = 60000
+  // Episode single-flight: arbitration is the atomic episode_leases RPC
+  // (migration 063) — a claim INSERTs/locks the thread's lease row in one
+  // statement, so two entry paths can never both pass. The same driver
+  // re-acquiring renews; a different live driver is refused 'running';
+  // an expired lease is taken over so a crashed driver can't wedge the
+  // thread. When the RPC is absent (un-migrated deployment) the legacy
+  // non-atomic research_state check below runs instead.
   const existingState = (data as any)?.data?.research_state
   const heartbeatAt = Date.parse(existingState?.driver_heartbeat_at || '')
   const leaseHolder = existingState?.driver_id
   const callerToken = (body?.driver_token as string) || null
   const callerId = callerToken || ctx.requestId
+  const DRIVER_LEASE_MS = 60000
   const leaseLive =
     !!leaseHolder &&
     leaseHolder !== callerId &&
@@ -501,32 +508,91 @@ export const run = createHandler(async (ctx, body) => {
     Number.isFinite(heartbeatAt) &&
     Date.now() - heartbeatAt < DRIVER_LEASE_MS
 
-  if ((runMode === 'step' || runMode === 'complete') && leaseLive) {
+  if (runMode === 'episode') {
+    // Episode mode claims the lease and runs the first turns INLINE
+    // (deadline-bounded complete mode) — detached 'void runAgent' work is
+    // CPU-throttled after the response flush on serverless platforms
+    // (~37s dead window observed before its first persisted message),
+    // which is exactly the stall the caller's quiet-window then "rescues"
+    // by double-driving. stealDetached lets this request take over from
+    // a 'detached:' background kick instantly; the fenced driver aborts
+    // at its next heartbeat without side effects.
+    const kick = await claimAgentEpisode(thread_id, user_message || '', ctx, callerId, (data as any)?.data, { stealDetached: true })
+    if (!kick.claimed && kick.already_done) {
+      // Replay of an already-answered question — return the episode's
+      // existing final rather than 'running' so callers don't poll for
+      // work that isn't coming.
+      const { data: lastOutbound } = await adminDb
+        .from('messages')
+        .select('id, content, data')
+        .eq('thread_id', thread_id)
+        .eq('direction', 'outbound')
+        .order('created_at', { ascending: false })
+        .limit(1)
+      const final = Array.isArray(lastOutbound) ? lastOutbound[0] : lastOutbound
+      return {
+        ok: true,
+        thread_id,
+        status: 'complete',
+        already_done: true,
+        driver_id: kick.driver_id,
+        message_id: final?.id || null,
+        content: final?.content || '',
+        message_type: final?.data?.message_type || null,
+        data: final?.data || null,
+        agent_id: final?.data?.agent_id || (data as any)?.data?.agent_id || null,
+        prompt_config_id: final?.data?.prompt_config_id || (data as any)?.data?.prompt_config_id || null,
+      }
+    }
+    if (!kick.claimed) {
+      return { ok: true, thread_id, status: 'running', already_running: true, driver_id: kick.driver_id }
+    }
+    // Debit agent_step only after a claim — refused requests start
+    // nothing and must not double-charge the episode.
+    await checkRateLimit(ctx, 'agent_step')
+    const message = await runAgent(thread_id, user_message || '', ctx, 'complete', kick.driver_id || callerToken || undefined, kick.lease_token, { deadlineMs: EPISODE_INLINE_BUDGET_MS })
+
+    const { data: updatedThread } = await adminDb
+      .from('threads')
+      .select('data')
+      .eq('id', thread_id)
+      .single()
+    const state = updatedThread?.data?.research_state || {}
+    return {
+      ok: true,
+      thread_id,
+      detached: false,
+      message_id: message?.id || null,
+      status: state.status || (message ? 'complete' : 'failed'),
+      turn_count: state.turn_count ?? 0,
+      content: message?.content || '',
+      message_type: message?.data?.message_type || null,
+      data: message?.data || null,
+      agent_id: message?.data?.agent_id || updatedThread?.data?.agent_id || null,
+      prompt_config_id: message?.data?.prompt_config_id || updatedThread?.data?.prompt_config_id || null,
+    }
+  }
+
+  // step/complete: claim the episode lease for this driver. 'held' means
+  // another live driver owns the episode — the caller watches persisted
+  // state instead of interleaving writes. A claimed lease survives a
+  // nonterminal step return so the same driver's next call renews it.
+  // stealDetached lets a request driver take over from a 'detached:'
+  // background kick without waiting out the TTL.
+  const claim = await acquireEpisodeLease(thread_id, ctx.accountId, callerId, undefined, true)
+  let leaseToken: string | undefined
+  if (claim?.outcome === 'held') {
+    return { ok: true, thread_id, status: 'running', driver_id: claim.holder_driver_id }
+  }
+  if (claim === null && leaseLive) {
     return { ok: true, thread_id, status: 'running', driver_id: leaseHolder }
   }
+  if (claim?.outcome === 'claimed') leaseToken = claim.lease_token
 
-  if (runMode === 'episode') {
-    if (leaseLive) {
-      return { ok: true, thread_id, status: 'running', detached: true, already_running: true }
-    }
-    // Debit agent_step only when a new driver will actually start work —
-    // lease-refused requests and ticket-creation kicks already debited or
-    // started nothing, and counting them would double-charge each episode.
-    await checkRateLimit(ctx, 'agent_step')
-    // Claim the lease before detaching so a step request landing during
-    // resolveAgentConfig still sees a live driver. Shared implementation lives
-    // in kickAgentEpisode (also used by ticket-creation handlers).
-    const leaseId = callerToken || ctx.requestId
-    const kick = await kickAgentEpisode(thread_id, user_message || '', ctx, leaseId, (data as any)?.data)
-    if (!kick.claimed) {
-      return { ok: true, thread_id, status: 'running', detached: true, already_running: true }
-    }
-    return { ok: true, thread_id, status: 'running', detached: true }
-  }
-
-  // step/complete modes debit here — same rule: only when work will start.
+  // step/complete modes debit here — only when work will start, so
+  // lease-refused requests never double-charge an episode.
   await checkRateLimit(ctx, 'agent_step')
-  const message = await runAgent(thread_id, user_message || '', ctx, runMode, callerToken || undefined)
+  const message = await runAgent(thread_id, user_message || '', ctx, runMode, callerId, leaseToken)
 
   const { data: updatedThread } = await adminDb
     .from('threads')
