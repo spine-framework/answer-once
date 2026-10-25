@@ -965,18 +965,28 @@ async function publishArticle(ctx: any, body: any) {
     }
   }
 
-  void (async () => {
-    const stamp = async (patch: Record<string, any>) => {
-      const { data: cur } = await adminDb.from('items').select('data').eq('id', embedId).single()
-      await adminDataUpdate(ctx, 'items', embedId, {
-        data: { ...(cur?.data || {}), ...patch },
-      })
-    }
-    try {
-      const ingest = await kbIngest(ctx, { id: embedId, account_id: embedAccountId })
+  // Run the ingest inline: detached post-response work is CPU-frozen on
+  // Netlify and silently never ran in production, leaving published articles
+  // with no embeddings and null embedding markers. Awaiting adds a few
+  // seconds to publish but returns the real embedding_state. A concurrent
+  // worker holding the document lease yields in_progress — the marker stays
+  // 'processing' and the owning worker's completion reconciles it.
+  const stamp = async (patch: Record<string, any>) => {
+    const { data: cur } = await adminDb.from('items').select('data').eq('id', embedId).single()
+    await adminDataUpdate(ctx, 'items', embedId, {
+      data: { ...(cur?.data || {}), ...patch },
+    })
+  }
+  let finalEmbeddingState = 'processing'
+  try {
+    const ingest = await kbIngest(ctx, { id: embedId, account_id: embedAccountId })
+    if (ingest?.in_progress) {
+      finalEmbeddingState = 'processing'
+    } else {
       const embedded = ingest?.ok === true && (ingest.count ?? 0) > 0
+      finalEmbeddingState = embedded ? 'embedded' : 'error'
       await stamp({
-        embedding_state: embedded ? 'embedded' : 'error',
+        embedding_state: finalEmbeddingState,
         embedding_pending_at: null,
         embedding_error: embedded ? null : (ingest?.message || 'no embeddings written'),
         ...(embedded ? {
@@ -984,16 +994,17 @@ async function publishArticle(ctx: any, body: any) {
           embedded_at: new Date().toISOString(),
         } : {}),
       })
-    } catch (err: any) {
-      await stamp({
-        embedding_state: 'error',
-        embedding_pending_at: null,
-        embedding_error: err?.message || String(err),
-      }).catch(() => {})
     }
-  })()
+  } catch (err: any) {
+    finalEmbeddingState = 'error'
+    await stamp({
+      embedding_state: 'error',
+      embedding_pending_at: null,
+      embedding_error: err?.message || String(err),
+    }).catch(() => {})
+  }
 
-  return { published: true, record, flavor, shared_article_id: sharedArtifactId, validation, embedding_state: 'processing' }
+  return { published: true, record, flavor, shared_article_id: sharedArtifactId, validation, embedding_state: finalEmbeddingState }
 }
 // CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publish_article:function"]
 

@@ -17,5 +17,105 @@
     },
     "metadata": {},
     "is_system": true
+  },
+  {
+    "slug": "ao_kb_article_published_auto_embed",
+    "name": "ao_kb_article_published_auto_embed",
+    "description": "When an ao_kb_article transitions to published, generate embeddings automatically.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_article",
+      "fire_on_transition": true,
+      "filters": { "status": { "$eq": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_kb_article_published_auto_embed_create",
+    "name": "ao_kb_article_published_auto_embed_create",
+    "description": "When an ao_kb_article is created already published, generate embeddings automatically.",
+    "trigger_type": "event",
+    "event_type": "item_created",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_article",
+      "filters": { "status": { "$eq": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_kb_shared_published_auto_embed",
+    "name": "ao_kb_shared_published_auto_embed",
+    "description": "When an ao_kb_shared artifact transitions to published, generate embeddings automatically.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_shared",
+      "fire_on_transition": true,
+      "filters": { "status": { "$eq": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_kb_shared_published_auto_embed_create",
+    "name": "ao_kb_shared_published_auto_embed_create",
+    "description": "When an ao_kb_shared artifact is created already published, generate embeddings automatically.",
+    "trigger_type": "event",
+    "event_type": "item_created",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_shared",
+      "filters": { "status": { "$eq": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_kb_article_unpublished_auto_revoke",
+    "name": "ao_kb_article_unpublished_auto_revoke",
+    "description": "When an ao_kb_article leaves published status, revoke its embeddings.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_revoke_on_unpublish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_article",
+      "fire_on_transition": true,
+      "filters": { "status": { "$ne": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_kb_shared_unpublished_auto_revoke",
+    "name": "ao_kb_shared_unpublished_auto_revoke",
+    "description": "When an ao_kb_shared artifact leaves published status, revoke its embeddings.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_revoke_on_unpublish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_kb_shared",
+      "fire_on_transition": true,
+      "filters": { "status": { "$ne": "published" } }
+    },
+    "metadata": {},
+    "is_system": true
   }
 ]

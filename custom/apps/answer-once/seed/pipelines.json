@@ -33,5 +33,50 @@
     "ownership": "platform",
     "is_system": true,
     "is_active": true
+  },
+  {
+    "slug": "ao_auto_embed_on_publish",
+    "name": "ao_auto_embed_on_publish",
+    "description": "Triggered when an Answer Once KB article or shared artifact is published. Generates embeddings via the canonical kb_ingest typed path.",
+    "trigger_type": "event",
+    "config": { "event": "item_updated", "scope": "account" },
+    "stages": [
+      {
+        "stage_type": "kb_ingest",
+        "continue_on_error": true,
+        "config": {
+          "item_id": "{{trigger.entity_id}}",
+          "force_regenerate": false
+        }
+      }
+    ],
+    "metadata": {
+      "note": "kb_ingest calls _shared/kb.ts kbIngest (content-hash document lease). item_id resolves from trigger data; account_id is passed through from the entity snapshot so cross-account (platform/tenant) publishes embed correctly."
+    },
+    "ownership": "platform",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "slug": "ao_auto_revoke_on_unpublish",
+    "name": "ao_auto_revoke_on_unpublish",
+    "description": "Triggered when an Answer Once KB article or shared artifact leaves published status. Revokes embeddings so they are excluded from retrieval.",
+    "trigger_type": "event",
+    "config": { "event": "item_updated", "scope": "account" },
+    "stages": [
+      {
+        "stage_type": "kb_revoke",
+        "continue_on_error": true,
+        "config": {
+          "document_id": "{{trigger.entity_id}}"
+        }
+      }
+    ],
+    "metadata": {
+      "note": "kb_revoke calls _shared/kb.ts kbRevoke — deletes embeddings and clears the document lease so a republished article re-ingests cleanly."
+    },
+    "ownership": "platform",
+    "is_system": true,
+    "is_active": true
   }
 ]

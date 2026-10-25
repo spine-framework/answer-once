@@ -1305,7 +1305,7 @@ const stageHandlers: Record<string, Function> = {
     if (!itemId) throw new Error('kb_ingest: could not resolve item_id from trigger data')
 
     const { kbIngest } = await import('./kb')
-    return await kbIngest(ctx, { id: itemId })
+    return await kbIngest(ctx, { id: itemId, account_id: triggerData?.entity?.data?.account_id })
   },
 
   'kb_revoke': async (ctx: CoreContext, config: any) => {

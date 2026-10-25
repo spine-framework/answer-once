@@ -688,7 +688,11 @@ export const create = createHandler(async (ctx, body) => {
 
         const { data, error: err } = await ctx.db.from(entity).insert(raw).select().single()
         if (err) throw err
-        fireCreateTriggers(entity, data.id, raw, ctx).catch(console.error)
+        // Await the trigger check: the heavy work already offloads to
+        // pipeline-runner-background, so this only adds eval + queue insert
+        // + dispatch. Detached post-response work is CPU-frozen on Netlify
+        // and silently dropped trigger fires in production.
+        await fireCreateTriggers(entity, data.id, raw, ctx).catch(console.error)
         return await sanitizeRecordData(ctx, data, entity)
       }
 
@@ -808,7 +812,7 @@ export const create = createHandler(async (ctx, body) => {
       if (err) throw err
 
       const entityData = { ...dataToInsert, id: data.id }
-      fireCreateTriggers(entity, data.id, entityData, ctx).catch(console.error)
+      await fireCreateTriggers(entity, data.id, entityData, ctx).catch(console.error)
 
       return await sanitizeRecordData(ctx, data, entity)
     }
@@ -915,7 +919,9 @@ export const update = createHandler(async (ctx, body) => {
       if (err) throw err
 
       const entityData = { ...data, ...dataToUpdate }
-      fireUpdateTriggers(entity, id, entityData, ctx, existing).catch(console.error)
+      // Await the trigger check — see note in the create path. Detached
+      // post-response work is CPU-frozen on Netlify and drops trigger fires.
+      await fireUpdateTriggers(entity, id, entityData, ctx, existing).catch(console.error)
 
       return await sanitizeRecordData(ctx, data, entity)
     }
