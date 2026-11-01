@@ -1,57 +1,94 @@
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Imports shared middleware, database, audit, pipeline and retry helpers for the system-cron Netlify function."]
-// CIL[DOC-RESPONSIBILITY responsibility="Sets up module dependencies and shared imports for the cron handler."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports required shared modules for database access, audit logging, pipeline execution and delivery retries." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers,operators"]
+/**
+ * @module   system-cron
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module handles scheduled tasks within the system, ensuring timely execution of various background processes. It utilizes a multi-step pipeline for task execution, which includes running pipelines and sweeping stale executions. INVARIANT: All scheduled tasks must be executed in a timely manner to maintain system integrity.
+ *
+ * @seeAlso middleware.ts (provides request handling capabilities).
+ * @seeAlso db.ts (manages database interactions).
+ * @seeAlso audits.ts (handles audit logging).
+ * @seeAlso pipeline-runner.ts (executes task pipelines).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 import { createHandler, RequestContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitAudit } from './_shared/audit'
 import { runPipeline, sweepStaleExecutions } from './_shared/pipeline-runner'
 import { retryPendingDeliveries } from './_shared/retry-deliveries'
-// CIL[DOC-VECTOR type="context" content="purpose='Imports shared middleware, database, audit, pipeline and retry helpers for the system-cron Netlify function.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:module_header:module_header"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:SCHEDULER_API_KEY:constant" type="constant" identity="SCHEDULER_API_KEY" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Resolves the scheduler API key from Node or Deno environment variables."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides the secret key used to authenticate cron requests."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-STABILITY stability="internal"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string | undefined" errors="none" side_effects="reads environment variables"]
-// CIL[DOC-MICRO logic_summary="Reads SCHEDULER_API_KEY from process.env or Deno.env, falling back to undefined." notable_decisions="none"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * SCHEDULER_API_KEY retrieves the API key for the scheduler from the environment variables to ensure that the application can access the necessary credentials for scheduling tasks.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const SCHEDULER_API_KEY: string | undefined = (globalThis as any).process?.env?.SCHEDULER_API_KEY || (globalThis as any).Deno?.env?.get?.('SCHEDULER_API_KEY')
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:SCHEDULER_API_KEY:constant"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='Resolves the scheduler API key from Node or Deno environment variables.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Netlify function entrypoint that runs scheduled actions, timers, threshold checks, retries and daily log cleanup."]
-// CIL[DOC-RESPONSIBILITY responsibility="Executes the cron loop for due schedules and timers, evaluates thresholds, retries pending deliveries and cleans logs at midnight."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="RequestContext" outputs="HTTP 200/403/500 response" errors="Throws on schedule or timer failures; returns 403 for auth failures and 500 for system errors." side_effects="Reads and writes schedule_executions, runs pipelines, emits audit events, updates schedules and timers."]
-// CIL[DOC-MICRO logic_summary="Validates scheduler API key or internal machine principal, fetches due schedules and timers, executes each action with scoped machine context, evaluates threshold alerts, retries pending deliveries, cleans logs at midnight, and returns a summary." notable_decisions="Uses a global try/catch to convert unhandled errors into a 500 response; runs threshold and log cleanup in non-failing branches; handles both Node and Deno runtimes for API key."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * The handler processes scheduled tasks by validating their execution conditions and executing them if due. It ensures proper authentication and logs unauthorized access attempts.
+ *
+ * @throws      Error — if fetching due schedules or validating schedules fails.
+ * @sideEffects DB reads from 'schedules', 'actions', and 'api_keys'; emits audit logs for unauthorized access.
+ * @stability   internal
+ * @calls       adminDb.rpc('get_due_schedules'), adminDb.rpc('validate_schedule_creator'), adminDb.from('actions'), adminDb.from('api_keys')
+ * @errorHandling logs errors to the console without throwing them further.
+ * @cil-generated
+ */
 export const handler = createHandler(async (ctx: RequestContext) => {
   const requestApiKey = ctx.query?.api_key || ctx.query?.scheduler_key
   
@@ -95,18 +132,9 @@ export const handler = createHandler(async (ctx: RequestContext) => {
       throw new Error(`Failed to fetch due schedules: ${schedulesError.message}`)
     }
     
-    if (!dueSchedules || dueSchedules.length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: 'No schedules due for execution',
-          executed: 0,
-          results: []
-        })
-      }
-    }
-    
-    for (const schedule of dueSchedules) {
+    // An empty schedule list must not end the tick: due timers, threshold
+    // alerts, delivery retries, and log cleanup below run every minute.
+    for (const schedule of dueSchedules || []) {
       const startTime = Date.now()
       
       try {
@@ -348,13 +376,19 @@ export const handler = createHandler(async (ctx: RequestContext) => {
     const failedCount = results.filter(r => r.status === 'failed').length
     const skippedCount = results.filter(r => r.status === 'skipped').length
 
-    const retrySummary = await retryPendingDeliveries(ctx)
+    let retrySummary = null
+    try {
+      retrySummary = await retryPendingDeliveries(ctx)
+    } catch (retryError) {
+      console.error('Delivery retry error:', retryError)
+    }
     
     return {
       statusCode: 200,
       body: JSON.stringify({
         message: `Executed ${results.length} total (schedules + timers)`,
         executed: results.length,
+        schedules_due: dueSchedules?.length || 0,
         success: successCount,
         failed: failedCount,
         skipped: skippedCount,
@@ -386,22 +420,41 @@ export const handler = createHandler(async (ctx: RequestContext) => {
     }
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Netlify function entrypoint that runs scheduled actions, timers, threshold checks, retries and daily log cleanup.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:handler:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Executes a specified action by delegating to the appropriate handler based on the action's module type. This function facilitates the execution of different types of actions within the system.
+ *
+ * @macro       Action executor that routes to specific handler implementations.
+ * @micro       Merges action-specific and provided configuration before invoking the appropriate handler function.
+ * @inputSpec
+ *   - ctx: RequestContext (required) — the context for the request execution.
+ *   - action: any (required) — the action object containing handler information.
+ *   - config: any (required) — additional configuration to merge with the action's config.
+ * @outputSpec  Promise<any> — resolves to the result of the executed action handler.
+ * @throws      Error — Custom handlers not yet implemented: <handlerName>
+Error — Unknown handler module: <handlerModule>
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeAction:function" type="function" identity="executeAction" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Dispatches an action to the appropriate handler module (functions, integrations or custom)."]
-// CIL[DOC-RESPONSIBILITY responsibility="Merges action and schedule config and delegates to a handler module."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, action: any, config: any" outputs="any handler result" errors="Throws for unknown handler module or not-implemented custom handlers." side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Merges config from the action with the schedule, then switches on handler_module to call the function, integration, or custom handler." notable_decisions="Custom handlers are explicitly not implemented and rejected; defaults fall through to an unknown-module error."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+ * @sideEffects none
+ * @stability   internal
+ * @calls       executeFunctionHandler, executeIntegrationHandler
+ * @cil-generated
+ */
 async function executeAction(
   ctx: RequestContext,
   action: any,
@@ -429,22 +482,41 @@ async function executeAction(
       throw new Error(`Unknown handler module: ${handlerModule}`)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Dispatches an action to the appropriate handler module (functions, integrations or custom).'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:executeAction:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeFunctionHandler:function" type="function" identity="executeFunctionHandler" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Implements built-in function handlers: send_email, generate_report, notify_watchers, run_pipeline."]
-// CIL[DOC-RESPONSIBILITY responsibility="Maps a handler name to a typed function and invokes it with the request context and config."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, handlerName: string, config: any" outputs="handler result object" errors="Throws for unknown handler or missing pipeline_id in run_pipeline." side_effects="May call runPipeline and log to console."]
-// CIL[DOC-MICRO logic_summary="Uses a handlers map to select and call the requested function; validates required fields before invoking run_pipeline." notable_decisions="Stubs produce console logs and mock results; run_pipeline requires pipeline_id and returns normalized execution summary."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * Executes a specified function handler based on the provided handler name and configuration. This module facilitates various operations such as sending emails, generating reports, notifying watchers, and running pipelines.
+ *
+ * @macro       Function dispatcher for executing predefined asynchronous handlers.
+ * @micro       Uses a record of handler functions indexed by name to dynamically invoke the appropriate operation.
+ * @inputSpec
+ *   ctx: RequestContext (required) — the context for the request.
+ *   handlerName: string (required) — the name of the handler to execute.
+ *   config: any (required) — configuration object for the handler.
+ * @outputSpec  Promise<any> — resolves to the result of the executed handler, which varies based on the handler type.
+ * @throws      Error — Unknown function handler: handlerName
+ * @sideEffects Logs to the console for each handler execution.
+ * @stability   internal
+ * @calls       runPipeline
+ * @errorHandling none
+ * @cil-generated
+ */
 async function executeFunctionHandler(
   ctx: RequestContext,
   handlerName: string,
@@ -491,21 +563,35 @@ async function executeFunctionHandler(
   return await handler(ctx, config)
 }
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:executeFunctionHandler:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeIntegrationHandler:function" type="function" identity="executeIntegrationHandler" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Stub for integration-based action handlers."]
-// CIL[DOC-VECTOR type="context" content="purpose='Implements built-in function handlers: send_email, generate_report, notify_watchers, run_pipeline.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-RESPONSIBILITY responsibility="Logs the invocation of an integration handler and returns a placeholder result."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, handlerName: string, config: any" outputs="placeholder result" errors="none" side_effects="logs to console"]
-// CIL[DOC-MICRO logic_summary="Logs the handler name and config, then returns an executed placeholder." notable_decisions="Integration handlers are not fully implemented in this file."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * Executes an integration handler based on the provided handler name and configuration. This function facilitates the execution of various integration tasks within the system.
+ *
+ * @inputSpec
+ *   ctx: RequestContext (required) — the context of the request including metadata.
+ *   handlerName: string (required) — the name of the integration handler to execute.
+ *   config: any (required) — configuration parameters for the integration handler.
+ * @outputSpec  Promise<any> — returns an object indicating execution status and the handler name.
+ * @sideEffects logs the execution details to the console
+ * @stability   internal
+ * @cil-generated
+ */
 async function executeIntegrationHandler(
   ctx: RequestContext,
   handlerName: string,
@@ -514,22 +600,38 @@ async function executeIntegrationHandler(
   console.log(`[${ctx.requestId}] Integration handler: ${handlerName}`, config)
   return { executed: true, handler: handlerName }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Stub for integration-based action handlers.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:executeIntegrationHandler:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:evaluateThresholds:function" type="function" identity="evaluateThresholds" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Fetches active threshold alerts, compares metrics to thresholds and fires associated pipelines when breached."]
-// CIL[DOC-RESPONSIBILITY responsibility="Evaluates error_rate, latency_p95 and pipeline_failure_rate thresholds and runs fire pipelines for breached ones."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext" outputs="array of threshold evaluation results" errors="Logs and swallows individual threshold errors; returns empty on DB errors." side_effects="Queries threshold_alerts, calls runPipeline, emits threshold.breached audit events."]
-// CIL[DOC-MICRO logic_summary="Fetches active thresholds, computes the requested metric over a window, compares it to the configured operator/value, fires the linked pipeline if breached, and emits audit events." notable_decisions="Unknown metrics are skipped with a warning; pipeline fire errors are logged but the threshold result still records breached=true."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * Evaluates active thresholds for various metrics to determine if they have been breached, potentially triggering associated pipelines. This function is essential for monitoring system performance and alerting based on predefined criteria.
+ *
+ * @macro       Async function responsible for evaluating threshold alerts and managing pipeline executions.
+ * @micro       Iterates through active thresholds, fetching metric data via RPC calls and assessing breaches based on specified operators.
+ * @inputSpec
+ *   ctx: RequestContext (required) — the context for the request containing necessary information for processing.
+ * @outputSpec  Promise<Array<{thresholdId: string, breached: boolean, fired: boolean}>> — an array of objects indicating the threshold ID, breach status, and whether the associated pipeline was fired.
+ * @sideEffects DB reads from 'threshold_alerts', RPC calls to fetch metric data, potential DB writes when triggering pipelines.
+ * @stability   internal
+ * @calls       adminDb.from('threshold_alerts'), adminDb.rpc('get_error_rate'), adminDb.rpc('get_latency_percentiles'), adminDb.rpc('get_pipeline_stats'), runPipeline
+ * @errorHandling logs errors to the console but does not throw them.
+ * @cil-generated
+ */
 async function evaluateThresholds(ctx: RequestContext): Promise<Array<{thresholdId: string, breached: boolean, fired: boolean}>> {
   const results: Array<{thresholdId: string, breached: boolean, fired: boolean}> = []
   
@@ -656,25 +758,36 @@ async function evaluateThresholds(ctx: RequestContext): Promise<Array<{threshold
   }
 }
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:evaluateThresholds:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:cleanupOldLogs:function" type="function" identity="cleanupOldLogs" parent="~/.framework/functions/system-cron.ts"]
-// CIL[DOC-MACRO purpose="Invokes the database cleanup_old_logs RPC to delete log records older than 90 days."]
-// CIL[DOC-VECTOR type="context" content="purpose='Fetches active threshold alerts, compares metrics to thresholds and fires associated pipelines when breached.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-RESPONSIBILITY responsibility="Removes stale logs and returns the number of deleted records."]
-// CIL[DOC-CONTEXT module="system-cron" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/retry-deliveries.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="number of deleted records" errors="Logs cleanup errors and returns 0 on failure." side_effects="Calls the cleanup_old_logs RPC which deletes old log records."]
-// CIL[DOC-MICRO logic_summary="Calls the cleanup_old_logs RPC with a 90-day retention and returns the deleted count, logging any errors." notable_decisions="Uses a fixed 90-day retention window; deletion count is read from the first row of the RPC result."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * Cleans up old log records that are older than a specified retention period to maintain the database by removing unnecessary log entries.
+ *
+ * @outputSpec  Promise<number> - returns the count of deleted log records.
+ * @sideEffects Makes an RPC call to 'cleanup_old_logs' in the database.
+ * @stability   internal
+ * @calls       adminDb.rpc
+ * @cil-generated
+ */
 async function cleanupOldLogs(): Promise<number> {
   try {
     const { data, error } = await adminDb.rpc('cleanup_old_logs', {
-      p_retention_days: 90
+      p_retention_days: 30
     })
     
     if (error) {
@@ -693,10 +806,10 @@ async function cleanupOldLogs(): Promise<number> {
     return 0
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Invokes the database cleanup_old_logs RPC to delete log records older than 90 days.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/system-cron.ts:cleanupOldLogs:function"]
+
+
+
+
+
+

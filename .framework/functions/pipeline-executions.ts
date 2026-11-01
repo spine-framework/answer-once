@@ -127,7 +127,7 @@ export const create = createHandler(async (ctx, body) => {
       pipeline_id,
       status: 'pending',
       trigger_data: trigger_data || {},
-      created_by: ctx.principal?.id || null,
+      created_by: ctx.principal?.type === 'human' ? ctx.principal.id : null,
       account_id: ctx.accountId,
     })
     .select('id')

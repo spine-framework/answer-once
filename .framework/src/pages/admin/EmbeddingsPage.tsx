@@ -16,7 +16,7 @@ import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-import { PageInstructions } from '../../components/admin/PageInstructions'
+// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:module_header:module_header"]
 
 
 // CIL[DOC-VECTOR type="context" content="purpose='Admin page for inspecting public.embeddings records'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx"]
@@ -25,8 +25,6 @@ import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingRecord:interface" type="interface" identity="EmbeddingRecord" parent="~/.framework/src/pages/admin/EmbeddingsPage.tsx"]
 // CIL[DOC-MACRO purpose="TypeScript type for a public.embeddings row"]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the typed shape of an embedding record"]
 // CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/EmbeddingsPage.tsx"]
@@ -34,6 +32,7 @@ import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Structured contract describing an embedding vector row" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingRecord:interface" type="interface" identity="EmbeddingRecord" parent="~/.framework/src/pages/admin/EmbeddingsPage.tsx"]
 interface EmbeddingRecord {
   id: string
   account_id: string
@@ -49,16 +48,15 @@ interface EmbeddingRecord {
   created_at: string
   updated_at: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingRecord:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript type for a public.embeddings row'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingRecord:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingsPage:component" type="component" identity="EmbeddingsPage" parent="~/.framework/src/pages/admin/EmbeddingsPage.tsx"]
 // CIL[DOC-MACRO purpose="Render the admin embeddings list page with search, sorting, and status indicators"]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch and display public.embeddings records; handle search, sort, and navigation to the detail view"]
 // CIL[DOC-CONTEXT module="admin" layer="component" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/EmbeddingsPage.tsx"]
@@ -66,6 +64,7 @@ interface EmbeddingRecord {
 // CIL[DOC-MICRO logic_summary="Fetch records, filter by content/document/model, sort by selected key/direction, compute status badges, and render a table with PageInstructions" notable_decisions="['Searches content, document_id, and model_id via lowercase substring', 'Sort supports string and number fields', 'Status derived from revoked_at and approved_at', 'Row click navigates to the detail view']"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingsPage:component" type="component" identity="EmbeddingsPage" parent="~/.framework/src/pages/admin/EmbeddingsPage.tsx"]
 export function EmbeddingsPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -149,7 +148,6 @@ export function EmbeddingsPage() {
     <AdminListPage
       title="Embeddings"
       description="Inspect runtime vector records from the public.embeddings table"
-      noPageInstructions
       statsCards={statsCards}
       searchPlaceholder="Search by content, document, or model..."
       searchValue={searchTerm}
@@ -160,25 +158,6 @@ export function EmbeddingsPage() {
       emptyMessage="No embedding records found"
       emptyIcon={AlertCircle}
     >
-      <PageInstructions
-        title="About the embeddings table"
-        description="These are runtime vector records stored in public.embeddings. Each record is a chunk of content with its embedding, model, document, and lifecycle metadata. This page is read-only."
-        sections={[
-          {
-            title: 'Columns',
-            content: 'Model ID, Document ID, chunk index, truncated content, approval status, content hash, and creation time.'
-          },
-          {
-            title: 'Searching',
-            content: 'Use the search field to filter by content text, document_id, or model_id.'
-          },
-          {
-            title: 'Drilling down',
-            content: 'Click any row to view the full record, including the full content, metadata JSON, and embedding vector.'
-          }
-        ]}
-      />
-
       {sortedRecords.length === 0 ? (
         <div className="p-8 text-center">
           <AlertCircle className="mx-auto h-12 w-12 text-slate-400" />
@@ -261,10 +240,10 @@ export function EmbeddingsPage() {
     </AdminListPage>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingsPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render the admin embeddings list page with search, sorting, and status indicators'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingsPage.tsx:EmbeddingsPage:component"]

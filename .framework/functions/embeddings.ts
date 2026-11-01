@@ -1,3 +1,4 @@
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/embeddings.ts"]
 /**
  * Creates a new embedding record for a knowledge base item and persists it to the database. This function also handles ownership and audit logging for the embedding.
  *
@@ -7,7 +8,6 @@
  * @calls       ctx.db.from, emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/embeddings.ts"]
 export const create = createHandler(async (ctx, body) => {
   const { model_id, document_id, chunk_index, content, metadata } = body
   if (!model_id || !document_id || !content) {
@@ -36,6 +36,7 @@ export const create = createHandler(async (ctx, body) => {
   return data
 })
 // CIL[END stable_id="~/.framework/functions/embeddings.ts:create:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/embeddings.ts"]
 /**
  * Updates an existing embedding's content and metadata, applying partial updates to an embedding record. It also emits an audit log for tracking changes.
  *
@@ -45,7 +46,6 @@ export const create = createHandler(async (ctx, body) => {
  * @calls       ctx.db.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/embeddings.ts"]
 export const update = createHandler(async (ctx, body) => {
   const id = body?.id || ctx.query?.id
   const { id: _bodyId, content, metadata } = body || {}
@@ -55,12 +55,15 @@ export const update = createHandler(async (ctx, body) => {
   const updateFields: Record<string, any> = {}
   if (content !== undefined) updateFields.content = content
   if (metadata !== undefined) updateFields.metadata = metadata
-  const { data, error: err } = await ctx.db
+  let query = ctx.db
     .from('embeddings')
     .update(updateFields)
     .eq('id', id)
-    .select()
-    .single()
+  if (!isSystemPrincipal(ctx)) {
+    if (!ctx.accountId) throw new Error('Account context required')
+    query = query.eq('account_id', ctx.accountId)
+  }
+  const { data, error: err } = await query.select().single()
   if (err) throw err
   await emitLog(ctx, 'embedding.updated', 
     { type: 'embedding', id }, 
@@ -78,13 +81,14 @@ export const update = createHandler(async (ctx, body) => {
  */
 // chunk_index is unique per (model_id, document_id) — each vector type
 // occupies a fixed slot (matching the CIL pipeline's convention).
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:vector_type_slots:constant" type="constant" identity="VECTOR_TYPE_SLOTS" parent="~/.framework/functions/embeddings.ts"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:VECTOR_TYPE_SLOTS:constant" type="constant" identity="VECTOR_TYPE_SLOTS" parent="~/.framework/functions/embeddings.ts"]
 const VECTOR_TYPE_SLOTS: Record<string, number> = {
   semantic: 0, structure: 1, context: 2, blast_radius: 3,
   configuration: 4, constraint: 5, summary: 6, intent: 7,
   cause: 8, procedure: 9, outcome: 10, error_signal: 11,
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:vector_type_slots:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:VECTOR_TYPE_SLOTS:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:generate:constant" type="constant" identity="generate" parent="~/.framework/functions/embeddings.ts"]
 /**
  * Generates or refreshes vector embeddings for a knowledge base item. This function builds text content for configured vector types, calls an embedding API, and persists vectors with hashes.
  *
@@ -94,16 +98,26 @@ const VECTOR_TYPE_SLOTS: Record<string, number> = {
  * @calls       adminDb.from('items'), adminDb.select, adminDb.eq, adminDb.single
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:generate:constant" type="constant" identity="generate" parent="~/.framework/functions/embeddings.ts"]
 export const generate = createHandler(async (ctx, body) => {
   const { item_id, force_regenerate = false, account_id_override } = body || {}
   if (!item_id) throw new Error('item_id is required')
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) {
+    throw new Error('Account context required')
+  }
   const { data: item, error: itemErr } = await adminDb
     .from('items')
     .select('*, type:types(slug, design_schema)')
     .eq('id', item_id)
     .single()
   if (itemErr || !item) throw new Error(`Item ${item_id} not found`)
+  // The adminDb read above bypasses RLS — a scoped caller may only generate
+  // vectors for items inside its own account.
+  if (!isSystem && item.account_id && item.account_id !== ctx.accountId) {
+    const e: any = new Error('Insufficient permissions to generate embeddings for this item')
+    e.statusCode = 403
+    throw e
+  }
   const typeDesign = item.type?.design_schema || {}
   const typeSlug = item.type?.slug || ''
   // Match the kbIngest convention (metadata.item_type = type slug) so retrieval
@@ -120,7 +134,12 @@ export const generate = createHandler(async (ctx, body) => {
     vectorTypes = ['semantic', 'structure']
   }
   const embeddingFields: string[] = typeDesign.embedding_fields?.structure || []
-  const resolvedAccountId = account_id_override || item.account_id || await getPlatformAccountId()
+  // account_id_override is a cross-account write primitive — honor it only
+  // for system-level callers. Scoped principals always write vectors under
+  // their own account.
+  const resolvedAccountId = isSystem
+    ? (account_id_override || item.account_id || await getPlatformAccountId())
+    : ctx.accountId
   const isPublished = item.status === 'published'
   const { data: existing } = await adminDb
     .from('embeddings')
@@ -236,7 +255,6 @@ export const generate = createHandler(async (ctx, body) => {
  *
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Creates a new embedding record for a knowledge base item."]
 // CIL[DOC-RESPONSIBILITY responsibility="Persists an embedding to the embeddings table with ownership and audit logging."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -430,6 +448,7 @@ export const generate = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers, operators"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/embeddings.ts"]
 import { createHash } from 'crypto'
 import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
@@ -438,6 +457,17 @@ import { isSystemAdmin } from './_shared/principal'
 import { sanitizeRecordData } from './_shared/permissions'
 import { callOpenAIEmbeddings, callOpenAIChat } from './_shared/llm'
 // CIL[END stable_id="~/.framework/functions/embeddings.ts:module_header:module_header"]
+
+// True only for platform-level principals: a system_admin role or an
+// internal machine principal with no account binding (SYSTEM_PRINCIPAL,
+// produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
+// resolve to the service-role adminDb via getPrincipalDb, so account-bound
+// API keys must be scoped to their own account below.
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/embeddings.ts"]
+function isSystemPrincipal(ctx: any): boolean {
+  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
+}
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:isSystemPrincipal:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Imports shared utilities for the embeddings Netlify function.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -454,7 +484,6 @@ import { callOpenAIEmbeddings, callOpenAIChat } from './_shared/llm'
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:striphtml:function" type="function" identity="stripHtml" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Strips HTML tags and decodes common HTML entities."]
 // CIL[DOC-RESPONSIBILITY responsibility="Normalizes HTML content into plain text for embedding."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -463,6 +492,7 @@ import { callOpenAIEmbeddings, callOpenAIChat } from './_shared/llm'
 // CIL[DOC-MICRO logic_summary="Replaces tags, decodes entities, collapses whitespace, and trims the string." notable_decisions="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:stripHtml:function" type="function" identity="stripHtml" parent="~/.framework/functions/embeddings.ts"]
 function stripHtml(html: string): string {
   return html
     .replace(/<[^>]+>/g, ' ')
@@ -470,7 +500,7 @@ function stripHtml(html: string): string {
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
     .replace(/\s+/g, ' ').trim()
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:striphtml:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:stripHtml:function"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Strips HTML tags and decodes common HTML entities.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -488,7 +518,6 @@ function stripHtml(html: string): string {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:firstnonempty:function" type="function" identity="firstNonEmpty" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Returns the first non-empty string from a list of values."]
 // CIL[DOC-RESPONSIBILITY responsibility="Selects the first truthy, trimmed string from candidates."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -497,13 +526,14 @@ function stripHtml(html: string): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:firstNonEmpty:function" type="function" identity="firstNonEmpty" parent="~/.framework/functions/embeddings.ts"]
 function firstNonEmpty(...values: (string | undefined | null)[]): string {
   for (const v of values) {
     if (v && String(v).trim()) return String(v).trim()
   }
   return ''
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:firstnonempty:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:firstNonEmpty:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Returns the first non-empty string from a list of values.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -522,7 +552,6 @@ function firstNonEmpty(...values: (string | undefined | null)[]): string {
  * @calls       stripHtml
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildsemanticcontent:function" type="function" identity="buildSemanticContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Builds the semantic text content for an item embedding."]
 // CIL[DOC-LEARNING topic="retrieval" content="KB articles store their body in data.content (data.body/markdown for other kinds) while description is only a short blurb — embedding title+description alone produced useless vectors."]
 // CIL[DOC-RESPONSIBILITY responsibility="Concatenates the item title, description blurb, and data-level body for vector search."]
@@ -532,6 +561,7 @@ function firstNonEmpty(...values: (string | undefined | null)[]): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildSemanticContent:function" type="function" identity="buildSemanticContent" parent="~/.framework/functions/embeddings.ts"]
 function buildSemanticContent(item: any): string {
   const title = item.title || ''
   const blurb = stripHtml(item.description || '')
@@ -540,7 +570,7 @@ function buildSemanticContent(item: any): string {
   )
   return [title, blurb, body].filter(Boolean).join('\n')
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildsemanticcontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildSemanticContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Builds the semantic text content for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -559,7 +589,6 @@ function buildSemanticContent(item: any): string {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildstructurecontent:function" type="function" identity="buildStructureContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Builds a structured JSON representation of an item for vector indexing."]
 // CIL[DOC-RESPONSIBILITY responsibility="Serializes item fields, metadata, and configured embedding fields into JSON."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -568,6 +597,7 @@ function buildSemanticContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildStructureContent:function" type="function" identity="buildStructureContent" parent="~/.framework/functions/embeddings.ts"]
 function buildStructureContent(item: any, embeddingFields: string[] = []): string {
   const base: Record<string, any> = {
     title: item.title || '',
@@ -584,7 +614,7 @@ function buildStructureContent(item: any, embeddingFields: string[] = []): strin
   }
   return JSON.stringify(base)
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildstructurecontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildStructureContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Builds a structured JSON representation of an item for vector indexing.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -603,7 +633,6 @@ function buildStructureContent(item: any, embeddingFields: string[] = []): strin
  * @calls       firstNonEmpty
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildintentcontent:function" type="function" identity="buildIntentContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Extracts the intent text for an item embedding."]
 // CIL[DOC-STABILITY stability="internal"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
@@ -612,6 +641,7 @@ function buildStructureContent(item: any, embeddingFields: string[] = []): strin
 // CIL[DOC-CONTRACT inputs="item: any" outputs="string" errors="none" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="Returns the first non-empty value among intent, learning_objectives, ca_reported_issue, use_case." notable_decisions="none"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildIntentContent:function" type="function" identity="buildIntentContent" parent="~/.framework/functions/embeddings.ts"]
 function buildIntentContent(item: any): string {
   return firstNonEmpty(
     item.data?.intent,
@@ -620,7 +650,7 @@ function buildIntentContent(item: any): string {
     item.data?.use_case,
   )
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildintentcontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildIntentContent:function"]
 
 /**
  * Extracts the intent text for an item embedding by retrieving the first non-empty cause-related field from the item data. This function is designed to facilitate the processing of item embeddings in the context of the application.
@@ -633,7 +663,6 @@ function buildIntentContent(item: any): string {
  * @calls       firstNonEmpty
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildcausecontent:function" type="function" identity="buildCauseContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts the intent text for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -648,6 +677,7 @@ function buildIntentContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildCauseContent:function" type="function" identity="buildCauseContent" parent="~/.framework/functions/embeddings.ts"]
 function buildCauseContent(item: any): string {
   return firstNonEmpty(
     item.data?.cause,
@@ -656,7 +686,7 @@ function buildCauseContent(item: any): string {
     item.data?.root_cause,
   )
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildcausecontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildCauseContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts the cause text for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -675,7 +705,6 @@ function buildCauseContent(item: any): string {
  * @calls       firstNonEmpty
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildprocedurecontent:function" type="function" identity="buildProcedureContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Extracts the procedure text for an item embedding."]
 // CIL[DOC-RESPONSIBILITY responsibility="Picks the first available procedure or resolution text from item data."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -684,6 +713,7 @@ function buildCauseContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildProcedureContent:function" type="function" identity="buildProcedureContent" parent="~/.framework/functions/embeddings.ts"]
 function buildProcedureContent(item: any): string {
   const steps = item.data?.procedure || item.data?.ca_solution_steps || item.data?.steps
   if (Array.isArray(steps) && steps.length) {
@@ -691,7 +721,7 @@ function buildProcedureContent(item: any): string {
   }
   return firstNonEmpty(item.data?.procedure, item.data?.resolution)
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildprocedurecontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildProcedureContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts the procedure text for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -710,7 +740,6 @@ function buildProcedureContent(item: any): string {
  * @calls       firstNonEmpty
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildoutcomecontent:function" type="function" identity="buildOutcomeContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Extracts the outcome text for an item embedding."]
 // CIL[DOC-RESPONSIBILITY responsibility="Picks the first available outcome or result field from item data."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -719,6 +748,7 @@ function buildProcedureContent(item: any): string {
     // CIL[DOC-STABILITY stability="internal"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildOutcomeContent:function" type="function" identity="buildOutcomeContent" parent="~/.framework/functions/embeddings.ts"]
 function buildOutcomeContent(item: any): string {
   return firstNonEmpty(
     item.data?.outcome,
@@ -727,7 +757,7 @@ function buildOutcomeContent(item: any): string {
     item.data?.result,
   )
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildoutcomecontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildOutcomeContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts the outcome text for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -746,7 +776,6 @@ function buildOutcomeContent(item: any): string {
  * @calls       firstNonEmpty
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildcontextcontent:function" type="function" identity="buildContextContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Extracts the context text for an item embedding."]
 // CIL[DOC-RESPONSIBILITY responsibility="Picks the first available context or prerequisite field from item data."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -755,6 +784,7 @@ function buildOutcomeContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildContextContent:function" type="function" identity="buildContextContent" parent="~/.framework/functions/embeddings.ts"]
 function buildContextContent(item: any): string {
   const steps = item.data?.ca_diagnostic_steps
   if (Array.isArray(steps) && steps.length) {
@@ -767,7 +797,7 @@ function buildContextContent(item: any): string {
     item.data?.product_area,
   )
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildcontextcontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildContextContent:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts the context text for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -788,7 +818,6 @@ function buildContextContent(item: any): string {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:builderrorsignalcontent:function" type="function" identity="buildErrorSignalContent" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Extracts error signals or code blocks for an item embedding."]
 // CIL[DOC-RESPONSIBILITY responsibility="Picks the first available error signature or code block from item data."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -797,6 +826,7 @@ function buildContextContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildErrorSignalContent:function" type="function" identity="buildErrorSignalContent" parent="~/.framework/functions/embeddings.ts"]
 function buildErrorSignalContent(item: any): string {
   const sigs = item.data?.error_signatures
   if (Array.isArray(sigs) && sigs.length) return sigs.join('\n')
@@ -807,7 +837,7 @@ function buildErrorSignalContent(item: any): string {
   const codeBlocks = desc.match(/```[\s\S]*?```/g) || []
   return codeBlocks.map((b: string) => b.replace(/```\w*\n?/g, '')).join('\n').trim()
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:builderrorsignalcontent:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildErrorSignalContent:function"]
 
 /**
  * Builds a synchronous summary string for an item by extracting and formatting its title and description. This function is designed to provide a concise overview of an item embedding.
@@ -820,7 +850,6 @@ function buildErrorSignalContent(item: any): string {
  * @calls       stripHtml
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildsummarycontentsync:function" type="function" identity="buildSummaryContentSync" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-VECTOR type="context" content="purpose='Extracts error signals or code blocks for an item embedding.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -835,12 +864,13 @@ function buildErrorSignalContent(item: any): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:buildSummaryContentSync:function" type="function" identity="buildSummaryContentSync" parent="~/.framework/functions/embeddings.ts"]
 function buildSummaryContentSync(item: any): string {
   
   const desc = stripHtml(item.description || '')
   return `${item.title || ''}: ${desc.slice(0, 300)}`
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildsummarycontentsync:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:buildSummaryContentSync:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Builds a synchronous summary string for an item.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -860,7 +890,6 @@ function buildSummaryContentSync(item: any): string {
  * @calls       callOpenAIChat, buildSummaryContentSync
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:generateaisummary:function" type="function" identity="generateAiSummary" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Generates an AI-written summary for an item, with a sync fallback."]
 // CIL[DOC-RESPONSIBILITY responsibility="Calls OpenAI chat to summarize an article, falling back to a synchronous summary on failure."]
 // CIL[DOC-STABILITY stability="internal"]
@@ -869,6 +898,7 @@ function buildSummaryContentSync(item: any): string {
 // CIL[DOC-CONTRACT inputs="item: any, ctx?: any" outputs="string summary" errors="none; failures are handled and fallback is returned" side_effects="calls external OpenAI chat API"]
 // CIL[DOC-MICRO logic_summary="Strips HTML and truncates the description, calls the LLM with a concise system prompt, and falls back to buildSummaryContentSync if the call fails." notable_decisions="none"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:generateAiSummary:function" type="function" identity="generateAiSummary" parent="~/.framework/functions/embeddings.ts"]
 async function generateAiSummary(item: any, ctx?: any): Promise<string> {
   const plain = stripHtml(item.description || '').slice(0, 3000)
   try {
@@ -886,7 +916,7 @@ async function generateAiSummary(item: any, ctx?: any): Promise<string> {
     return buildSummaryContentSync(item)
   }
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:generateaisummary:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:generateAiSummary:function"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Generates an AI-written summary for an item, with a sync fallback.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -906,7 +936,6 @@ async function generateAiSummary(item: any, ctx?: any): Promise<string> {
  * @calls       callOpenAIEmbeddings
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:callembeddingapi:function" type="function" identity="callEmbeddingApi" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Calls the OpenAI embedding API and formats the result."]
 // CIL[DOC-RESPONSIBILITY responsibility="Converts text inputs into vector arrays from the embedding model."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -915,13 +944,14 @@ async function generateAiSummary(item: any, ctx?: any): Promise<string> {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:callEmbeddingApi:function" type="function" identity="callEmbeddingApi" parent="~/.framework/functions/embeddings.ts"]
 async function callEmbeddingApi(inputs: string[], ctx?: any): Promise<string[]> {
   if (!inputs.length) return inputs.map(() => '')
   const j = await callOpenAIEmbeddings(ctx, inputs, 'text-embedding-3-small')
   const sorted = (j.data || []).sort((a: any, b: any) => a.index - b.index)
   return sorted.map((d: any) => `[${d.embedding.join(',')}]`)
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:callembeddingapi:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:callEmbeddingApi:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Calls the OpenAI embedding API and formats the result.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -940,7 +970,6 @@ async function callEmbeddingApi(inputs: string[], ctx?: any): Promise<string[]> 
  * @calls       createHash
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:contenthash:function" type="function" identity="contentHash" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Computes a short SHA-256 hash of text."]
 // CIL[DOC-RESPONSIBILITY responsibility="Generates a 16-hex-character content hash for embeddings."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -949,10 +978,11 @@ async function callEmbeddingApi(inputs: string[], ctx?: any): Promise<string[]> 
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:contentHash:function" type="function" identity="contentHash" parent="~/.framework/functions/embeddings.ts"]
 function contentHash(text: string): string {
   return createHash('sha256').update(text).digest('hex').slice(0, 16)
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:contenthash:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:contentHash:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Computes a short SHA-256 hash of text.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -970,7 +1000,6 @@ function contentHash(text: string): string {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:_platformaccountid:constant" type="constant" identity="_platformAccountId" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Cached platform account identifier for spine-system."]
 // CIL[DOC-RESPONSIBILITY responsibility="Holds the cached spine-system account id to avoid repeated lookups."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -979,8 +1008,9 @@ function contentHash(text: string): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+
 let _platformAccountId: string | null = null
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:_platformaccountid:constant"]
+
 // CIL[DOC-VECTOR type="context" content="purpose='Cached platform account identifier for spine-system.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -997,7 +1027,6 @@ let _platformAccountId: string | null = null
  * @calls       adminDb.from('accounts')
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:getplatformaccountid:function" type="function" identity="getPlatformAccountId" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Resolves and caches the spine-system platform account id."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetches the platform account from the accounts table and caches it."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1006,13 +1035,14 @@ let _platformAccountId: string | null = null
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:getPlatformAccountId:function" type="function" identity="getPlatformAccountId" parent="~/.framework/functions/embeddings.ts"]
 async function getPlatformAccountId(): Promise<string | null> {
   if (_platformAccountId) return _platformAccountId
   const { data } = await adminDb.from('accounts').select('id').eq('slug', 'spine-system').maybeSingle()
   _platformAccountId = data?.id ?? null
   return _platformAccountId
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:getplatformaccountid:function"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:getPlatformAccountId:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Resolves and caches the spine-system platform account id.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1031,7 +1061,6 @@ async function getPlatformAccountId(): Promise<string | null> {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:contentbuilder:type" type="type" identity="ContentBuilder" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Type alias for embedding content builder functions."]
 // CIL[DOC-RESPONSIBILITY responsibility="Defines the function signature used by CONTENT_BUILDERS."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1040,8 +1069,9 @@ async function getPlatformAccountId(): Promise<string | null> {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:ContentBuilder:type" type="type" identity="ContentBuilder" parent="~/.framework/functions/embeddings.ts"]
 type ContentBuilder = (item: any, meta?: any) => string
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:contentbuilder:type"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:ContentBuilder:type"]
 // CIL[DOC-VECTOR type="context" content="purpose='Type alias for embedding content builder functions.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1057,7 +1087,6 @@ type ContentBuilder = (item: any, meta?: any) => string
  * @calls       buildSemanticContent, buildStructureContent, buildIntentContent, buildCauseContent, buildProcedureContent, buildOutcomeContent, buildContextContent, buildErrorSignalContent
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:content_builders:constant" type="constant" identity="CONTENT_BUILDERS" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Mapping of vector type names to content builder functions."]
 // CIL[DOC-RESPONSIBILITY responsibility="Registers content builders for semantic, structure, intent, cause, procedure, outcome, context, and error_signal vectors."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1066,6 +1095,7 @@ type ContentBuilder = (item: any, meta?: any) => string
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:CONTENT_BUILDERS:constant" type="constant" identity="CONTENT_BUILDERS" parent="~/.framework/functions/embeddings.ts"]
 const CONTENT_BUILDERS: Record<string, ContentBuilder> = {
   semantic:     buildSemanticContent,
   structure:    (item, meta) => buildStructureContent(item, meta?.embedding_fields ?? []),
@@ -1077,7 +1107,7 @@ const CONTENT_BUILDERS: Record<string, ContentBuilder> = {
   error_signal: buildErrorSignalContent,
   
 }
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:content_builders:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:CONTENT_BUILDERS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Mapping of vector type names to content builder functions.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1093,7 +1123,6 @@ const CONTENT_BUILDERS: Record<string, ContentBuilder> = {
  * @calls       sanitizeRecordData, adminDb.from, ctx.db.from
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Lists embedding records with optional filters."]
 // CIL[DOC-RESPONSIBILITY responsibility="Returns a paginated, sanitized list of embeddings for the current account."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1102,10 +1131,13 @@ const CONTENT_BUILDERS: Record<string, ContentBuilder> = {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/embeddings.ts"]
 export const list = createHandler(async (ctx, _body) => {
   const { model_id, document_id, limit = 100, offset = 0 } = ctx.query || {}
 
-  if (!ctx.accountId) {
+  const isSystem = isSystemPrincipal(ctx)
+
+  if (!isSystem && !ctx.accountId) {
     throw new Error('Account context required')
   }
 
@@ -1115,6 +1147,10 @@ export const list = createHandler(async (ctx, _body) => {
     .from('embeddings')
     .select('*')
     .order('created_at', { ascending: false })
+
+  if (!isSystem) {
+    query = query.eq('account_id', ctx.accountId)
+  }
 
   if (model_id) {
     query = query.eq('model_id', model_id)
@@ -1150,7 +1186,6 @@ export const list = createHandler(async (ctx, _body) => {
  * @calls       adminDb.from('embeddings'), ctx.db.from('embeddings'), sanitizeRecordData
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Retrieves a single embedding by id."]
 // CIL[DOC-VECTOR type="context" content="purpose='Lists embedding records with optional filters.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -1165,6 +1200,7 @@ export const list = createHandler(async (ctx, _body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/embeddings.ts"]
 export const get = createHandler(async (ctx, _body) => {
   const { id } = ctx.query || {}
 
@@ -1174,11 +1210,17 @@ export const get = createHandler(async (ctx, _body) => {
 
   const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
 
-  const { data, error: err } = await db
+  let query = db
     .from('embeddings')
     .select('*')
     .eq('id', id)
-    .single()
+
+  if (!isSystemPrincipal(ctx)) {
+    if (!ctx.accountId) throw new Error('Account context required')
+    query = query.eq('account_id', ctx.accountId)
+  }
+
+  const { data, error: err } = await query.single()
 
   if (err) throw err
 
@@ -1200,7 +1242,6 @@ export const get = createHandler(async (ctx, _body) => {
  * @calls       ctx.db.from('embeddings')
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:getstats:constant" type="constant" identity="getStats" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Returns the total count of embeddings for the current account."]
 // CIL[DOC-RESPONSIBILITY responsibility="Counts the number of embeddings owned by the account."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1209,20 +1250,26 @@ export const get = createHandler(async (ctx, _body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:getStats:constant" type="constant" identity="getStats" parent="~/.framework/functions/embeddings.ts"]
 export const getStats = createHandler(async (ctx, _body) => {
-  if (!ctx.accountId) {
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) {
     throw new Error('Account context required')
   }
 
-  const { count, error: err } = await ctx.db
+  let query = ctx.db
     .from('embeddings')
     .select('*', { count: 'exact', head: true })
+
+  if (!isSystem) query = query.eq('account_id', ctx.accountId)
+
+  const { count, error: err } = await query
 
   if (err) throw err
 
   return { total_embeddings: count || 0 }
 })
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:getstats:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:getStats:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Returns the total count of embeddings for the current account.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1238,7 +1285,6 @@ export const getStats = createHandler(async (ctx, _body) => {
  * @calls       ctx.db.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:batchcreate:constant" type="constant" identity="batchCreate" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Bulk inserts multiple embedding records."]
 // CIL[DOC-RESPONSIBILITY responsibility="Creates many embeddings in one transaction and logs the batch."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1247,6 +1293,7 @@ export const getStats = createHandler(async (ctx, _body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:batchCreate:constant" type="constant" identity="batchCreate" parent="~/.framework/functions/embeddings.ts"]
 export const batchCreate = createHandler(async (ctx, body) => {
   const { embeddings_data } = body
 
@@ -1277,7 +1324,7 @@ export const batchCreate = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:batchcreate:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:batchCreate:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Bulk inserts multiple embedding records.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1293,7 +1340,6 @@ export const batchCreate = createHandler(async (ctx, body) => {
  * @calls       ctx.db.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:deletebydocument:constant" type="constant" identity="deleteByDocument" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Deletes all embeddings for a given document."]
 // CIL[DOC-RESPONSIBILITY responsibility="Removes embeddings associated with a document and logs the deletion."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1302,6 +1348,7 @@ export const batchCreate = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:deleteByDocument:constant" type="constant" identity="deleteByDocument" parent="~/.framework/functions/embeddings.ts"]
 export const deleteByDocument = createHandler(async (ctx, body) => {
   const { document_id } = body
 
@@ -1309,11 +1356,15 @@ export const deleteByDocument = createHandler(async (ctx, body) => {
     throw new Error('document_id is required')
   }
 
-  const { data, error: err } = await ctx.db
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) throw new Error('Account context required')
+
+  let query = ctx.db
     .from('embeddings')
     .delete()
     .eq('document_id', document_id)
-    .select()
+  if (!isSystem) query = query.eq('account_id', ctx.accountId)
+  const { data, error: err } = await query.select()
 
   if (err) throw err
 
@@ -1324,7 +1375,7 @@ export const deleteByDocument = createHandler(async (ctx, body) => {
 
   return { deleted_count: data?.length || 0 }
 })
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:deletebydocument:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:deleteByDocument:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Deletes all embeddings for a given document.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1340,7 +1391,6 @@ export const deleteByDocument = createHandler(async (ctx, body) => {
  * @calls       ctx.db.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:cleanup:constant" type="constant" identity="cleanup" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Deletes embedding records older than a threshold."]
 // CIL[DOC-RESPONSIBILITY responsibility="Purges old embeddings based on a retention policy."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1349,18 +1399,23 @@ export const deleteByDocument = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:cleanup:constant" type="constant" identity="cleanup" parent="~/.framework/functions/embeddings.ts"]
 export const cleanup = createHandler(async (ctx, body) => {
   const { days_to_keep } = body
   const daysToKeep = days_to_keep || 365
 
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) throw new Error('Account context required')
+
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - daysToKeep)
 
-  const { data, error: err } = await ctx.db
+  let query = ctx.db
     .from('embeddings')
     .delete()
     .lt('created_at', cutoff.toISOString())
-    .select()
+  if (!isSystem) query = query.eq('account_id', ctx.accountId)
+  const { data, error: err } = await query.select()
 
   if (err) throw err
 
@@ -1389,7 +1444,6 @@ export const cleanup = createHandler(async (ctx, body) => {
  * @calls       ctx.db.rpc
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:searchsimilar:constant" type="constant" identity="searchSimilar" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Performs vector similarity search over embeddings."]
 // CIL[DOC-RESPONSIBILITY responsibility="Returns embeddings whose vectors are within a threshold of a query embedding."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1398,6 +1452,7 @@ export const cleanup = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:searchSimilar:constant" type="constant" identity="searchSimilar" parent="~/.framework/functions/embeddings.ts"]
 export const searchSimilar = createHandler(async (ctx, body) => {
   const {
     query_embedding,
@@ -1414,10 +1469,16 @@ export const searchSimilar = createHandler(async (ctx, body) => {
     throw new Error('query_embedding is required for similarity search')
   }
 
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) {
+    throw new Error('Account context required')
+  }
+
   const { data, error: err } = await ctx.db.rpc('match_embeddings', {
     query_embedding,
     match_count: parseInt(limit.toString()),
-    filter_account_ids: filter_account_ids ?? null,
+    // Scoped callers may not widen the corpus beyond their own account.
+    filter_account_ids: isSystem ? (filter_account_ids ?? null) : [ctx.accountId],
     filter_vector_type: filter_vector_type ?? null,
     similarity_threshold: parseFloat(threshold.toString()),
     filter_item_types: filter_item_types ?? null,
@@ -1433,7 +1494,7 @@ export const searchSimilar = createHandler(async (ctx, body) => {
     threshold: parseFloat(threshold.toString())
   }
 })
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:searchsimilar:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:searchSimilar:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Performs vector similarity search over embeddings.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1449,7 +1510,6 @@ export const searchSimilar = createHandler(async (ctx, body) => {
  * @calls       ctx.db.from('embeddings'), ctx.db.select, ctx.db.eq, ctx.db.textSearch, ctx.db.limit, ctx.db.in
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:searchsemantic:constant" type="constant" identity="searchSemantic" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Performs text search against embedding content."]
 // CIL[DOC-RESPONSIBILITY responsibility="Returns embeddings matching a text query using full-text search."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1458,6 +1518,7 @@ export const searchSimilar = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:searchSemantic:constant" type="constant" identity="searchSemantic" parent="~/.framework/functions/embeddings.ts"]
 export const searchSemantic = createHandler(async (ctx, body) => {
   const { query, model_id, document_ids, limit = 10 } = body || {}
 
@@ -1498,7 +1559,7 @@ export const searchSemantic = createHandler(async (ctx, body) => {
     query
   }
 })
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:searchsemantic:constant"]
+// CIL[END stable_id="~/.framework/functions/embeddings.ts:searchSemantic:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Performs text search against embedding content.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -1514,7 +1575,6 @@ export const searchSemantic = createHandler(async (ctx, body) => {
  * @calls       adminDb.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:revoke:constant" type="constant" identity="revoke" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Revokes all active embeddings for a document."]
 // CIL[DOC-RESPONSIBILITY responsibility="Marks embeddings for a document as revoked by setting revoked_at."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1523,16 +1583,21 @@ export const searchSemantic = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:revoke:constant" type="constant" identity="revoke" parent="~/.framework/functions/embeddings.ts"]
 export const revoke = createHandler(async (ctx, body) => {
   const { document_id } = body || {}
   if (!document_id) throw new Error('document_id is required')
 
-  const { data, error } = await adminDb
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) throw new Error('Account context required')
+
+  let query = adminDb
     .from('embeddings')
     .update({ revoked_at: new Date().toISOString() })
     .eq('document_id', document_id)
     .is('revoked_at', null)
-    .select('id')
+  if (!isSystem) query = query.eq('account_id', ctx.accountId)
+  const { data, error } = await query.select('id')
 
   if (error) throw error
 
@@ -1559,7 +1624,6 @@ export const revoke = createHandler(async (ctx, body) => {
  * @calls       adminDb.from('embeddings'), emitLog
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:approve:constant" type="constant" identity="approve" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Approves all embeddings for a document."]
 // CIL[DOC-RESPONSIBILITY responsibility="Marks embeddings for a document as approved by setting approved_at and clearing revoked_at."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1568,16 +1632,21 @@ export const revoke = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:approve:constant" type="constant" identity="approve" parent="~/.framework/functions/embeddings.ts"]
 export const approve = createHandler(async (ctx, body) => {
   const { document_id } = body || {}
   if (!document_id) throw new Error('document_id is required')
 
+  const isSystem = isSystemPrincipal(ctx)
+  if (!isSystem && !ctx.accountId) throw new Error('Account context required')
+
   const now = new Date().toISOString()
-  const { data, error } = await adminDb
+  let query = adminDb
     .from('embeddings')
     .update({ approved_at: now, revoked_at: null })
     .eq('document_id', document_id)
-    .select('id')
+  if (!isSystem) query = query.eq('account_id', ctx.accountId)
+  const { data, error } = await query.select('id')
 
   if (error) throw error
 
@@ -1605,7 +1674,6 @@ export const approve = createHandler(async (ctx, body) => {
  * @errorHandling none
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/embeddings.ts"]
 // CIL[DOC-MACRO purpose="Netlify function router that dispatches embedding actions."]
 // CIL[DOC-RESPONSIBILITY responsibility="Routes HTTP requests to the correct embedding operation based on action and method."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
@@ -1614,6 +1682,7 @@ export const approve = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
+// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/embeddings.ts"]
 export const handler = createHandler(async (ctx, body) => {
   const { action } = ctx.query || {}
   const method = ctx.query?.method || 'GET'

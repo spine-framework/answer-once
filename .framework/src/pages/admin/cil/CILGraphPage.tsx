@@ -1,5 +1,5 @@
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // CIL[DOC-MACRO purpose="Provide the CIL graph visualization page for exploring file and chunk call graphs."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render an interactive React Flow graph, switch view modes, and display node details."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts"]
@@ -12,6 +12,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:module_header:module_header"]
   ReactFlow,
   Background,
   Controls,
@@ -42,15 +43,12 @@ import { RefreshCw, ChevronRight, ZoomIn, Layers } from 'lucide-react'
 
 
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='Provide the CIL graph visualization page for exploring file and chunk call graphs.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:node_width:constant" type="constant" identity="NODE_WIDTH" parent="none"]
 // CIL[DOC-MACRO purpose="Define the default width for graph nodes."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a constant node width used by layout and rendering."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -59,15 +57,15 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NODE_WIDTH:constant" type="constant" identity="NODE_WIDTH" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 const NODE_WIDTH  = 180
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NODE_WIDTH:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the default width for graph nodes.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:node_width:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:node_height:constant" type="constant" identity="NODE_HEIGHT" parent="none"]
 // CIL[DOC-MACRO purpose="Define the default height for graph nodes."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a constant node height used by layout and rendering."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -76,15 +74,15 @@ const NODE_WIDTH  = 180
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NODE_HEIGHT:constant" type="constant" identity="NODE_HEIGHT" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 const NODE_HEIGHT = 60
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NODE_HEIGHT:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the default height for graph nodes.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:node_height:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:file_width:constant" type="constant" identity="FILE_WIDTH" parent="none"]
 // CIL[DOC-MACRO purpose="Define the default width for file nodes in the graph."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a constant file node width used by layout and rendering."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -93,15 +91,15 @@ const NODE_HEIGHT = 60
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:FILE_WIDTH:constant" type="constant" identity="FILE_WIDTH" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 const FILE_WIDTH  = 200
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:FILE_WIDTH:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the default width for file nodes in the graph.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:file_width:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:file_height:constant" type="constant" identity="FILE_HEIGHT" parent="none"]
 // CIL[DOC-MACRO purpose="Define the default height for file nodes in the graph."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a constant file node height used by layout and rendering."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -110,16 +108,16 @@ const FILE_WIDTH  = 200
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:FILE_HEIGHT:constant" type="constant" identity="FILE_HEIGHT" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 const FILE_HEIGHT = 40
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:FILE_HEIGHT:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the default height for file nodes in the graph.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:file_height:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:viewmode:type" type="type" identity="ViewMode" parent="none"]
 // CIL[DOC-MACRO purpose="Define the allowed graph view modes."]
 // CIL[DOC-RESPONSIBILITY responsibility="Constrain the viewMode state to files, chunks, or mixed display."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -128,17 +126,17 @@ const FILE_HEIGHT = 40
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:ViewMode:type" type="type" identity="ViewMode" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 type ViewMode = 'files' | 'chunks' | 'mixed'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:ViewMode:type"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the allowed graph view modes.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:viewmode:type"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:layoutgraph:function" type="function" identity="layoutGraph" parent="none"]
 // CIL[DOC-MACRO purpose="Apply a directed graph layout to React Flow nodes and edges."]
 // CIL[DOC-RESPONSIBILITY responsibility="Compute x/y positions for nodes using dagre and return positioned nodes with unchanged edges."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -147,6 +145,7 @@ type ViewMode = 'files' | 'chunks' | 'mixed'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:layoutGraph:function" type="function" identity="layoutGraph" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 function layoutGraph(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
   const g = new dagre.graphlib.Graph()
   g.setDefaultEdgeLabel(() => ({}))
@@ -170,19 +169,18 @@ function layoutGraph(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge
 
   return { nodes: positionedNodes, edges }
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:layoutGraph:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Apply a directed graph layout to React Flow nodes and edges.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:layoutgraph:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:chunk_type_colors:constant" type="constant" identity="CHUNK_TYPE_COLORS" parent="none"]
 // CIL[DOC-MACRO purpose="Map chunk types to display colors for the graph legend and nodes."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a color palette used by nodeColor and the graph legend."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -191,6 +189,7 @@ function layoutGraph(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:CHUNK_TYPE_COLORS:constant" type="constant" identity="CHUNK_TYPE_COLORS" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 const CHUNK_TYPE_COLORS: Record<string, string> = {
   function:  '#6366F1', 
   class:     '#8B5CF6', 
@@ -201,18 +200,17 @@ const CHUNK_TYPE_COLORS: Record<string, string> = {
   route:     '#EF4444', 
   config:    '#64748B', 
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:CHUNK_TYPE_COLORS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Map chunk types to display colors for the graph legend and nodes.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:chunk_type_colors:constant"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodecolor:function" type="function" identity="nodeColor" parent="none"]
 // CIL[DOC-MACRO purpose="Resolve the display color for a graph node based on its data."]
 // CIL[DOC-RESPONSIBILITY responsibility="Return a color string for React Flow nodes and the MiniMap."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -221,23 +219,23 @@ const CHUNK_TYPE_COLORS: Record<string, string> = {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodeColor:function" type="function" identity="nodeColor" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 function nodeColor(node: Node): string {
   if (node.data?.isFile) return '#1E293B'
   if (node.data?.is_dead_code) return '#94A3B8'
   return CHUNK_TYPE_COLORS[node.data?.chunk_type as string] || '#6366F1'
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodeColor:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Resolve the display color for a graph node based on its data.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodecolor:function"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:projectgraph:interface" type="interface" identity="ProjectGraph" parent="none"]
 // CIL[DOC-MACRO purpose="Describe the shape of the CIL project graph payload."]
 // CIL[DOC-RESPONSIBILITY responsibility="Type the file and chunk nodes plus import and call edges returned by the graph API."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -246,6 +244,7 @@ function nodeColor(node: Node): string {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:ProjectGraph:interface" type="interface" identity="ProjectGraph" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 interface ProjectGraph {
   nodes: {
     files: any[]
@@ -256,16 +255,15 @@ interface ProjectGraph {
     calls: { source_id: string; target_id: string; metadata?: any }[]
   }
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:ProjectGraph:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Describe the shape of the CIL project graph payload.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:projectgraph:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:buildflowgraph:function" type="function" identity="buildFlowGraph" parent="none"]
 // CIL[DOC-MACRO purpose="Build React Flow nodes and edges from a CIL project graph."]
 // CIL[DOC-RESPONSIBILITY responsibility="Convert project graph files, chunks, imports, and calls into React Flow elements."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -274,6 +272,7 @@ interface ProjectGraph {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:buildFlowGraph:function" type="function" identity="buildFlowGraph" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 function buildFlowGraph(graph: ProjectGraph, viewMode: ViewMode): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = []
   const edges: Edge[] = []
@@ -366,18 +365,17 @@ function buildFlowGraph(graph: ProjectGraph, viewMode: ViewMode): { nodes: Node[
 
   return layoutGraph(nodes, edges)
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:buildFlowGraph:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Build React Flow nodes and edges from a CIL project graph.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:buildflowgraph:function"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodedetailpanel:function" type="function" identity="NodeDetailPanel" parent="none"]
 // CIL[DOC-MACRO purpose="Render the inspector panel for a selected graph node."]
 // CIL[DOC-RESPONSIBILITY responsibility="Show file or chunk metadata and provide a link to the chunk contract view."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -386,6 +384,7 @@ function buildFlowGraph(graph: ProjectGraph, viewMode: ViewMode): { nodes: Node[
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NodeDetailPanel:component" type="component" identity="NodeDetailPanel" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 function NodeDetailPanel({
   node,
   projectId,
@@ -434,17 +433,16 @@ function NodeDetailPanel({
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:NodeDetailPanel:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render the inspector panel for a selected graph node.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:nodedetailpanel:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:cilgraphpage:function" type="function" identity="CILGraphPage" parent="none"]
 // CIL[DOC-MACRO purpose="Render the main CIL graph exploration page for a selected project."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch and display the project call graph, manage view mode, selection, and loading state."]
 // CIL[DOC-CONTEXT module="admin-cil-graph" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILGraphPage.tsx"]
@@ -453,6 +451,7 @@ function NodeDetailPanel({
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:CILGraphPage:component" type="component" identity="CILGraphPage" parent="~/.framework/src/pages/admin/cil/CILGraphPage.tsx"]
 export default function CILGraphPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
@@ -552,17 +551,6 @@ export default function CILGraphPage() {
           </Button>
         </div>
       </div>
-
-      <PageInstructions
-        description="Explore the file and chunk call graph for a project."
-        sections={[
-          { title: 'What this page is for', content: 'This page visualizes import links between files and call links between chunks for the selected CIL project.' },
-          { title: 'How to read this page', content: 'The React Flow canvas shows nodes and edges. The legend explains colors by chunk type. The Inspector panel on the right displays details for the selected node.' },
-          { title: 'How to use this page', content: 'Switch the view mode to files or chunks. Click a node to see its details in the inspector. Pan, zoom, and use the minimap to navigate large graphs.' },
-          { title: 'Important notes', content: 'The graph is only available after Pass 1 and Pass 2 ingestion complete. Empty graphs mean no imports or calls were detected yet.' },
-        ]}
-      />
-
       {}
       <div className="flex flex-1 min-h-0">
         <div className="flex-1">
@@ -629,10 +617,10 @@ export default function CILGraphPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:CILGraphPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render the main CIL graph exploration page for a selected project.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILGraphPage.tsx:cilgraphpage:function"]

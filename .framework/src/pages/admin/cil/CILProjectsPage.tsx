@@ -1,12 +1,27 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="React page for administering CIL projects — listing, creation, ingestion, and deletion."]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the CIL admin UI; load project list; manage create/edit/delete dialogs."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="API calls for listing, creating, updating, and deleting CIL projects"]
-// CIL[DOC-MICRO logic_summary="Imports dependencies, defines types and helpers, then exports a default component that renders a project grid, status badges, and a registration dialog." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="framework"]
+/**
+ * @module   CILProjectsPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * The CILProjectsPage module is responsible for rendering the user interface for managing CIL projects within the admin section of the application. It fetches project data from the API and displays it in a structured format using cards and badges. INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso apiFetch (used for fetching project data).
+ * @seeAlso @core/components/ui/card (provides UI components for displaying project information).
+ * @seeAlso react-router-dom (for navigation handling).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,8 +31,10 @@ import { Button } from '@core/components/ui/button'
 import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:module_header:module_header"]
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -28,24 +45,32 @@ import { Textarea } from '@core/components/ui/textarea'
 import { NativeSelect, NativeSelectOption } from '@core/components/ui/native-select'
 import { FolderGit2, Plus, Play, CheckCircle2, Clock, AlertCircle, GitGraph, LayoutDashboard, Trash2, Layers, Pencil, X } from 'lucide-react'
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 
-// CIL[DOC-VECTOR type="context" content="purpose='React page for administering CIL projects — listing, creation, ingestion, and deletion.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:SourceSet:interface" type="interface" identity="SourceSet" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="Describe an optional source set within a CIL project."]
-// CIL[DOC-RESPONSIBILITY responsibility="Type-check source set fields including base path, globs, and layer."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Optional source set structure with id, name, base_path, globs, exclude_globs, and layer." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-
+/**
+ * The SourceSet interface defines a structure for managing a set of source files, including their identifiers and paths. It is used to facilitate the organization and retrieval of source files in the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface SourceSet {
   id: string
   name: string
@@ -54,24 +79,35 @@ interface SourceSet {
   exclude_globs?: string
   layer?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Describe an optional source set within a CIL project.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:SourceSet:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:CILProject:interface" type="interface" identity="CILProject" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="Data model for a CIL project record and its ingestion metadata."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the shape of project data returned from the CIL API."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Includes id, title, description, status, and a nested data object with repo path, globs, source sets, and ingestion statistics." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:CILProject:interface" type="interface" identity="CILProject" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
+/**
+ * CILProject defines the structure of a project within the CIL framework, encapsulating essential project details and ingestion data. It standardizes how project information is represented and managed in the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface CILProject {
   id: string
   title: string
@@ -93,12 +129,6 @@ interface CILProject {
   }
   created_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data model for a CIL project record and its ingestion metadata.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:CILProject:interface"]
 
 
@@ -106,27 +136,38 @@ interface CILProject {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:status_badge:constant" type="constant" identity="STATUS_BADGE" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="Mapping of ingestion statuses to badge label and variant."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide consistent badge styling for not_started, in_progress, and complete statuses."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ingestion status string" outputs="badge label and variant" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Record keyed by status that returns a label and a shadcn Badge variant." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:STATUS_BADGE:constant" type="constant" identity="STATUS_BADGE" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
+/**
+ * STATUS_BADGE is a constant that defines the various status labels and their corresponding visual variants for project statuses in the admin interface. It exists to provide a consistent way to represent project states throughout the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 const STATUS_BADGE: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
   not_started: { label: 'Not Started', variant: 'outline' },
   in_progress: { label: 'In Progress', variant: 'secondary' },
   complete: { label: 'Complete', variant: 'default' },
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mapping of ingestion statuses to badge label and variant.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:status_badge:constant"]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:STATUS_BADGE:constant"]
 
 
 
@@ -138,27 +179,56 @@ const STATUS_BADGE: Record<string, { label: string; variant: 'default' | 'second
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:status_icon:constant" type="constant" identity="STATUS_ICON" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="Mapping of ingestion statuses to icon components."]
-// CIL[DOC-RESPONSIBILITY responsibility="Render an appropriate Lucide icon for each ingestion status."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ingestion status string" outputs="React icon component" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Record keyed by status that returns Clock, AlertCircle, or CheckCircle2 components." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:STATUS_ICON:constant" type="constant" identity="STATUS_ICON" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
+/**
+ * STATUS_ICON is a mapping of project statuses to their corresponding React components, providing a consistent way to render status indicators in the UI. This ensures that the visual representation of project statuses is uniform across the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 const STATUS_ICON: Record<string, React.ElementType> = {
   not_started: Clock,
   in_progress: AlertCircle,
   complete: CheckCircle2,
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mapping of ingestion statuses to icon components.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:status_icon:constant"]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:STATUS_ICON:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -167,14 +237,18 @@ const STATUS_ICON: Record<string, React.ElementType> = {
 
 
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:CILProjectsPage:component" type="component" identity="CILProjectsPage" parent="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-MACRO purpose="Default React component for the CIL projects admin page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Display and manage CIL projects, including listing, creating, editing, deleting, and navigation."]
-// CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILProjectsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="API calls, React state and navigation"]
-// CIL[DOC-MICRO logic_summary="Fetches project list, renders status cards with badge and icon, and provides a dialog to register or edit projects and source sets." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-
+/**
+ * CILProjectsPage manages the display and creation of CIL projects within the admin interface. It handles project data fetching, creation, and editing functionalities.
+ *
+ * @macro       Component for managing CIL projects in an admin interface.
+ * @micro       Utilizes React state management and API calls to fetch and manipulate project data.
+ * @outputSpec  JSX.Element — renders the CIL projects page UI
+ * @sideEffects API calls to fetch, create, and update CIL project data
+ * @stability   stable
+ * @calls       apiFetch
+ * @errorHandling none
+ * @cil-generated
+ */
 export default function CILProjectsPage() {
   const navigate = useNavigate()
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
@@ -327,17 +401,6 @@ export default function CILProjectsPage() {
           New Project
         </Button>
       </div>
-
-      <PageInstructions
-        description="Manage CIL projects and registered codebases."
-        sections={[
-          { title: 'What this page is for', content: 'Projects represent codebases that the CIL has indexed. This page lists all projects, their ingestion status, and quick stats.' },
-          { title: 'How to read this page', content: 'Each card shows the project title, repository path, status badge, and counts for files, chunks, and cumulative ingestion cost. Click a card to open the project.' },
-          { title: 'How to create / manage', content: 'Click New Project to register a codebase. Open a project to run ingestion, inspect the graph, or use the agent. Use the dashboard or ingestion tabs for detailed status.' },
-          { title: 'Important notes', content: 'The status badge reflects the latest ingestion pass. Costs are cumulative across all runs and include embedding and documentation generation.' },
-        ]}
-      />
-
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {[1, 2, 3].map(i => <Skeleton key={i} className="h-44 rounded-xl" />)}
@@ -359,7 +422,16 @@ export default function CILProjectsPage() {
 
 
 
+
+/**
+ * The constant 'ingestionStatus' retrieves the ingestion status of a project, defaulting to 'not_started' if the status is not available. It exists to provide a clear indication of the project's ingestion state within the CILProjectsPage module.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
             const ingestionStatus = project.data?.ingestion_status || 'not_started'
+
 
 
 
@@ -371,7 +443,16 @@ export default function CILProjectsPage() {
 
 
 
+
+/**
+ * StatusIcon determines the appropriate icon to represent the current ingestion status, providing a fallback to a default clock icon if the status is not recognized.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
             const StatusIcon = STATUS_ICON[ingestionStatus] || Clock
+
 
 
 
@@ -514,6 +595,9 @@ export default function CILProjectsPage() {
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingProjectId ? 'Edit CIL Project' : 'Register New CIL Project'}</DialogTitle>
+            <DialogDescription>
+              Configure the code intelligence project and its source sets.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
@@ -707,10 +791,10 @@ export default function CILProjectsPage() {
             <DialogTitle className="text-destructive flex items-center gap-2">
               <Trash2 className="h-4 w-4" /> Delete Project
             </DialogTitle>
+            <DialogDescription>
+              This will permanently delete the project and <strong>all associated files, chunks, proposals, embeddings, and graph links</strong>. This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            This will permanently delete the project and <strong>all associated files, chunks, proposals, embeddings, and graph links</strong>. This action cannot be undone.
-          </p>
           <p className="text-sm font-medium">
             Project: <span className="font-mono">{projects.find(p => p.id === confirmDeleteId)?.title || confirmDeleteId}</span>
           </p>
@@ -725,11 +809,13 @@ export default function CILProjectsPage() {
     </div>
   )
 }
-
-// CIL[DOC-VECTOR type="context" content="purpose='Default React component for the CIL projects admin page.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILProjectsPage.tsx:CILProjectsPage:component"]
+
+
+
+
+
+
+
+
+

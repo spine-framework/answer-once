@@ -26,15 +26,14 @@ import { Dialog as SheetPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='shadcn/ui Sheet component module built on Radix UI Dialog primitives'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:Sheet:component" type="component" identity="Sheet" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders a styled Radix Sheet root wrapper"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the sheet root wrapper that controls the dialog open state"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -42,18 +41,18 @@ import { XIcon } from "lucide-react"
 // CIL[DOC-MICRO logic_summary="Spreads props onto SheetPrimitive.Root with a data-slot attribute for styling hooks" notable_decisions="Uses React.ComponentProps to inherit the Radix Dialog root prop types"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:Sheet:component" type="component" identity="Sheet" parent="~/.framework/src/components/ui/sheet.tsx"]
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:Sheet:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a styled Radix Sheet root wrapper'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:Sheet:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTrigger:component" type="component" identity="SheetTrigger" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the trigger that opens the sheet"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the trigger element that opens the sheet"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -61,20 +60,20 @@ function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
 // CIL[DOC-MICRO logic_summary="Spreads props onto SheetPrimitive.Trigger with a data-slot attribute for styling hooks" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTrigger:component" type="component" identity="SheetTrigger" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetTrigger({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
   return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTrigger:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the trigger that opens the sheet'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTrigger:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetClose:component" type="component" identity="SheetClose" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the close button that dismisses the sheet"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the close button that dismisses the sheet"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -82,20 +81,20 @@ function SheetTrigger({
 // CIL[DOC-MICRO logic_summary="Spreads props onto SheetPrimitive.Close with a data-slot attribute for styling hooks" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetClose:component" type="component" identity="SheetClose" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetClose({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Close>) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetClose:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the close button that dismisses the sheet'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetClose:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetPortal:component" type="component" identity="SheetPortal" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the portal that mounts sheet content in the document body"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the portal that mounts sheet content in the document body"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -103,20 +102,20 @@ function SheetClose({
 // CIL[DOC-MICRO logic_summary="Spreads props onto SheetPrimitive.Portal with a data-slot attribute for styling hooks" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetPortal:component" type="component" identity="SheetPortal" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetPortal({
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Portal>) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetPortal:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the portal that mounts sheet content in the document body'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetPortal:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetOverlay:component" type="component" identity="SheetOverlay" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the backdrop overlay behind the sheet"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the backdrop overlay behind the sheet"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -124,6 +123,7 @@ function SheetPortal({
 // CIL[DOC-MICRO logic_summary="Wraps SheetPrimitive.Overlay and applies a fixed black/80 backdrop with optional blur and open/close animations" notable_decisions="Uses cn to merge the provided className with Tailwind backdrop and animation utilities"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetOverlay:component" type="component" identity="SheetOverlay" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetOverlay({
   className,
   ...props
@@ -132,22 +132,21 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/80 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 z-50 bg-black/80 duration-[250ms] supports-backdrop-filter:backdrop-blur-xs data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
         className
       )}
       {...props}
     />
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetOverlay:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the backdrop overlay behind the sheet'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetOverlay:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetContent:component" type="component" identity="SheetContent" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the main sheet panel with side positioning and an optional close button"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the main sheet panel with side positioning and an optional close button"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -155,6 +154,7 @@ function SheetOverlay({
 // CIL[DOC-MICRO logic_summary="Composes SheetPortal and SheetOverlay then renders SheetPrimitive.Content with side-aware Tailwind classes and an internal close button" notable_decisions="Defaults side to right and showCloseButton to true; uses data-side and data-open/data-closed attributes for animation hooks"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetContent:component" type="component" identity="SheetContent" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetContent({
   className,
   children,
@@ -172,7 +172,7 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col bg-popover bg-clip-padding text-xs/relaxed text-popover-foreground shadow-lg transition duration-200 ease-in-out data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-[side=bottom]:data-open:slide-in-from-bottom-10 data-[side=left]:data-open:slide-in-from-left-10 data-[side=right]:data-open:slide-in-from-right-10 data-[side=top]:data-open:slide-in-from-top-10 data-closed:animate-out data-closed:fade-out-0 data-[side=bottom]:data-closed:slide-out-to-bottom-10 data-[side=left]:data-closed:slide-out-to-left-10 data-[side=right]:data-closed:slide-out-to-right-10 data-[side=top]:data-closed:slide-out-to-top-10",
+          "fixed z-50 flex flex-col bg-popover bg-clip-padding text-xs/relaxed text-popover-foreground shadow-lg transition duration-[250ms] ease-in-out data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-full data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:border-b data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[side=bottom]:data-[state=open]:slide-in-from-bottom-10 data-[side=left]:data-[state=open]:slide-in-from-left-10 data-[side=right]:data-[state=open]:slide-in-from-right-10 data-[side=top]:data-[state=open]:slide-in-from-top-10 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[side=bottom]:data-[state=closed]:slide-out-to-bottom-10 data-[side=left]:data-[state=closed]:slide-out-to-left-10 data-[side=right]:data-[state=closed]:slide-out-to-right-10 data-[side=top]:data-[state=closed]:slide-out-to-top-10",
           className
         )}
         {...props}
@@ -195,15 +195,14 @@ function SheetContent({
     </SheetPortal>
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetContent:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the main sheet panel with side positioning and an optional close button'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetContent:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetHeader:component" type="component" identity="SheetHeader" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the header area of a sheet panel"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the header area of a sheet panel"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -211,6 +210,7 @@ function SheetContent({
 // CIL[DOC-MICRO logic_summary="Renders a div with the sheet-header data slot and vertical flex gap padding" notable_decisions="Merges an optional className with base layout classes via cn"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetHeader:component" type="component" identity="SheetHeader" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -220,15 +220,14 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetHeader:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the header area of a sheet panel'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetHeader:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetFooter:component" type="component" identity="SheetFooter" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the footer area of a sheet panel"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the footer area of a sheet panel"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -236,6 +235,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
 // CIL[DOC-MICRO logic_summary="Renders a div with the sheet-footer data slot and bottom auto-margin padding" notable_decisions="Merges an optional className with base layout classes via cn"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetFooter:component" type="component" identity="SheetFooter" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -245,15 +245,14 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
     />
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetFooter:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the footer area of a sheet panel'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetFooter:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTitle:component" type="component" identity="SheetTitle" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the accessible title inside a sheet"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the accessible title inside a sheet"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -261,6 +260,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
 // CIL[DOC-MICRO logic_summary="Wraps SheetPrimitive.Title with a heading font and data-slot attribute" notable_decisions="Merges an optional className with base typography classes"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTitle:component" type="component" identity="SheetTitle" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetTitle({
   className,
   ...props
@@ -276,15 +276,14 @@ function SheetTitle({
     />
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTitle:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the accessible title inside a sheet'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetTitle:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetDescription:component" type="component" identity="SheetDescription" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Renders the accessible description inside a sheet"]
 // CIL[DOC-RESPONSIBILITY responsibility="Renders the accessible description inside a sheet"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -292,6 +291,7 @@ function SheetTitle({
 // CIL[DOC-MICRO logic_summary="Wraps SheetPrimitive.Description with muted-foreground text styling" notable_decisions="Merges an optional className with base text classes"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:SheetDescription:component" type="component" identity="SheetDescription" parent="~/.framework/src/components/ui/sheet.tsx"]
 function SheetDescription({
   className,
   ...props
@@ -304,14 +304,13 @@ function SheetDescription({
     />
   )
 }
+// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetDescription:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the accessible description inside a sheet'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:SheetDescription:component"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/sheet.tsx:exports:variable" type="variable" identity="exports" parent="~/.framework/src/components/ui/sheet.tsx"]
 // CIL[DOC-MACRO purpose="Re-exports the Sheet subcomponents as the public API of the module"]
 // CIL[DOC-RESPONSIBILITY responsibility="Re-exports the Sheet subcomponents as the public API of the module"]
 // CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/sheet.tsx,.framework/src/lib/utils.ts"]
@@ -335,4 +334,3 @@ export {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/sheet.tsx:exports:variable"]

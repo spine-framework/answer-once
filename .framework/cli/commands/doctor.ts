@@ -11,9 +11,12 @@
 import type { Command } from 'commander'
 import { buildCliContext, handleError } from '../context.ts'
 import { adminDb } from '../../functions/_shared/index.ts'
-import { readFileSync, existsSync, readdirSync } from 'fs'
-import { resolve, dirname } from 'path'
+import { collectMigrations } from './migrate.ts'
+import { readFileSync, existsSync } from 'fs'
+import { resolve, dirname, join } from 'path'
 import { fileURLToPath } from 'url'
+import { findAgentsBlock, agentsBlockVersion } from '../lib/project-files.ts'
+import { hashEntry } from '../../../scripts/checksum-manifest.mts'
 
 // CIL[DOC-VECTOR type="context" content="purpose='Provides CLI commands for the doctor (system health) functionality, integrating with CLI context and shared database functions.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -131,7 +134,27 @@ async function checkEnvironment(): Promise<CheckResult> {
     }
   }
 
-  
+  const bad = required.filter(v => /your[-_]|placeholder|change-?me|^<[^>]*>|^xxx/i.test(process.env[v]!))
+  if (bad.length > 0) {
+    return {
+      name: 'environment',
+      status: 'fail',
+      message: `Placeholder values still set: ${bad.join(', ')} — replace with real Supabase credentials`,
+      details: { bad },
+      fixable: true
+    }
+  }
+
+  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co/.test(process.env.SUPABASE_URL || '')) {
+    return {
+      name: 'environment',
+      status: 'fail',
+      message: 'SUPABASE_URL must look like https://<project-ref>.supabase.co',
+      details: {},
+      fixable: true
+    }
+  }
+
   const xenvPath = resolve(__dirname, '../../.xenv')
   const hasXenv = existsSync(xenvPath)
 
@@ -142,6 +165,7 @@ async function checkEnvironment(): Promise<CheckResult> {
     details: { has_xenv: hasXenv, vars_present: required.length }
   }
 }
+
 // CIL[DOC-VECTOR type="context" content="purpose='Validates required environment variables and optional .xenv file presence.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -202,15 +226,15 @@ async function checkDatabase(): Promise<CheckResult> {
 // CIL[DOC-MACRO purpose="Compares local migration files against applied database migrations."]
 // CIL[DOC-RESPONSIBILITY responsibility="Identify pending or missing database migrations."]
 // CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Reads migration directory and queries schema_migrations."]
-// CIL[DOC-MICRO logic_summary="List local SQL files, query applied migration versions, and report any local files not yet applied." notable_decisions="Returns warn for pending migrations and fail when the directory or query errors."]
+// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Collects local migration files and queries _spine_migrations."]
+// CIL[DOC-MICRO logic_summary="List local SQL files via collectMigrations (framework + custom), query applied filenames from _spine_migrations, and report any local files not yet applied." notable_decisions="Returns warn for pending migrations — including when the tracking table does not exist yet — and fail only on unexpected query errors."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
 async function checkMigrations(): Promise<CheckResult> {
-  const migrationsDir = resolve(__dirname, '../../migrations_dayzero')
+  const migrationFiles = collectMigrations(false)
 
-  if (!existsSync(migrationsDir)) {
+  if (migrationFiles.length === 0) {
     return {
       name: 'migrations',
       status: 'fail',
@@ -219,36 +243,37 @@ async function checkMigrations(): Promise<CheckResult> {
     }
   }
 
-  const localFiles = readdirSync(migrationsDir)
-    .filter(f => f.endsWith('.sql'))
-    .sort()
-
   try {
     const { data, error } = await adminDb
-      .schema('public' as any)
-      .from('schema_migrations' as any)
-      .select('version')
+      .from('_spine_migrations' as any)
+      .select('filename')
 
     if (error) {
-      return {
-        name: 'migrations',
-        status: 'fail',
-        message: `Cannot query applied migrations: ${error.message}`,
-        details: { error: error.message },
-        fixable: false
+      // A missing tracking table means `migrate` has never run on this
+      // database — every file is pending, which is a warn, not a query error.
+      const tableMissing = error.code === '42P01' ||
+        /does not exist|schema cache/i.test(error.message)
+      if (!tableMissing) {
+        return {
+          name: 'migrations',
+          status: 'fail',
+          message: `Cannot query applied migrations: ${error.message}`,
+          details: { error: error.message },
+          fixable: false
+        }
       }
     }
 
-    const applied = (data || []).map((r: any) => r.version)
+    const applied = (data || []).map((r: any) => r.filename)
     const appliedSet = new Set(applied)
-    const pending = localFiles.filter(f => !appliedSet.has(f.replace('.sql', '')))
+    const pending = migrationFiles.filter(f => !appliedSet.has(f.name))
 
     if (pending.length > 0) {
       return {
         name: 'migrations',
         status: 'warn',
-        message: `${pending.length} pending migrations: ${pending.join(', ')}`,
-        details: { pending: pending.map(f => f.replace('.sql', '')), applied: applied.length },
+        message: `${pending.length} pending migrations: ${pending.map(f => f.name).join(', ')}`,
+        details: { pending: pending.map(f => f.name.replace('.sql', '')), applied: applied.length },
         fixable: true
       }
     }
@@ -335,6 +360,83 @@ async function checkIntegrity(): Promise<CheckResult> {
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkIntegrity:function"]
 
+/**
+ * Verify the agent assets init/upgrade install: AGENTS.md carries a
+ * spine-framework marker block whose version matches the manifest's
+ * framework_version, and every spine-* skill file listed under the
+ * manifest's `agent_files` map exists and hashes clean.
+ *
+ * All mismatches are WARNINGS, never failures — agent assets are
+ * refreshable state (`npx spine-framework upgrade` re-syncs them), and
+ * customer edits outside the markers / non-spine-* skills must never
+ * degrade health. Runs from process.cwd() (the project root).
+ */
+async function checkAgentFiles(): Promise<CheckResult> {
+  const root = process.cwd()
+  const manifestPath = join(root, '.spine-manifest.json')
+
+  let manifest: any = null
+  try {
+    if (existsSync(manifestPath)) manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+  } catch {
+    manifest = null
+  }
+  const agentFiles: Record<string, string> = manifest?.agent_files ?? {}
+  const expectedVersion: string | null = manifest?.framework_version ?? null
+  const problems: string[] = []
+
+  // AGENTS.md — marker block presence + version agreement.
+  const agentsPath = join(root, 'AGENTS.md')
+  if ('AGENTS.md' in agentFiles || existsSync(agentsPath)) {
+    if (!existsSync(agentsPath)) {
+      problems.push('AGENTS.md missing (manifest expects it)')
+    } else {
+      const text = readFileSync(agentsPath, 'utf8')
+      const range = findAgentsBlock(text.split(/\r?\n/))
+      if (!range) {
+        problems.push('AGENTS.md has no spine-framework marker block')
+      } else {
+        const blockVersion = agentsBlockVersion(text)
+        if (expectedVersion && blockVersion && blockVersion !== expectedVersion) {
+          problems.push(`AGENTS.md block is v${blockVersion}, project is v${expectedVersion}`)
+        }
+      }
+    }
+  }
+
+  // spine-* skills — existence + hash vs manifest agent_files entries.
+  for (const [rel, hash] of Object.entries(agentFiles)) {
+    if (rel === 'AGENTS.md') continue
+    const abs = join(root, rel)
+    if (!existsSync(abs)) { problems.push(`${rel} missing`); continue }
+    try {
+      if (hashEntry({ rel, abs, symlink: false }) !== hash) {
+        problems.push(`${rel} modified`)
+      }
+    } catch {
+      problems.push(`${rel} unreadable`)
+    }
+  }
+
+  if (problems.length) {
+    return {
+      name: 'agent_files',
+      status: 'warn',
+      message: `Agent asset drift: ${problems.join('; ')}`,
+      details: { problems },
+      fixable: true,
+    }
+  }
+  const count = Object.keys(agentFiles).length
+  return {
+    name: 'agent_files',
+    status: 'pass',
+    message: count
+      ? `Agent assets in sync (${count} manifest entries)`
+      : 'No agent assets tracked — this framework version predates agent_files',
+  }
+}
+
 // CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkTestRuns:function" type="function" identity="checkTestRuns" parent="~/.framework/cli/commands/doctor.ts"]
 // CIL[DOC-MACRO purpose="Fetches the latest test run from the database."]
 // CIL[DOC-RESPONSIBILITY responsibility="Report the status of the most recent test suite execution."]
@@ -351,7 +453,7 @@ async function checkTestRuns(): Promise<CheckResult> {
       .select('suite, status, started_at')
       .order('started_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
     if (error) {
       return {
@@ -502,7 +604,7 @@ async function tryFix(check: CheckResult): Promise<string> {
       return 'Please set missing environment variables in .xenv or export them'
 
     case 'migrations':
-      return 'Run `npx spine migrations apply` or use Supabase CLI to apply pending migrations'
+      return 'Run `npx spine-framework migrate` to apply pending migrations'
 
     case 'integrity':
       return 'Run `npm run manifest` to regenerate the integrity manifest'
@@ -512,6 +614,9 @@ async function tryFix(check: CheckResult): Promise<string> {
 
     case 'runtime_wiring':
       return 'Fix the dangling trigger/pipeline references listed in details (re-install the owning app or correct the type_slug / pipeline reference)'
+
+    case 'agent_files':
+      return 'Run `npx spine-framework upgrade` to re-sync AGENTS.md and .devin/skills/spine-*'
 
     default:
       return 'No automatic fix available'
@@ -613,6 +718,7 @@ export function registerDoctorCommands(program: Command) {
         }
 
         checks.push(await checkIntegrity())
+        checks.push(await checkAgentFiles())
 
         
         const failed = checks.filter(c => c.status === 'fail').length

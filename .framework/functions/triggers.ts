@@ -248,7 +248,8 @@ export const getExecutions = createHandler(async (ctx, body) => {
     throw new Error('Account context required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('trigger_executions')
     .select('*')
     .eq('trigger_id', trigger_id)
@@ -275,7 +276,7 @@ export const getExecutions = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const create = createHandler(async (ctx, body) => {
-  const { app_id, name, description, event_type, pipeline_id, config, metadata } = body
+  const { app_id, name, description, event_type, trigger_type, pipeline_id, config, metadata } = body
 
   if (!name || !event_type || !pipeline_id) {
     throw new Error('name, event_type, and pipeline_id are required')
@@ -305,7 +306,8 @@ export const create = createHandler(async (ctx, body) => {
     }
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('triggers')
     .insert({
       app_id: app_id || null,
@@ -316,7 +318,8 @@ export const create = createHandler(async (ctx, body) => {
       pipeline_id,
       config: config || {},
       metadata: metadata || {},
-      created_by: ctx.principal.id
+      trigger_type: trigger_type || 'event',
+      created_by: ctx.principal.type === 'human' ? ctx.principal.id : null
     })
     .select()
     .single()
@@ -353,13 +356,14 @@ export const update = createHandler(async (ctx, body) => {
     throw new Error('Trigger ID is required')
   }
 
-  const allowed = ['name', 'description', 'config', 'pipeline_id', 'metadata', 'is_active', 'event_type', 'app_id']
+  const allowed = ['name', 'description', 'config', 'pipeline_id', 'metadata', 'is_active', 'event_type', 'trigger_type', 'app_id']
   const updateData: Record<string, any> = { updated_at: new Date().toISOString() }
   for (const key of allowed) {
     if (updates[key] !== undefined) updateData[key] = updates[key]
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('triggers')
     .update(updateData)
     .eq('id', id)
@@ -397,7 +401,8 @@ export const remove = createHandler(async (ctx, body) => {
     throw new Error('Trigger ID is required')
   }
 
-  const { data: existing } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: existing } = await db
     .from('triggers')
     .select('name, event_type')
     .eq('id', id)
@@ -407,9 +412,9 @@ export const remove = createHandler(async (ctx, body) => {
     throw new Error('Trigger not found')
   }
 
-  const { error: err } = await ctx.db
+  const { error: err } = await db
     .from('triggers')
-    .update({ 
+    .update({
       is_active: false,
       updated_at: new Date().toISOString()
     })
@@ -446,7 +451,8 @@ export const toggle = createHandler(async (ctx, body) => {
     throw new Error('Trigger ID is required')
   }
 
-  const { data: existing } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: existing } = await db
     .from('triggers')
     .select('is_active, name')
     .eq('id', id)
@@ -458,9 +464,9 @@ export const toggle = createHandler(async (ctx, body) => {
 
   const newStatus = !existing.is_active
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('triggers')
-    .update({ 
+    .update({
       is_active: newStatus,
       updated_at: new Date().toISOString()
     })
@@ -497,7 +503,16 @@ export const toggle = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
-  const { action } = ctx.query || {}
+  const { action, id } = ctx.query || {}
+  const method = ctx.query?.method || 'GET'
+
+  if (!action) {
+    if (method === 'GET') return id ? await get(ctx, body) : await list(ctx, body)
+    if (method === 'POST') return await create(ctx, body)
+    if (method === 'PATCH') return await update(ctx, body)
+    if (method === 'DELETE') return await remove(ctx, body)
+    throw new Error(`Unsupported method: ${method}`)
+  }
 
   switch (action) {
     case 'list':

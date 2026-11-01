@@ -1,73 +1,116 @@
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Shared logging utilities for admin-data operations and request context"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide logging helpers, log levels and structured log payloads used by admin-data handlers"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports CoreContext, adminDb and formatPrincipalForAudit; defines LogLevel, LogContext, AdminDataLogPayload and helpers for structured admin-data logging" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
-// CIL[DOC-AUDIENCE audience="framework-developers, admin-data consumers"]
+/**
+ * @module   logging
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module provides logging functionality that is shared across the application, facilitating consistent logging practices. It integrates with core middleware and database components to ensure that logs are formatted and stored appropriately.
+ * INVARIANT: All logs must include relevant context for auditing purposes.
+ *
+ * @seeAlso middleware.ts (provides core context for logging)
+ * @seeAlso db.ts (handles database interactions for log storage)
+ * @seeAlso principal.ts (formats principal information for audit logs)
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { CoreContext } from './middleware'
 import { adminDb } from './db'
 import { formatPrincipalForAudit } from './principal'
-// CIL[DOC-VECTOR type="context" content="purpose='Shared logging utilities for admin-data operations and request context'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:module_header:module_header"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LogLevel:type" type="type" identity="LogLevel" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Define the set of logging levels used across the framework"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the union of supported logging levels"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="LogLevel union type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="String-literal union of 'off', 'timing', 'warnings', 'errors' and 'all'" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * LogLevel defines a set of string constants representing different logging levels to standardize logging behavior across the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 export type LogLevel = 'off' | 'timing' | 'warnings' | 'errors' | 'all'
-// CIL[DOC-VECTOR type="context" content="purpose='Define the set of logging levels used across the framework'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LogLevel:type"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LogContext:interface" type="interface" identity="LogContext" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Extend the core request context with logging-specific fields"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare optional logging fields attached to a request context"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="LogContext interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Adds appId, source and logLevel properties to CoreContext" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The LogContext interface defines the structure for logging context information within the application, allowing for optional properties that provide additional context for log entries. This enhances the clarity and usefulness of logs by including details like application ID and log level.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 export interface LogContext extends CoreContext {
   appId?: string | null
   source?: string
   logLevel?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Extend the core request context with logging-specific fields'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LogContext:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:AdminDataLogPayload:interface" type="interface" identity="AdminDataLogPayload" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Define the payload shape for admin-data operation logs"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare all fields logged for an admin-data operation"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AdminDataLogPayload interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Records entity, action, method, duration, recordId, rowCount, filters, typeSlug, error and warning" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The AdminDataLogPayload interface defines the structure for logging administrative actions within the application. It captures essential details about the entity being acted upon, the action taken, and any relevant metadata.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 export interface AdminDataLogPayload {
   entity: string
   action: string
@@ -80,55 +123,97 @@ export interface AdminDataLogPayload {
   error?: any
   warning?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the payload shape for admin-data operation logs'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:AdminDataLogPayload:interface"]
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:VALID_LEVELS:constant" type="constant" identity="VALID_LEVELS" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="List the valid log levels in priority order"]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold the array of supported LogLevel values"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="LogLevel[] constant" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Array of all LogLevel string literals for filtering and validation" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * VALID_LEVELS defines the acceptable logging levels for the application to provide a standardized set of log levels used throughout the logging system.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const VALID_LEVELS: LogLevel[] = ['off', 'timing', 'warnings', 'errors', 'all']
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:VALID_LEVELS:constant"]
 
 // Module-level cache of the `system_settings` rows for key='logging'. The
 // per-ctx cache in resolveLogLevels only dedupes within one request; polling
 // clients re-issue this query on every request otherwise.
+
 let loggingSettingsCache: { rows: any[]; expiresAt: number } | null = null
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LOGGING_SETTINGS_TTL_MS:constant" type="constant" identity="LOGGING_SETTINGS_TTL_MS" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * LOGGING_SETTINGS_TTL_MS defines the time-to-live for logging settings in milliseconds to ensure that module-level caches persist for a specified duration between test cases.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const LOGGING_SETTINGS_TTL_MS = 60_000
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LOGGING_SETTINGS_TTL_MS:constant"]
 
 // Test hook — module-level caches survive between cases in one process.
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:__resetLoggingSettingsCache:component" type="component" identity="__resetLoggingSettingsCache" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * __resetLoggingSettingsCache resets the logging settings cache to null to clear any cached logging settings, ensuring that fresh settings are retrieved when needed.
+ *
+ * @outputSpec  void
+ * @sideEffects sets loggingSettingsCache to null
+ * @stability   internal
+ * @cil-generated
+ */
 export function __resetLoggingSettingsCache() {
   loggingSettingsCache = null
 }
-// CIL[DOC-VECTOR type="context" content="purpose='List the valid log levels in priority order'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:VALID_LEVELS:constant"]
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:__resetLoggingSettingsCache:component"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:parseLogLevelHeader:function" type="function" identity="parseLogLevelHeader" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Parse a comma or pipe delimited log level header into a list"]
-// CIL[DOC-RESPONSIBILITY responsibility="Convert a raw header string into validated LogLevel values"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="value: string | undefined" outputs="LogLevel[]" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Splits on commas or pipes, trims and filters to VALID_LEVELS; falls back to a single trimmed value" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Parses a log level header string into an array of valid log levels, ensuring only recognized levels are returned. This function handles both single and multiple log levels.
+ *
+ * @inputSpec
+ *   - value: string | undefined (optional) — the log level header string to parse.
+ * @outputSpec  LogLevel[] — an array of valid log levels.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function parseLogLevelHeader(value: string | undefined): LogLevel[] {
   if (!value) return []
   const parts = value.split(/[,|]/).map(p => p.trim()).filter(Boolean)
@@ -141,66 +226,104 @@ function parseLogLevelHeader(value: string | undefined): LogLevel[] {
   const levels = parts.filter(p => VALID_LEVELS.includes(p as LogLevel)) as LogLevel[]
   return levels
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Parse a comma or pipe delimited log level header into a list'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:parseLogLevelHeader:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:getCache:function" type="function" identity="getCache" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Retrieve the per-context logging cache if it exists"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return the logging cache from a LogContext"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext" outputs="Map<string, any> | undefined" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Accesses (ctx as any).__loggingCache" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Retrieves the logging cache from the provided log context if it exists. This function is useful for accessing cached logging data associated with a specific context.
+ *
+ * @inputSpec
+ *   - ctx: LogContext (required) — the logging context from which to retrieve the cache.
+ * @outputSpec  Map<string, any> | undefined — returns the logging cache map or undefined if it does not exist.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function getCache(ctx: LogContext): Map<string, any> | undefined {
   return (ctx as any).__loggingCache
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Retrieve the per-context logging cache if it exists'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:getCache:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:getOrCreateCache:function" type="function" identity="getOrCreateCache" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Return a per-context logging cache, creating one if needed"]
-// CIL[DOC-RESPONSIBILITY responsibility="Ensure a LogContext has an attached logging cache"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext" outputs="Map<string, any>" errors="none" side_effects="Mutates ctx.__loggingCache when missing"]
-// CIL[DOC-MICRO logic_summary="Checks for an existing cache and initializes a new Map if absent" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * This function retrieves an existing logging cache from the provided context or creates a new one if it doesn't exist. It ensures that logging operations can efficiently store and retrieve log-related data.
+ *
+ * @inputSpec
+ *   ctx: LogContext (required) — the logging context that may contain a cache.
+ * @outputSpec  Map<string, any> — a Map object representing the logging cache.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function getOrCreateCache(ctx: LogContext): Map<string, any> {
   if (!(ctx as any).__loggingCache) {
     ;(ctx as any).__loggingCache = new Map()
   }
   return (ctx as any).__loggingCache
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Return a per-context logging cache, creating one if needed'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:getOrCreateCache:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:findSetting:function" type="function" identity="findSetting" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Find the log levels configured for a given scope and optional scopeId"]
-// CIL[DOC-RESPONSIBILITY responsibility="Search system_settings rows for a matching logging configuration"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="rows: any[], scope: string, scopeId?: string | null" outputs="LogLevel[] | undefined" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Uses Array.find with a predicate comparing scope and scope_id, then returns row.value.levels" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Retrieves logging levels associated with a specific scope and optional scope ID from a list of rows. This function is used to configure logging settings based on the provided parameters.
+ *
+ * @inputSpec
+ *   rows: any[] (required) — an array of row objects containing logging settings.
+ *   scope: string (required) — the scope to filter the rows by.
+ *   scopeId: string | null (optional) — an optional identifier to further filter the rows.
+ * @outputSpec  LogLevel[] | undefined — an array of logging levels or undefined if no matching row is found.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function findSetting(
   rows: any[],
   scope: string,
@@ -211,23 +334,39 @@ function findSetting(
   )
   return row?.value?.levels as LogLevel[] | undefined
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Find the log levels configured for a given scope and optional scopeId'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:findSetting:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:resolveLogLevels:function" type="function" identity="resolveLogLevels" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Resolve the effective log levels for a request and optional entity/action"]
-// CIL[DOC-RESPONSIBILITY responsibility="Combine cache, system settings and request context to determine active log levels"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext, options?: { entity?: string; action?: string }" outputs="Promise<LogLevel[]>" errors="none" side_effects="Reads system_settings via adminDb, cached module-level with a short TTL"]
-// CIL[DOC-MICRO logic_summary="Checks module-level settings cache, fetches system_settings on miss, applies header override, then overlays global/source/principal/account/app/tool scopes" notable_decisions="settings rows are shared across requests so the hot admin-data path doesn't re-read them per call; tests reset the cache via the exported reset hook"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Resolves logging levels based on the provided context and options, caching results for efficiency. It retrieves settings from a database if not already cached.
+ *
+ * @macro       Async function that determines log levels for a given context and options.
+ * @micro       Uses a caching mechanism to store and retrieve log levels, querying a database when necessary.
+ * @inputSpec
+ *   ctx: LogContext (required) — the logging context containing relevant information.
+ *   options: { entity?: string; action?: string } (optional) — optional parameters to specify the entity and action for logging.
+ * @outputSpec  Promise<LogLevel[]> — an array of resolved log levels.
+ * @sideEffects Database query to 'system_settings' if cache is expired or empty.
+ * @stability   internal
+ * @calls       getOrCreateCache, adminDb.from('system_settings'), findSetting, parseLogLevelHeader
+ * @cil-generated
+ */
 export async function resolveLogLevels(
   ctx: LogContext,
   options?: { entity?: string; action?: string }
@@ -294,23 +433,133 @@ export async function resolveLogLevels(
   cache.set(cacheKey, levels)
   return levels
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve the effective log levels for a request and optional entity/action'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:resolveLogLevels:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:APP_UUID_TTL_MS:constant" type="constant" identity="APP_UUID_TTL_MS" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * APP_UUID_TTL_MS defines the time-to-live duration for application UUIDs in milliseconds. This constant helps manage the lifecycle of UUIDs within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
+const APP_UUID_TTL_MS = 5 * 60_000
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:APP_UUID_TTL_MS:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:appUuidCache:constant" type="constant" identity="appUuidCache" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * The appUuidCache stores mappings of application UUIDs to their corresponding metadata, allowing for efficient retrieval of this information. It exists to optimize the management of UUIDs and their associated data within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
+const appUuidCache = new Map<string, { id: string | null; at: number }>()
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:appUuidCache:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:UUID_PATTERN:constant" type="constant" identity="UUID_PATTERN" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * UUID_PATTERN is a regular expression that validates the format of UUIDs to ensure consistency and correctness in logging. It is essential for maintaining the integrity of UUIDs used within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:UUID_PATTERN:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:resolveAppUuid:function" type="function" identity="resolveAppUuid" parent="~/.framework/functions/_shared/logging.ts"]
+/**
+ * Resolves the application UUID based on a given reference string by checking a cache and querying a database if necessary. This function is essential for retrieving application identifiers in a consistent manner.
+ *
+ * @macro       Async function that resolves application UUIDs from references.
+ * @micro       Utilizes a caching mechanism and database query to retrieve the UUID efficiently.
+ * @inputSpec
+ *   - ref: string | null | undefined — The reference string used to look up the application UUID.
+ * @outputSpec  Promise<string | null> — Returns the application UUID or null if not found.
+ * @sideEffects Writes to appUuidCache and queries the adminDb database.
+ * @stability   internal
+ * @calls       adminDb.from('apps')
+ * @errorHandling returns null on database query error.
+ * @cil-generated
+ */
+export async function resolveAppUuid(ref: string | null | undefined): Promise<string | null> {
+  if (!ref) return null
+  if (UUID_PATTERN.test(ref)) return ref
+  const hit = appUuidCache.get(ref)
+  if (hit && Date.now() - hit.at < APP_UUID_TTL_MS) return hit.id
+  try {
+    const { data, error } = await adminDb
+      .from('apps')
+      .select('id')
+      .eq('slug', ref)
+      .maybeSingle()
+    if (error) return null
+    const id = data?.id ?? null
+    appUuidCache.set(ref, { id, at: Date.now() })
+    return id
+  } catch {
+    return null
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:resolveAppUuid:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildMessage:function" type="function" identity="buildMessage" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Build a human-readable log message from an admin-data payload"]
-// CIL[DOC-RESPONSIBILITY responsibility="Format a concise message string describing the operation"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="payload: AdminDataLogPayload" outputs="string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Concatenates action, entity, method, recordId, duration, warning and error details" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Builds a log message string based on the provided payload containing administrative data log details. This function is used for generating consistent log messages for various administrative actions.
+ *
+ * @macro       Log message builder for administrative actions.
+ * @micro       Constructs a message string by conditionally appending details from the payload.
+ * @inputSpec
+ *   payload: AdminDataLogPayload (required) — object containing details for the log message.
+ * @outputSpec  string — formatted log message.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function buildMessage(payload: AdminDataLogPayload): string {
   const { entity, action, method, durationMs, recordId, error, warning } = payload
   let msg = `admin-data ${action} ${entity}`
@@ -321,23 +570,37 @@ function buildMessage(payload: AdminDataLogPayload): string {
   if (error) msg += ` failed: ${error.message || String(error)}`
   return msg
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Build a human-readable log message from an admin-data payload'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildMessage:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildContext:function" type="function" identity="buildContext" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Build the structured context object for an admin-data log"]
-// CIL[DOC-RESPONSIBILITY responsibility="Convert payload fields into a flat context record for storage"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="payload: AdminDataLogPayload" outputs="Record<string, any>" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Maps duration, method, rowCount, filters, typeSlug, warning and error message into snake_case keys" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The buildContext function constructs a context object from the provided AdminDataLogPayload, extracting relevant properties for logging purposes. It ensures that only defined and relevant fields are included in the resulting context.
+ *
+ * @macro       Context builder for logging structured data.
+ * @micro       Conditionally adds properties to the context object based on the presence of corresponding fields in the payload.
+ * @inputSpec
+ *   payload: AdminDataLogPayload (required) — the payload containing data for logging.
+ * @outputSpec  Record<string, any> — an object containing the extracted context properties.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function buildContext(payload: AdminDataLogPayload): Record<string, any> {
   const ctx: Record<string, any> = {}
   if (payload.durationMs !== undefined) ctx.duration_ms = payload.durationMs
@@ -349,23 +612,35 @@ function buildContext(payload: AdminDataLogPayload): Record<string, any> {
   if (payload.error) ctx.error_message = payload.error.message || String(payload.error)
   return ctx
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Build the structured context object for an admin-data log'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildContext:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:traceLogFields:function" type="function" identity="traceLogFields" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Extract OpenTelemetry trace fields from the request context"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return trace metadata for a log row"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext" outputs="Record<string, any>" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Reads ctx.trace and maps traceId, spanId, parentSpanId, traceFlags, traceState and sampled" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The function extracts trace-related fields from a logging context if available, providing structured trace information for logging purposes. This enhances the logging capabilities by including relevant trace data.
+ *
+ * @inputSpec
+ *   ctx: LogContext (required) — the logging context containing trace information.
+ * @outputSpec  Record<string, any> — an object containing trace fields or an empty object if no trace is present.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function traceLogFields(ctx: LogContext): Record<string, any> {
   const trace = ctx.trace
   if (!trace) return {}
@@ -378,23 +653,39 @@ function traceLogFields(ctx: LogContext): Record<string, any> {
     sampled: trace.sampled
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Extract OpenTelemetry trace fields from the request context'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:traceLogFields:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildMetadata:function" type="function" identity="buildMetadata" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Build the metadata object for an admin-data log row"]
-// CIL[DOC-RESPONSIBILITY responsibility="Combine request, principal and trace metadata into a log record"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext, payload: AdminDataLogPayload" outputs="Record<string, any>" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Merges request_id, source, entity, action, formatted principal and trace fields, with optional record_id and truncated stack" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The buildMetadata function constructs a metadata object for logging purposes, aggregating information from the log context and payload. It facilitates the logging of administrative actions with relevant details.
+ *
+ * @macro       Function that generates a structured metadata object for logging.
+ * @micro       Utilizes properties from the log context and payload, conditionally adding fields based on the presence of specific data.
+ * @inputSpec
+ *   - ctx: LogContext (required) — context containing request and principal information.
+ *   - payload: AdminDataLogPayload (required) — data payload containing entity and action details.
+ * @outputSpec  Record<string, any> — an object containing structured metadata for logging.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       formatPrincipalForAudit, traceLogFields
+ * @cil-generated
+ */
 function buildMetadata(
   ctx: LogContext,
   payload: AdminDataLogPayload
@@ -413,23 +704,35 @@ function buildMetadata(
   }
   return meta
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Build the metadata object for an admin-data log row'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildMetadata:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:extractLogResult:function" type="function" identity="extractLogResult" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Extract recordId and rowCount from an admin-data operation result"]
-// CIL[DOC-RESPONSIBILITY responsibility="Normalize an admin-data result into log-relevant identifiers and counts"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="result: any" outputs="{ recordId?: string; rowCount?: number }" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Handles arrays, single records, result.data arrays/objects and result.count, preferring the first id when available" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Extracts relevant log result information from a given input object, returning either a record ID or row count. This function helps standardize the output format for logging purposes.
+ *
+ * @inputSpec
+ *   result: any (required) — the input object from which to extract log information.
+ * @outputSpec  { recordId?: string; rowCount?: number } — an object containing either a record ID or a row count based on the input.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function extractLogResult(result: any): { recordId?: string; rowCount?: number } {
   if (!result || typeof result !== 'object') return {}
 
@@ -459,23 +762,40 @@ function extractLogResult(result: any): { recordId?: string; rowCount?: number }
 
   return {}
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Extract recordId and rowCount from an admin-data operation result'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:extractLogResult:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:logAdminDataOperation:function" type="function" identity="logAdminDataOperation" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Write a structured admin-data operation log to the logs table"]
-// CIL[DOC-RESPONSIBILITY responsibility="Persist a log row based on resolved log levels and payload"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext, payload: AdminDataLogPayload" outputs="Promise<void>" errors="none" side_effects="Inserts a row into the logs table via ctx.db or adminDb"]
-// CIL[DOC-MICRO logic_summary="Resolves levels, filters by error/warning/timing, builds message/context/metadata and inserts a log row" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * Logs administrative data operations to a database, ensuring that only relevant log entries are recorded based on the provided payload and context. This function filters logs based on log levels and error/warning status.
+ *
+ * @macro       Async function responsible for logging administrative data operations.
+ * @micro       Determines the appropriate log level based on the presence of errors or warnings and the resolved log levels.
+ * @inputSpec
+ *   ctx: LogContext (required) — context containing logging and user information.
+ *   payload: AdminDataLogPayload (required) — data payload containing details about the operation being logged.
+ * @outputSpec  Promise<void>
+ * @sideEffects Writes log entries to the database.
+ * @stability   internal
+ * @calls       resolveLogLevels, resolveAppUuid, traceLogFields, buildMessage, buildContext, buildMetadata, ctx.db.from('logs').insert
+ * @errorHandling Logs errors to the console if logging fails.
+ * @cil-generated
+ */
 export async function logAdminDataOperation(
   ctx: LogContext,
   payload: AdminDataLogPayload
@@ -510,7 +830,7 @@ export async function logAdminDataOperation(
       source_id: payload.recordId || null,
       person_id: ctx.principal?.id || null,
       created_by: ctx.principal?.id || null,
-      app_id: ctx.appId || null,
+      app_id: await resolveAppUuid(ctx.appId),
       account_id: ctx.accountId || null,
       span_name: `admin-data.${payload.action}`,
       kind: 'event',
@@ -529,23 +849,40 @@ export async function logAdminDataOperation(
     console.error('Failed to write admin-data log:', err)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Write a structured admin-data operation log to the logs table'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:logAdminDataOperation:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:withAdminLogging:function" type="function" identity="withAdminLogging" parent="~/.framework/functions/_shared/logging.ts"]
-// CIL[DOC-MACRO purpose="Wrap an admin-data operation with automatic timing and logging"]
-// CIL[DOC-RESPONSIBILITY responsibility="Run an async operation and emit a structured log on completion or error"]
-// CIL[DOC-CONTEXT module="functions/_shared/logging" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: LogContext, params: Omit<AdminDataLogPayload, 'durationMs' | 'error' | 'recordId' | 'rowCount'>, operation: () => Promise<T>" outputs="Promise<T>" errors="Re-throws operation errors" side_effects="Calls logAdminDataOperation after the operation"]
-// CIL[DOC-MICRO logic_summary="Times the operation, extracts recordId/rowCount from result, catches and re-throws errors, and logs in finally" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY internal]
+/**
+ * The withAdminLogging function wraps an asynchronous operation with logging capabilities for admin data operations. It captures execution time, potential errors, and relevant result metadata for logging purposes.
+ *
+ * @macro       Async function that logs admin data operations.
+ * @micro       Measures execution duration and logs details in a finally block regardless of success or failure.
+ * @inputSpec
+ *   ctx: LogContext (required) — the logging context for the operation.
+ *   params: Omit<AdminDataLogPayload, 'durationMs' | 'error' | 'recordId' | 'rowCount'> (required) — parameters for logging excluding certain fields.
+ *   operation: () => Promise<T> (required) — the asynchronous operation to execute.
+ * @outputSpec  Promise<T> — the result of the executed operation.
+ * @sideEffects Logs admin data operation details to an external logging service.
+ * @stability   internal
+ * @calls       extractLogResult, logAdminDataOperation
+ * @cil-generated
+ */
 export async function withAdminLogging<T>(
   ctx: LogContext,
   params: Omit<AdminDataLogPayload, 'durationMs' | 'error' | 'recordId' | 'rowCount'>,
@@ -577,10 +914,11 @@ export async function withAdminLogging<T>(
     }).catch(console.error)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Wrap an admin-data operation with automatic timing and logging'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/logging.ts:withAdminLogging:function"]
+
+
+
+
+
+
+

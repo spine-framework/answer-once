@@ -1,12 +1,27 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the PromptConfigDetailPage React page file, imports dependencies, and declares the PromptConfig interface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Top-of-file module documentation and dependency imports for the prompt config admin detail page"]
-// CIL[DOC-CONTEXT module="prompt-config-admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, router hooks, UI components, API hooks, and utility modules; exports no runtime logic"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * @module   PromptConfigDetailPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * This module represents the Prompt Configuration Detail page in the admin section of the application, allowing users to view and edit prompt configurations. It integrates various UI components and hooks to manage state and API interactions. INVARIANT: The user must have appropriate permissions to access this page.
+ *
+ * @seeAlso EntitySelect (provides entity selection functionality).
+ * @seeAlso useApi (custom hook for API interactions).
+ * @seeAlso PageInstructions (displays instructions for the page).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -21,6 +36,7 @@ import { Input } from '../../components/ui/input'
 import { Textarea } from '../../components/ui/textarea'
 import { Checkbox } from '../../components/ui/checkbox'
 import { Label } from '../../components/ui/label'
+import { AppSelect } from '../../components/admin/EntitySelect'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
@@ -28,23 +44,31 @@ import { ArrowLeft, FileText, AlertCircle } from 'lucide-react'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the PromptConfigDetailPage React page file, imports dependencies, and declares the PromptConfig interface'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfig:interface" type="interface" identity="PromptConfig" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Type definition for prompt configuration records used by the detail page and API"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the shape of prompt configuration data"]
-// CIL[DOC-CONTEXT module="prompt-config-admin" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="PromptConfig type interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes fields for prompt configuration including metadata, model settings, escalation, and runtime options"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The PromptConfig interface defines the structure for configuration settings related to prompts in the application. It encapsulates various properties that control the behavior and characteristics of prompts used in the system.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface PromptConfig {
   id: string
   name: string
@@ -74,22 +98,37 @@ interface PromptConfig {
   created_at: string
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for prompt configuration records used by the detail page and API'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfig:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfigDetailPage:component" type="component" identity="PromptConfigDetailPage" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin page for creating and editing prompt configurations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a form for prompt config fields, load existing config, validate JSON, and submit to API"]
-// CIL[DOC-CONTEXT module="prompt-config-admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="URL id param (optional), apiFetch, useApi hook" outputs="Rendered form UI, API save requests" errors="API fetch/save failures, invalid JSON input" side_effects="Updates form state, calls navigate, shows alert"]
-// CIL[DOC-MICRO logic_summary="Loads prompt config by id, initialises form state, validates JSON arrays/objects, submits create or patch request, and renders card-based form sections"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The PromptConfigDetailPage component manages the creation and editing of prompt configurations in an admin interface. It fetches existing configurations or initializes a new one based on the provided ID.
+ *
+ * @macro       Component for managing prompt configuration details in an admin panel.
+ * @micro       Uses React hooks to manage state and side effects for form handling and API interactions.
+ * @outputSpec  JSX.Element
+ * @throws      Error — if the API fetch fails
+ * @sideEffects Makes API calls to fetch and submit prompt configurations.
+ * @stability   stable
+ * @calls       useParams, useNavigate, useApi, apiFetch
+ * @errorHandling throws an error if the API fetch fails
+ * @cil-generated
+ */
 export function PromptConfigDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -120,6 +159,7 @@ export function PromptConfigDetailPage() {
     is_active: true
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
 
   const { data: config, loading, error } = useApi<PromptConfig>(
     async () => {
@@ -164,6 +204,7 @@ export function PromptConfigDetailPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setFormError(null)
     try {
       let parsedKnowledgeSources: any[]
       let parsedAvailableTools: any[]
@@ -213,7 +254,7 @@ export function PromptConfigDetailPage() {
       const result = await response.json()
       if (isCreateMode) { navigate(`/spine-framework/admin/configs/prompts/${result.config_id || result.id}`) } else { navigate(-1) }
     } catch (err: any) {
-      alert(err.message)
+      setFormError(err.message)
     } finally {
       setIsSubmitting(false)
     }
@@ -255,57 +296,6 @@ export function PromptConfigDetailPage() {
           {isCreateMode ? 'Create Prompt Config' : config?.name || 'Prompt Config'}
         </h1>
       </div>
-
-      <PageInstructions
-        description="Create and manage prompt configurations that define LLM behavior."
-        sections={[
-          { title: 'What this prompt config controls', content: 'A prompt config stores the prompt body, model settings, escalation rules, knowledge sources, available tools, tool constraints, and metadata that AI agents and chat interfaces use at runtime.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name *</strong> — string, required. The display and lookup name.</li>
-            <li><strong>Slug *</strong> — string, required. The unique key callers use to select this config.</li>
-            <li><strong>Description</strong> — string, optional. Human-readable purpose.</li>
-            <li><strong>App ID</strong> — uuid, optional. Links this config to a specific app; editable only when creating.</li>
-            <li><strong>System Prompt</strong> — text. Optional base system instructions.</li>
-            <li><strong>Context Template</strong> — text. The prompt body; may include variable placeholders.</li>
-            <li><strong>Model</strong> — string, default gpt-4o. The model to use for this prompt.</li>
-            <li><strong>Temperature</strong> — number, default 0.7. Sampling temperature.</li>
-            <li><strong>Max Tokens</strong> — number, default 4000. Token limit for the response.</li>
-            <li><strong>Is Multi Turn</strong> — checkbox, default true. Whether the prompt supports conversation history.</li>
-            <li><strong>Max History Messages</strong> — number, default 20. Number of prior messages to include.</li>
-            <li><strong>Confidence Threshold</strong> — number, optional. Minimum confidence before taking action.</li>
-            <li><strong>Escalation Action / Target</strong> — strings, optional. Where to route low-confidence results.</li>
-            <li><strong>Output Mode / Field</strong> — strings, optional. How and where to emit the model output.</li>
-            <li><strong>Requires Review</strong> — checkbox, default false. Whether outputs need human review.</li>
-            <li><strong>Knowledge Sources</strong> — JSON array, default []. Data sources the prompt can draw from.</li>
-            <li><strong>Available Tools</strong> — JSON array, default []. Tool definitions the prompt can invoke.</li>
-            <li><strong>Tool Constraints</strong> — JSON object, default {}. Rules restricting tool use.</li>
-            <li><strong>Metadata</strong> — JSON object, default {}. Extra structured data attached to the config.</li>
-            <li><strong>Active</strong> — checkbox, default true. Inactive configs are not returned as candidates.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Model</strong> defaults to <em>gpt-4o</em> if left blank.</li>
-            <li><strong>Temperature</strong> can be any number; 0 is deterministic, higher values produce more random output.</li>
-            <li><strong>JSON fields</strong> must contain valid JSON. Arrays are expected for <em>Knowledge Sources</em> and <em>Available Tools</em>; objects are expected for <em>Tool Constraints</em> and <em>Metadata</em>.</li>
-            <li><strong>Active</strong>: when checked, callers can select this config by slug or default lookup.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>AI agents and pipelines look up prompts by slug. Missing or inactive configs break those calls.</li>
-            <li>Context Template variables must be supplied by callers; unresolved placeholders remain literal in the rendered text.</li>
-            <li>Malformed JSON in the JSON fields will prevent save and may break runtime callers expecting arrays or objects.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, enter the required <em>Name</em> and <em>Slug</em>. Optionally set <em>App ID</em>.</li>
-            <li>Fill the <em>Context Template</em> prompt body, model defaults, and any optional escalation/output fields.</li>
-            <li>Paste valid JSON into the four JSON textareas. Click <strong>Create</strong> or <strong>Update</strong> to save.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Leaving <em>Slug</em> empty or duplicating an existing slug.</li>
-            <li>Entering JSON arrays as a string or leaving a JSON field completely blank.</li>
-            <li>Setting <em>Max Tokens</em> or <em>Max History Messages</em> to 0 or non-numeric values.</li>
-          </ul> },
-        ]}
-      />
-
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
@@ -334,11 +324,10 @@ export function PromptConfigDetailPage() {
               </div>
               {isCreateMode && (
                 <div className="space-y-2">
-                  <Label>App ID</Label>
-                  <Input
+                  <Label>App</Label>
+                  <AppSelect
                     value={formData.app_id}
-                    onChange={(e) => setFormData({ ...formData, app_id: e.target.value })}
-                    placeholder="00000000-0000-0000-0000-000000000000"
+                    onChange={(v) => setFormData({ ...formData, app_id: v })}
                   />
                 </div>
               )}
@@ -424,6 +413,13 @@ export function PromptConfigDetailPage() {
 
 
 
+/**
+ * The constant 'v' captures the value from an event target, typically from a user input field, to facilitate the handling of user input in the component's state management.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
                     const v = e.target.value
 
                     setFormData({ ...formData, confidence_threshold: v === '' ? '' : Number(v) })
@@ -577,6 +573,7 @@ export function PromptConfigDetailPage() {
         )}
 
         <div className="flex items-center justify-end gap-3">
+          {formError && <p className="text-sm text-red-600 mr-auto">{formError}</p>}
           <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
             Cancel
           </Button>
@@ -588,13 +585,14 @@ export function PromptConfigDetailPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Admin page for creating and editing prompt configurations'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfigDetailPage:component"]
+
+
+
+
+
+
+
 
 
 

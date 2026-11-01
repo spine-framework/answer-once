@@ -11,20 +11,20 @@
 import { createHandler, CoreContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
-import { resolveCredential } from './_shared/resolve-credentials'
+import { resolveCredential, ResolvedCredential } from './_shared/resolve-credentials'
+import { isSystemAdmin } from './_shared/principal'
 import { get as adminDataGet, update as adminDataUpdate } from './admin-data'
 import * as openaiOutbound from './adapters/openai-outbound'
 import * as genericWebhookOutbound from './adapters/generic-webhook-outbound'
 import * as resendOutbound from './adapters/resend-outbound'
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='Module header: imports and adapter registration for outbound integration delivery'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:OutboundRequest:interface" type="interface" identity="OutboundRequest" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Shape of an outbound HTTP request produced by an adapter"]
 // CIL[DOC-RESPONSIBILITY responsibility="Defines the contract between adapters and the outbound executor"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -32,6 +32,7 @@ import * as resendOutbound from './adapters/resend-outbound'
 // CIL[DOC-MICRO logic_summary="Describes the fields required for a single outbound HTTP call." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:OutboundRequest:interface" type="interface" identity="OutboundRequest" parent="~/.framework/functions/integration-outbound.ts"]
 interface OutboundRequest {
   url: string
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -39,15 +40,14 @@ interface OutboundRequest {
   body?: any
   external_id?: string
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:OutboundRequest:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Shape of an outbound HTTP request produced by an adapter'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:OutboundRequest:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:OutboundAdapterContext:interface" type="interface" identity="OutboundAdapterContext" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Context object passed to outbound adapters when building a request"]
 // CIL[DOC-RESPONSIBILITY responsibility="Encapsulates record, integration, resolved credential and runtime identifiers for adapter use"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -55,6 +55,7 @@ interface OutboundRequest {
 // CIL[DOC-MICRO logic_summary="Provides adapters with all runtime data needed to construct a request." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:OutboundAdapterContext:interface" type="interface" identity="OutboundAdapterContext" parent="~/.framework/functions/integration-outbound.ts"]
 interface OutboundAdapterContext {
   record: any
   integration: any
@@ -63,15 +64,14 @@ interface OutboundAdapterContext {
   appId: string | null
   actionConfig: any
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:OutboundAdapterContext:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Context object passed to outbound adapters when building a request'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:OutboundAdapterContext:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:computeNextAttempt:function" type="function" identity="computeNextAttempt" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Compute the next retry timestamp for a failed outbound delivery"]
 // CIL[DOC-RESPONSIBILITY responsibility="Calculate exponential backoff with jitter for delivery retries"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -79,20 +79,20 @@ interface OutboundAdapterContext {
 // CIL[DOC-MICRO logic_summary="Uses exponential backoff capped by maxDelayMs and adds up to 20% jitter." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:computeNextAttempt:function" type="function" identity="computeNextAttempt" parent="~/.framework/functions/integration-outbound.ts"]
 function computeNextAttempt(attemptCount: number, baseMs = 30000, maxDelayMs = 3600000): Date {
   const delay = Math.min(baseMs * Math.pow(2, attemptCount), maxDelayMs)
   const jitter = Math.floor(Math.random() * delay * 0.2)
   return new Date(Date.now() + delay + jitter)
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:computeNextAttempt:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Compute the next retry timestamp for a failed outbound delivery'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:computeNextAttempt:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:execute:function" type="function" identity="execute" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Execute an outbound integration webhook request with retries and audit logging"]
 // CIL[DOC-RESPONSIBILITY responsibility="Resolve the integration, build an outbound request, call the target, and persist delivery status"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -100,13 +100,14 @@ function computeNextAttempt(attemptCount: number, baseMs = 30000, maxDelayMs = 3
 // CIL[DOC-MICRO logic_summary="Resolves tenant or system integration, creates or reuses a delivery record, loads the configured adapter, builds and executes the HTTP request, updates delivery status, and optionally writes the record." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:execute:function" type="function" identity="execute" parent="~/.framework/functions/integration-outbound.ts"]
 export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
   let deliveryId = body?.delivery_id
   let requestBody = body
   let isRetry = false
   let retryDelivery: any = null
 
-  if (deliveryId && ctx.principal?.isInternal) {
+  if (deliveryId) {
     const { data: delivery, error: deliveryError } = await adminDb
       .from('webhook_deliveries')
       .select('*')
@@ -117,14 +118,29 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
       throw new Error(`Delivery not found: ${deliveryId}`)
     }
 
-    retryDelivery = delivery
-    requestBody = delivery.payload || {}
-    isRetry = true
+    // A delivery_id replays (internal) or rewrites (non-internal) an existing
+    // delivery row that carries its own account_id. Only system-level
+    // principals — system_admin role or an unbound internal machine
+    // (SYSTEM_PRINCIPAL via INTERNAL_INVOKE_SECRET) — may touch another
+    // account's delivery. Account-bound callers must match.
+    const isSystem = isSystemAdmin(ctx.principal) ||
+      (ctx.principal?.isInternal === true && !ctx.accountId)
+    if (!isSystem && delivery.account_id !== ctx.accountId) {
+      const e: any = new Error('Delivery belongs to a different account')
+      e.statusCode = 403
+      throw e
+    }
 
-    await adminDb
-      .from('webhook_deliveries')
-      .update({ status: 'processing', updated_at: new Date().toISOString() })
-      .eq('id', deliveryId)
+    if (ctx.principal?.isInternal) {
+      retryDelivery = delivery
+      requestBody = delivery.payload || {}
+      isRetry = true
+
+      await adminDb
+        .from('webhook_deliveries')
+        .update({ status: 'processing', updated_at: new Date().toISOString() })
+        .eq('id', deliveryId)
+    }
   }
 
   const { integration_slug, record_id, action_config = {} } = requestBody
@@ -220,7 +236,31 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
 
   try {
     const credentialField = action_config.credential_field || 'api_token'
-    const resolved = await resolveCredential(ctx, integration, credentialField)
+    // An absent or explicitly-empty credential entry means "call without
+    // auth" — generic HTTP/webhook targets often need none, and the stock
+    // generic-http seed ships api_token {source:'value',value:''} as a
+    // deliberate no-auth marker. The skip is still audited with the same
+    // integration.credential_* event resolveCredential would have emitted,
+    // marked skipped:true so the non-fatal path is distinguishable. A
+    // configured-but-broken credential (env_var name set, variable unset)
+    // keeps throwing inside resolveCredential, and adapters that genuinely
+    // require a key (openai-outbound, resend-outbound) still fail in
+    // buildRequest when apiKey is missing — generic-webhook-outbound only
+    // attaches Authorization: Bearer when a credential resolved.
+    const credEntry = (integration?.credentials || {})[credentialField]
+    const credentialSkipped = !credEntry?.source || (credEntry.source === 'value' && !credEntry.value)
+    let resolved: ResolvedCredential | undefined
+    if (credentialSkipped) {
+      await emitLog(ctx, credEntry?.source === 'value' ? 'integration.credential_empty' : 'integration.credential_missing', { type: 'integration', id: integration.id }, undefined, {
+        field: credentialField,
+        source: credEntry?.source || null,
+        integration_id: integration.id,
+        account_id: ctx.accountId,
+        skipped: true
+      })
+    } else {
+      resolved = await resolveCredential(ctx, integration, credentialField)
+    }
 
     const adapterName = action_config.adapter || integration.config?.outbound_adapter
     if (!adapterName) {
@@ -351,15 +391,14 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
     throw err
   }
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:execute:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Execute an outbound integration webhook request with retries and audit logging'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:execute:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:builtInOutboundAdapters:constant" type="constant" identity="builtInOutboundAdapters" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Registry of built-in outbound adapter modules"]
 // CIL[DOC-RESPONSIBILITY responsibility="Map adapter paths to their module exports"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -367,20 +406,20 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
 // CIL[DOC-MICRO logic_summary="Lists the openai and generic webhook outbound adapter modules." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:builtInOutboundAdapters:constant" type="constant" identity="builtInOutboundAdapters" parent="~/.framework/functions/integration-outbound.ts"]
 const builtInOutboundAdapters: Record<string, any> = {
   'adapters/openai-outbound': openaiOutbound,
   'adapters/generic-webhook-outbound': genericWebhookOutbound,
   'adapters/resend-outbound': resendOutbound
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:builtInOutboundAdapters:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Registry of built-in outbound adapter modules'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:builtInOutboundAdapters:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function" type="function" identity="loadOutboundAdapter" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Load an outbound adapter by name from built-ins or dynamic imports"]
 // CIL[DOC-RESPONSIBILITY responsibility="Resolve and return an adapter module that exposes buildRequest"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -388,6 +427,7 @@ const builtInOutboundAdapters: Record<string, any> = {
 // CIL[DOC-MICRO logic_summary="Checks built-in registry first, then dynamically imports the requested adapter and verifies buildRequest exists." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function" type="function" identity="loadOutboundAdapter" parent="~/.framework/functions/integration-outbound.ts"]
 async function loadOutboundAdapter(functionName: string): Promise<any | null> {
   if (builtInOutboundAdapters[functionName]) {
     return builtInOutboundAdapters[functionName]
@@ -400,15 +440,14 @@ async function loadOutboundAdapter(functionName: string): Promise<any | null> {
     return null
   }
 }
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Load an outbound adapter by name from built-ins or dynamic imports'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:integrationOutbound:constant" type="constant" identity="integrationOutbound" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Handler binding for the outbound integration execute function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Wrap execute in the shared middleware handler"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -416,15 +455,15 @@ async function loadOutboundAdapter(functionName: string): Promise<any | null> {
 // CIL[DOC-MICRO logic_summary="Creates the middleware-backed handler from the execute function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:integrationOutbound:constant" type="constant" identity="integrationOutbound" parent="~/.framework/functions/integration-outbound.ts"]
 const integrationOutbound = createHandler(execute)
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:integrationOutbound:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Handler binding for the outbound integration execute function'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:integrationOutbound:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:default:function" type="function" identity="default" parent="~/.framework/functions/integration-outbound.ts"]
 // CIL[DOC-MACRO purpose="Default export of the integration outbound handler"]
 // CIL[DOC-RESPONSIBILITY responsibility="Export integrationOutbound as the module default"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
@@ -432,12 +471,13 @@ const integrationOutbound = createHandler(execute)
 // CIL[DOC-MICRO logic_summary="Exports the prebuilt handler as the module default for serverless entry points." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:default:function" type="function" identity="default" parent="~/.framework/functions/integration-outbound.ts"]
 export default integrationOutbound
+// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:default:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Default export of the integration outbound handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/integration-outbound.ts:default:function"]
 

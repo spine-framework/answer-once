@@ -33,8 +33,29 @@ export interface ProjectProfile {
   config_files: string[]
   root_scripts: string[]
   bin: string[]
+  /**
+   * Agent-facing assets init copies into the customer repo. Unlike the
+   * categories above, these are NOT copied verbatim into a matching path —
+   * each entry names a package `source`, a project `dest`, and a `merge`
+   * mode handled by syncAgentFiles:
+   *   framework-block — render the template, substitute {{SPINE_VERSION}},
+   *     and merge only the marked framework block into dest (init writes the
+   *     whole file; upgrade replaces the block between the markers and
+   *     preserves everything else).
+   *   dir-replace — copy the source directory tree to dest; on every run,
+   *     `spine-*` subdirectories under dest are removed first, so framework
+   *     skills are replaced wholesale while customer-owned sibling dirs
+   *     (any name not starting with `spine-`) are left alone.
+   */
+  agent_files?: AgentFileEntry[]
   exclude_globs: string[]
   package_scripts: Record<string, string>
+}
+
+export interface AgentFileEntry {
+  source: string
+  dest: string
+  merge: 'framework-block' | 'dir-replace'
 }
 
 export interface CollectedFile {
@@ -280,7 +301,11 @@ export function mergePackageJson(opts: {
   }
   for (const [k, v] of Object.entries(opts.newDependencies)) dependencies[k] = v
   for (const [k, v] of Object.entries(opts.newDevDependencies)) devDependencies[k] = v
-  dependencies['spine-framework'] = opts.spineVersion
+  const existingSpec = dependencies['spine-framework']
+  dependencies['spine-framework'] =
+    existingSpec && /^(file:|link:|workspace:|portal:)/.test(existingSpec)
+      ? existingSpec
+      : opts.spineVersion
 
   const frameworkDeps = [
     ...Object.keys(opts.newDependencies),
@@ -322,6 +347,7 @@ export function writeFrozenManifest(opts: {
   projectRoot: string
   frameworkVersion: string
   frameworkDeps: string[]
+  agentFiles?: Record<string, string>
 }): { fileCount: number; treeDigest: string } {
   const { projectRoot } = opts
   const entries = collectProtectedFiles(projectRoot, ['bin'], new Set(['.spine-manifest.json']))
@@ -338,6 +364,9 @@ export function writeFrozenManifest(opts: {
     node: '>=22.13.0',
     npm: '>=10.0.0',
     files,
+    // Agent assets live outside `files` — see the agent-files block comment
+    // above for why sealing them would break verify and upgrade.
+    ...(opts.agentFiles ? { agent_files: opts.agentFiles } : {}),
   }
   fs.writeFileSync(
     path.join(projectRoot, '.spine-manifest.json'),
@@ -346,6 +375,217 @@ export function writeFrozenManifest(opts: {
   return { fileCount: pairs.length, treeDigest: manifest.tree_digest }
 }
 // CIL[END stable_id="~/.framework/cli/lib/project-files.ts:manifest:block"]
+
+/*
+ * Agent asset sync — AGENTS.md framework block + .devin/skills/spine-*.
+ *
+ * Marker contract (upgrade.ts, doctor.ts, and tests depend on this format):
+ *
+ *   <!-- spine-framework:begin version=X.Y.Z -->
+ *   ...framework-owned lines...
+ *   <!-- spine-framework:end -->
+ *
+ * - The markers are HTML comments so they are inert in rendered markdown.
+ * - `version=` on the begin marker lets doctor/doctor-style checks read the
+ *   block's framework version without hashing.
+ * - {{SPINE_VERSION}} anywhere in the template (including inside the begin
+ *   marker) is substituted at copy time by renderAgentTemplate.
+ * - Everything outside the markers is customer-owned and never rewritten.
+ *
+ * Manifest semantics: agent files are hashed into the manifest's
+ * `agent_files` map — NOT `files`. Keeping them out of `files` matters:
+ * verify-manifest treats `files` entries as sealed and unions their top-level
+ * dirs into the protected trees, which would flag every customer file under
+ * .devin/ as EXTRA and every edit to AGENTS.md's user section as MODIFIED.
+ * `agent_files` records, per dest rel:
+ *   - framework-block dests: sha256 of the extracted block (LF-normalized),
+ *     so edits outside the markers do not count as drift.
+ *   - dir-replace dests: sha256 of each file under `spine-*` subdirs.
+ */
+
+/** Begin marker: `<!-- spine-framework:begin version=X.Y.Z -->` (version optional on read). */
+export const AGENTS_BEGIN_RE = /<!--\s*spine-framework:begin(?:\s+version=([^\s>]*))?\s*-->/
+/** End marker: `<!-- spine-framework:end -->`. */
+export const AGENTS_END_RE = /<!--\s*spine-framework:end\s*-->/
+
+/** Substitute {{SPINE_VERSION}} placeholders in an agent template. */
+export function renderAgentTemplate(template: string, version: string): string {
+  return template.replace(/\{\{SPINE_VERSION\}\}/g, version)
+}
+
+/**
+ * Locate the framework block inside newline-split lines.
+ * Returns inclusive line indices, or null when no begin marker exists.
+ * An unterminated begin marker spans only its own line — the orphan marker is
+ * consumed on merge while the stale body below degrades into user content
+ * (safe: user content is never deleted, only the framework block is managed).
+ */
+export function findAgentsBlock(lines: string[]): { begin: number; end: number } | null {
+  let begin = -1
+  for (let i = 0; i < lines.length; i++) {
+    if (AGENTS_BEGIN_RE.test(lines[i])) { begin = i; break }
+  }
+  if (begin === -1) return null
+  for (let i = begin + 1; i < lines.length; i++) {
+    if (AGENTS_END_RE.test(lines[i])) return { begin, end: i }
+  }
+  return { begin, end: begin }
+}
+
+/** The framework block's declared version, or null when absent. */
+export function agentsBlockVersion(text: string): string | null {
+  const m = text.match(AGENTS_BEGIN_RE)
+  return m ? (m[1] ?? null) : null
+}
+
+export interface AgentsMergeResult {
+  text: string
+  status: 'replaced' | 'prepended'
+}
+
+/**
+ * Merge the rendered template's framework block into existing AGENTS.md text.
+ * Replaces the marker-delimited span when markers exist (EOL preserved),
+ * otherwise prepends the block ahead of the user's content.
+ */
+export function mergeAgentsFile(existing: string, renderedTemplate: string): AgentsMergeResult {
+  const eol = existing.includes('\r\n') ? '\r\n' : '\n'
+  const tplLines = renderedTemplate.split(/\r?\n/)
+  const tplRange = findAgentsBlock(tplLines)
+  if (!tplRange) {
+    throw new Error('agent template is missing spine-framework begin/end markers')
+  }
+  const blockLines = tplLines.slice(tplRange.begin, tplRange.end + 1)
+
+  const lines = existing.split(/\r?\n/)
+  const range = findAgentsBlock(lines)
+  if (!range) {
+    const body = existing.replace(/^\s+/, '')
+    return { text: `${blockLines.join(eol)}${eol}${eol}${body}`, status: 'prepended' }
+  }
+  const next = [...lines.slice(0, range.begin), ...blockLines, ...lines.slice(range.end + 1)]
+  return { text: next.join(eol), status: 'replaced' }
+}
+
+export interface AgentSyncAction {
+  rel: string
+  action: 'written' | 'replaced' | 'prepended' | 'synced' | 'unchanged' | 'skipped'
+  detail?: string
+}
+
+function copyDirRecursive(srcAbs: string, destAbs: string): void {
+  fs.mkdirSync(destAbs, { recursive: true })
+  for (const dent of fs.readdirSync(srcAbs, { withFileTypes: true })) {
+    const src = path.join(srcAbs, dent.name)
+    const dest = path.join(destAbs, dent.name)
+    if (dent.isDirectory()) copyDirRecursive(src, dest)
+    else if (dent.isFile()) {
+      fs.copyFileSync(src, dest)
+      fs.chmodSync(dest, fs.statSync(src).mode)
+    }
+  }
+}
+
+/**
+ * Apply the profile's agent_files entries to a project tree.
+ * `framework-block` renders + merges the template; `dir-replace` removes
+ * `spine-*` subdirs under dest then copies the source tree in.
+ * dryRun reports the same actions without writing.
+ */
+export function syncAgentFiles(opts: {
+  pkgRoot: string
+  projectRoot: string
+  entries: AgentFileEntry[]
+  version: string
+  dryRun?: boolean
+}): AgentSyncAction[] {
+  const out: AgentSyncAction[] = []
+  for (const entry of opts.entries ?? []) {
+    const srcAbs = path.join(opts.pkgRoot, entry.source)
+    const destAbs = path.join(opts.projectRoot, entry.dest)
+
+    if (entry.merge === 'framework-block') {
+      if (!fs.existsSync(srcAbs)) {
+        out.push({ rel: entry.dest, action: 'skipped', detail: 'template absent from package' })
+        continue
+      }
+      const rendered = renderAgentTemplate(fs.readFileSync(srcAbs, 'utf8'), opts.version)
+      if (!fs.existsSync(destAbs)) {
+        if (!opts.dryRun) {
+          fs.mkdirSync(path.dirname(destAbs), { recursive: true })
+          fs.writeFileSync(destAbs, rendered)
+        }
+        out.push({ rel: entry.dest, action: 'written' })
+      } else {
+        const existing = fs.readFileSync(destAbs, 'utf8')
+        const merged = mergeAgentsFile(existing, rendered)
+        if (merged.text === existing) {
+          out.push({ rel: entry.dest, action: 'unchanged' })
+        } else {
+          if (!opts.dryRun) fs.writeFileSync(destAbs, merged.text)
+          out.push({ rel: entry.dest, action: merged.status })
+        }
+      }
+    } else if (entry.merge === 'dir-replace') {
+      if (!fs.existsSync(srcAbs) || !fs.statSync(srcAbs).isDirectory()) {
+        out.push({ rel: entry.dest, action: 'skipped', detail: 'source dir absent from package' })
+        continue
+      }
+      // Framework owns only the spine-* subdirs of dest — remove them, then
+      // copy the source tree in. Sibling dirs with any other name are
+      // customer-owned and untouched.
+      const removed = fs.existsSync(destAbs)
+        ? fs.readdirSync(destAbs, { withFileTypes: true })
+            .filter((d) => d.isDirectory() && d.name.startsWith('spine-'))
+            .map((d) => d.name)
+        : []
+      if (!opts.dryRun) {
+        for (const name of removed) {
+          fs.rmSync(path.join(destAbs, name), { recursive: true, force: true })
+        }
+        copyDirRecursive(srcAbs, destAbs)
+      }
+      const detail = removed.length ? `removed spine-* dirs: ${removed.join(', ')}` : undefined
+      out.push({ rel: entry.dest, action: 'synced', detail })
+    } else {
+      out.push({ rel: entry.dest, action: 'skipped', detail: `unknown merge mode '${entry.merge}'` })
+    }
+  }
+  return out
+}
+
+/**
+ * Hash the project's installed agent files for the manifest `agent_files` map.
+ * framework-block → hash of the extracted block (LF-normalized, so EOL style
+ * does not matter); dir-replace → one entry per file under `spine-*` subdirs.
+ */
+export function collectAgentFileHashes(
+  projectRoot: string,
+  entries: AgentFileEntry[],
+): Record<string, string> {
+  const hashes: Record<string, string> = {}
+  for (const entry of entries ?? []) {
+    const destAbs = path.join(projectRoot, entry.dest)
+    if (entry.merge === 'framework-block') {
+      if (!fs.existsSync(destAbs)) continue
+      const lines = fs.readFileSync(destAbs, 'utf8').split(/\r?\n/)
+      const range = findAgentsBlock(lines)
+      if (!range) continue
+      hashes[entry.dest] = sha256Text(lines.slice(range.begin, range.end + 1).join('\n') + '\n')
+    } else if (entry.merge === 'dir-replace') {
+      if (!fs.existsSync(destAbs)) continue
+      const managed = fs.readdirSync(destAbs, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && d.name.startsWith('spine-'))
+      for (const dir of managed) {
+        const dirAbs = path.join(destAbs, dir.name)
+        for (const f of walkDir(dirAbs, projectRoot, [])) {
+          hashes[f.rel] = sha256File(f.abs)
+        }
+      }
+    }
+  }
+  return hashes
+}
 
 // CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:file_io:block" type="block" identity="file_io" parent="~/.framework/cli/lib/project-files.ts"]
 // CIL[DOC-MACRO purpose="Copy collected files (mode-preserving, symlink safety-checked), sanitize dir names to npm package names, compare semvers"]

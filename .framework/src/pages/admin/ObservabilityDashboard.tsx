@@ -1,12 +1,28 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Admin observability dashboard page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the top-level React page for visualizing system observability metrics"]
-// CIL[DOC-CONTEXT module="observability" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines the admin observability dashboard page module and re-exports the component" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="maintainer"]
+/**
+ * @module   ObservabilityDashboard
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module renders the Observability Dashboard, providing visualizations for monitoring system performance and health. It utilizes various chart components to display data fetched from APIs, allowing users to gain insights into application metrics.
+ * INVARIANT: The dashboard requires valid API endpoints to function correctly.
+ *
+ * @seeAlso useApi (for API interaction).
+ * @seeAlso LoadingSpinner (for loading states).
+ * @seeAlso PageInstructions (for user guidance).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -15,6 +31,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:module_header:module_header"]
   LineChart,
   Line,
   BarChart,
@@ -35,133 +52,185 @@ import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
 import { Link } from 'react-router-dom'
-import { PageInstructions } from '../../components/admin/PageInstructions'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Admin observability dashboard page'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:MetricData:interface" type="interface" identity="MetricData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for event volume buckets"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe a single bucketed event count"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="MetricData[]" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="bucket and count fields for chart data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The MetricData interface defines the structure for metric data used in the observability dashboard. It encapsulates the essential properties needed to represent a metric's bucket and its count.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface MetricData {
   bucket: string
   count: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for event volume buckets'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:MetricData:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ErrorRateData:interface" type="interface" identity="ErrorRateData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for error rate aggregation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe total, error, and rate fields"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="ErrorRateData" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="total, errors, and rate fields for error summary" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The ErrorRateData interface defines the structure for representing error rate metrics in the observability dashboard. It provides essential data points for monitoring application performance and reliability.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface ErrorRateData {
   total: number
   errors: number
   rate: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for error rate aggregation'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ErrorRateData:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:LatencyData:interface" type="interface" identity="LatencyData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for latency percentiles"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe p50, p90, p95, p99 latency metrics"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="LatencyData" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="percentile fields for latency distribution" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The LatencyData interface defines a structure for capturing latency metrics at various percentiles. It provides a standardized way to represent and access latency statistics in the observability dashboard.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface LatencyData {
   p50: number
   p90: number
   p95: number
   p99: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for latency percentiles'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:LatencyData:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:PipelineStats:interface" type="interface" identity="PipelineStats" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for pipeline execution statistics"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe per-pipeline success, failure, and duration metrics"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="PipelineStats[]" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="pipeline_id, success_count, failure_count, and avg_duration_ms fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The PipelineStats interface defines the structure for tracking the statistics of a data processing pipeline, including its success and failure counts as well as average duration. It exists to provide a standardized way to represent and access these metrics within the observability dashboard.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface PipelineStats {
   pipeline_id: string
   success_count: number
   failure_count: number
   avg_duration_ms: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for pipeline execution statistics'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:PipelineStats:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:TopActor:interface" type="interface" identity="TopActor" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for top actor counts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe a principal and its event count"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="TopActor[]" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="principal_id and event_count fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TopActor interface defines the structure for representing an actor in the observability dashboard, including their unique identifier and the count of events associated with them. It facilitates the management and display of actor-related data within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface TopActor {
   principal_id: string
   event_count: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for top actor counts'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:TopActor:interface"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:AlertEvent:interface" type="interface" identity="AlertEvent" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Data shape for threshold alert events"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe an alert with metric, threshold, actual, and timestamp"]
-// CIL[DOC-CONTEXT module="observability" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="AlertEvent[]" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="id, metric, threshold_value, actual_value, and created_at fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The AlertEvent interface defines the structure of an alert event object used in the observability dashboard. It captures key details about the alert, including its identifier, metric, threshold, actual value, and creation timestamp.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface AlertEvent {
   id: string
   metric: string
@@ -169,46 +238,69 @@ interface AlertEvent {
   actual_value: number
   created_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Data shape for threshold alert events'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:AlertEvent:interface"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:colors:constant" type="constant" identity="COLORS" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Chart color palette"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide default color codes for charts"]
-// CIL[DOC-CONTEXT module="observability" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="string[]" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="static array of hex color values for use in charts" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:COLORS:constant" type="constant" identity="COLORS" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
+/**
+ * COLORS is an array of hex color codes used for visual representation in the Observability Dashboard. It provides a consistent color scheme for various UI elements.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
-// CIL[DOC-VECTOR type="context" content="purpose='Chart color palette'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:colors:constant"]
+// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:COLORS:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ObservabilityDashboard:component" type="component" identity="ObservabilityDashboard" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Render the observability dashboard"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch and display event volume, error rate, latency, pipeline health, top actors, and recent alerts"]
-// CIL[DOC-CONTEXT module="observability" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/ObservabilityDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="timeRange and refreshInterval from local state" outputs="JSX dashboard" errors="failed API fetches" side_effects="periodic refetch via setInterval"]
-// CIL[DOC-MICRO logic_summary="Uses useApi hooks to call observability endpoints, derives chart data and stats, and renders charts and alerts" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The ObservabilityDashboard component provides a user interface for monitoring various metrics related to system observability, such as event volume, error rates, and latency. It allows users to select time ranges and refresh intervals for the displayed data.
+ *
+ * @macro       UI component for displaying observability metrics.
+ * @micro       Utilizes multiple asynchronous API calls to fetch and display observability data based on user-selected parameters.
+ * @outputSpec  JSX.Element — renders the observability dashboard UI.
+ * @sideEffects Makes external API calls to fetch observability data.
+ * @stability   internal
+ * @calls       useApi, apiFetch
+ * @errorHandling returns default values on API call failures.
+ * @cil-generated
+ */
 export function ObservabilityDashboard() {
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d'>('24h')
   const [refreshInterval, setRefreshInterval] = useState(30)
@@ -311,12 +403,14 @@ export function ObservabilityDashboard() {
   
   const { data: recentAlerts } = useApi<AlertEvent[]>(
     async () => {
-      const response = await apiFetch('/api/logs?action=account&event=threshold.breached&limit=5')
+      const response = await apiFetch(
+        `/api/logs?action=account&event=threshold.breached&date_from=${encodeURIComponent(timeParams.from)}&date_to=${encodeURIComponent(timeParams.to)}&limit=5`
+      )
       if (!response.ok) return []
       const result = await response.json()
       return (result.data || result || []).slice(0, 5)
     },
-    { immediate: true }
+    { immediate: true, deps: [timeRange] }
   )
 
   
@@ -363,7 +457,7 @@ export function ObservabilityDashboard() {
       bgColor: latency && latency.p95 > 2000 ? 'bg-red-50' : 'bg-green-50',
     },
     {
-      title: 'Active Pipelines',
+      title: 'Pipelines with runs',
       value: pipelineStats?.length || 0,
       icon: RefreshCw,
       iconColor: 'text-purple-500',
@@ -413,17 +507,6 @@ export function ObservabilityDashboard() {
           </Button>
         </div>
       </div>
-
-      <PageInstructions
-        description="Review observability metrics and trace summaries."
-        sections={[
-          { title: 'What this page is for', content: 'This page shows real-time metrics for event volume, error rates, latency percentiles, and pipeline execution.' },
-          { title: 'How to read the cards', content: 'The stats cards show Total Events, Error Rate, P95 Latency, and Active Pipelines. Values change color when thresholds are exceeded (e.g., error rate above 5% or p95 above 2000ms).' },
-          { title: 'How to filter and interpret', content: 'Use the time range selector (1h, 24h, 7d) and refresh interval to control the window. Charts below the cards show trends for events, errors, latency, and pipeline success or failure.' },
-          { title: 'Important notes', content: 'Alert events are listed when metrics cross their configured thresholds. Top actors show the principals driving the most events.' },
-        ]}
-      />
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((card) => (
@@ -453,7 +536,7 @@ export function ObservabilityDashboard() {
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               <h3 className="text-lg font-semibold text-slate-900 mb-4">Event Volume</h3>
               <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" debounce={50}>
                   <LineChart data={eventVolume || []}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="bucket" tick={{ fontSize: 12 }} />
@@ -514,7 +597,7 @@ export function ObservabilityDashboard() {
               <h3 className="text-lg font-semibold text-slate-900 mb-4">Pipeline Health</h3>
               <div className="h-64">
                 {pipelineChartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" debounce={50}>
                     <BarChart data={pipelineChartData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                       <XAxis dataKey="name" tick={{ fontSize: 12 }} />
@@ -611,10 +694,10 @@ export function ObservabilityDashboard() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the observability dashboard'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ObservabilityDashboard:component"]
+
+
+
+
+
+

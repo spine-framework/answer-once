@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent=""]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Top-level imports and module entry point for the AppDetailPage admin component."]
 // CIL[DOC-RESPONSIBILITY responsibility="Declare external dependencies for the App detail admin page."]
 // CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { 
+// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header"]
   Select,
   SelectContent,
   SelectItem,
@@ -33,16 +34,13 @@ import {
 } from '../../components/ui/select'
 import { ArrowLeft, Pencil, Trash2, AlertCircle } from 'lucide-react';
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='Top-level imports and module entry point for the AppDetailPage admin component.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface" type="interface" identity="App" parent="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header"]
 // CIL[DOC-MACRO purpose="Define the App data contract used across the admin app detail page."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a TypeScript type describing the shape of an app record."]
 // CIL[DOC-CONTEXT module="admin" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppDetailPage.tsx"]
@@ -50,6 +48,7 @@ import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Declares the App interface with fields for metadata, configuration, and runtime settings." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface" type="interface" identity="App" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
 interface App {
   id: string
   slug: string
@@ -78,15 +77,14 @@ interface App {
   created_by?: string
   account_id?: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Define the App data contract used across the admin app detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component" type="component" identity="AppDetailPage" parent="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header"]
 // CIL[DOC-MACRO purpose="Render and manage the admin app create/edit/detail page."]
 // CIL[DOC-RESPONSIBILITY responsibility="Display app details, support editing and saving app configuration, and handle deletion."]
 // CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppDetailPage.tsx"]
@@ -94,6 +92,7 @@ interface App {
 // CIL[DOC-MICRO logic_summary="Fetches app by id, manages edit state and JSON config, renders form fields, and persists changes via API." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component" type="component" identity="AppDetailPage" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
 export function AppDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -348,59 +347,6 @@ export function AppDetailPage() {
           )}
         </div>
       </div>
-
-      <PageInstructions
-        description="Configure an app, its metadata, and runtime settings."
-        sections={[
-          { title: 'What this app controls', content: 'An app is a registered application in Spine. It controls navigation visibility, which people can use it, and the JSON configuration that the app or its runtime types consume.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name</strong> — string. The display name in the app switcher and registry.</li>
-            <li><strong>Slug</strong> — string. A unique URL-friendly identifier. Should be set at creation and rarely changed.</li>
-            <li><strong>Description</strong> — string. Optional short text shown in the app list.</li>
-            <li><strong>App Type</strong> — select. system, custom, or marketplace. Drives how the app is treated by the platform.</li>
-            <li><strong>Source</strong> — select. system, custom, or marketplace. Tracks where the app package came from.</li>
-            <li><strong>Min Role</strong> — select. member, admin, or owner. The lowest role that can see or access the app.</li>
-            <li><strong>Version</strong> — string. The current app version shown in the registry.</li>
-            <li><strong>Active</strong> — select true/false. Inactive apps are hidden and cannot be opened.</li>
-            <li><strong>System</strong> — select true/false. Marks apps that are part of the platform and should not be treated as tenant-managed.</li>
-            <li><strong>Icon</strong> — string. An icon name used by the UI. Invalid names show no icon.</li>
-            <li><strong>Color</strong> — select. The theme color for the app tile.</li>
-            <li><strong>Route Prefix</strong> — string. Optional URL prefix for the app (defaults to /slug).</li>
-            <li><strong>Renderer</strong> — select. generic, custom, or none. generic uses the design schema to render pages.</li>
-            <li><strong>Configuration (JSON)</strong> — JSON. Runtime configuration for the app or its generic renderer.</li>
-            <li><strong>Nav Items (JSON)</strong> — JSON. Array of navigation items for the app shell.</li>
-            <li><strong>Integration Deps (JSON)</strong> — JSON. Array of integration slugs the app depends on.</li>
-            <li><strong>Metadata (JSON)</strong> — JSON. Free-form metadata associated with the app.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Type/Source</strong>: <em>system</em> for built-in apps, <em>custom</em> for account-built apps, <em>marketplace</em> for installed apps.</li>
-            <li><strong>Min Role</strong>: <em>member</em> is most permissive, <em>admin</em> for admins, <em>owner</em> for account owners.</li>
-            <li><strong>Active</strong>: choose Active to publish, Inactive to hide.</li>
-            <li><strong>System</strong>: choose System to protect the app from tenant deletion.</li>
-            <li><strong>Color</strong>: blue, green, red, yellow, purple, pink, indigo, gray, slate.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>The app registry and shell navigation read these fields to decide which apps to show and who can open them.</li>
-            <li>Generic apps use the Configuration JSON and related types to render lists and detail pages.</li>
-            <li>Custom apps may read the slug and config to initialize routes. A missing slug or bad config can break the app.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, fill the App Information card and enter a unique slug, then choose Type, Source, and Min Role.</li>
-            <li>Edit the Configuration JSON with valid JSON; the form warns about invalid syntax on save.</li>
-            <li>Click Create to save, or Save Changes when editing. Use Delete to remove the app after a confirmation.</li>
-            <li>Validation checks required fields and that the Configuration JSON is parseable.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Reusing a slug that already exists, causing a unique constraint error.</li>
-
-
-            <li>Switching an app to Inactive while people are using it.</li>
-
-            <li>Pasting non-JSON text or trailing commas in the Configuration JSON.</li>
-          </ul> },
-        ]}
-      />
-
       <Card>
         <CardHeader>
           <CardTitle>App Information</CardTitle>
@@ -607,10 +553,10 @@ export function AppDetailPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render and manage the admin app create/edit/detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component"]

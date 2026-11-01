@@ -24,14 +24,14 @@
 
 
 import { createHandler } from './_shared/middleware'
+import { isSystemAdmin } from './_shared/principal'
+// CIL[END stable_id="~/.framework/functions/debug-auth.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='Netlify function for debugging authentication state and JWT token resolution'; No verified external callers; imports: .framework/functions/_shared/middleware.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/debug-auth.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:debug:constant" type="constant" identity="debug" parent="~/.framework/functions/debug-auth.ts"]
 // CIL[DOC-MACRO purpose="Return a debug payload showing whether a principal and selected environment variables are present"]
 // CIL[DOC-RESPONSIBILITY responsibility="Builds a safe, read-only debug response from request context and process.env"]
 // CIL[DOC-CONTEXT module="framework/functions" layer="functions" related_files=".framework/functions/_shared/middleware.ts,.framework/functions/debug-auth.ts"]
@@ -39,6 +39,7 @@ import { createHandler } from './_shared/middleware'
 // CIL[DOC-MICRO logic_summary="Checks the request context for a principal and masks environment variable presence" notable_decisions="Only reports SET/NOT_SET for sensitive env values"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:debug:constant" type="constant" identity="debug" parent="~/.framework/functions/debug-auth.ts"]
 const debug = createHandler(async (ctx, _body) => {
   const envObj = (globalThis as any).process?.env || {}
   return {
@@ -54,14 +55,13 @@ const debug = createHandler(async (ctx, _body) => {
     }
   }
 })
+// CIL[END stable_id="~/.framework/functions/debug-auth.ts:debug:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Return a debug payload showing whether a principal and selected environment variables are present'; No verified external callers; imports: .framework/functions/_shared/middleware.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/debug-auth.ts:debug:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:testJwt:constant" type="constant" identity="testJwt" parent="~/.framework/functions/debug-auth.ts"]
 // CIL[DOC-MACRO purpose="Validate and return the resolved JWT principal for a request"]
 // CIL[DOC-RESPONSIBILITY responsibility="Verifies a principal exists and returns its identity and account association"]
 // CIL[DOC-CONTEXT module="framework/functions" layer="functions" related_files=".framework/functions/_shared/middleware.ts,.framework/functions/debug-auth.ts"]
@@ -69,6 +69,7 @@ const debug = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Returns principal data or an error if authentication did not resolve" notable_decisions="Includes accountId from the request context"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:testJwt:constant" type="constant" identity="testJwt" parent="~/.framework/functions/debug-auth.ts"]
 const testJwt = createHandler(async (ctx, _body) => {
   const envObj = (globalThis as any).process?.env || {}
   if (!ctx.principal) {
@@ -89,14 +90,13 @@ const testJwt = createHandler(async (ctx, _body) => {
     }
   }
 })
+// CIL[END stable_id="~/.framework/functions/debug-auth.ts:testJwt:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Validate and return the resolved JWT principal for a request'; No verified external callers; imports: .framework/functions/_shared/middleware.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/debug-auth.ts:testJwt:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:handler:function" type="function" identity="handler" parent="~/.framework/functions/debug-auth.ts"]
 // CIL[DOC-MACRO purpose="Route incoming requests to the debug or testJwt handler"]
 // CIL[DOC-RESPONSIBILITY responsibility="Dispatches by query method to the appropriate handler and returns the result"]
 // CIL[DOC-CONTEXT module="framework/functions" layer="functions" related_files=".framework/functions/_shared/middleware.ts,.framework/functions/debug-auth.ts"]
@@ -104,10 +104,16 @@ const testJwt = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Reads the method query parameter, switches to debug or testJwt, and awaits the handler" notable_decisions="Defaults unknown methods to debug"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/debug-auth.ts:handler:function" type="function" identity="handler" parent="~/.framework/functions/debug-auth.ts"]
 export async function handler(event: any, context: any) {
   const method = event.queryStringParameters?.method || 'debug'
   
   const ctx = await createHandler(async (ctx, _body) => {
+    if (!isSystemAdmin(ctx.principal)) {
+      const e: any = new Error('system_admin required')
+      e.statusCode = 403
+      throw e
+    }
     switch (method) {
       case 'debug':
         return await debug(ctx, _body)
@@ -120,10 +126,10 @@ export async function handler(event: any, context: any) {
   
   return ctx
 }
+// CIL[END stable_id="~/.framework/functions/debug-auth.ts:handler:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Route incoming requests to the debug or testJwt handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/debug-auth.ts:handler:function"]

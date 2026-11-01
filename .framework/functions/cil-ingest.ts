@@ -168,9 +168,9 @@ interface ChunkProposal {
 // CIL[DOC-MICRO logic_summary="Holds the static LANGUAGE_MAP value" notable_decisions="Static value used across cil-ingest"]
 const LANGUAGE_MAP: Record<string, string> = {
   '.ts': 'typescript',
-  '.tsx': 'typescript',
+  '.tsx': 'typescriptreact',
   '.js': 'javascript',
-  '.jsx': 'javascript',
+  '.jsx': 'javascriptreact',
   '.sql': 'sql',
   '.py': 'python',
   '.go': 'go',
@@ -1606,9 +1606,9 @@ async function pass2Chunk(
   for (const fileItem of fileItems || []) {
     const relPath: string = fileItem.data?.file_path || fileItem.title
     const absPath = path.join(repoPath, relPath)
-    const language = fileItem.data?.language || 'unknown'
+    const language = detectLanguage(relPath)
 
-    if (!['typescript', 'javascript'].includes(language)) continue
+    if (!['typescript', 'typescriptreact', 'javascript', 'javascriptreact'].includes(language)) continue
 
     if (!forceReprocess && alreadyChunkedFileIds.has(fileItem.id)) continue
 
@@ -1628,13 +1628,23 @@ async function pass2Chunk(
 
       const rawContent = fs.readFileSync(absPath, 'utf-8')
       const rawLines = rawContent.split('\n')
-      // Blank (rather than remove) CIL marker/DOC lines when force-reprocessing:
+      // Blank (rather than remove) CIL BEGIN/END marker lines when force-reprocessing:
       // filtering them out shifts every line index, so stored line_start/line_end
       // land in stripped-file coordinates and validate_file reports false drift.
       // Blank lines are invisible to the AST proposer and collapse in
       // computeContentHash, keeping hashes identical to store_markers output.
+      // DOC tags are intentionally preserved — they are source-of-truth docs.
+      // markerResidue tracks blanked marker slots so the write pass can drop
+      // residue that ends up adjacent to a fresh marker (prevents +1 drift).
+      const markerResidue = new Set<number>()
       const lines = forceReprocess
-        ? rawLines.map((l: string) => (/^\/\/\s*CIL\[/.test(l.trim()) || /^\s*\/\*\s*CIL\[/.test(l.trim())) ? '' : l)
+        ? rawLines.map((l: string, i: number) => {
+            if (/^\/\/\s*CIL\[(?:BEGIN|END)\b/.test(l.trim()) || /^\s*\/\*\s*CIL\[(?:BEGIN|END)\b/.test(l.trim())) {
+              markerResidue.add(i)
+              return ''
+            }
+            return l
+          })
         : rawLines
       const content = lines.join('\n')
 
@@ -1832,7 +1842,7 @@ async function pass2Chunk(
             },
           })
           
-          approvedChunks.push({ name: proposal.name, stable_id: proposal.stable_id, line_start: proposal.line_start, line_end: proposal.line_end, marker_line_end: proposal.marker_line_end, chunk_type: proposal.chunk_type, is_proposal: true })
+          approvedChunks.push({ name: proposal.name, stable_id: proposal.stable_id, parent_stable_id: proposal.parent_stable_id || canonicalPath, line_start: proposal.line_start, line_end: proposal.line_end, marker_line_end: proposal.marker_line_end, chunk_type: proposal.chunk_type, is_proposal: true })
           chunksQueued++
         }
       }
@@ -1844,24 +1854,46 @@ async function pass2Chunk(
         let resultLines = [...lines]
 
 
-        const sorted = [...approvedChunks].sort((a, b) => b.line_start - a.line_start)
-
-        for (const chunk of sorted) {
-          const startLine = resultLines[chunk.line_start - 1]
+        // Compute every insertion index against the pre-insertion `lines`, then
+        // apply splices bottom-up. Indexing the mutating resultLines (the old
+        // approach) broke on nested chunks: declarations inside a component
+        // shifted its closing lines, so the parent's END marker landed mid-JSX.
+        const insertions: { idx: number; begin: boolean; text: string }[] = []
+        for (const chunk of approvedChunks) {
+          const startLine = lines[chunk.line_start - 1]
           
           if (startLine && ANY_MARKER_RE.test(startLine.trim())) continue
 
           const startMarker = chunk.is_proposal ? proposalStartMarker(chunk.name) : chunkStartMarker(chunk.stable_id, chunk.chunk_type, chunk.name, chunk.parent_stable_id)
           const endMarker   = chunk.is_proposal ? proposalEndMarker(chunk.name)   : chunkEndMarker(chunk.stable_id)
-          const startIdx = markerInsertIdx(resultLines, chunk.line_start)
+          const startIdx = markerInsertIdx(lines, chunk.line_start)
           
           const endIdx = chunk.chunk_type === 'module_header'
             ? chunk.marker_line_end
-            : markerEndInsertIdx(resultLines, chunk.line_start, chunk.marker_line_end)
+            : markerEndInsertIdx(lines, chunk.line_start, chunk.marker_line_end)
 
-          resultLines.splice(endIdx, 0, endMarker)
-          resultLines.splice(startIdx, 0, startMarker)
+          insertions.push({ idx: startIdx, begin: true, text: startMarker })
+          insertions.push({ idx: endIdx, begin: false, text: endMarker })
           markersWritten++
+        }
+        insertions.sort((a, b) => b.idx - a.idx || (a.begin === b.begin ? 0 : a.begin ? -1 : 1))
+        for (const ins of insertions) {
+          resultLines.splice(ins.idx, 0, ins.text)
+          if (markerResidue.size) {
+            const shifted = new Set<number>()
+            for (const r of markerResidue) shifted.add(r >= ins.idx ? r + 1 : r)
+            markerResidue.clear()
+            shifted.forEach(r => markerResidue.add(r))
+          }
+        }
+        // Remove the blanked old-marker slots after fresh markers are in place.
+        // Fresh markers occupy equivalent positions, so this is a swap where
+        // markers did not move — and it prevents residue lines from ratcheting
+        // +1 line per pass wherever old and new positions disagree.
+        for (let i = resultLines.length - 1; i >= 0; i--) {
+          if (markerResidue.has(i) && (resultLines[i] || '').trim() === '') {
+            resultLines.splice(i, 1)
+          }
         }
 
 
@@ -1873,6 +1905,7 @@ async function pass2Chunk(
         id: fileItem.id,
         data: {
           ...fileItem.data,
+          language,
           stored_hash: fileHash,
           file_hash: fileHash,
           content_hash: fileHash,

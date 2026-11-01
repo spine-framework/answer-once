@@ -1,42 +1,69 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Module header for the admin API keys list page, importing dependencies and defining the page component scope."]
-// CIL[DOC-RESPONSIBILITY responsibility="Set up imports and module metadata for APIKeysPage."]
-// CIL[DOC-CONTEXT module="admin/api-keys" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains import statements for the page; no runtime logic." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="ai-coder"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
+/**
+ * @module   APIKeysPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * This module represents the API Keys management page in the admin section of the application, allowing administrators to view, create, and manage API keys. INVARIANT: The user must have admin privileges to access this page.
+ * 
+ * It integrates with various UI components to provide a seamless user experience for key management.
+ *
+ * @seeAlso LoadingSpinner (provides loading feedback).
+ * @seeAlso Button (used for actions).
+ * @seeAlso AdminListPage (displays a list of API keys).
+ * @seeAlso useApi (custom hook for API interactions).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Key, CheckCircle, Clock, ShieldCheck, RefreshCw } from 'lucide-react';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { Button } from '../../components/ui/button'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
-import { PageInstructions } from '../../components/admin/PageInstructions'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[DOC-VECTOR type="context" content="purpose='Module header for the admin API keys list page, importing dependencies and defining the page component scope.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:apikey:interface" type="interface" identity="apikey" parent="none"]
-// CIL[DOC-MACRO purpose="Define the TypeScript shape of an API key record."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a typed interface for API key data."]
-// CIL[DOC-CONTEXT module="admin/api-keys" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/APIKeysPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="APIKey type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes fields for an API key including id, name, key_type, is_active, usage, integration, and creator." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKey:interface" type="interface" identity="APIKey" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
+/**
+ * The APIKey interface defines the structure of an API key object used for managing access to services. It includes properties for identification, status, usage metrics, and associated integration details.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface APIKey {
   id: string
   name: string
@@ -58,23 +85,39 @@ interface APIKey {
   }
   created_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the TypeScript shape of an API key record.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:apikey:interface"]
+// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKey:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:apikeyspage:function" type="function" identity="apikeyspage" parent="none"]
-// CIL[DOC-MACRO purpose="Render the admin API keys list page with search, filtering, sorting, and usage statistics."]
-// CIL[DOC-RESPONSIBILITY responsibility="Display and filter API keys; handle row navigation."]
-// CIL[DOC-CONTEXT module="admin/api-keys" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/APIKeysPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (React hook props and local state)" outputs="JSX page rendering" errors="Throws if API fetch fails (handled by useApi error state)" side_effects="Fetches /api/api-keys on mount; navigates on row click"]
-// CIL[DOC-MICRO logic_summary="Fetches API keys, applies search/status/type filters, sorts, and renders a SortableTableHeader table with stats cards and usage instructions." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKeysPage:component" type="component" identity="APIKeysPage" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
+/**
+ * The APIKeysPage component manages the display and interaction with API keys, allowing users to filter, sort, and navigate to detailed views of individual keys. It fetches API keys from a server and provides statistics on their status and types.
+ *
+ * @macro       Component for managing and displaying API keys with filtering and sorting capabilities.
+ * @micro       Utilizes state management and hooks to handle API calls and dynamic updates based on user input.
+ * @outputSpec  JSX.Element
+ * @throws      Error — if the API fetch fails
+ * @sideEffects fetches data from external API endpoint '/api/api-keys?action=list'
+ * @stability   stable
+ * @calls       useApi, apiFetch, useNavigate
+ * @errorHandling throws an error if the API fetch fails
+ * @cil-generated
+ */
 export function APIKeysPage() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
@@ -111,7 +154,7 @@ export function APIKeysPage() {
   }
 
   const handleRowClick = (key: APIKey) => {
-    window.location.href = `/spine-framework/admin/configs/api-keys/${key.id}`
+    navigate(`/spine-framework/admin/configs/api-keys/${key.id}`)
   }
 
   const sortedKeys = [...(filteredKeys || [])].sort((a, b) => {
@@ -198,7 +241,6 @@ export function APIKeysPage() {
     <AdminListPage
       title="API Keys"
       description="Manage API keys and access tokens"
-      noPageInstructions
       newButtonText="Generate API Key"
       newButtonHref="/spine-framework/admin/configs/api-keys/new"
       statsCards={statsCards}
@@ -211,47 +253,6 @@ export function APIKeysPage() {
       emptyMessage="No API keys found"
       emptyIcon={Key}
     >
-      <PageInstructions
-        title="API key usage instructions"
-        description="API keys are generated tokens that authenticate external callers or service-to-service calls. The full key is shown once after creation. Copy it immediately and store it securely."
-        sections={[
-          { title: '1. Inbound webhooks (authenticate callers to Spine)', content: (
-            <div className="space-y-2">
-              <p className="text-sm text-slate-600">
-                Create an <code className="text-xs bg-muted px-1 rounded">inbound</code> key, optionally bound to an Integration. Send the key in the request header to <code className="text-xs bg-muted px-1 rounded">/api/integration-routes</code>:
-              </p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto font-mono">{`X-Api-Key: sk_...`}</pre>
-              <p className="text-sm text-slate-600">
-                The Integration Broker will validate the key and route the event to the adapter defined by the integration.
-              </p>
-            </div>
-          )},
-          { title: '2. Outbound / service calls (use a key instead of an env var)', content: (
-            <div className="space-y-2">
-              <p className="text-sm text-slate-600">
-                You can use a literal key value in an integration's <code className="text-xs bg-muted px-1 rounded">credentials</code> instead of <code className="text-xs bg-muted px-1 rounded">env_var</code>. Create a key, copy the value, and paste it into the integration's credentials JSON with <code className="text-xs bg-muted px-1 rounded">source: "value"</code>:
-              </p>
-              <pre className="text-xs bg-muted p-2 rounded overflow-auto font-mono">{JSON.stringify({ api_token: { source: 'value', value: 'sk_...' } }, null, 2)}</pre>
-            </div>
-          )},
-          { title: '3. Key types', content: (
-            <div className="space-y-2">
-              <ul className="text-sm text-slate-600 list-disc list-inside space-y-1">
-                <li><strong>inbound</strong> — external services calling Spine (webhooks, API clients).</li>
-                <li><strong>outbound</strong> — Spine services calling another system, often linked to an integration.</li>
-                <li><strong>internal</strong> — internal Spine function-to-function calls.</li>
-                <li><strong>cli</strong> — command-line scripts and tooling.</li>
-              </ul>
-            </div>
-          )},
-          { title: '4. Rate limits, scopes, and expiration', content: (
-            <p className="text-sm text-slate-600">
-              Use <code className="text-xs bg-muted px-1 rounded">rate_limit</code> to throttle usage, set <code className="text-xs bg-muted px-1 rounded">expires_at</code> for short-lived keys, and define <code className="text-xs bg-muted px-1 rounded">permissions</code> / <code className="text-xs bg-muted px-1 rounded">scopes</code> as JSON arrays to restrict what the key can do.
-            </p>
-          )},
-        ]}
-      />
-
       {sortedKeys.length === 0 ? (
         <div className="p-8 text-center">
           <Key className="mx-auto h-12 w-12 text-slate-400" />
@@ -372,10 +373,10 @@ export function APIKeysPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin API keys list page with search, filtering, sorting, and usage statistics.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:apikeyspage:function"]
+// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKeysPage:component"]
+
+
+
+
+
+

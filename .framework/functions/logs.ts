@@ -1,12 +1,27 @@
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-AUDIENCE audience="runtime,developers,operators"]
-// CIL[DOC-MACRO purpose="Module imports and shared setup for the logs Netlify function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import dependencies and establish module context for log query and write handlers"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports createHandler, json, error, parseBody, adminDb, and isSystemAdmin for use by route handlers" notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * @module   logs
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module provides logging functionality for the application, serving as an API handler for log-related operations. It ensures that only system administrators can access sensitive logging features. The module is part of a multi-step pipeline that includes authentication, validation, and execution of log actions. INVARIANT: Only users with system admin privileges can access the logging endpoints.
+ *
+ * @seeAlso middleware.ts (provides shared middleware functions for handling requests).
+ * @seeAlso db.ts (contains database access methods used for logging).
+ * @seeAlso principal.ts (defines user roles and permissions for access control).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -19,21 +34,47 @@
 import { createHandler, json, error, parseBody } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { isSystemAdmin } from './_shared/principal'
-// CIL[DOC-VECTOR type="context" content="purpose='Module imports and shared setup for the logs Netlify function'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:module_header:module_header"]
+
+
+// True only for platform-level principals: a system_admin role or an
+// internal machine principal with no account binding (SYSTEM_PRINCIPAL,
+// produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
+// resolve to the service-role adminDb via getPrincipalDb, so an
+// account-bound API key must never be treated as system here.
+// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/logs.ts"]
+function isSystemPrincipal(ctx: any): boolean {
+  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
+}
+// CIL[END stable_id="~/.framework/functions/logs.ts:isSystemPrincipal:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:mapLogRow:function" type="function" identity="mapLogRow" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Map a raw database log row into a normalized log event object"]
-// CIL[DOC-RESPONSIBILITY responsibility="Transform Supabase logs table fields into the external log event schema"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="row: any (raw log record)" outputs="normalized log event object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Rename and expose log fields such as level to event_type, source to action, and context to details" notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The mapLogRow function transforms a log row object into a standardized format for further processing. It extracts and renames fields from the input object to create a more structured output.
+ *
+ * @macro       Data transformation function that maps log row data to a standardized object.
+ * @micro       Directly extracts specific fields from the input row object and maps them to a new object structure.
+ * @inputSpec
+ *   row: any (required) — the log row object containing various fields.
+ * @outputSpec  { id: string, event_type: string, actor_id: string, target_type: string, target_id: string, action: string, span_name: string, trace_id: string, span_id: string, parent_span_id: string, duration_ms: number, outcome: string, event_category: string, kind: string, message: string, details: any, metadata: any, created_at: timestamp }
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function mapLogRow(row: any) {
   return {
     id: row.id,
@@ -56,21 +97,33 @@ function mapLogRow(row: any) {
     created_at: row.created_at,
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Map a raw database log row into a normalized log event object'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:mapLogRow:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listAccount:constant" type="constant" identity="listAccount" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="List or filter account-wide log events and threshold breach alerts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return paginated log rows for the current account, applying filters and a special threshold breach view"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query fields: event, event_type, target_type, source, source_id, actor_id, query, date_from, date_to, trace_id, limit, offset" outputs="{ data, total }" errors="Account context required, database query errors" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Build a Supabase query against logs, apply account scoping, filters, pagination, and map results through mapLogRow" notable_decisions="Uses isSystemAdmin to allow admin cross-account access and supports threshold.breached span"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The listAccount function retrieves log entries based on various query parameters, allowing users to filter logs by account, event type, and date range. It ensures that only authorized users can access account-specific logs.
+ *
+ * @throws      Error — Account context required, Error — database query error
+ * @sideEffects none
+ * @stability   internal
+ * @calls       adminDb.from('logs'), ctx.db.from('logs')
+ * @errorHandling throws error on missing account context or database query failure
+ * @cil-generated
+ */
 export const listAccount = createHandler(async (ctx, body) => {
   const { event, event_type, target_type, source, source_id, actor_id, query: searchQuery, date_from, date_to, trace_id, limit = 100, offset = 0 } = ctx.query || {}
   const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
@@ -141,21 +194,33 @@ export const listAccount = createHandler(async (ctx, body) => {
     total: count || 0
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List or filter account-wide log events and threshold breach alerts'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:listAccount:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listTarget:constant" type="constant" identity="listTarget" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="List log events for a specific target entity"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return paginated logs scoped to a target_type and target_id within an account"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query: target_type, target_id, event_type, limit, offset" outputs="log event array" errors="target_type and target_id required, Account context required" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Query logs filtered by account_id, source_type, source_id and optional event_type, paginate and map results" notable_decisions="Requires both target_type and target_id"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The listTarget constant defines an asynchronous handler for retrieving log entries based on specified target criteria. It ensures that required parameters are present and fetches logs from the database according to the provided filters.
+ *
+ * @throws      Error — if target_type or target_id are missing, or if account context is not provided.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       ctx.db.from('logs'), ctx.db.select('*'), ctx.db.eq, ctx.db.order, ctx.db.range
+ * @errorHandling throws error if database query fails
+ * @cil-generated
+ */
 export const listTarget = createHandler(async (ctx, body) => {
   const { target_type, target_id, event_type, limit = 100, offset = 0 } = ctx.query || {}
 
@@ -186,21 +251,32 @@ export const listTarget = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List log events for a specific target entity'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:listTarget:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listPerson:constant" type="constant" identity="listPerson" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="List log events for a person or the current principal"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return paginated logs where actor matches a person_id, optionally including system logs"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query: person_id, include_system, limit, offset" outputs="log event array" errors="Person ID is required, Account context required" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Use ctx.principal.id as fallback, filter by account and person, optionally exclude level='system'" notable_decisions="Defaults principal to current user and hides system events unless requested"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * This function retrieves log entries associated with a specific person from the database, handling pagination and filtering based on system log levels. It ensures that the necessary context, such as person ID and account ID, is provided before executing the query.
+ *
+ * @throws      Error — Person ID is required, Error — Account context required, Error — database query error
+ * @sideEffects none
+ * @stability   internal
+ * @calls       ctx.db.from('logs'), ctx.db.select, ctx.db.eq, ctx.db.order, ctx.db.neq, ctx.db.range
+ * @cil-generated
+ */
 export const listPerson = createHandler(async (ctx, body) => {
   const { person_id, include_system, limit = 50, offset = 0 } = ctx.query || {}
 
@@ -234,21 +310,32 @@ export const listPerson = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List log events for a person or the current principal'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:listPerson:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:getStats:constant" type="constant" identity="getStats" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Return aggregated log statistics for an account"]
-// CIL[DOC-RESPONSIBILITY responsibility="Call the get_log_stats RPC to return summary counts and breakdowns"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query: event_type, target_type, source, source_id, actor_id, query, date_from, date_to" outputs="stats object with totals and arrays" errors="Account context required, RPC errors" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Invoke Supabase RPC get_log_stats with account-scoped parameters and return first result or a default zeroed object" notable_decisions="Requires account context and uses ctx.db"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * Fetches log statistics based on various query parameters and the account context. It ensures that the account ID is present before making a database call to retrieve the statistics.
+ *
+ * @throws      Error — Account context required, Error — database call error
+ * @sideEffects RPC call to 'get_log_stats' in the database
+ * @stability   internal
+ * @calls       ctx.db.rpc
+ * @cil-generated
+ */
 export const getStats = createHandler(async (ctx, body) => {
   const { event_type, target_type, source, source_id, actor_id, query: searchQuery, date_from, date_to } = ctx.query || {}
 
@@ -280,21 +367,32 @@ export const getStats = createHandler(async (ctx, body) => {
     source_types: []
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Return aggregated log statistics for an account'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:getStats:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:search:constant" type="constant" identity="search" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Search log messages by text within an account"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return paginated log events matching a case-insensitive message substring"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query: query, event_type, target_type, limit, offset" outputs="log event array" errors="Search query is required, Account context required" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Filter logs by account and message ilike pattern, optionally by level and source_type, then paginate and map" notable_decisions="Performs substring match with SQL ILIKE"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The 'search' constant defines an asynchronous handler for searching log entries based on a query and optional filters. It ensures that a search query and account context are provided before querying the database for matching log records.
+ *
+ * @throws      Error — 'Search query is required', 'Account context required', or database error.
+ * @sideEffects Database read operations.
+ * @stability   internal
+ * @calls       ctx.db.from('logs'), ctx.db.select, ctx.db.eq, ctx.db.ilike, ctx.db.order, ctx.db.range
+ * @cil-generated
+ */
 export const search = createHandler(async (ctx, body) => {
   const { query: searchQuery, event_type, target_type, limit = 50, offset = 0 } = ctx.query || {}
 
@@ -325,21 +423,32 @@ export const search = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Search log messages by text within an account'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:search:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:log:constant" type="constant" identity="log" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Create a new log entry from an incoming event"]
-// CIL[DOC-RESPONSIBILITY responsibility="Insert a log record into the logs table using the request body fields"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="body: event_type, target_type, target_id, action, message, details, metadata" outputs="{ log_id }" errors="event_type is required, Account context required, database insert errors" side_effects="Writes a row to the logs table"]
-// CIL[DOC-MICRO logic_summary="Build an insert from body and principal, default missing fields, and return the created id" notable_decisions="message falls back to action or event_type"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The log constant is an asynchronous handler that processes logging events by inserting log entries into a database. It ensures that required fields are present and manages the context of the logging operation.
+ *
+ * @throws      Error — 'event_type is required', 'Account context required', or database error.
+ * @sideEffects Inserts a new log entry into the 'logs' database table.
+ * @stability   internal
+ * @calls       ctx.db.from('logs').insert, ctx.db.from('logs').select
+ * @cil-generated
+ */
 export const log = createHandler(async (ctx, body) => {
   const { event_type, target_type, target_id, action, message, details, metadata } = body
 
@@ -371,23 +480,43 @@ export const log = createHandler(async (ctx, body) => {
 
   return { log_id: data?.id }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Create a new log entry from an incoming event'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:log:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:cleanup:constant" type="constant" identity="cleanup" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Delete log records older than a retention period"]
-// CIL[DOC-RESPONSIBILITY responsibility="Remove logs created before the configured days-to-keep cutoff"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="body: days_to_keep" outputs="{ deleted_count }" errors="Database delete errors" side_effects="Deletes rows from the logs table"]
-// CIL[DOC-MICRO logic_summary="Calculate a cutoff date from days_to_keep and delete logs with created_at before it" notable_decisions="Defaults retention to 90 days"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The cleanup constant defines a handler for deleting log entries older than a specified number of days to manage log retention and free up database space. It removes outdated logs from the database.
+ *
+ * @throws      Error — if there is an error during the database deletion process.
+ * @sideEffects Deletes entries from the 'logs' table in the database.
+ * @stability   internal
+ * @calls       ctx.db.from('logs')
+ * @cil-generated
+ */
 export const cleanup = createHandler(async (ctx, body) => {
-  const { days_to_keep = 90 } = body
+  const { days_to_keep = 30 } = body
+
+  // cleanup deletes rows platform-wide and machine principals run it on the
+  // service-role client — restrict to system-level callers so a scoped API
+  // key cannot wipe other accounts' logs.
+  if (!isSystemPrincipal(ctx)) {
+    const e: any = new Error('Insufficient permissions for log cleanup')
+    e.statusCode = 403
+    throw e
+  }
 
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - parseInt(days_to_keep.toString()))
@@ -402,21 +531,32 @@ export const cleanup = createHandler(async (ctx, body) => {
 
   return { deleted_count: (data || []).length }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Delete log records older than a retention period'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:cleanup:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/logs.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/logs.ts"]
-// CIL[DOC-MACRO purpose="Route incoming log function requests to the correct action handler"]
-// CIL[DOC-RESPONSIBILITY responsibility="Dispatch GET/POST requests based on action query parameter to list, search, stats, cleanup or write operations"]
-// CIL[DOC-CONTEXT module="logs" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/principal.ts,.framework/functions/logs.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query: action, method" outputs="result from selected handler" errors="Invalid action or method" side_effects="Delegates to other handlers, may write or delete logs"]
-// CIL[DOC-MICRO logic_summary="Switch on action and method, calling listAccount, listTarget, listPerson, getStats, search, cleanup, or log; reject unsupported combinations" notable_decisions="Default POST falls through to the log writer; unsupported method/action throws"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+/**
+ * The handler processes incoming requests based on the specified action and HTTP method, executing the appropriate function for each action. It serves as a centralized entry point for handling various log-related operations.
+ *
+ * @throws      Error — Invalid action or method
+ * @sideEffects none
+ * @stability   internal
+ * @calls       listAccount, listTarget, listPerson, getStats, search, cleanup, log
+ * @cil-generated
+ */
 export const handler = createHandler(async (ctx, body) => {
   const { action } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
@@ -446,10 +586,10 @@ export const handler = createHandler(async (ctx, body) => {
 
   throw new Error('Invalid action or method')
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Route incoming log function requests to the correct action handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/logs.ts:handler:constant"]
+
+
+
+
+
+

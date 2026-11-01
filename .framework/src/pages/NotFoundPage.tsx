@@ -1,35 +1,65 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/NotFoundPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/NotFoundPage.tsx"]
-// CIL[DOC-MACRO purpose="Import dependencies used by the NotFoundPage 404 component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide React, react-router-dom Link, and lucide-react Home icon for the page"]
-// CIL[DOC-CONTEXT module=".framework/src/pages" layer="page" related_files=".framework/src/pages/NotFoundPage.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="N/A" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="Imports React, Link, and Home icon; no runtime logic" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="Spine framework page authors"]
+/**
+ * @module   NotFoundPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module renders a Not Found page for the application, providing users with a friendly message when they navigate to an undefined route. It serves as a fallback UI component, enhancing user experience by guiding them back to the home page. INVARIANT: The Not Found page should always be accessible for any invalid routes.
+ *
+ * @seeAlso react-router-dom (provides routing capabilities).
+ * @seeAlso lucide-react (used for icons).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
+
 
 
 
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Home } from 'lucide-react';
-// CIL[DOC-VECTOR type="context" content="purpose='Import dependencies used by the NotFoundPage 404 component'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/NotFoundPage.tsx:module_header:module_header"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/NotFoundPage.tsx:NotFoundPage:component" type="component" identity="NotFoundPage" parent="~/.framework/src/pages/NotFoundPage.tsx"]
-// CIL[DOC-MACRO purpose="Render a friendly 404 not found page with a link back to sign in"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display a centered 404 message and a Home icon link that navigates to /login"]
-// CIL[DOC-CONTEXT module=".framework/src/pages" layer="page" related_files=".framework/src/pages/NotFoundPage.tsx"]
-// CIL[DOC-CONTRACT inputs="None" outputs="JSX 404 page" errors="None" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Renders a full-screen 404 page with a heading, description, and a Link to /login" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="End users who reach an unknown route"]
+/**
+ * The NotFoundPage component displays a 404 error message when a page is not found, providing a user-friendly interface to guide users back to the home page.
+ *
+ * @macro       React functional component responsible for rendering a 404 error page.
+ * @micro       Utilizes JSX to structure the layout and styling of the error message and navigation link.
+ * @outputSpec  JSX.Element
+ * @sideEffects none
+ * @stability   internal
+ * @calls       Link
+ * @cil-generated
+ */
 export function NotFoundPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -43,11 +73,11 @@ export function NotFoundPage() {
           
           <div className="mt-6">
             <Link
-              to="/login"
+              to="/"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Home className="w-4 h-4 mr-2" />
-              Go to sign in
+              Go home
             </Link>
           </div>
         </div>
@@ -55,10 +85,11 @@ export function NotFoundPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a friendly 404 not found page with a link back to sign in'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/NotFoundPage.tsx:NotFoundPage:component"]
+
+
+
+
+
+
+

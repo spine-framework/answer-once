@@ -1,12 +1,28 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Top-level module imports for the pipeline detail admin page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load React, routing, UI primitives, and admin-specific dependencies used by the component"]
-// CIL[DOC-CONTEXT module="admin-pipeline" layer="pages" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports hooks, router, API client, UI components, icons, utilities, and PageInstructions" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-ui-developer"]
+/**
+ * @module   PipelineDetailPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * This module represents the Pipeline Detail Page in the admin section of the application, allowing users to view and manage pipeline details. It integrates various UI components for user interaction and data display, relying on API calls to fetch relevant information.
+ * INVARIANT: The user must have appropriate permissions to access this page.
+ *
+ * @seeAlso apiFetch (handles API requests).
+ * @seeAlso PageInstructions (provides guidance on page usage).
+ * @seeAlso EntitySelect (for selecting entities related to the pipeline).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -17,29 +33,38 @@ import { Textarea } from '../../components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { Checkbox } from '../../components/ui/checkbox'
 import { Label } from '../../components/ui/label'
+import { AppSelect } from '../../components/admin/EntitySelect'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Badge } from '../../components/ui/badge'
 import { ArrowLeft, Play, Pause, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
-// CIL[DOC-VECTOR type="context" content="purpose='Top-level module imports for the pipeline detail admin page'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:pipeline:interface" type="interface" identity="pipeline" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="TypeScript shape of a pipeline record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the Pipeline data structure used by forms and API responses"]
-// CIL[DOC-CONTEXT module="admin-pipeline" layer="pages" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Pipeline type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes id, name, description, trigger_type, stages, config, metadata, is_active and timestamps" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:Pipeline:interface" type="interface" identity="Pipeline" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
+/**
+ * The Pipeline interface defines the structure for a pipeline object, which represents a sequence of processing stages in a data workflow. It includes properties for identification, configuration, and metadata related to the pipeline's execution.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface Pipeline {
   id: string
   name: string
@@ -54,66 +79,98 @@ interface Pipeline {
   created_at: string
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='TypeScript shape of a pipeline record'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:pipeline:interface"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:statuses:constant" type="constant" identity="statuses" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Selectable pipeline status options for UI dropdowns"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide value/label pairs for pipeline status rendering"]
-// CIL[DOC-CONTEXT module="admin-pipeline" layer="pages" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="STATUSES array" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant array mapping draft, active, paused, and archived to display labels" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:Pipeline:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:STATUSES:constant" type="constant" identity="STATUSES" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
+/**
+ * STATUSES is a constant array that defines the various states a pipeline can be in within the admin interface. It provides a structured way to reference these states throughout the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 const STATUSES = [
   { value: 'draft', label: 'Draft' },
   { value: 'active', label: 'Active' },
   { value: 'paused', label: 'Paused' },
   { value: 'archived', label: 'Archived' }
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Selectable pipeline status options for UI dropdowns'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:statuses:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:trigger_types:constant" type="constant" identity="trigger_types" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Selectable pipeline trigger type options"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide value/label pairs for trigger type rendering"]
-// CIL[DOC-CONTEXT module="admin-pipeline" layer="pages" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TRIGGER_TYPES array" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant array mapping manual, scheduled, webhook, and event to display labels" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:STATUSES:constant"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:TRIGGER_TYPES:constant" type="constant" identity="TRIGGER_TYPES" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
+/**
+ * TRIGGER_TYPES defines a set of available trigger types for a pipeline, providing a structured way to categorize different triggering mechanisms. This constant is used to facilitate the selection of trigger types in the admin interface.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 const TRIGGER_TYPES = [
   { value: 'manual', label: 'Manual' },
   { value: 'scheduled', label: 'Scheduled' },
   { value: 'webhook', label: 'Webhook' },
   { value: 'event', label: 'Event' }
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Selectable pipeline trigger type options'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:trigger_types:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:pipelinedetailpage:component" type="component" identity="pipelinedetailpage" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin page for viewing, creating, and editing a pipeline"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render pipeline form, load/save pipeline data, toggle activation, and display stage list"]
-// CIL[DOC-CONTEXT module="admin-pipeline" layer="pages" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="React element" errors="Network or JSON parse errors" side_effects="Calls /api/pipelines, navigates, updates local state"]
-// CIL[DOC-MICRO logic_summary="Fetches pipeline by URL id, manages form state, parses JSON fields, saves via API, and renders editable detail UI" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:TRIGGER_TYPES:constant"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:PipelineDetailPage:component" type="component" identity="PipelineDetailPage" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
+/**
+ * The PipelineDetailPage component manages the creation and editing of pipeline configurations in an admin interface. It fetches existing pipeline data or initializes a new pipeline form based on the provided ID.
+ *
+ * @macro       Component responsible for displaying and managing pipeline details.
+ * @micro       Uses React hooks to manage state and side effects for fetching and saving pipeline data.
+ * @outputSpec  JSX.Element
+ * @sideEffects Fetches data from an external API and navigates to a different route upon saving.
+ * @stability   stable
+ * @calls       apiFetch, useParams, useNavigate
+ * @errorHandling Sets error state on fetch failure.
+ * @cil-generated
+ */
 export function PipelineDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -242,49 +299,12 @@ export function PipelineDetailPage() {
           ) : !isCreateMode && <Button onClick={() => setIsEditing(true)}>Edit</Button>}
         </div>
       </div>
-
-      <PageInstructions
-        description="Configure a pipeline with trigger type, JSON stages, config, and metadata."
-        sections={[
-          { title: 'What this pipeline controls', content: 'A pipeline is a multi-step workflow that can be triggered manually, on a schedule, by a webhook, or by an event. This page controls the pipeline metadata, trigger type, and the JSON stages/config that the runner executes.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name</strong> — string. The display name. Missing name prevents saving.</li>
-            <li><strong>Trigger Type</strong> — select. manual, scheduled, webhook, or event. Determines what causes a run.</li>
-            <li><strong>Active</strong> — checkbox. Inactive pipelines will not run regardless of trigger.</li>
-            <li><strong>App ID</strong> — string. Optional owning app UUID. Leave blank to make it account-scoped.</li>
-            <li><strong>Description</strong> — string. Optional human-readable notes.</li>
-            <li><strong>Config (JSON)</strong> — JSON. Free-form runtime configuration for the pipeline.</li>
-            <li><strong>Stages (JSON)</strong> — JSON. Required array of step definitions the runner executes.</li>
-            <li><strong>Metadata (JSON)</strong> — JSON. Optional metadata about the pipeline.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Trigger Type</strong>: <em>manual</em> run by button; <em>scheduled</em> is invoked by a timer; <em>webhook</em> waits for an HTTP call; <em>event</em> waits for a Spine trigger event.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>The runner uses the stages array to execute steps in order.</li>
-
-            <li>Triggers and timers reference pipelines by ID; changing the trigger type may require re-linking triggers or timers.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, enter a name and choose a trigger type. Fill in the Stages JSON array.</li>
-            <li>Paste valid JSON into the Config and Metadata textareas. Invalid JSON will be ignored on save.</li>
-            <li>Click Create to save, or Edit then Save for existing pipelines. Use the Activate/Pause button to toggle is_active.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-
-            <li>Setting trigger type to scheduled but not linking a timer.</li>
-            <li>Pasting a non-array value into Stages (it must be a JSON array).</li>
-            <li>Expecting to edit step order here; the JSON stages field is the source of truth.</li>
-          </ul> },
-        ]}
-      />
-
       <Card><CardContent className="p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-muted-foreground">Configuration</h3>
             <div className="space-y-2"><Label>Name</Label>{isEditing ? <Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /> : <div className="text-sm">{pipeline?.name}</div>}</div>
-            <div className="space-y-2"><Label>App ID</Label>{isEditing ? <Input value={formData.app_id} onChange={e => setFormData({...formData, app_id: e.target.value})} placeholder="Optional app UUID" /> : <div className="text-sm font-mono">{pipeline?.app_id || '—'}</div>}</div>
+            <div className="space-y-2"><Label>App</Label>{isEditing ? <AppSelect value={formData.app_id} onChange={v => setFormData({...formData, app_id: v})} /> : <div className="text-sm font-mono">{pipeline?.app_id || '—'}</div>}</div>
             <div className="space-y-2"><Label>Trigger Type</Label>{isEditing ? <Select value={formData.trigger_type} onValueChange={v => setFormData({...formData, trigger_type: v as any})}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TRIGGER_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select> : <div className="text-sm">{pipeline?.trigger_type}</div>}</div>
             <div className="space-y-2"><Label>Active</Label>{isEditing ? <div className="flex items-center gap-2"><Checkbox id="active" checked={formData.is_active} onCheckedChange={c => setFormData({...formData, is_active: c === true})} /><Label htmlFor="active">Enabled</Label></div> : <div className="text-sm">{pipeline?.is_active ? 'Yes' : 'No'}</div>}</div>
           </div>
@@ -319,10 +339,11 @@ export function PipelineDetailPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Admin page for viewing, creating, and editing a pipeline'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:pipelinedetailpage:component"]
+// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:PipelineDetailPage:component"]
+
+
+
+
+
+
+

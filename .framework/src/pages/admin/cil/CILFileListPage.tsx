@@ -1,12 +1,27 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="React admin page for listing and validating CIL files within a project"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders the CIL file list UI, fetches project data, and exposes chunk status"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Aggregates CIL files, displays badges, supports search and chunk expansion" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+/**
+ * @module   CILFileListPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module represents the CIL File List Page in the admin section of the application, allowing users to view and manage files related to the CIL. It integrates with the API to fetch file data and provides a user interface for interaction.
+ * INVARIANT: The user must have appropriate permissions to access this page.
+ *
+ * @seeAlso PageInstructions (provides instructional content for the admin interface).
+ * @seeAlso apiFetch (handles API requests for fetching file data).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -17,6 +32,7 @@ import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Input } from '@core/components/ui/input'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:module_header:module_header"]
   FileCode2,
   CheckCircle2,
   AlertTriangle,
@@ -36,23 +52,31 @@ import {
 
 
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
-// CIL[DOC-VECTOR type="context" content="purpose='React admin page for listing and validating CIL files within a project'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFile:interface" type="interface" identity="CILFile" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the CILFile record shape used by the file list"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describes the data model for an indexed CIL source file"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="data-model" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Lists metadata fields including chunk_count, ingestion_pass, and dead-code flags" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFile:interface" type="interface" identity="CILFile" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * The CILFile interface defines the structure of a CIL file object, encapsulating its metadata and associated data attributes. It serves to standardize the representation of CIL files within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface CILFile {
   id: string
   title: string
@@ -71,24 +95,35 @@ interface CILFile {
   }
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the CILFile record shape used by the file list'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFile:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILChunk:interface" type="interface" identity="CILChunk" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the CILChunk record shape"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describes the data model for a CIL chunk"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="data-model" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Exposes chunk_name, chunk_type, line range, and stability fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILChunk:interface" type="interface" identity="CILChunk" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * The CILChunk interface defines the structure of a chunk of code within a CIL (Common Intermediate Language) file, encapsulating metadata about the chunk for processing and analysis. It exists to facilitate the management and representation of code segments in the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface CILChunk {
   id: string
   chunk_name: string
@@ -104,24 +139,35 @@ interface CILChunk {
   file_path: string
   project_id: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the CILChunk record shape'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILChunk:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:ValidationSummary:interface" type="interface" identity="ValidationSummary" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the validation summary shape"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describes aggregate validation trust metrics"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="data-model" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains total, current, drift_detected, not_found, and trust_rating fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:ValidationSummary:interface" type="interface" identity="ValidationSummary" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * The ValidationSummary interface defines the structure for summarizing validation results in the application, providing key metrics related to validation status. It includes totals and counts of detected issues to facilitate monitoring and reporting.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface ValidationSummary {
   total: number
   current: number
@@ -129,50 +175,77 @@ interface ValidationSummary {
   not_found: number
   trust_rating: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the validation summary shape'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:ValidationSummary:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:FileValidation:interface" type="interface" identity="FileValidation" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines per-file validation state"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describes the validation result for a single CIL file"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="data-model" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Includes summary, loading flag, and error message" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:FileValidation:interface" type="interface" identity="FileValidation" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * The FileValidation interface defines the structure for validating file uploads within the admin panel. It encapsulates the file's ID, validation summary, loading state, and any potential error messages.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface FileValidation {
   fileId: string
   summary: ValidationSummary | null
   loading: boolean
   error: string | null
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines per-file validation state'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:FileValidation:interface"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:PassBadge:component" type="component" identity="PassBadge" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Badge component showing ingestion pass status"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders a label for the current ingestion pass"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="pass: number" outputs="Badge React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Shows Not ingested, Pass n, or Pass n complete variants" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:PassBadge:component" type="component" identity="PassBadge" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * PassBadge is a React component that visually represents the status of a pass based on its value. It provides feedback for various pass states, including not ingested, in progress, or complete.
+ *
+ * @macro       React component responsible for rendering pass status badges.
+ * @micro       Utilizes conditional rendering to determine the appropriate badge style and message based on the pass value.
+ * @inputSpec
+ *   pass: number (required) — the number representing the pass status.
+ * @outputSpec  JSX.Element — a badge element reflecting the pass status.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function PassBadge({ pass }: { pass: number }) {
   if (!pass || pass < 1) {
     return <Badge variant="outline" className="text-xs text-muted-foreground">Not ingested</Badge>
@@ -182,26 +255,42 @@ function PassBadge({ pass }: { pass: number }) {
   }
   return <Badge variant="secondary" className="text-xs">Pass {pass}</Badge>
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Badge component showing ingestion pass status'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:PassBadge:component"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:TrustBadge:component" type="component" identity="TrustBadge" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Badge component showing validation trust"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders a trust rating and drift count badge"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="summary: ValidationSummary | null" outputs="Badge or null" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Displays destructive badge when drift detected, otherwise trusted percentage" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:TrustBadge:component" type="component" identity="TrustBadge" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * The TrustBadge component displays a visual indicator of trustworthiness based on a validation summary. It provides feedback on trust ratings and drift detection to inform users of the current state of validation.
+ *
+ * @macro       UI component that renders trust status based on validation summary.
+ * @micro       Utilizes conditional rendering to display different badge styles based on the presence of drift detection.
+ * @inputSpec
+ *   - summary: ValidationSummary | null (required) — the validation summary containing trust rating and drift detection information.
+ * @outputSpec  JSX.Element | null — returns a Badge component or null if no summary is provided.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function TrustBadge({ summary }: { summary: ValidationSummary | null }) {
   if (!summary) return null
   const { trust_rating, drift_detected } = summary
@@ -220,26 +309,42 @@ function TrustBadge({ summary }: { summary: ValidationSummary | null }) {
     </Badge>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Badge component showing validation trust'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:TrustBadge:component"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFileListPage:component" type="component" identity="CILFileListPage" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-MACRO purpose="Main page component for the CIL file list"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetches and renders CIL files for a project"]
-// CIL[DOC-CONTEXT module="admin-cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILFileListPage.tsx"]
-// CIL[DOC-CONTRACT inputs="projectId from useParams" outputs="React page JSX" errors="Error messages displayed via validations" side_effects="Fetches project and files, manages React state, navigates"]
-// CIL[DOC-MICRO logic_summary="Implements search, summary cards, file chunk expansion, and validation actions" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFileListPage:component" type="component" identity="CILFileListPage" parent="~/.framework/src/pages/admin/cil/CILFileListPage.tsx"]
+/**
+ * CILFileListPage is a React component that manages the display and validation of CIL files associated with a specific project. It fetches project and file data from an API and provides functionality to validate individual files or all visible files at once.
+ *
+ * @macro       React component for managing CIL file listings and validations.
+ * @micro       Utilizes asynchronous API calls to fetch project and file data, and manages state with React hooks.
+ * @outputSpec  JSX.Element
+ * @sideEffects Makes external API calls to fetch project and file data, and to validate files.
+ * @stability   internal
+ * @calls       apiFetch
+ * @errorHandling none
+ * @cil-generated
+ */
 export default function CILFileListPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -259,14 +364,29 @@ export default function CILFileListPage() {
     if (!projectId) return
     setLoading(true)
 
+    const PAGE_SIZE = 500
+    const fetchAllFiles = async (): Promise<CILFile[]> => {
+      const all: CILFile[] = []
+      let offset = 0
+      while (true) {
+        const res = await apiFetch(
+          `/api/admin-data?action=list&entity=items&type_slug=cil_file&limit=${PAGE_SIZE}&offset=${offset}`
+        )
+        const json = await res.json()
+        const batch: CILFile[] = json?.data || json?.items || []
+        all.push(...batch)
+        if (batch.length < PAGE_SIZE) break
+        offset += PAGE_SIZE
+      }
+      return all
+    }
+
     Promise.all([
       apiFetch(`/api/cil-project?action=get&id=${projectId}`).then(r => r.json()),
-      apiFetch(`/api/admin-data?action=list&entity=items&type_slug=cil_file&limit=500`)
-        .then(r => r.json()),
+      fetchAllFiles(),
     ])
-      .then(([projData, filesData]) => {
+      .then(([projData, allFiles]) => {
         setProject(projData?.project || projData?.data || null)
-        const allFiles: CILFile[] = filesData?.data || filesData?.items || []
         setFiles(allFiles.filter(f => f.data?.project_id === projectId))
       })
       .catch(() => {})
@@ -381,6 +501,7 @@ export default function CILFileListPage() {
             variant="ghost"
             size="sm"
             onClick={() => navigate(appPath(`/cil/${projectId}`))}
+
             className="flex items-center gap-1 text-muted-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -415,17 +536,6 @@ export default function CILFileListPage() {
           </Button>
         </div>
       </div>
-
-      <PageInstructions
-        description="Browse indexed files and their chunks for a project."
-        sections={[
-          { title: 'What this page is for', content: 'This page lists all files discovered for a CIL project and shows their ingestion, drift, and dead-code status.' },
-          { title: 'How to read this page', content: 'The summary cards show Total Files, Fully Ingested, Dead Code, and Files with Drift. Each file card displays the path, language, chunk count, and status badges.' },
-          { title: 'How to use this page', content: 'Use the search box to filter by path or language. Click a file to view its chunks. Click Validate All to re-check hashes and drift for the filtered files.' },
-          { title: 'Important notes', content: 'Drift means the file changed since the last ingestion and stored hashes no longer match. Dead-code files are not called or imported by any other indexed file.' },
-        ]}
-      />
-
       {}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
@@ -479,29 +589,83 @@ export default function CILFileListPage() {
           {filteredFiles.map(file => {
 
 
+
+/**
+ * The constant 'd' stores the data from the 'file' object, defaulting to an empty object if no data is present. This ensures that subsequent operations can safely access 'd' without encountering undefined values.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const d = file.data || {}
 
 
 
+
+
+/**
+ * The constant 'filePath' holds the file path for a document, defaulting to the title of the file if no specific path is provided. It exists to ensure that a valid file path is always available for further processing.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const filePath: string = d.file_path || file.title
 
 
 
+
+
+/**
+ * The constant 'shortName' extracts the last segment of a file path, providing a simplified name for display purposes. It exists to facilitate user-friendly representations of file names in the admin interface.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const shortName = filePath.split('/').pop() || filePath
 
 
 
+
+
+/**
+ * The constant 'dirPath' extracts the directory path from a given file path if it contains a '/' character. It exists to facilitate operations that require the directory context of a file path.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const dirPath   = filePath.includes('/')
               ? filePath.split('/').slice(0, -1).join('/')
               : ''
 
 
 
+
+
+/**
+ * The constant 'val' retrieves validation rules associated with a specific file ID from the 'validations' object. It exists to provide the necessary validation logic for the file being processed.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const val = validations[file.id]
 
 
 
+
+
+/**
+ * The constant 'isValidating' determines if the loading state of a validation process is active. It is used to conditionally render UI elements based on the validation status.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
             const isValidating = val?.loading === true
+
 
 
             return (
@@ -616,7 +780,16 @@ export default function CILFileListPage() {
                   {expandedFiles.has(file.id) && (() => {
 
 
+
+/**
+ * The constant 'fc' retrieves the file chunk associated with a specific file ID, providing a way to manage loading states and display appropriate messages based on the chunk's status. It exists to facilitate the rendering of file chunk information in the UI.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
                     const fc = fileChunks[file.id]
+
 
                     if (!fc || fc.loading) return (
                       <div className="mt-3 pt-3 border-t space-y-1.5">
@@ -631,6 +804,14 @@ export default function CILFileListPage() {
 
 
 
+
+/**
+ * CHUNK_TYPE_COLORS is a mapping of chunk types to their corresponding CSS class styles for visual representation in the UI. It provides consistent styling for different types of code chunks displayed in the admin interface.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
                     const CHUNK_TYPE_COLORS: Record<string, string> = {
                       function: 'bg-indigo-100 text-indigo-700',
                       class: 'bg-violet-100 text-violet-700',
@@ -644,12 +825,22 @@ export default function CILFileListPage() {
 
 
 
+
                     return (
                       <div className="mt-3 pt-3 border-t space-y-1">
                         {fc.chunks.map(chunk => {
 
 
+
+/**
+ * The constant 'typeClass' determines the CSS class to apply based on the chunk type, providing visual differentiation in the UI. It ensures that each chunk is styled appropriately according to its type, enhancing user experience.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
                           const typeClass = CHUNK_TYPE_COLORS[chunk.chunk_type] || 'bg-slate-100 text-slate-600'
+
 
                           return (
                             <a
@@ -686,11 +877,12 @@ export default function CILFileListPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Main page component for the CIL file list'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/cil/CILFileListPage.tsx:CILFileListPage:component"]
+
+
+
+
+
+
+
 

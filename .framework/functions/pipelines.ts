@@ -176,7 +176,8 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('pipelines')
     .insert({
       app_id: app_id || null,
@@ -187,7 +188,7 @@ export const create = createHandler(async (ctx, body) => {
       config: config || {},
       stages,
       metadata: metadata || {},
-      created_by: ctx.principal.id
+      created_by: ctx.principal.type === 'human' ? ctx.principal.id : null
     })
     .select()
     .single()
@@ -228,7 +229,8 @@ export const update = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: current } = await db
     .from('pipelines')
     .select('*')
     .eq('id', id)
@@ -248,7 +250,7 @@ export const update = createHandler(async (ctx, body) => {
   if (is_active !== undefined) updateData.is_active = is_active
   if (app_id !== undefined) updateData.app_id = app_id
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('pipelines')
     .update(updateData)
     .eq('id', id)
@@ -290,7 +292,8 @@ export const toggle = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: current } = await db
     .from('pipelines')
     .select('*')
     .eq('id', id)
@@ -300,7 +303,7 @@ export const toggle = createHandler(async (ctx, body) => {
     throw new Error('Pipeline not found')
   }
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('pipelines')
     .update({ is_active, updated_at: new Date().toISOString() })
     .eq('id', id)
@@ -338,7 +341,8 @@ export const getExecutions = createHandler(async (ctx, _body) => {
     throw new Error('Pipeline ID is required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('pipeline_executions')
     .select('*')
     .eq('pipeline_id', pipeline_id)
@@ -374,7 +378,8 @@ export const remove = createHandler(async (ctx, _body) => {
     throw new Error('Pipeline ID is required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: current } = await db
     .from('pipelines')
     .select('id, name')
     .eq('id', id)
@@ -382,7 +387,7 @@ export const remove = createHandler(async (ctx, _body) => {
 
   if (!current) throw new Error('Pipeline not found')
 
-  const { error: err } = await ctx.db
+  const { error: err } = await db
     .from('pipelines')
     .delete()
     .eq('id', id)

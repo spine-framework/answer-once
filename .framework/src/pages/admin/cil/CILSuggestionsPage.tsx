@@ -19,6 +19,7 @@ import { Label } from '@core/components/ui/label'
 import { Textarea } from '@core/components/ui/textarea'
 import { NativeSelect, NativeSelectOption } from '@core/components/ui/native-select'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:module_header:module_header"]
   Table,
   TableHeader,
   TableBody,
@@ -28,7 +29,6 @@ import {
 } from '@core/components/ui/table'
 import { Lightbulb, Plus } from 'lucide-react'
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 
 // CIL[DOC-VECTOR type="context" content="purpose='Admin page for reviewing and managing CIL redesign suggestions'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -36,9 +36,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:project_id:constant" type="constant" identity="PROJECT_ID" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Project ID for the CIL redesign scope used to filter suggestions"]
 // CIL[DOC-RESPONSIBILITY responsibility="Provides a constant project identifier for runtime record queries"]
 // CIL[DOC-CONTEXT module="admin/cil" layer="constant" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
@@ -46,16 +44,16 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Declares the UUID string for the CIL redesign project" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:PROJECT_ID:constant" type="constant" identity="PROJECT_ID" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 const PROJECT_ID = '24d2bb67-24be-4cdf-a633-108588d37f00'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:PROJECT_ID:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Project ID for the CIL redesign scope used to filter suggestions'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:project_id:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:suggestion_types:constant" type="constant" identity="SUGGESTION_TYPES" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Allowed suggestion type values for the creation form"]
 // CIL[DOC-RESPONSIBILITY responsibility="Defines the selectable suggestion categories"]
 // CIL[DOC-CONTEXT module="admin/cil" layer="constant" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
@@ -63,18 +61,18 @@ const PROJECT_ID = '24d2bb67-24be-4cdf-a633-108588d37f00'
 // CIL[DOC-MICRO logic_summary="Lists valid suggestion types: refactor, add_doc, rename, remove, other" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:SUGGESTION_TYPES:constant" type="constant" identity="SUGGESTION_TYPES" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 const SUGGESTION_TYPES = ['refactor', 'add_doc', 'rename', 'remove', 'other']
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:SUGGESTION_TYPES:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Allowed suggestion type values for the creation form'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:suggestion_types:constant"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:cilsuggestion:interface" type="interface" identity="CILSuggestion" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 // CIL[DOC-MACRO purpose="TypeScript type for a CIL suggestion record returned from the API"]
 // CIL[DOC-RESPONSIBILITY responsibility="Describes the shape of cil_suggestion items"]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
@@ -82,6 +80,7 @@ const SUGGESTION_TYPES = ['refactor', 'add_doc', 'rename', 'remove', 'other']
 // CIL[DOC-MICRO logic_summary="Defines id, title, nested data fields, and created_at" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:CILSuggestion:interface" type="interface" identity="CILSuggestion" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 interface CILSuggestion {
   id: string
   title: string
@@ -96,18 +95,17 @@ interface CILSuggestion {
   }
   created_at: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:CILSuggestion:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript type for a CIL suggestion record returned from the API'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:cilsuggestion:interface"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:status_variant:constant" type="constant" identity="STATUS_VARIANT" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Badge variant mapping for suggestion status values"]
 // CIL[DOC-RESPONSIBILITY responsibility="Maps suggestion status strings to shadcn Badge variants"]
 // CIL[DOC-CONTEXT module="admin/cil" layer="constant" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
@@ -115,18 +113,19 @@ interface CILSuggestion {
 // CIL[DOC-MICRO logic_summary="Record mapping accepted/default, proposed/secondary, rejected/destructive" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:STATUS_VARIANT:constant" type="constant" identity="STATUS_VARIANT" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   accepted: 'default',
   proposed: 'secondary',
   rejected: 'destructive',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:STATUS_VARIANT:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Badge variant mapping for suggestion status values'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:status_variant:constant"]
 
 
 
@@ -134,7 +133,6 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'dest
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:cilsuggestionspage:function" type="function" identity="CILSuggestionsPage" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Renders the CIL suggestions management page and handles creation/accept/reject"]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetches, filters, displays, and updates CIL suggestions for the redesign project"]
 // CIL[DOC-CONTEXT module="admin/cil" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/native-select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
@@ -142,6 +140,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'dest
 // CIL[DOC-MICRO logic_summary="Loads suggestions, provides form handlers, renders table with accept/reject and create form" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:CILSuggestionsPage:component" type="component" identity="CILSuggestionsPage" parent="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx"]
 export default function CILSuggestionsPage() {
   const [suggestions, setSuggestions] = useState<CILSuggestion[]>([])
   const [loading, setLoading] = useState(true)
@@ -236,16 +235,6 @@ export default function CILSuggestionsPage() {
           </p>
         </div>
       </div>
-
-      <PageInstructions
-        description="Manage AI- or manually-proposed CIL suggestions."
-        sections={[
-          { title: 'What this page is for', content: 'Suggestions track proposed changes to CIL records. Each suggestion has a type, target stable ID, and confidence.' },
-          { title: 'How to review', content: 'Use Accept to set the suggestion status to accepted, or Reject to set it to rejected.' },
-          { title: 'How to create', content: 'Fill in the type, target stable ID, and content, then click Create.' },
-        ]}
-      />
-
       <Card>
         <CardContent className="p-4 space-y-3">
           <form onSubmit={handleCreate} className="space-y-3">
@@ -370,10 +359,10 @@ export default function CILSuggestionsPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:CILSuggestionsPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders the CIL suggestions management page and handles creation/accept/reject'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILSuggestionsPage.tsx:cilsuggestionspage:function"]

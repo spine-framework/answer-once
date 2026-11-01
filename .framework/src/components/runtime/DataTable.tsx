@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { EntityColumn } from '../../types/types'
 import { formatDateTime } from '../../lib/utils'
 import {
+// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:module_header:module_header"]
   Table,
   TableBody,
   TableCell,
@@ -34,10 +35,8 @@ import * as Icons from 'lucide-react'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:module_header:module_header"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTableProps:interface" type="interface" identity="DataTableProps" parent="~/.framework/src/components/runtime/DataTable.tsx"]
 // CIL[DOC-MACRO purpose="TypeScript props contract for the DataTable component"]
 // CIL[DOC-RESPONSIBILITY responsibility="Defines the expected properties passed to DataTable, including columns, data, sort handlers, and state flags."]
 // CIL[DOC-CONTEXT module="components/runtime" layer="component" related_files=".framework/src/components/runtime/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
@@ -45,6 +44,7 @@ import * as Icons from 'lucide-react'
 // CIL[DOC-MICRO logic_summary="Declares the DataTableProps interface consumed by the DataTable React component." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTableProps:interface" type="interface" identity="DataTableProps" parent="~/.framework/src/components/runtime/DataTable.tsx"]
 interface DataTableProps {
   columns: EntityColumn[]
   data: any[]
@@ -57,16 +57,15 @@ interface DataTableProps {
   emptyMessage: string
   emptyIcon: string
 }
+// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTableProps:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript props contract for the DataTable component'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/table.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTableProps:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTable:component" type="component" identity="DataTable" parent="~/.framework/src/components/runtime/DataTable.tsx"]
 // CIL[DOC-MACRO purpose="Renders a sortable, clickable data table for runtime records with loading, error, and empty states"]
 // CIL[DOC-RESPONSIBILITY responsibility="Displays tabular data, handles sorting, row navigation, and loading/error/empty UI states."]
 // CIL[DOC-CONTEXT module="components/runtime" layer="component" related_files=".framework/src/components/runtime/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
@@ -74,6 +73,7 @@ interface DataTableProps {
 // CIL[DOC-MICRO logic_summary="Renders skeleton, error, empty, or table views; uses renderCell to format timestamp, badge, and truncated text; handles ascending/descending sort and row navigation." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTable:component" type="component" identity="DataTable" parent="~/.framework/src/components/runtime/DataTable.tsx"]
 export function DataTable({ 
   columns, 
   data, 
@@ -112,13 +112,15 @@ export function DataTable({
   const renderCell = (column: EntityColumn, row: any) => {
     const value = column.key.includes('.')
       ? column.key.split('.').reduce((obj, k) => obj?.[k], row)
-      : row[column.key]
-    
-    if (column.type === 'timestamp' && value) {
+      : (row[column.key] ?? row.data?.[column.key])
+
+    const displayType = column.display_type || column.type
+
+    if (displayType === 'timestamp' && value) {
       return formatDateTime(value)
     }
-    
-    if (column.type === 'badge' && column.badgeColors) {
+
+    if (displayType === 'badge' && column.badgeColors) {
       const colorClass = column.badgeColors[value?.toString()] || 'bg-muted text-muted-foreground'
       return (
         <Badge variant="secondary" className={colorClass}>
@@ -217,10 +219,10 @@ export function DataTable({
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTable:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a sortable, clickable data table for runtime records with loading, error, and empty states'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/table.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/runtime/DataTable.tsx:DataTable:component"]

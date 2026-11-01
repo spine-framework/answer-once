@@ -16,6 +16,7 @@ import { apiFetch } from '../../lib/api'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { useApi } from '../../hooks/useApi'
+// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:module_header:module_header"]
 
 
 // CIL[DOC-VECTOR type="context" content="purpose='Admin deliveries list page module: defines the Delivery record shape and DeliveriesPage React component for viewing webhook delivery attempts.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
@@ -24,8 +25,6 @@ import { useApi } from '../../hooks/useApi'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:Delivery:interface" type="interface" identity="Delivery" parent="~/.framework/src/pages/admin/DeliveriesPage.tsx"]
 // CIL[DOC-MACRO purpose="TypeScript contract for a webhook delivery attempt record."]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the fields and types for a Delivery entity consumed by the admin list page."]
 // CIL[DOC-CONTEXT module="admin/deliveries" layer="model" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/DeliveriesPage.tsx"]
@@ -33,6 +32,7 @@ import { useApi } from '../../hooks/useApi'
 // CIL[DOC-MICRO logic_summary="Enumerates delivery fields including direction, status, ids, retry metadata, timestamps, and optional API/handler details." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:Delivery:interface" type="interface" identity="Delivery" parent="~/.framework/src/pages/admin/DeliveriesPage.tsx"]
 interface Delivery {
   id: string
   direction: 'inbound' | 'outbound'
@@ -52,16 +52,15 @@ interface Delivery {
   created_at: string
   updated_at: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:Delivery:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript contract for a webhook delivery attempt record.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:Delivery:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:DeliveriesPage:component" type="component" identity="DeliveriesPage" parent="~/.framework/src/pages/admin/DeliveriesPage.tsx"]
 // CIL[DOC-MACRO purpose="Admin UI page that lists inbound and outbound webhook delivery attempts with filters and sorting."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch deliveries from /api/deliveries, filter by search/status/direction, sort by selected key, and render a sortable table inside AdminListPage."]
 // CIL[DOC-CONTEXT module="admin/deliveries" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/DeliveriesPage.tsx"]
@@ -69,6 +68,7 @@ interface Delivery {
 // CIL[DOC-MICRO logic_summary="Uses useApi to load deliveries, applies local filter and sort state, computes stats cards, and passes configuration to AdminListPage. Table renders color-coded status badges and formatted dates." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:DeliveriesPage:component" type="component" identity="DeliveriesPage" parent="~/.framework/src/pages/admin/DeliveriesPage.tsx"]
 export function DeliveriesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
@@ -219,10 +219,10 @@ export function DeliveriesPage() {
     </AdminListPage>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:DeliveriesPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Admin UI page that lists inbound and outbound webhook delivery attempts with filters and sorting.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/DeliveriesPage.tsx:DeliveriesPage:component"]

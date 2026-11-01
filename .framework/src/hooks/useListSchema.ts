@@ -1,55 +1,88 @@
 // CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/hooks/useListSchema.ts"]
-// CIL[DOC-AUDIENCE audience="frontend"]
-// CIL[DOC-CONTEXT module="useListSchema" layer="hooks" related_files=".framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="React hooks, apiFetch and DesignSchema/View imports available to the module" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="React hook module for loading entity list design schemas"]
-// CIL[DOC-MICRO logic_summary="Imports useState, useEffect, apiFetch and local DesignSchema/View types" notable_decisions="[]"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the useListSchema hook and its option/result type definitions"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * @module   useListSchema
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module provides hooks for managing and interacting with list schemas in the application. It utilizes React's state and effect hooks to fetch and update schema data from an API. INVARIANT: The component using this hook must be wrapped in a provider that supplies the necessary context for API calls.
+ *
+ * @seeAlso apiFetch (handles API requests).
+ * @seeAlso DesignSchema (defines the structure of the schema data).
+ * @seeAlso View (represents the UI components that utilize the schema).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../lib/api'
 import { DesignSchema, View } from '../types/types'
-// CIL[DOC-VECTOR type="context" content="purpose='React hook module for loading entity list design schemas'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:module_header:module_header"]
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaOptions:interface" type="interface" identity="UseListSchemaOptions" parent="~/.framework/src/hooks/useListSchema.ts"]
-// CIL[DOC-MACRO purpose="Defines the input options for the useListSchema hook"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare entity and optional viewSlug used to resolve the list schema"]
-// CIL[DOC-CONTEXT module="useListSchema" layer="hooks" related_files=".framework/src/hooks/useListSchema.ts,.framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="N/A" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="entity: string and viewSlug?: string" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The UseListSchemaOptions interface defines the options for using a list schema in the framework, allowing for the specification of an entity and an optional view slug for enhanced flexibility in list management.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface UseListSchemaOptions {
   entity: string
   viewSlug?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the input options for the useListSchema hook'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaOptions:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaResult:interface" type="interface" identity="UseListSchemaResult" parent="~/.framework/src/hooks/useListSchema.ts"]
-// CIL[DOC-MACRO purpose="Defines the return shape of the useListSchema hook"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare schema, view, loading state, error and refetch callback"]
-// CIL[DOC-CONTEXT module="useListSchema" layer="hooks" related_files=".framework/src/hooks/useListSchema.ts,.framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="N/A" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="schema, view, loading, error and refetch fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The UseListSchemaResult interface defines the structure of the result returned by the useListSchema hook, which is used to manage and retrieve schema data in a React application. It provides information about the loading state, any errors, and a method to refetch the data.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface UseListSchemaResult {
   schema: DesignSchema | null
   view: View | null
@@ -57,22 +90,39 @@ interface UseListSchemaResult {
   error: string | null
   refetch: () => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the return shape of the useListSchema hook'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaResult:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:useListSchema:hook" type="hook" identity="useListSchema" parent="~/.framework/src/hooks/useListSchema.ts"]
-// CIL[DOC-CONTEXT module="useListSchema" layer="hooks" related_files=".framework/src/hooks/useListSchema.ts,.framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="options: UseListSchemaOptions" outputs="UseListSchemaResult" errors="Network or API errors set the error string" side_effects="Calls apiFetch on mount and when entity/viewSlug changes; updates local state"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="React hook that loads the design schema and view definition for an entity list"]
-// CIL[DOC-MICRO logic_summary="Fetches a sample record to read stamped design_schema; falls back to type lookup and generic fallback views; supports JWT retry" notable_decisions="[]"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch and resolve the list design schema and selected view for a given entity"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The useListSchema hook fetches and manages the schema and view for a specified entity in a list format, handling loading states and errors while providing a fallback schema if no data is available.
+ *
+ * @macro       Custom React hook for managing entity list schemas.
+ * @micro       Utilizes asynchronous API calls to fetch data and updates state based on the response.
+ * @inputSpec
+ *   - options: UseListSchemaOptions (required) — configuration options including entity and optional viewSlug.
+ * @outputSpec  UseListSchemaResult — an object containing schema, view, loading state, and error message.
+ * @throws      Error — failed to fetch sample record or invalid authentication.
+ * @sideEffects API calls to /api/admin-data and /api/types for fetching schema data.
+ * @stability   internal
+ * @calls       apiFetch
+ * @errorHandling Retries fetching schema on specific authentication errors.
+ * @cil-generated
+ */
 export function useListSchema(options: UseListSchemaOptions): UseListSchemaResult {
   const { entity, viewSlug = 'default_list' } = options
   
@@ -149,12 +199,12 @@ export function useListSchema(options: UseListSchemaOptions): UseListSchemaResul
         let resolvedSchema: DesignSchema | null = null
 
         if (kind) {
-          const typeResp = await apiFetch(`/api/types?kind=${kind}&limit=1`)
+          const typeResp = await apiFetch(`/api/types?action=list&kind=${kind}`)
           if (typeResp.ok) {
             const typeData = await typeResp.json()
-            const typeRecord = typeData.data?.[0]
-            if (typeRecord?.design_schema) {
-              resolvedSchema = typeRecord.design_schema as DesignSchema
+            const typeRecords = Array.isArray(typeData.data) ? typeData.data : []
+            if (typeRecords.length === 1 && typeRecords[0]?.design_schema) {
+              resolvedSchema = typeRecords[0].design_schema as DesignSchema
             }
           }
         }
@@ -243,10 +293,10 @@ export function useListSchema(options: UseListSchemaOptions): UseListSchemaResul
     refetch: fetchSchema
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='React hook that loads the design schema and view definition for an entity list'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/types/types.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:useListSchema:hook"]
+
+
+
+
+
+

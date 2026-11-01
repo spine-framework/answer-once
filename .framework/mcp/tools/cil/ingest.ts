@@ -133,18 +133,29 @@ Run this before starting an incremental ingestion pass to build an accurate work
 
 
 
-      let chunkQuery = adminDb.from('items').select('id, data')
-        .filter('data->>kb_type', 'eq', 'cil_chunk')
-        .filter('data->>project_id', 'eq', project_id)
-        .eq('is_active', true)
+      // PostgREST caps responses (server max-rows, often below the requested
+      // range); active chunk counts exceed it, so page with a stable order and
+      // advance by the rows actually returned — otherwise files outside the
+      // first page are falsely reported as drifted with total_chunks = 0.
+      const chunks: any[] = []
+      const CHUNK_PAGE = 1000
+      for (let offset = 0; ; ) {
+        let pageQuery = adminDb.from('items').select('id, data')
+          .filter('data->>kb_type', 'eq', 'cil_chunk')
+          .filter('data->>project_id', 'eq', project_id)
+          .eq('is_active', true)
+          .order('id')
+          .range(offset, offset + CHUNK_PAGE - 1)
 
+        if (activeVersionId) {
+          pageQuery = pageQuery.filter('data->>version_id', 'eq', activeVersionId)
+        }
 
-      if (activeVersionId) {
-        chunkQuery = chunkQuery.filter('data->>version_id', 'eq', activeVersionId)
+        const { data: pageRows } = await pageQuery
+        if (!pageRows || pageRows.length === 0) break
+        chunks.push(...pageRows)
+        offset += pageRows.length
       }
-
-
-      const { data: chunks } = await chunkQuery
 
       const chunksByFile: Record<string, any[]> = {}
 

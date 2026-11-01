@@ -131,7 +131,8 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('Account context required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('prompt_configs')
     .insert({
       app_id: app_id || null,
@@ -201,7 +202,8 @@ export const update = createHandler(async (ctx, body) => {
     if (updates[key] !== undefined) updateData[key] = updates[key]
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('prompt_configs')
     .update(updateData)
     .eq('id', id)
@@ -239,7 +241,8 @@ export const remove = createHandler(async (ctx, _body) => {
     throw new Error('Config ID is required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: current } = await db
     .from('prompt_configs')
     .select('id, name, slug')
     .eq('id', id)
@@ -247,7 +250,7 @@ export const remove = createHandler(async (ctx, _body) => {
 
   if (!current) throw new Error('Prompt config not found')
 
-  const { error: err } = await ctx.db
+  const { error: err } = await db
     .from('prompt_configs')
     .delete()
     .eq('id', id)

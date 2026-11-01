@@ -341,33 +341,48 @@ function parseAgentCilDocs(lines: string[], startLine: number, endLine: number):
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 function mapAgentDocsToChunkData(docs: AgentParsedDocs): Record<string, any> {
-  const pendingVectors = docs.vectors
-    ? Object.entries(docs.vectors).filter(([, v]) => v.status === 'pending_human_input').map(([k]) => k)
-    : []
-
-  return {
-    macro: docs.macro || docs.raw.MACRO || '',
-    micro: docs.micro?.logic_summary || docs.responsibility || '',
-    description: docs.macro || '',
-    input_spec: docs.contract?.inputs?.replace(/\\n/g, '\n') || '',
-    output_spec: docs.contract?.outputs || '',
-    side_effects: docs.contract?.side_effects || '',
-    throws: docs.contract?.errors || '',
-    module: docs.context?.module || '',
-    layer: docs.context?.layer || '',
-    doc_confidence: docs.confidence?.pass === 'second' ? 'ai_generated' : 'from_source',
-    confidence_score: docs.confidence?.score || 0,
-    confidence_flags: docs.confidence?.flags || [],
-    related_files: docs.context?.related_files || '',
-    tags: docs.micro?.notable_decisions || '',
-    depends_on: docs.contract?.dependencies || '',
-    stability: docs.stability || '',
-    audience: docs.audience || '',
-    vector_content: docs.vectors || {},
-    vectors_pending_human_review: pendingVectors,
-    notes: docs.notes || [],
-    learnings: docs.learnings || [],
+  // Only emit fields backed by DOC-* tags actually present in the source.
+  // Emitting empty strings for absent tags would wipe enriched fields on
+  // every store_markers call for chunks that use JSDoc or no doc tags.
+  const out: Record<string, any> = {}
+  if (docs.raw.MACRO || docs.macro) {
+    out.macro = docs.macro || docs.raw.MACRO || ''
+    out.description = docs.macro || ''
   }
+  if (docs.raw.MICRO) {
+    out.micro = docs.micro?.logic_summary || ''
+    out.tags = docs.micro?.notable_decisions || ''
+  } else if (docs.raw.RESPONSIBILITY) {
+    out.micro = docs.responsibility || ''
+  }
+  if (docs.contract) {
+    out.input_spec = docs.contract.inputs?.replace(/\\n/g, '\n') || ''
+    out.output_spec = docs.contract.outputs || ''
+    out.side_effects = docs.contract.side_effects || ''
+    out.throws = docs.contract.errors || ''
+    out.depends_on = docs.contract.dependencies || ''
+  }
+  if (docs.context) {
+    out.module = docs.context.module || ''
+    out.layer = docs.context.layer || ''
+    out.related_files = docs.context.related_files || ''
+  }
+  if (docs.confidence) {
+    out.doc_confidence = docs.confidence.pass === 'second' ? 'ai_generated' : 'from_source'
+    out.confidence_score = docs.confidence.score || 0
+    out.confidence_flags = docs.confidence.flags || []
+  }
+  if (docs.raw.STABILITY || docs.stability) out.stability = docs.stability || ''
+  if (docs.raw.AUDIENCE || docs.audience) out.audience = docs.audience || ''
+  if (docs.vectors) {
+    out.vector_content = docs.vectors
+    out.vectors_pending_human_review = Object.entries(docs.vectors)
+      .filter(([, v]) => v.status === 'pending_human_input')
+      .map(([k]) => k)
+  }
+  if (docs.notes) out.notes = docs.notes
+  if (docs.learnings) out.learnings = docs.learnings
+  return out
 }
 // CIL[DOC-VECTOR type="context" content="purpose='Defines mapAgentDocsToChunkData'; No verified external callers; imports: .framework/mcp/shared/db.ts,.framework/functions/_shared/cil.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]

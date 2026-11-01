@@ -1,52 +1,94 @@
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Integration handler module that exports CRUD handlers and helpers for the integrations table"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide create, read, update, and delete handlers plus slug derivation and credential validation helpers for integration records"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts"]
-// CIL[DOC-CONTRACT inputs="HTTP request context and method" outputs="Routed integration data responses" errors="Throws on missing context, invalid input, or database errors" side_effects="Reads and writes integrations table and emits audit logs"]
-// CIL[DOC-MICRO logic_summary="Imports shared middleware, database joins, audit, and permissions helpers then defines slug derivation, credential configuration check, list, get, create, update, remove, and a top-level method router" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="engineers maintaining integration handlers and related admin-data endpoints"]
+/**
+ * @module   integrations
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module provides integration functions for handling various operations within the application. It serves as a middleware layer that processes requests, ensuring proper authentication and data sanitization before interacting with the database. INVARIANT: All requests must be authenticated as a system admin to access sensitive operations.
+ *
+ * @seeAlso middleware.ts (provides request handling capabilities).
+ * @seeAlso db.ts (contains database interaction functions).
+ * @seeAlso audits.ts (handles logging of operations).
+ * @seeAlso permissions.ts (ensures data access control).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { createHandler } from './_shared/middleware'
-import { joins } from './_shared/db'
+import { joins, adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { sanitizeRecordData } from './_shared/permissions'
-// CIL[DOC-VECTOR type="context" content="purpose='Integration handler module that exports CRUD handlers and helpers for the integrations table'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+import { isSystemAdmin } from './_shared/principal'
 // CIL[END stable_id="~/.framework/functions/integrations.ts:module_header:module_header"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:deriveSlug:function" type="function" identity="deriveSlug" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Derive a URL-safe slug from a name and optional override"]
-// CIL[DOC-RESPONSIBILITY responsibility="Normalize integration names to kebab-case slugs"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="name: string, slug?: string" outputs="string" errors="none" side_effects="none"]
-// CIL[DOC-STABILITY stability="internal"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MICRO logic_summary="Returns provided slug or lowercases the name, collapses whitespace to hyphens, and strips characters that are not alphanumeric or hyphens" notable_decisions="[]"]
+/**
+ * Derives a URL-friendly slug from a given name, ensuring it is lowercase and replaces spaces with hyphens while removing invalid characters. This function can also use a provided slug if available.
+ *
+ * @inputSpec
+ *   - name: string (required) — the name to derive the slug from.
+ *   - slug: string (optional) — an optional slug to use instead of deriving from the name.
+ * @outputSpec  string — a URL-friendly slug derived from the name or the provided slug.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function deriveSlug(name: string, slug?: string): string {
   return slug || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 }
 // CIL[END stable_id="~/.framework/functions/integrations.ts:deriveSlug:function"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='Derive a URL-safe slug from a name and optional override'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:computeIsConfigured:function" type="function" identity="computeIsConfigured" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Determine whether all credential entries are populated strings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Evaluate integration configured status from a credentials map"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="credentials: Record<string, any> | undefined" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns false if credentials is undefined or empty; otherwise requires every entry to have a source and a non-empty string value" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Determines if the provided credentials are configured correctly by checking for valid entries in the credentials object. This function ensures that all necessary credential values are present and valid.
+ *
+ * @inputSpec
+ *   credentials: Record<string, any> | undefined (optional) — an object containing credential entries or undefined.
+ * @outputSpec  boolean — returns true if all entries are valid, otherwise false.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function computeIsConfigured(credentials: Record<string, any> | undefined): boolean {
   if (!credentials || Object.keys(credentials).length === 0) return false
   return Object.values(credentials).every((entry: any) => {
@@ -54,21 +96,33 @@ function computeIsConfigured(credentials: Record<string, any> | undefined): bool
     return typeof entry.value === 'string' && entry.value.length > 0
   })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Determine whether all credential entries are populated strings'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:computeIsConfigured:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="List integration records with optional filters and pagination"]
-// CIL[DOC-RESPONSIBILITY responsibility="Handle GET /integrations list requests"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, _body: any" outputs="Sanitized integration records" errors="Throws on missing account or database error" side_effects="Reads integrations table with optional filters"]
-// CIL[DOC-MICRO logic_summary="Builds a query from query parameters, applies pagination, and sanitizes each returned record" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The 'list' constant defines an asynchronous handler that retrieves a list of integrations based on various query parameters, ensuring that the request context includes an account ID. It applies filters based on the provided query parameters.
+ *
+ * @throws      Error — Account context required if ctx.accountId is missing.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       adminDb.from('integrations'), ctx.db.from('integrations'), sanitizeRecordData
+ * @errorHandling none
+ * @cil-generated
+ */
 export const list = createHandler(async (ctx, _body) => {
   const { integration_type, provider, is_active, is_configured, limit = 100, offset = 0 } = ctx.query || {}
 
@@ -76,7 +130,9 @@ export const list = createHandler(async (ctx, _body) => {
     throw new Error('Account context required')
   }
 
-  let query = ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+
+  let query = db
     .from('integrations')
     .select(`*, ${joins.app}, ${joins.createdBy}`)
     .order('name')
@@ -108,21 +164,32 @@ export const list = createHandler(async (ctx, _body) => {
 
   return sanitized
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List integration records with optional filters and pagination'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:list:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Retrieve a single integration by id"]
-// CIL[DOC-RESPONSIBILITY responsibility="Handle GET /integrations?id=... requests"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, _body: any" outputs="Sanitized integration record" errors="Throws when id missing or record not found" side_effects="Reads integrations table"]
-// CIL[DOC-MICRO logic_summary="Fetches one integration by id and sanitizes the result for the caller" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Retrieves a specific integration record from the database based on the provided integration ID. This function ensures that the caller has the necessary permissions and handles potential errors during the database query.
+ *
+ * @throws      Error — Integration ID is required, Error — database query error
+ * @sideEffects none
+ * @stability   internal
+ * @calls       adminDb.from('integrations'), ctx.db.from('integrations'), sanitizeRecordData
+ * @cil-generated
+ */
 export const get = createHandler(async (ctx, _body) => {
   const { id } = ctx.query || {}
 
@@ -130,7 +197,9 @@ export const get = createHandler(async (ctx, _body) => {
     throw new Error('Integration ID is required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+
+  const { data, error: err } = await db
     .from('integrations')
     .select(`*, ${joins.app}, ${joins.createdBy}`)
     .eq('id', id)
@@ -140,21 +209,32 @@ export const get = createHandler(async (ctx, _body) => {
 
   return await sanitizeRecordData(ctx, data, 'integration')
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Retrieve a single integration by id'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:get:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Create a new integration record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Handle POST /integrations requests"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, body with integration fields" outputs="New integration record" errors="Throws on validation, permission, or database error" side_effects="Inserts into integrations table and emits audit log"]
-// CIL[DOC-MICRO logic_summary="Validates required fields and context, derives a slug, computes configured state, inserts the record, and emits an audit log" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Creates a new integration record in the database based on the provided parameters while ensuring required fields are present and validating user context. This function is essential for managing integrations within the application.
+ *
+ * @throws      Error — name, integration_type, and provider are required; Error — User context (person and account) required; Error — database insert error.
+ * @sideEffects Writes a new record to the 'integrations' table and emits a log event.
+ * @stability   internal
+ * @calls       adminDb.from('integrations'), ctx.db.from('integrations'), emitLog
+ * @cil-generated
+ */
 export const create = createHandler(async (ctx, body) => {
   const { app_id, name, description, integration_type, provider, version, config, credentials, metadata } = body
 
@@ -168,7 +248,9 @@ export const create = createHandler(async (ctx, body) => {
 
   const safeCredentials = credentials || {}
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+
+  const { data, error: err } = await db
     .from('integrations')
     .insert({
       app_id: app_id || null,
@@ -183,7 +265,7 @@ export const create = createHandler(async (ctx, body) => {
       credentials: safeCredentials,
       metadata: metadata || {},
       is_configured: computeIsConfigured(safeCredentials),
-      created_by: ctx.principal.id
+      created_by: ctx.principal.type === 'human' ? ctx.principal.id : null
     })
     .select()
     .single()
@@ -197,21 +279,32 @@ export const create = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Create a new integration record'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:create:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Update an existing integration record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Handle PATCH /integrations requests"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, body with id and allowed fields" outputs="Updated integration record" errors="Throws on missing id or database error" side_effects="Updates integrations table and emits audit log"]
-// CIL[DOC-MICRO logic_summary="Collects allowed fields, recomputes configured state when credentials change, updates by id, and emits an audit log" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The update constant defines a handler for updating integration records in the database. It ensures that required fields are present and only allowed fields are updated.
+ *
+ * @throws      Error — Integration ID is required, Error — database update error
+ * @sideEffects DB writes to the 'integrations' table, emits a log event for the update.
+ * @stability   internal
+ * @calls       adminDb.from('integrations'), ctx.db.from('integrations'), emitLog
+ * @cil-generated
+ */
 export const update = createHandler(async (ctx, body) => {
   const id = body?.id || ctx.query?.id
   const { id: _bodyId, ...updates } = body || {}
@@ -230,7 +323,9 @@ export const update = createHandler(async (ctx, body) => {
     updateData.is_configured = computeIsConfigured(updateData.credentials)
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+
+  const { data, error: err } = await db
     .from('integrations')
     .update(updateData)
     .eq('id', id)
@@ -239,28 +334,46 @@ export const update = createHandler(async (ctx, body) => {
 
   if (err) throw err
 
+  // S-005: redact credentials from the audit payload — the DB write above is
+  // untouched, but `after` lands in public.logs and must never carry secrets.
+  const auditAfter = { ...updateData }
+  if (auditAfter.credentials !== undefined) {
+    auditAfter.credentials = { __redacted: true }
+  }
+
   await emitLog(ctx, 'integration.updated', 
     { type: 'integration', id }, 
-    { after: updateData }
+    { after: auditAfter }
   )
 
   return data
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Update an existing integration record'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:update:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Soft-delete an integration by marking it inactive"]
-// CIL[DOC-RESPONSIBILITY responsibility="Handle DELETE /integrations requests"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, _body: any" outputs="Record marked inactive" errors="Throws when id missing or record not found" side_effects="Sets is_active to false and emits audit log"]
-// CIL[DOC-MICRO logic_summary="Verifies the integration exists, marks it inactive with an updated timestamp, and emits an audit log" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The 'remove' constant defines a handler for deleting an integration by its ID, marking it as inactive in the database. It ensures that the integration ID is provided and logs the deletion event.
+ *
+ * @throws      Error — Integration ID is required, Error — Integration not found, Error — database error
+ * @sideEffects Updates the 'integrations' table in the database and emits a log event.
+ * @stability   internal
+ * @calls       adminDb.from('integrations'), ctx.db.from('integrations'), emitLog
+ * @cil-generated
+ */
 export const remove = createHandler(async (ctx, _body) => {
   const id = ctx.query?.id
 
@@ -268,7 +381,9 @@ export const remove = createHandler(async (ctx, _body) => {
     throw new Error('Integration ID is required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+
+  const { data: current } = await db
     .from('integrations')
     .select('id, name, provider')
     .eq('id', id)
@@ -276,7 +391,7 @@ export const remove = createHandler(async (ctx, _body) => {
 
   if (!current) throw new Error('Integration not found')
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('integrations')
     .update({ is_active: false, updated_at: new Date().toISOString() })
     .eq('id', id)
@@ -293,20 +408,31 @@ export const remove = createHandler(async (ctx, _body) => {
   return data
 })
 // CIL[END stable_id="~/.framework/functions/integrations.ts:remove:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/integrations.ts"]
-// CIL[DOC-MACRO purpose="Route integration HTTP requests by method"]
-// CIL[DOC-VECTOR type="context" content="purpose='Soft-delete an integration by marking it inactive'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-RESPONSIBILITY responsibility="Dispatch GET, POST, PATCH, DELETE to the appropriate handler"]
-// CIL[DOC-CONTEXT module="integrations" layer=".framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/integrations.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, body: any" outputs="Result from chosen handler" errors="Throws for unsupported method or delegate errors" side_effects="Delegates to CRUD handlers and helpers"]
-// CIL[DOC-MICRO logic_summary="Selects a handler based on the request method and optional id in query" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The handler processes incoming requests based on the HTTP method specified in the query parameters. It routes the request to the appropriate function for handling GET, POST, PATCH, or DELETE operations.
+ *
+ * @throws      Error — Unsupported method: {method}
+ * @sideEffects none
+ * @stability   internal
+ * @calls       get, list, create, update, remove
+ * @cil-generated
+ */
 export const handler = createHandler(async (ctx, body) => {
   const method = ctx.query?.method || 'GET'
 
@@ -327,10 +453,11 @@ export const handler = createHandler(async (ctx, body) => {
       throw new Error(`Unsupported method: ${method}`)
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Route integration HTTP requests by method'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/integrations.ts:handler:constant"]
+
+
+
+
+
+
+

@@ -1,18 +1,36 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin roles management page module: defines the Role interface and the RolesPage React component for listing, searching, filtering, and sorting roles."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the top-level TypeScript module exports and role model shape consumed by the admin roles UI."]
-// CIL[DOC-CONTEXT module="admin" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="module imports and role API response data" outputs="Role interface and RolesPage React component" errors="Network or API errors are surfaced by useApi hook" side_effects="none at module scope"]
-// CIL[DOC-MICRO logic_summary="Imports React, hooks, shared components, and utilities; exports Role type and RolesPage component for rendering the admin roles list." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-frontend"]
+/**
+ * @module   RolesPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The RolesPage module provides an interface for managing user roles within the admin panel of the application. It allows administrators to view, add, and modify roles, leveraging various UI components for a seamless experience.
+ * INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso AdminListPage (provides the list view for admin roles).
+ * @seeAlso LoadingSpinner (indicates loading states during API calls).
+ * @seeAlso useApi (custom hook for API interactions).
+ * @seeAlso SortableTableHeader (enables sorting functionality in tables).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, ShieldCheck, CheckCircle, XCircle, Settings, FileText, Cog } from 'lucide-react';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { Button } from '../../components/ui/button'
@@ -21,23 +39,32 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-
-
-// CIL[DOC-VECTOR type="context" content="purpose='Admin roles management page module: defines the Role interface and the RolesPage React component for listing, searching, filtering, and sorting roles.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:Role:interface" type="interface" identity="Role" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
-// CIL[DOC-MACRO purpose="Define the shape of a role record for use in the admin roles list and related operations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeScript interface for role objects returned by the roles API."]
-// CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/RolesPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Role interface type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Typed interface with required and optional fields representing a role, its permissions, app association, and audit timestamps." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Role interface defines the structure of a role object used in the admin panel for managing user roles and permissions. It encapsulates essential attributes such as identification, status, and metadata related to roles within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface Role {
   id: string
   name: string
@@ -51,23 +78,39 @@ interface Role {
   created_at: string
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the shape of a role record for use in the admin roles list and related operations.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:Role:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:RolesPage:component" type="component" identity="RolesPage" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin roles list page with search, filters, sorting, stats, and navigation to role detail."]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch and display roles; handle search, status/type filters, column sorting, row navigation, and summary statistics."]
-// CIL[DOC-CONTEXT module="admin" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/RolesPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (internal state and useApi fetch)" outputs="JSX admin list page for roles" errors="API fetch error passed to AdminListPage; boolean sort fallback for permissions" side_effects="Navigates to /spine-framework/admin/configs/roles/:id on row click; uses window.location.href"]
-// CIL[DOC-MICRO logic_summary="Uses useApi to load roles, applies search/status/type filters, sorts by selected column, computes stats cards, and renders an AdminListPage with a sortable table and clickable rows." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The RolesPage component manages the display and filtering of user roles in the admin interface. It provides functionality for searching, sorting, and navigating to role details.
+ *
+ * @macro       Component responsible for rendering and managing roles in an admin dashboard.
+ * @micro       Utilizes state management and API calls to filter and sort roles based on user input.
+ * @outputSpec  JSX.Element — renders a UI for managing roles.
+ * @throws      Error — if the API call fails
+ * @sideEffects API call to '/api/roles?action=list' to fetch roles.
+ * @stability   internal
+ * @calls       useApi, apiFetch, useNavigate
+ * @errorHandling throws an error if the API call fails.
+ * @cil-generated
+ */
 export function RolesPage() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
@@ -119,7 +162,7 @@ export function RolesPage() {
   }
 
   const handleRowClick = (role: Role) => {
-    window.location.href = `/spine-framework/admin/configs/roles/${role.id}`
+    navigate(`/spine-framework/admin/configs/roles/${role.id}`)
   }
 
   const sortedRoles = [...(filteredRoles || [])].sort((a, b) => {
@@ -319,10 +362,10 @@ export function RolesPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin roles list page with search, filters, sorting, stats, and navigation to role detail.'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:RolesPage:component"]
+
+
+
+
+
+

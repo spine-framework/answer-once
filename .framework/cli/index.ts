@@ -71,6 +71,7 @@ program
 const [
   { registerInitCommands },
   { registerMigrateCommands },
+  { registerBootstrapCommands },
   { registerInstallAppCommands },
   { registerStatusCommands },
   { registerAuthCommands },
@@ -85,10 +86,12 @@ const [
   { registerGenerateCommands },
   { registerCreateAppCommands },
   { registerValidateAppCommands },
+  { registerValidateSchemaCommands },
   { registerUpgradeCommands },
 ] = await Promise.all([
   import('./commands/init.ts'),
   import('./commands/migrate.ts'),
+  import('./commands/bootstrap.ts'),
   import('./commands/install-app.ts'),
   import('./commands/status.ts'),
   import('./commands/auth.ts'),
@@ -103,6 +106,7 @@ const [
   import('./commands/generate.ts'),
   import('./commands/create-app.ts'),
   import('./commands/validate-app.ts'),
+  import('./commands/validate-schema.ts'),
   import('./commands/upgrade.ts'),
 ])
 // CIL[DOC-VECTOR type="context" content="purpose='Dynamically import all CLI command modules'; No verified external callers; imports: .framework/cli/env-loader.ts"]
@@ -122,6 +126,7 @@ const [
 // CIL[DOC-STABILITY stability="stable"]
 registerInitCommands(program)
 registerMigrateCommands(program)
+registerBootstrapCommands(program)
 registerInstallAppCommands(program)
 registerStatusCommands(program)
 registerAuthCommands(program)
@@ -136,6 +141,7 @@ registerSystemCommands(program)
 registerGenerateCommands(program)
 registerCreateAppCommands(program)
 registerValidateAppCommands(program)
+registerValidateSchemaCommands(program)
 registerUpgradeCommands(program)
 // CIL[DOC-VECTOR type="context" content="purpose='Register all CLI commands with the program'; No verified external callers; imports: .framework/cli/env-loader.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]

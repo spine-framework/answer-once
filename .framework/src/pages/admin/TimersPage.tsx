@@ -1,12 +1,28 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
-// CIL[DOC-MACRO purpose="Timers admin page module: imports, types, and React component for managing scheduled and recurring tasks"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide module-level setup and dependencies for the Timers admin UI page"]
-// CIL[DOC-CONTEXT module="admin/timers" layer="ui.page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="No runtime logic; groups imports and type definitions for the TimersPage component" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-ui developers"]
+/**
+ * @module   TimersPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The TimersPage module provides a user interface for managing timers within the admin section of the application. It leverages React hooks for state management and API interactions, allowing users to view, create, and manipulate timer entries.
+ * INVARIANT: The module expects a valid API context to function correctly.
+ *
+ * @seeAlso useApi (provides API interaction capabilities).
+ * @seeAlso LoadingSpinner (displays loading state).
+ * @seeAlso AdminListPage (displays a list of admin items).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -21,22 +37,32 @@ import { Badge } from '../../components/ui/badge'
 import { formatDateTime } from '../../lib/utils'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Timers admin page module: imports, types, and React component for managing scheduled and recurring tasks'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:Timer:interface" type="interface" identity="Timer" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
-// CIL[DOC-MACRO purpose="Define the Timer data shape used by the admin timers page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe the fields and configuration structure of a timer record"]
-// CIL[DOC-CONTEXT module="admin/timers" layer="ui.type" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TimersPage.tsx"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Timer interface" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="TypeScript interface describing timer fields including scheduling config, execution stats, and ownership" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Timer interface defines the structure for timer objects used in the application, encapsulating their properties and configuration. It standardizes how timers are represented and managed within the system.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface Timer {
   id: string
   name: string
@@ -62,22 +88,39 @@ interface Timer {
   success_count: number
   failure_count: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the Timer data shape used by the admin timers page'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:Timer:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:TimersPage:component" type="component" identity="TimersPage" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin timers list page with search, filters, sorting, and execution statistics"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display timers, enable search/filter/sort, show status cards, and navigate to create/edit/detail"]
-// CIL[DOC-CONTEXT module="admin/timers" layer="ui.component" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TimersPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX AdminListPage with a sortable timer table" errors="API request failures" side_effects="Navigates to timer detail on row click; fetches timer list from API"]
-// CIL[DOC-MICRO logic_summary="Fetches timer list, filters by search text, type and status, sorts by selected key, computes summary cards, and renders a table of timers" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TimersPage component manages the display and filtering of timer data in the admin interface. It allows users to search, filter by type and status, and sort timers.
+ *
+ * @macro       Component responsible for rendering and managing timer data in an admin UI.
+ * @micro       Utilizes a custom API hook to fetch timer data and applies client-side filtering based on user input.
+ * @outputSpec  JSX.Element - renders the TimersPage component with timer data and UI elements.
+ * @throws      Error — if the timer fetch fails
+ * @sideEffects Fetches timer data from an external API.
+ * @stability   internal
+ * @calls       useApi, apiFetch
+ * @errorHandling throws an error if the timer fetch fails
+ * @cil-generated
+ */
 export function TimersPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -88,27 +131,10 @@ export function TimersPage() {
 
   const { data: timers, loading, error, refetch } = useApi<Timer[]>(
     async ({ signal }: { signal?: AbortSignal }) => {
-      try {
-        console.log('Fetching timers...')
-        const response = await apiFetch('/api/timers?action=list', { signal })
-        console.log('Response status:', response.status)
-        
-        if (!response.ok) {
-          console.error('Response not ok:', response.statusText)
-          throw new Error(`Failed to fetch timers: ${response.statusText}`)
-        }
-        
-        const result = await response.json()
-        console.log('Raw API result:', result)
-        
-        const timers = result.data || result
-        console.log('Timers after processing:', timers)
-        
-        return timers
-      } catch (error) {
-        console.error('Error in TimersPage:', error)
-        throw error
-      }
+      const response = await apiFetch('/api/timers?action=list', { signal })
+      if (!response.ok) throw new Error('Failed to fetch timers')
+      const result = await response.json()
+      return result.data || result
     },
     { immediate: true }
   )
@@ -391,16 +417,18 @@ export function TimersPage() {
                 </td>
               </tr>
             ))}
+
           </tbody>
         </table>
       )}
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin timers list page with search, filters, sorting, and execution statistics'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:TimersPage:component"]
+
+
+
+
+
+
+

@@ -55,7 +55,7 @@ async function callSecurity(action: string, body?: any) {
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data?.error || data?.message || `${action} failed (${res.status})`)
-  return data
+  return data?.data ?? data
 }
 
 export function SecurityPage() {

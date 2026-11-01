@@ -1,12 +1,27 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-MACRO purpose="Provides the admin system logs page for viewing the audit trail and event history"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports UI dependencies and exports the LogsPage component for admin routing"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="LogsPage component module" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Sets up imports and default export for the admin logs page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * @module   LogsPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The LogsPage module provides an interface for administrators to view and manage logs within the application. It leverages various UI components for displaying log data in a sortable table format and includes functionalities for searching and filtering logs by date. INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso LoadingSpinner (used for loading states).
+ * @seeAlso AdminListPage (provides admin-specific list functionalities).
+ * @seeAlso SortableTableHeader (enables sorting of log entries).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -24,23 +39,33 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the admin system logs page for viewing the audit trail and event history'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogEntry:interface" type="interface" identity="LogEntry" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the shape of a system log record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides a TypeScript type contract for log entry data"]
-// CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="n/a" outputs="LogEntry interface" errors="n/a" side_effects="n/a"]
-// CIL[DOC-MICRO logic_summary="Declares required and optional fields for log events, actor metadata, and tracing" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogEntry:interface" type="interface" identity="LogEntry" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
+/**
+ * The LogEntry interface defines the structure of log entries used in the admin logs page, capturing various details about events in the system. It exists to standardize the representation of log data for better management and analysis.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface LogEntry {
   id: string
   event_type: string
@@ -66,46 +91,68 @@ interface LogEntry {
     email: string
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of a system log record'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogEntry:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsResponse:interface" type="interface" identity="LogsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the paginated API response shape for log listings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides a TypeScript type contract for log list responses"]
-// CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="n/a" outputs="LogsResponse interface" errors="n/a" side_effects="n/a"]
-// CIL[DOC-MICRO logic_summary="Declares data array and total count fields for log responses" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsResponse:interface" type="interface" identity="LogsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
+/**
+ * LogsResponse defines the structure of the response for log entries in the admin logs page, ensuring a consistent format for handling log data and its total count.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface LogsResponse {
   data: LogEntry[]
   total: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the paginated API response shape for log listings'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsResponse:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:StatsResponse:interface" type="interface" identity="StatsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the shape of aggregated log statistics"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides a TypeScript type contract for log stats responses"]
-// CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="n/a" outputs="StatsResponse interface" errors="n/a" side_effects="n/a"]
-// CIL[DOC-MICRO logic_summary="Declares count metrics and category arrays for log statistics" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:StatsResponse:interface" type="interface" identity="StatsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
+/**
+ * StatsResponse defines the structure of the response containing various statistics related to user actions and events. It provides a comprehensive overview of the logged data in the admin logs page.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface StatsResponse {
   total: number
   error_count: number
@@ -115,31 +162,51 @@ interface StatsResponse {
   sources: string[]
   source_types: string[]
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of aggregated log statistics'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:StatsResponse:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsPage:component" type="component" identity="LogsPage" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-MACRO purpose="Renders the admin system logs UI with filters, sorting, and pagination"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetches and displays logs and stats, manages filter and sort state, renders table and pagination"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/LogsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="props: { title?: string }" outputs="JSX.Element" errors="API errors surfaced via useApi" side_effects="HTTP requests to /api/logs; React state updates"]
-// CIL[DOC-MICRO logic_summary="Builds query URL, fetches logs and stats with useApi, manages filters/sort/pagination, renders log table" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsPage:component" type="component" identity="LogsPage" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
+/**
+ * LogsPage is a component that displays system logs and allows users to filter and search through them based on various criteria. It handles fetching logs and statistics from an API and updating the displayed data based on user input.
+ *
+ * @macro       Component responsible for managing and displaying logs with filtering capabilities.
+ * @micro       Utilizes state management and API calls to dynamically fetch and display log data based on user-defined filters.
+ * @inputSpec
+ *   - title: string (optional) — the title to display on the page.
+ * @outputSpec  JSX.Element — renders the logs page UI.
+ * @throws      Error — if the log fetch fails.
+ * @sideEffects Makes external API calls to fetch logs and statistics.
+ * @stability   internal
+ * @calls       useApi, apiFetch
+ * @errorHandling throws an error if the log fetch fails.
+ * @cil-generated
+ */
 export function LogsPage({ title = 'System Logs' }: { title?: string }) {
+  const defaultDateFrom = () => new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedEventType, setSelectedEventType] = useState('all')
   const [selectedSource, setSelectedSource] = useState('all')
   const [selectedSourceType, setSelectedSourceType] = useState('all')
   const [sourceIdFilter, setSourceIdFilter] = useState('')
   const [actorIdFilter, setActorIdFilter] = useState('')
-  const [dateFrom, setDateFrom] = useState('')
+  const [dateFrom, setDateFrom] = useState(defaultDateFrom)
   const [dateTo, setDateTo] = useState('')
   const [sortKey, setSortKey] = useState('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
@@ -174,7 +241,7 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
       const result = await response.json()
       return (result.data || result) as LogsResponse
     },
-    { immediate: true }
+    { immediate: false }
   )
 
   const logs = logsData?.data || []
@@ -187,7 +254,7 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
       const result = await response.json()
       return (result.data || result) as StatsResponse
     },
-    { immediate: true }
+    { immediate: false }
   )
 
   useEffect(() => {
@@ -326,6 +393,7 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
+
               className="px-3 py-1.5 text-sm border border-slate-300 rounded-md"
             />
           </div>
@@ -379,7 +447,7 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
               setSourceIdFilter('')
               setActorIdFilter('')
               setTraceIdFilter('')
-              setDateFrom('')
+              setDateFrom(defaultDateFrom())
               setDateTo('')
               setPage(1)
             }}
@@ -571,10 +639,10 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the admin system logs UI with filters, sorting, and pagination'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsPage:component"]
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 // CIL[DOC-MACRO purpose="React admin page for visualizing and controlling the CIL flexible pipeline for a project."]
 // CIL[DOC-RESPONSIBILITY responsibility="Import dependencies, set up the admin page module, and render the root page instructions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts"]
@@ -19,6 +19,7 @@ import { Progress } from '@core/components/ui/progress'
 import { Alert, AlertDescription } from '@core/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@core/components/ui/tabs'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:module_header:module_header"]
   CheckCircle2,
   RefreshCw,
   Play,
@@ -36,16 +37,13 @@ import {
   FileCode2,
 } from 'lucide-react'
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='React admin page for visualizing and controlling the CIL flexible pipeline for a project.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:filepipelinestate:interface" type="interface" identity="FilePipelineState" parent="none"]
 // CIL[DOC-MACRO purpose="TypeScript interface describing the shape of FilePipelineState."]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the data contract for FilePipelineState."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -53,6 +51,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Describes the per-file state including path, current status, completed/ready/blocked steps, and progress percentage." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FilePipelineState:interface" type="interface" identity="FilePipelineState" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 interface FilePipelineState {
   file_path: string
   current_status: string
@@ -61,15 +60,14 @@ interface FilePipelineState {
   blocked_by: number[]
   progress_percentage: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FilePipelineState:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing the shape of FilePipelineState.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:filepipelinestate:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:pipelinestatus:interface" type="interface" identity="PipelineStatus" parent="none"]
 // CIL[DOC-MACRO purpose="TypeScript interface describing the shape of PipelineStatus."]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the data contract for PipelineStatus."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -77,21 +75,21 @@ interface FilePipelineState {
 // CIL[DOC-MICRO logic_summary="Describes the overall pipeline status for a project, including all files and a step summary." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:PipelineStatus:interface" type="interface" identity="PipelineStatus" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 interface PipelineStatus {
   project_id: string
   files: FilePipelineState[]
   step_summary: Record<number, { completed: number; pending: number; in_progress: number }>
   overall_progress: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:PipelineStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing the shape of PipelineStatus.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:pipelinestatus:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:filesreadyforstep:interface" type="interface" identity="FilesReadyForStep" parent="none"]
 // CIL[DOC-MACRO purpose="TypeScript interface describing the shape of FilesReadyForStep."]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the data contract for FilesReadyForStep."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -99,6 +97,7 @@ interface PipelineStatus {
 // CIL[DOC-MICRO logic_summary="Describes the response for files that are ready to be processed for a specific step, including blocking info." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FilesReadyForStep:interface" type="interface" identity="FilesReadyForStep" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 interface FilesReadyForStep {
   ok: boolean
   project_id: string
@@ -118,15 +117,14 @@ interface FilesReadyForStep {
     blocking_reasons: string[]
   }>
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FilesReadyForStep:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing the shape of FilesReadyForStep.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:filesreadyforstep:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:bottleneckanalysis:interface" type="interface" identity="BottleneckAnalysis" parent="none"]
 // CIL[DOC-MACRO purpose="TypeScript interface describing the shape of BottleneckAnalysis."]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the data contract for BottleneckAnalysis."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -134,6 +132,7 @@ interface FilesReadyForStep {
 // CIL[DOC-MICRO logic_summary="Describes the bottleneck analysis result with bottlenecks, recommendations, and optimal processing order." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:BottleneckAnalysis:interface" type="interface" identity="BottleneckAnalysis" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 interface BottleneckAnalysis {
   project_id: string
   bottlenecks: Array<{
@@ -158,15 +157,14 @@ interface BottleneckAnalysis {
     ready_for_processing: number
   }
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:BottleneckAnalysis:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing the shape of BottleneckAnalysis.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:bottleneckanalysis:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:step_labels:constant" type="constant" identity="STEP_LABELS" parent="none"]
 // CIL[DOC-MACRO purpose="Named constant mapping used across the pipeline UI."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a lookup table for STEP_LABELS."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -174,6 +172,7 @@ interface BottleneckAnalysis {
 // CIL[DOC-MICRO logic_summary="Maps each pipeline step index to a human-readable label." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:STEP_LABELS:constant" type="constant" identity="STEP_LABELS" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 const STEP_LABELS: Record<number, string> = {
   0: 'Discover Files',
   1: 'Select Files',
@@ -185,15 +184,14 @@ const STEP_LABELS: Record<number, string> = {
   7: 'Embed & Map',
   8: 'Publish',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:STEP_LABELS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Named constant mapping used across the pipeline UI.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:step_labels:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:step_colors:constant" type="constant" identity="STEP_COLORS" parent="none"]
 // CIL[DOC-MACRO purpose="Named constant mapping used across the pipeline UI."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a lookup table for STEP_COLORS."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -201,6 +199,7 @@ const STEP_LABELS: Record<number, string> = {
 // CIL[DOC-MICRO logic_summary="Maps each pipeline step index to a Tailwind color class string for badges and progress." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:STEP_COLORS:constant" type="constant" identity="STEP_COLORS" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 const STEP_COLORS: Record<number, string> = {
   0: 'bg-slate-100 text-slate-700',
   1: 'bg-gray-100 text-gray-700',
@@ -212,15 +211,14 @@ const STEP_COLORS: Record<number, string> = {
   7: 'bg-indigo-100 text-indigo-700',
   8: 'bg-violet-100 text-violet-700',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:STEP_COLORS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Named constant mapping used across the pipeline UI.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:step_colors:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:priority_colors:constant" type="constant" identity="PRIORITY_COLORS" parent="none"]
 // CIL[DOC-MACRO purpose="Named constant mapping used across the pipeline UI."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a lookup table for PRIORITY_COLORS."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -228,20 +226,20 @@ const STEP_COLORS: Record<number, string> = {
 // CIL[DOC-MICRO logic_summary="Maps priority levels to Tailwind color class strings." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:PRIORITY_COLORS:constant" type="constant" identity="PRIORITY_COLORS" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 const PRIORITY_COLORS: Record<string, string> = {
   high: 'bg-red-100 text-red-700',
   medium: 'bg-yellow-100 text-yellow-700',
   low: 'bg-gray-100 text-gray-700',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:PRIORITY_COLORS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Named constant mapping used across the pipeline UI.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:priority_colors:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:fileprogresscard:function" type="function" identity="FileProgressCard" parent="none"]
 // CIL[DOC-MACRO purpose="React/TypeScript function for rendering FileProgressCard."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the FileProgressCard UI and handle user interactions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -249,6 +247,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 // CIL[DOC-MICRO logic_summary="Shows a single file's progress, completed/ready/blocked steps, and a button to process the next available step." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FileProgressCard:component" type="component" identity="FileProgressCard" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 function FileProgressCard({ file, onProcess }: { 
   file: FilePipelineState
   onProcess: (filePath: string, step: number) => void 
@@ -302,15 +301,14 @@ function FileProgressCard({ file, onProcess }: {
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FileProgressCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='React/TypeScript function for rendering FileProgressCard.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:fileprogresscard:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:stepsummarycard:function" type="function" identity="StepSummaryCard" parent="none"]
 // CIL[DOC-MACRO purpose="React/TypeScript function for rendering StepSummaryCard."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the StepSummaryCard UI and handle user interactions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -318,6 +316,7 @@ function FileProgressCard({ file, onProcess }: {
 // CIL[DOC-MICRO logic_summary="Renders a step summary with completion stats, a progress bar, and a button to process all ready files in that step." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:StepSummaryCard:component" type="component" identity="StepSummaryCard" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 function StepSummaryCard({ step, summary, onProcess }: {
   step: number
   summary: { completed: number; pending: number; in_progress: number }
@@ -363,15 +362,14 @@ function StepSummaryCard({ step, summary, onProcess }: {
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:StepSummaryCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='React/TypeScript function for rendering StepSummaryCard.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:stepsummarycard:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:bottleneckalert:function" type="function" identity="BottleneckAlert" parent="none"]
 // CIL[DOC-MACRO purpose="React/TypeScript function for rendering BottleneckAlert."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the BottleneckAlert UI and handle user interactions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -379,6 +377,7 @@ function StepSummaryCard({ step, summary, onProcess }: {
 // CIL[DOC-MICRO logic_summary="Displays a bottleneck step with ready/blocked counts and a list of blocking reasons." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:BottleneckAlert:component" type="component" identity="BottleneckAlert" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 function BottleneckAlert({ bottleneck }: { bottleneck: BottleneckAnalysis['bottlenecks'][0] }) {
   return (
     <Alert className="mb-3">
@@ -409,15 +408,14 @@ function BottleneckAlert({ bottleneck }: { bottleneck: BottleneckAnalysis['bottl
     </Alert>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:BottleneckAlert:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='React/TypeScript function for rendering BottleneckAlert.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:bottleneckalert:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:recommendationcard:function" type="function" identity="RecommendationCard" parent="none"]
 // CIL[DOC-MACRO purpose="React/TypeScript function for rendering RecommendationCard."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the RecommendationCard UI and handle user interactions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -425,6 +423,7 @@ function BottleneckAlert({ bottleneck }: { bottleneck: BottleneckAnalysis['bottl
 // CIL[DOC-MICRO logic_summary="Renders a single recommendation with a priority badge." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:RecommendationCard:component" type="component" identity="RecommendationCard" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 function RecommendationCard({ recommendation }: { recommendation: BottleneckAnalysis['recommendations'][0] }) {
   return (
     <Card className="mb-2">
@@ -443,15 +442,14 @@ function RecommendationCard({ recommendation }: { recommendation: BottleneckAnal
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:RecommendationCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='React/TypeScript function for rendering RecommendationCard.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:recommendationcard:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:flexiblepipelinepage:function" type="function" identity="FlexiblePipelinePage" parent="none"]
 // CIL[DOC-MACRO purpose="React/TypeScript function for rendering FlexiblePipelinePage."]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the FlexiblePipelinePage UI and handle user interactions."]
 // CIL[DOC-CONTEXT module="pages.admin.cil" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
@@ -459,6 +457,7 @@ function RecommendationCard({ recommendation }: { recommendation: BottleneckAnal
 // CIL[DOC-MICRO logic_summary="Fetches pipeline status, files ready per step, and bottleneck analysis; renders tabbed dashboard with overview, files, steps, and bottlenecks." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FlexiblePipelinePage:component" type="component" identity="FlexiblePipelinePage" parent="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx"]
 export default function FlexiblePipelinePage() {
   const { id: projectId } = useParams<{ id: string }>()
   
@@ -585,17 +584,6 @@ export default function FlexiblePipelinePage() {
           Refresh
         </Button>
       </div>
-
-      <PageInstructions
-        description="View the flexible pipeline status and identify bottlenecks."
-        sections={[
-          { title: 'What this page is for', content: 'This page shows the dependency-aware file processing pipeline for the selected CIL project, including overall progress and per-step status.' },
-          { title: 'How to read this page', content: 'The Overall Progress card shows the completion percentage and counts for total, complete, and in-progress files. Tabs provide Overview, Files, Steps, and Bottlenecks views.' },
-          { title: 'How to use this page', content: 'Switch tabs to inspect step summaries, individual file progress, and which files are ready for the next step. Use the Process buttons to advance selected files.' },
-          { title: 'Important notes', content: 'Bottlenecks are files that cannot proceed until another step completes. Refresh the page to see live progress during ingestion.' },
-        ]}
-      />
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -727,10 +715,10 @@ export default function FlexiblePipelinePage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:FlexiblePipelinePage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='React/TypeScript function for rendering FlexiblePipelinePage.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/FlexiblePipelinePage.tsx:flexiblepipelinepage:function"]

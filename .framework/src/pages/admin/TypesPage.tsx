@@ -1,20 +1,38 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin Types page header and module imports for the Spine admin configuration UI."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the module scope, organize imports, and provide the entry point for the admin Types management page."]
-// CIL[DOC-CONTEXT module="admin.types" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains module-level imports for React, local hooks, API client, UI components, and utilities used by TypesPage." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+/**
+ * @module   TypesPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module represents the TypesPage component within the admin section of the application, providing a user interface for managing various types. It integrates with the API to fetch data and utilizes several UI components for rendering. INVARIANT: The component must always be rendered within a valid routing context to function correctly.
+ *
+ * @seeAlso useApi (provides API interaction functionality).
+ * @seeAlso LoadingSpinner (used for loading states).
+ * @seeAlso AdminListPage (displays a list of admin items).
+ * @seeAlso SortableTableHeader (enables sorting functionality in tables).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { 
+// CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:module_header:module_header"]
   Plus,
   Box,
   FileText,
@@ -28,21 +46,29 @@ import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Admin Types page header and module imports for the Spine admin configuration UI.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:Type:interface" type="interface" identity="Type" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
-// CIL[DOC-MACRO purpose="Describe the shape of a Type record for the admin Types list."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the Type TypeScript interface used across the TypesPage and related consumers."]
-// CIL[DOC-CONTEXT module="admin.types" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TypesPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Type type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares fields including id, name, slug, kind, schema fields, ownership, timestamps, and optional app." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Type interface defines the structure for a type object used in the admin panel, encapsulating various attributes related to types. It serves to standardize the representation of types within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface Type {
   id: string
   name: string
@@ -51,7 +77,7 @@ interface Type {
   description?: string
   icon?: string
   color?: string
-  schema: {
+  design_schema?: {
     fields: Record<string, {
       type: string
       label?: string
@@ -66,23 +92,39 @@ interface Type {
   app_id?: string | null
   app?: any
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Describe the shape of a Type record for the admin Types list.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:Type:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:TypesPage:component" type="component" identity="TypesPage" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin Types list with search, category filters, sorting, stats, and navigation."]
-// CIL[DOC-RESPONSIBILITY responsibility="Display and manage Type records; handle user interactions for search, filter, sort, and row navigation."]
-// CIL[DOC-CONTEXT module="admin.types" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TypesPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX admin list page rendering Type rows" errors="Network or fetch errors are surfaced by useApi" side_effects="Navigates to type detail and new pages; sets React state for search, sort, and filter."]
-// CIL[DOC-MICRO logic_summary="Fetches types via useApi, filters by search and category, sorts by selected key, computes stats cards, and renders an AdminListPage with a sortable table of types." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TypesPage component manages the display and filtering of various types in an admin interface. It allows users to search, sort, and categorize types based on specific criteria.
+ *
+ * @macro       Admin interface component for managing and displaying types.
+ * @micro       Utilizes state management and API calls to fetch and filter types based on user input.
+ * @outputSpec  JSX.Element
+ * @throws      Error — if the API response is not ok
+ * @sideEffects API call to '/api/types?action=list&limit=500'
+ * @stability   internal
+ * @calls       useApi, apiFetch, useNavigate
+ * @errorHandling throws an error if the API response is not ok
+ * @cil-generated
+ */
 export function TypesPage() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortKey, setSortKey] = useState('name')
@@ -90,7 +132,7 @@ export function TypesPage() {
 
   const { data: types, loading, error, refetch } = useApi<Type[]>(
     async ({ signal }: { signal?: AbortSignal }) => {
-      const response = await apiFetch('/api/types?action=list', { signal })
+      const response = await apiFetch('/api/types?action=list&limit=500&active=all', { signal })
       if (!response.ok) throw new Error('Failed to fetch types')
       const result = await response.json()
       return result.data || []
@@ -144,7 +186,7 @@ export function TypesPage() {
   }
 
   const handleRowClick = (type: Type) => {
-    window.location.href = `/spine-framework/admin/configs/types/${type.id}`
+    navigate(`/spine-framework/admin/configs/types/${type.id}`)
   }
 
   const sortedTypes = [...(filteredTypes || [])].sort((a, b) => {
@@ -185,7 +227,7 @@ export function TypesPage() {
     },
     {
       title: 'Total Fields',
-      value: (types || []).reduce((sum, t) => sum + Object.keys(t.schema?.fields || {}).length, 0),
+      value: (types || []).reduce((sum, t) => sum + Object.keys(t.design_schema?.fields || {}).length, 0),
       icon: FileText,
       iconColor: 'text-purple-600',
     }
@@ -286,7 +328,7 @@ export function TypesPage() {
                     <div className="text-sm text-muted-foreground">
                       {type.description || type.slug}
                       <span className="mx-1.5 text-muted-foreground">&middot;</span>
-                      {Object.keys(type.schema?.fields || {}).length} fields
+                      {Object.keys(type.design_schema?.fields || {}).length} fields
                     </div>
                   </div>
                 </td>
@@ -301,7 +343,7 @@ export function TypesPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {Object.keys(type.schema?.fields || {}).length}
+                  {Object.keys(type.design_schema?.fields || {}).length}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                   {formatDateTime(type.created_at)}
@@ -317,10 +359,10 @@ export function TypesPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin Types list with search, category filters, sorting, stats, and navigation.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:TypesPage:component"]
+
+
+
+
+
+

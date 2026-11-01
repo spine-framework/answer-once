@@ -1,14 +1,29 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent=""]
-// CIL[DOC-MACRO purpose="Admin list page component module imports and entry point."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import dependencies and declare the AdminListPage component module."]
-// CIL[DOC-CONTEXT module="AdminListPage" layer="components/admin" related_files=".framework/src/components/admin/AdminStatsCard.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Aggregates imports for the admin list page UI: React, UI primitives, icons, local components, and utils." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="module"]
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
+/**
+ * @module   AdminListPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * The AdminListPage module is responsible for rendering the admin interface that displays a list of administrative items and provides functionalities for searching and filtering. It serves as a key component in the admin dashboard, allowing users to navigate through various admin-related tasks. INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso AdminStatsCard (provides statistics relevant to the admin interface).
+ * @seeAlso PageInstructions (offers guidance on using the admin features).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import React, { ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
 import { Input } from '../ui/input'
@@ -17,28 +32,37 @@ import { Skeleton } from '../ui/skeleton'
 import { Search } from 'lucide-react'
 import { LucideIcon } from 'lucide-react'
 import { AdminStatsCard } from './AdminStatsCard'
-import { PageInstructions } from './PageInstructions'
-import { cn } from '../../lib/utils'
-// CIL[DOC-VECTOR type="context" content="purpose='Admin list page component module imports and entry point.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:adminlistpageprops:interface" type="interface" identity="AdminListPageProps" parent="adminlistpage:function"]
-// CIL[DOC-MACRO purpose="Props contract for the AdminListPage component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the typed input surface for AdminListPage."]
-// CIL[DOC-CONTEXT module="AdminListPage" layer="components/admin" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/AdminStatsCard.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="property bag: title, description, statsCards, children, optional search/filter/loading/error/new-button fields" outputs="typed props interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the complete prop surface for the admin list page, including stats, search, filters, loading, error, and children." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+import { cn } from '../../lib/utils'
+// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPageProps:interface" type="interface" identity="AdminListPageProps" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
+/**
+ * AdminListPageProps defines the properties required for rendering the Admin List Page component, facilitating the configuration of various UI elements and behaviors within the admin interface.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface AdminListPageProps {
   title: string
   description: string
-  noPageInstructions?: boolean
   newButtonText?: string
   newButtonHref?: string
   onNewClick?: () => void
@@ -64,28 +88,31 @@ interface AdminListPageProps {
   emptyMessage?: string
   emptyIcon?: LucideIcon
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Props contract for the AdminListPage component.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:adminlistpageprops:interface"]
+// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPageProps:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:adminlistpage:function" type="function" identity="AdminListPage" parent=""]
-// CIL[DOC-MACRO purpose="Render a reusable admin list page with header, instructions, stats, search, filters, and content."]
-// CIL[DOC-RESPONSIBILITY responsibility="Compose and render the admin list page layout and its interactive controls."]
-// CIL[DOC-CONTEXT module="AdminListPage" layer="components/admin" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/AdminStatsCard.tsx,.framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="AdminListPageProps" outputs="JSX.Element" errors="Error state rendered inside card" side_effects="Sets window.location.href when new button is clicked and no onNewClick handler provided"]
-// CIL[DOC-MICRO logic_summary="Builds a vertical page layout with title/actions, optional instructional help, stats cards, search/filter bar, and a content card that shows skeleton, error, or children." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPage:component" type="component" identity="AdminListPage" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
 export function AdminListPage({
   title,
   description,
-  noPageInstructions,
   newButtonText,
   newButtonHref = '#',
   onNewClick,
@@ -99,6 +126,7 @@ export function AdminListPage({
   error = null,
   onRetry,
 }: AdminListPageProps) {
+  const navigate = useNavigate()
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -108,34 +136,12 @@ export function AdminListPage({
         </div>
         
         {newButtonText && (
-          <Button onClick={() => onNewClick ? onNewClick() : (window.location.href = newButtonHref!)}>
+          <Button onClick={() => onNewClick ? onNewClick() : navigate(newButtonHref)}>
             {newButtonText}
           </Button>
         )}
       </div>
 
-      {!noPageInstructions && (
-        <PageInstructions
-          sections={[
-            {
-              title: 'What this page is for',
-              content: `This page is the administrative list for ${title.toLowerCase()}. It shows all records in the system, their current state, and provides tools to search, filter, and create new records.`,
-            },
-            {
-              title: 'How to find records',
-              content: `Use the search field at the top of the list to look for records by name or keyword. Use the filter dropdowns to narrow the list by status, type, or other categories. Click any column header to sort ascending or descending.`,
-            },
-            {
-              title: 'How to create, view, and edit records',
-              content: `${newButtonText ? `Click the ${newButtonText} button in the top-right to create a new record. ` : ''}Click any row in the table to open its detail page. From the detail page you can review all fields, edit the record, and, if allowed, delete it. Deleting a record usually cannot be undone.`,
-            },
-            {
-              title: 'Understanding the stats',
-              content: `The summary cards above the table show the most important counts for this record type. Use them as a quick health check or to spot trends before drilling into the list.`,
-            },
-          ]}
-        />
-      )}
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {statsCards.map((stat, index) => (
@@ -160,6 +166,7 @@ export function AdminListPage({
                     placeholder={searchPlaceholder}
                     value={searchValue}
                     onChange={(e) => onSearchChange(e.target.value)}
+
                     className="pl-9"
                   />
                 </div>
@@ -211,10 +218,11 @@ export function AdminListPage({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a reusable admin list page with header, instructions, stats, search, filters, and content.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:adminlistpage:function"]
+// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPage:component"]
+
+
+
+
+
+
+

@@ -28,7 +28,7 @@ import { AgentView } from '../../components/shared/AgentView'
 import { FlaskConical, CheckCircle, XCircle, Clock, RefreshCw } from 'lucide-react';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:module_header:module_header"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Admin test suite dashboard page module header'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -36,8 +36,6 @@ import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteStat:interface" type="interface" identity="SuiteStat" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Type definition for suite statistics"]
 // CIL[DOC-RESPONSIBILITY responsibility="Describe the shape of aggregated test suite stats"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="types" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -45,6 +43,7 @@ import { PageInstructions } from '../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Record of suite, total_runs, last status, counts, and timestamps" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteStat:interface" type="interface" identity="SuiteStat" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 interface SuiteStat {
   suite:        string
   total_runs:   number
@@ -54,16 +53,15 @@ interface SuiteStat {
   last_failed:  number | null
   last_total:   number | null
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteStat:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Type definition for suite statistics'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteStat:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestRun:interface" type="interface" identity="TestRun" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Type definition for a test run record"]
 // CIL[DOC-RESPONSIBILITY responsibility="Describe the shape of an individual test run"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="types" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -71,6 +69,7 @@ interface SuiteStat {
 // CIL[DOC-MICRO logic_summary="Record of id, suite, status, timing, counts, and trigger" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestRun:interface" type="interface" identity="TestRun" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 interface TestRun {
   id:           string
   suite:        string
@@ -84,14 +83,13 @@ interface TestRun {
   skipped:      number | null
   triggered_by: string | null
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestRun:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Type definition for a test run record'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestRun:interface"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:suite_labels:constant" type="constant" identity="SUITE_LABELS" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Human readable labels for test suite names"]
 // CIL[DOC-RESPONSIBILITY responsibility="Map suite slugs to display labels"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="constants" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -99,26 +97,26 @@ interface TestRun {
 // CIL[DOC-MICRO logic_summary="Mapping of unit, integration, api, ui to display names" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SUITE_LABELS:constant" type="constant" identity="SUITE_LABELS" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 const SUITE_LABELS: Record<string, string> = {
   unit:        'Unit',
   integration: 'Integration',
   api:         'API',
   ui:          'UI',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SUITE_LABELS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Human readable labels for test suite names'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:suite_labels:constant"]
 
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:StatusBadge:component" type="component" identity="StatusBadge" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Render a colored status badge"]
 // CIL[DOC-RESPONSIBILITY responsibility="Display a status string as a styled badge"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -126,6 +124,7 @@ const SUITE_LABELS: Record<string, string> = {
 // CIL[DOC-MICRO logic_summary="Selects Tailwind color classes based on status and renders text" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:StatusBadge:component" type="component" identity="StatusBadge" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 function StatusBadge({ status }: { status: string | null }) {
   if (!status) return <span className="text-gray-400 text-xs">—</span>
   const color =
@@ -139,16 +138,15 @@ function StatusBadge({ status }: { status: string | null }) {
     </span>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:StatusBadge:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render a colored status badge'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:StatusBadge:component"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:durationLabel:function" type="function" identity="durationLabel" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Format a duration in milliseconds as a readable string"]
 // CIL[DOC-RESPONSIBILITY responsibility="Convert millisecond duration to ms or seconds display"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -156,20 +154,20 @@ function StatusBadge({ status }: { status: string | null }) {
 // CIL[DOC-MICRO logic_summary="Returns '—' for null, 'ms' for sub-second, or formatted seconds" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:durationLabel:function" type="function" identity="durationLabel" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 function durationLabel(ms: number | null): string {
   if (ms == null) return '—'
   if (ms < 1000) return `${ms}ms`
   return `${(ms / 1000).toFixed(1)}s`
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:durationLabel:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Format a duration in milliseconds as a readable string'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:durationLabel:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteCard:component" type="component" identity="SuiteCard" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Render a test suite summary card"]
 // CIL[DOC-RESPONSIBILITY responsibility="Show label, status, last run, pass/fail counts, and pass rate"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -177,6 +175,7 @@ function durationLabel(ms: number | null): string {
 // CIL[DOC-MICRO logic_summary="Computes pass rate and displays suite health in a card" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteCard:component" type="component" identity="SuiteCard" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 function SuiteCard({ stat }: { stat: SuiteStat }) {
   const label = SUITE_LABELS[stat.suite] ?? stat.suite
   const passRate = stat.last_total
@@ -209,15 +208,14 @@ function SuiteCard({ stat }: { stat: SuiteStat }) {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render a test suite summary card'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:SuiteCard:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestingDashboard:component" type="component" identity="TestingDashboard" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 // CIL[DOC-MACRO purpose="Admin page for viewing test suite health and run history"]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch stats and recent runs, render suite cards and run table"]
 // CIL[DOC-CONTEXT module="TestingDashboard" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/shared/AgentView.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TestingDashboard.tsx"]
@@ -225,6 +223,7 @@ function SuiteCard({ stat }: { stat: SuiteStat }) {
 // CIL[DOC-MICRO logic_summary="Loads suite stats and recent runs, renders cards, table, and agent view" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestingDashboard:component" type="component" identity="TestingDashboard" parent="~/.framework/src/pages/admin/TestingDashboard.tsx"]
 export default function TestingDashboard() {
   const navigate = useNavigate()
 
@@ -264,17 +263,6 @@ export default function TestingDashboard() {
           Refresh
         </button>
       </div>
-
-      <PageInstructions
-        description="Run and review Spine test suites."
-        sections={[
-          { title: 'What this page is for', content: 'This page displays the health and history of the unit, integration, API, and UI test suites.' },
-          { title: 'How to read the cards', content: 'The suite health cards show the most recent run status, pass rate, total runs, and last run time. Colors indicate passed, failed, running, or unknown states.' },
-          { title: 'How to use this page', content: 'Click the Refresh button to reload stats and runs. Click a row in the Recent Runs table to view individual test case results. Suites are triggered from the IDE or CI pipeline.' },
-          { title: 'Important notes', content: 'A pass rate below 100% is shown in red. Empty states mean no runs have been recorded yet for that suite.' },
-        ]}
-      />
-
       {/* Suite health cards */}
       {statsLoading ? (
         <div className="flex justify-center py-8"><LoadingSpinner /></div>
@@ -373,10 +361,10 @@ export default function TestingDashboard() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestingDashboard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Admin page for viewing test suite health and run history'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/shared/AgentView.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/TestingDashboard.tsx:TestingDashboard:component"]

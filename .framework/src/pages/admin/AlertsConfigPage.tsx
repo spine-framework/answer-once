@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:module_header:module_header"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 // CIL[DOC-MACRO purpose="Top-level module for the admin threshold alerts configuration page"]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide imports and module context for the AlertsConfigPage and AlertModal components"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
@@ -17,6 +17,7 @@
 
 import React, { useState } from 'react'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:module_header:module_header"]
   Bell,
   Plus,
   Edit,
@@ -39,8 +40,6 @@ import { formatDateTime } from '../../lib/utils'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:ThresholdAlert:interface"]
 // CIL[DOC-MACRO purpose="Describe the shape of a threshold alert record and its embedded data"]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the ThresholdAlert TypeScript interface used across the alerts page"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="type" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -48,6 +47,7 @@ import { formatDateTime } from '../../lib/utils'
 // CIL[DOC-MICRO logic_summary="Declares fields for alert identity, title, status, metric, operator, threshold, window, optional pipeline linkage, and timestamps" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:ThresholdAlert:interface" type="interface" identity="ThresholdAlert" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 interface ThresholdAlert {
   id: string
   title: string
@@ -64,15 +64,14 @@ interface ThresholdAlert {
   created_at: string
   updated_at: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:ThresholdAlert:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Describe the shape of a threshold alert record and its embedded data'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/Modal.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:ThresholdAlert:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:Pipeline:interface"]
 // CIL[DOC-MACRO purpose="Describe a selectable pipeline reference"]
 // CIL[DOC-RESPONSIBILITY responsibility="Define the minimal Pipeline shape used for alert pipeline selection"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="type" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -80,20 +79,20 @@ interface ThresholdAlert {
 // CIL[DOC-MICRO logic_summary="Declares id and name fields for pipeline dropdown options" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:Pipeline:interface" type="interface" identity="Pipeline" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 interface Pipeline {
   id: string
   name: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:Pipeline:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Describe a selectable pipeline reference'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/Modal.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:Pipeline:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:alert_constants:constants"]
 // CIL[DOC-MACRO purpose="Provide human-readable labels and units for alert metrics and operators"]
 // CIL[DOC-RESPONSIBILITY responsibility="Supply display maps for metric names, operators, and units used in the alert list and modal"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -101,30 +100,36 @@ interface Pipeline {
 // CIL[DOC-MICRO logic_summary="Defines METRIC_LABELS, OPERATOR_LABELS, and UNIT_LABELS records for rendering alert details" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:METRIC_LABELS:constant" type="constant" identity="METRIC_LABELS" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 const METRIC_LABELS: Record<string, string> = {
   error_rate: 'Error Rate',
   latency_p95: 'Latency (P95)',
   pipeline_failure_rate: 'Pipeline Failure Rate',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:METRIC_LABELS:constant"]
 
 
 
 
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:OPERATOR_LABELS:constant" type="constant" identity="OPERATOR_LABELS" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 const OPERATOR_LABELS: Record<string, string> = {
   gt: '>',
   lt: '<',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:OPERATOR_LABELS:constant"]
 
 
 
 
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:UNIT_LABELS:constant" type="constant" identity="UNIT_LABELS" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 const UNIT_LABELS: Record<string, string> = {
   error_rate: '%',
   latency_p95: 'ms',
   pipeline_failure_rate: '%',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:UNIT_LABELS:constant"]
 
 
 
@@ -134,8 +139,6 @@ const UNIT_LABELS: Record<string, string> = {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:alert_constants:constants"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertsConfigPage:component"]
 // CIL[DOC-MACRO purpose="Admin page for listing, creating, editing, toggling, and deleting threshold alerts"]
 // CIL[DOC-RESPONSIBILITY responsibility="Render the alert list, fetch alert and pipeline data, and handle alert CRUD interactions"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="page" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -143,10 +146,12 @@ const UNIT_LABELS: Record<string, string> = {
 // CIL[DOC-MICRO logic_summary="Loads alerts and pipelines with useApi, builds stat cards, renders AdminListPage, and provides handlers for save, delete, toggle, and edit actions" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertsConfigPage:component" type="component" identity="AlertsConfigPage" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 export function AlertsConfigPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingAlert, setEditingAlert] = useState<ThresholdAlert | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const { data: alerts, loading, error, refetch } = useApi<ThresholdAlert[]>(
     async () => {
@@ -205,7 +210,7 @@ export function AlertsConfigPage() {
       setEditingAlert(null)
       refetch()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to save alert')
+      setActionError(err instanceof Error ? err.message : 'Failed to save alert')
     }
   }
 
@@ -219,7 +224,7 @@ export function AlertsConfigPage() {
       if (!response.ok) throw new Error('Failed to delete alert')
       refetch()
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to delete alert')
+      setActionError(err instanceof Error ? err.message : 'Failed to delete alert')
     }
   }
 
@@ -238,7 +243,7 @@ export function AlertsConfigPage() {
       if (!response.ok) throw new Error('Failed to toggle alert')
       refetch()
     } catch (err) {
-      window.alert(err instanceof Error ? err.message : 'Failed to toggle alert')
+      setActionError(err instanceof Error ? err.message : 'Failed to toggle alert')
     }
   }
 
@@ -308,6 +313,12 @@ export function AlertsConfigPage() {
       newButtonText="Create Alert"
       onNewClick={openCreateModal}
     >
+      {actionError && (
+        <div className="mx-6 mt-4 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex justify-between items-center">
+          <span>{actionError}</span>
+          <button onClick={() => setActionError(null)} className="text-red-500 hover:text-red-700 font-medium">Dismiss</button>
+        </div>
+      )}
       {alerts && alerts.length === 0 ? (
         <div className="p-8 text-center">
           <Bell className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -401,6 +412,7 @@ export function AlertsConfigPage() {
     </AdminListPage>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertsConfigPage:component"]
 
 
 // CIL[DOC-VECTOR type="context" content="purpose='Admin page for listing, creating, editing, toggling, and deleting threshold alerts'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/Modal.tsx"]
@@ -409,8 +421,6 @@ export function AlertsConfigPage() {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertsConfigPage:component"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModalProps:interface"]
 // CIL[DOC-MACRO purpose="Props contract for the AlertModal form component"]
 // CIL[DOC-RESPONSIBILITY responsibility="Declare the properties passed to AlertModal"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="type" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -418,6 +428,7 @@ export function AlertsConfigPage() {
 // CIL[DOC-MICRO logic_summary="Defines isOpen, onClose, onSave, alert, and pipelines props for the alert edit/create modal" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModalProps:interface" type="interface" identity="AlertModalProps" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 interface AlertModalProps {
   isOpen: boolean
   onClose: () => void
@@ -425,15 +436,14 @@ interface AlertModalProps {
   alert: ThresholdAlert | null
   pipelines: Pipeline[]
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModalProps:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Props contract for the AlertModal form component'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/Modal.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModalProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModal:component"]
 // CIL[DOC-MACRO purpose="Modal form for creating and editing threshold alerts"]
 // CIL[DOC-RESPONSIBILITY responsibility="Render a controlled form, manage alert state, and call onSave with form data"]
 // CIL[DOC-CONTEXT module="admin/alerts" layer="component" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AlertsConfigPage.tsx"]
@@ -441,6 +451,7 @@ interface AlertModalProps {
 // CIL[DOC-MICRO logic_summary="Initializes form state, resets state when the alert or isOpen changes, and renders a form with metric, operator, threshold, window, optional pipeline, and active toggle fields" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModal:component" type="component" identity="AlertModal" parent="~/.framework/src/pages/admin/AlertsConfigPage.tsx"]
 function AlertModal({ isOpen, onClose, onSave, alert, pipelines }: AlertModalProps) {
   const [formData, setFormData] = useState({
     title: '',
@@ -624,10 +635,10 @@ function AlertModal({ isOpen, onClose, onSave, alert, pipelines }: AlertModalPro
     </Modal>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModal:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Modal form for creating and editing threshold alerts'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/Modal.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AlertsConfigPage.tsx:AlertModal:component"]

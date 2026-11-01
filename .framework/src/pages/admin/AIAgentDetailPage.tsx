@@ -1,12 +1,28 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent=""]
-// CIL[DOC-MACRO purpose="Provide imports and dependencies for the AIAgentDetailPage admin view."]
-// CIL[DOC-RESPONSIBILITY responsibility="Assemble external and internal imports used by the AI agent detail page."]
-// CIL[DOC-CONTEXT module="admin-ai-agent-detail" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="loaded dependencies for the page component" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, router utilities, API helpers, UI primitives, and admin page instructions." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-ui-developers"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
+/**
+ * @module   AIAgentDetailPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * This module represents the AIAgentDetailPage component, which is responsible for displaying and managing the details of an AI agent within the admin interface. It utilizes various UI components to facilitate user interactions and integrates with the API for data fetching and submission. INVARIANT: The component expects valid agent ID parameters to function correctly.
+ *
+ * @seeAlso useApi (provides API interaction hooks).
+ * @seeAlso apiFetch (handles API requests).
+ * @seeAlso EntitySelect (used for selecting entities related to the agent).
+ * @seeAlso PageInstructions (provides guidance on the page).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -18,30 +34,40 @@ import { Textarea } from '../../components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { Checkbox } from '../../components/ui/checkbox'
 import { Label } from '../../components/ui/label'
+import { AppSelect } from '../../components/admin/EntitySelect'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { ArrowLeft, Bot, AlertCircle } from 'lucide-react'
-import { PageInstructions } from '../../components/admin/PageInstructions'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provide imports and dependencies for the AIAgentDetailPage admin view.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:aiagent:interface" type="interface" identity="aiagent" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define the AIAgent data shape used by the detail page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a TypeScript interface describing an agent record and its configuration fields."]
-// CIL[DOC-CONTEXT module="admin-ai-agent-detail" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/pages/admin/AIAgentDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AIAgent interface definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares an AIAgent interface with optional metadata, model config, system prompt, and tool list." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgent:interface" type="interface" identity="AIAgent" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
+/**
+ * The AIAgent interface defines the structure for AI agents used in the application, encapsulating their properties and configurations. It serves to standardize the representation of various types of AI agents within the system.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface AIAgent {
   id: string
   name: string
@@ -58,50 +84,76 @@ interface AIAgent {
   created_at: string
   updated_at: string
 }
-
-// CIL[DOC-VECTOR type="context" content="purpose='Define the AIAgent data shape used by the detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:aiagent:interface"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgent:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:agent_types:constant" type="constant" identity="agent_types" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Provide the selectable labels and values for the agent_type field."]
-// CIL[DOC-RESPONSIBILITY responsibility="Supply the list of supported AI agent type options for the select input."]
-// CIL[DOC-CONTEXT module="admin-ai-agent-detail" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/pages/admin/AIAgentDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AGENT_TYPES array constant" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares an array of agent type options with value and label pairs." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AGENT_TYPES:constant" type="constant" identity="AGENT_TYPES" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
+/**
+ * AGENT_TYPES is a constant array that defines the different types of agents available in the application. It serves to standardize the agent type options throughout the module.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 const AGENT_TYPES = [
   { value: 'chat', label: 'Chat' },
   { value: 'analysis', label: 'Analysis' },
   { value: 'automation', label: 'Automation' },
   { value: 'custom', label: 'Custom' }
 ]
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provide the selectable labels and values for the agent_type field.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:agent_types:constant"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AGENT_TYPES:constant"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:aiagentdetailpage:function" type="function" identity="aiagentdetailpage" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render and manage the AI agent create/edit detail page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch or initialize agent data, manage editing state, validate inputs, save to the API, and render the UI."]
-// CIL[DOC-CONTEXT module="admin-ai-agent-detail" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/pages/admin/AIAgentDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="route id param from useParams, apiFetch and useApi hooks" outputs="rendered create/edit form or read-only agent detail" errors="Failed to fetch or save errors logged to console" side_effects="navigates on create, calls /api/ai-agents, updates browser UI state"]
-// CIL[DOC-MICRO logic_summary="Loads an agent or default create payload, binds form state, parses JSON fields, validates required fields, and saves the agent." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgentDetailPage:component" type="component" identity="AIAgentDetailPage" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
+/**
+ * The AIAgentDetailPage component manages the creation and editing of AI agent details within the admin interface. It fetches existing agent data or initializes a new agent based on the provided ID.
+ *
+ * @outputSpec  JSX.Element
+ * @throws      Error — failed to fetch AI agent
+ * @sideEffects Fetches data from an external API, potentially modifies the database via POST or PATCH requests.
+ * @stability   stable
+ * @calls       useParams, useNavigate, useApi, apiFetch, navigate
+ * @errorHandling Logs errors to the console on save failure.
+ * @cil-generated
+ */
 export function AIAgentDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -182,49 +234,6 @@ export function AIAgentDetailPage() {
         <Button variant="ghost" onClick={() => navigate(-1)}><ArrowLeft className="h-5 w-5" /></Button>
         <h1 className="text-2xl font-bold">{isCreateMode ? 'Create AI Agent' : agent?.name}</h1>
       </div>
-      
-      <PageInstructions
-        description="Configure an AI agent with a model, system prompt, and tools."
-        sections={[
-          { title: 'What this AI agent controls', content: 'An AI agent is a reusable model, prompt, and tool configuration that Spine invokes from pipelines, triggers, and chat interfaces. It defines how an LLM behaves, which tools it can call, and any guardrails.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name</strong> — string. The display name used in lists and callers. Missing or empty prevents the record from being saved.</li>
-            <li><strong>Type</strong> — select. Categorizes the agent as chat, analysis, automation, or custom. Used to filter and route agents; a missing value defaults to chat.</li>
-            <li><strong>Model</strong> — string. The LLM model name stored in <code>model_config.model</code>. If blank, the API call will fail because no model is targeted.</li>
-            <li><strong>Max Tokens</strong> — number. The maximum response length. Invalid or empty parses to an empty value and may cause provider errors.</li>
-            <li><strong>Temperature</strong> — number between 0 and 2. Lower is more deterministic, higher is more random. Out of range values may be rejected by the provider.</li>
-            <li><strong>Description</strong> — string (optional). Human-readable context for other admins.</li>
-            <li><strong>System Prompt</strong> — text. Defines the agent personality, instructions, and constraints. Empty means the model receives no system message.</li>
-            <li><strong>App ID</strong> — string. Optional owning app UUID; blank means account-scoped.</li>
-            <li><strong>Tools (one per line)</strong> — newline-separated string list. Tool names the agent is allowed to invoke. Unknown or missing tools cause runtime errors.</li>
-            <li><strong>Capabilities</strong> — JSON object. Optional flags or settings the agent can use. Must be valid JSON or save fails.</li>
-            <li><strong>Constraints</strong> — JSON object. Optional guardrails. Must be valid JSON or save fails.</li>
-            <li><strong>Metadata</strong> — JSON object. Optional metadata. Must be valid JSON or save fails.</li>
-            <li><strong>Active</strong> — checkbox. Inactive agents are not available for invocation.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Agent type</strong>: <em>Chat</em> for conversational assistants, <em>Analysis</em> for data reasoning, <em>Automation</em> for pipeline actions, <em>Custom</em> for anything else.</li>
-            <li><strong>Active</strong>: enabled means the agent can be called; disabled means it is hidden from callers and will not run.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Pipelines, triggers, and chat UIs reference agents by ID; deleting or changing the model changes their output.</li>
-            <li>Tool names listed here must match registered tool names exactly, otherwise the agent cannot call them.</li>
-            <li>Invalid JSON in Capabilities or Constraints will stop the save and leave the previous config in place.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, fill every required field, enter at least a model name and system prompt.</li>
-            <li>Add tools one per line; supply optional JSON in Capabilities and Constraints.</li>
-            <li>Click Create. On existing records, click Edit, change fields, then Save.</li>
-            <li>Validation checks JSON syntax, parses Max Tokens and Temperature as numbers, and rejects empty Name/Model.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Pasting a multiline tools string as a single comma-separated line.</li>
-            <li>Using invalid JSON in Capabilities or Constraints.</li>
-            <li>Referencing a model name that is not configured in the account, causing calls to fail.</li>
-          </ul> },
-        ]}
-      />
-      
       <div className="flex justify-end gap-2">
         {isEditing ? (
           <><Button variant="outline" onClick={() => isCreateMode ? navigate(-1) : setIsEditing(false)}>Cancel</Button><Button onClick={handleSave}>{isCreateMode ? 'Create' : 'Save'}</Button></>
@@ -235,7 +244,7 @@ export function AIAgentDetailPage() {
         <Card><CardContent className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Name</Label><Input value={editData.name || ''} onChange={e => setEditData({...editData, name: e.target.value})} /></div>
-            <div className="space-y-2"><Label>App ID</Label><Input value={editData.app_id || ''} onChange={e => setEditData({...editData, app_id: e.target.value})} placeholder="Optional app UUID" /></div>
+            <div className="space-y-2"><Label>App</Label><AppSelect value={editData.app_id || ''} onChange={v => setEditData({...editData, app_id: v})} /></div>
             <div className="space-y-2"><Label>Type</Label><Select value={editData.agent_type || 'chat'} onValueChange={v => setEditData({...editData, agent_type: v})}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{AGENT_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-2"><Label>Model</Label><Input value={editData.model_config?.model || ''} onChange={e => setEditData({...editData, model_config: {...editData.model_config, model: e.target.value}})} /></div>
             <div className="space-y-2"><Label>Max Tokens</Label><Input type="number" value={editData.model_config?.max_tokens || ''} onChange={e => setEditData({...editData, model_config: {...editData.model_config, max_tokens: parseInt(e.target.value)}})} /></div>
@@ -271,11 +280,13 @@ export function AIAgentDetailPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgentDetailPage:component"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='Render and manage the AI agent create/edit detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:aiagentdetailpage:function"]
+
+
+
+
+
+
+
+

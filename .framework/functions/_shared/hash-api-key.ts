@@ -1,81 +1,135 @@
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Provides PBKDF2-based API key hashing and verification utilities"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports crypto primitives and exports hashApiKey and verifyApiKey"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports crypto functions used by hashing and verification" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * @module   hash-api-key
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module provides utilities for securely hashing API keys using cryptographic functions. It plays a crucial role in ensuring the integrity and confidentiality of sensitive data within the application. INVARIANT: The API keys must always be hashed before storage to prevent unauthorized access.
+ *
+ * @seeAlso crypto (provides cryptographic functions for hashing).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 import { randomBytes, pbkdf2Sync, timingSafeEqual } from 'crypto'
-// CIL[DOC-VECTOR type="context" content="purpose='Provides PBKDF2-based API key hashing and verification utilities'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:module_header:module_header"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:ITERATIONS:constant" type="constant" identity="ITERATIONS" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Defines the default PBKDF2 iteration count"]
-// CIL[DOC-RESPONSIBILITY responsibility="Stores the default number of PBKDF2 iterations for hashing"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="number" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant default iteration count used by hashApiKey" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * ITERATIONS defines the number of iterations used for hashing an API key, ensuring a high level of security. This constant is crucial for maintaining the strength of the hashing process.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const ITERATIONS = 100000
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the default PBKDF2 iteration count'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:ITERATIONS:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:KEY_LENGTH:constant" type="constant" identity="KEY_LENGTH" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Defines the derived key length in bytes for PBKDF2"]
-// CIL[DOC-RESPONSIBILITY responsibility="Stores the PBKDF2 derived key length"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="number" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant derived key length used by hashApiKey" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * KEY_LENGTH defines the length of the API key used for hashing to ensure a consistent key size for security purposes.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const KEY_LENGTH = 32
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the derived key length in bytes for PBKDF2'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:KEY_LENGTH:constant"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:DIGEST:constant" type="constant" identity="DIGEST" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Defines the digest algorithm for PBKDF2"]
-// CIL[DOC-RESPONSIBILITY responsibility="Stores the PBKDF2 digest algorithm"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant digest algorithm used by hashApiKey and verifyApiKey" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * DIGEST defines the hashing algorithm used for API key generation, specifically SHA-256. It provides a consistent and secure method for hashing within the module.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const DIGEST = 'sha256'
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the digest algorithm for PBKDF2'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:DIGEST:constant"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:hashApiKey:function" type="function" identity="hashApiKey" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Hash a raw API key using PBKDF2 and return a storable key record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Derive a salted PBKDF2 hash, prefix the raw key, and return a hash string"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="rawKey: string, iterations = ITERATIONS" outputs="{ key_prefix: string, key_hash: string, rawKey: string }" errors="none" side_effects="Uses crypto.randomBytes and pbkdf2Sync to generate salt and hash"]
-// CIL[DOC-MICRO logic_summary="Extracts an 8-character prefix, generates a random salt, derives a 32-byte PBKDF2 hash, and encodes the result as pbkdf2$iterations$salt$hash" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Hashes a raw API key using PBKDF2 to enhance security and returns the key prefix along with the hashed key. This function is essential for securely storing API keys.
+ *
+ * @inputSpec
+ *   - rawKey: string (required) — the raw API key to be hashed.
+ *   - iterations: number (optional) — the number of iterations for the PBKDF2 algorithm, defaults to ITERATIONS.
+ * @outputSpec  { key_prefix: string; key_hash: string; rawKey: string }
+ * @sideEffects none
+ * @stability   internal
+ * @calls       randomBytes, pbkdf2Sync
+ * @cil-generated
+ */
 export function hashApiKey(rawKey: string, iterations = ITERATIONS): { key_prefix: string; key_hash: string; rawKey: string } {
   const key_prefix = rawKey.slice(0, 8)
   const salt = randomBytes(16)
@@ -84,23 +138,37 @@ export function hashApiKey(rawKey: string, iterations = ITERATIONS): { key_prefi
 
   return { key_prefix, key_hash, rawKey }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Hash a raw API key using PBKDF2 and return a storable key record'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:hashApiKey:function"]
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:verifyApiKey:function" type="function" identity="verifyApiKey" parent="~/.framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-MACRO purpose="Verify a raw API key against a stored PBKDF2 hash"]
-// CIL[DOC-RESPONSIBILITY responsibility="Parse the stored hash, re-derive the key, and compare hashes timing-safely"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/hash-api-key.ts"]
-// CIL[DOC-CONTRACT inputs="rawKey: string, keyHash: string" outputs="boolean" errors="Returns false for invalid format, missing parts, non-positive iterations, base64 decode errors, or mismatched lengths" side_effects="Uses crypto.pbkdf2Sync and timingSafeEqual"]
-// CIL[DOC-MICRO logic_summary="Validates the keyHash format, extracts iterations and salt, derives the hash with the stored length, and compares with timingSafeEqual" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * Verifies an API key against a stored hash to ensure its validity. This function is essential for securing access to resources by validating the provided key.
+ *
+ * @inputSpec
+ *   - rawKey: string (required) — the API key to verify.
+ *   - keyHash: string (required) — the hashed representation of the API key.
+ * @outputSpec  boolean — returns true if the API key is valid, otherwise false.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       pbkdf2Sync, timingSafeEqual
+ * @cil-generated
+ */
 export function verifyApiKey(rawKey: string, keyHash: string): boolean {
   if (!keyHash || !keyHash.startsWith('pbkdf2$')) {
     return false
@@ -131,10 +199,46 @@ export function verifyApiKey(rawKey: string, keyHash: string): boolean {
     return false
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Verify a raw API key against a stored PBKDF2 hash'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:verifyApiKey:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/hash-api-key.ts:omitSecretFields:function" type="function" identity="omitSecretFields" parent="~/.framework/functions/_shared/hash-api-key.ts"]
+/**
+ * The omitSecretFields function removes sensitive fields from an object to prevent exposure of secret information. It is designed to sanitize data before further processing or transmission.
+ *
+ * @inputSpec
+ *   row: Record<string, any> | null | undefined — the object from which secret fields will be omitted.
+ * @outputSpec  Record<string, any> | null | undefined — a new object without the omitted fields, or the original input if it was not an object.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
+export function omitSecretFields(row: Record<string, any> | null | undefined) {
+  if (!row || typeof row !== 'object') return row
+  const copy = { ...row }
+  delete copy.key_value
+  delete copy.key_hash
+  return copy
+}
+// CIL[END stable_id="~/.framework/functions/_shared/hash-api-key.ts:omitSecretFields:function"]
+
+
+
+
+
+
+

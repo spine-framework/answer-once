@@ -188,7 +188,8 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('Role slug already exists for this app')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = permissions.isSystemAdmin(ctx) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('roles')
     .insert({
       app_id,
@@ -234,7 +235,8 @@ export const update = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data: current, error: fetchErr } = await ctx.db
+  const db = permissions.isSystemAdmin(ctx) ? adminDb : ctx.db
+  const { data: current, error: fetchErr } = await db
     .from('roles')
     .select('*')
     .eq('id', id)
@@ -255,7 +257,7 @@ export const update = createHandler(async (ctx, body) => {
     throw new Error(fieldValidation.error)
   }
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('roles')
     .update({
       ...updates,
@@ -297,7 +299,8 @@ export const remove = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data: current, error: fetchErr } = await ctx.db
+  const db = permissions.isSystemAdmin(ctx) ? adminDb : ctx.db
+  const { data: current, error: fetchErr } = await db
     .from('roles')
     .select('*')
     .eq('id', id)
@@ -307,7 +310,7 @@ export const remove = createHandler(async (ctx, body) => {
     throw new Error('Role not found or access denied')
   }
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await db
     .from('roles')
     .update({
       is_active: false,

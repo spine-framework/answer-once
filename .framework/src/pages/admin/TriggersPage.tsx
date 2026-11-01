@@ -1,12 +1,28 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin triggers management module for the Spine framework"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TriggersPage module and its core dependencies for admin configuration"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module imports and component exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, API utilities, Lucide icons, and admin UI components used by TriggersPage" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * @module   TriggersPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * The TriggersPage module provides an interface for managing triggers within the admin section of the application. It allows users to view, create, and manipulate triggers through a user-friendly UI. This module relies on various UI components and hooks for API interaction and state management.
+ *
+ * @seeAlso useApi (provides API interaction hooks).
+ * @seeAlso LoadingSpinner (displays loading state).
+ * @seeAlso AdminListPage (base component for admin list views).
+ * @seeAlso SortableTableHeader (enables sorting functionality in tables).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 import React, { useState } from 'react'
@@ -21,22 +37,32 @@ import { Badge } from '../../components/ui/badge'
 import { formatDateTime } from '../../lib/utils'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Admin triggers management module for the Spine framework'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:Trigger:interface" type="interface" identity="Trigger" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-MACRO purpose="Define the data shape for a Trigger record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide TypeScript typings for trigger entities consumed by TriggersPage"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Trigger type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes all fields of a trigger including metadata, scheduling, and execution counters" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Trigger interface defines the structure for trigger objects used in the admin panel, encapsulating properties related to the trigger's identity, configuration, and state. It serves as a blueprint for managing triggers within the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface Trigger {
   id: string
   name: string
@@ -50,26 +76,36 @@ interface Trigger {
   updated_at: string
   created_by: string
   account_id: string
-  execution_count: number
-  last_execution?: string
-  next_execution?: string
+  trigger_count?: number
+  last_triggered?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the data shape for a Trigger record'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:Trigger:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggerExecution:interface" type="interface" identity="TriggerExecution" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-MACRO purpose="Define the data shape for a trigger execution record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide TypeScript typings for individual trigger executions"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TriggerExecution type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes execution status, timing, payload, and optional error for a single run" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TriggerExecution interface defines the structure for tracking the execution status of triggers within the system. It captures essential details such as the trigger's ID, execution status, timestamps, and any associated data or errors.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface TriggerExecution {
   id: string
   trigger_id: string
@@ -80,24 +116,40 @@ interface TriggerExecution {
   result?: Record<string, any>
   error?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the data shape for a trigger execution record'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggerExecution:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggersPage:component" type="component" identity="TriggersPage" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin triggers list page with filtering, sorting, and navigation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch and display triggers; provide status/type filters, sorting, and row actions"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TriggersPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX for the admin triggers list" errors="Failed to fetch triggers" side_effects="navigates to trigger create, edit, and execution routes; calls toggle/execute/row click handlers"]
-// CIL[DOC-MICRO logic_summary="Uses useApi to load triggers, filters and sorts them, then renders an AdminListPage with a data table" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TriggersPage component manages the display and filtering of trigger events in the admin interface. It allows users to search, sort, and filter triggers based on type and status.
+ *
+ * @macro       User interface component for managing trigger events.
+ * @micro       Utilizes state management and API calls to fetch and filter trigger data dynamically.
+ * @outputSpec  JSX.Element — renders the triggers page UI.
+ * @throws      Error — if the API response is not ok
+ * @sideEffects API call to '/api/triggers?action=list'
+ * @stability   stable
+ * @calls       apiFetch
+ * @errorHandling throws an error if the API response is not ok
+ * @cil-generated
+ */
 export function TriggersPage() {
-  console.log('TriggersPage rendering...')
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState('all')
@@ -107,28 +159,10 @@ export function TriggersPage() {
 
   const { data: triggers, loading, error, refetch } = useApi<Trigger[]>(
     async ({ signal }: { signal?: AbortSignal }) => {
-      try {
-        console.log('Fetching triggers...')
-        
-        const response = await apiFetch('/api/triggers?action=list', { signal })
-        console.log('Response status:', response.status)
-        
-        if (!response.ok) {
-          console.error('Response not ok:', response.statusText)
-          throw new Error(`Failed to fetch triggers: ${response.statusText}`)
-        }
-        
-        const result = await response.json()
-        console.log('Raw API result:', result)
-        
-        const triggers = result.data || result
-        console.log('Triggers after processing:', triggers)
-        
-        return triggers
-      } catch (error) {
-        console.error('Error in TriggersPage:', error)
-        throw error
-      }
+      const response = await apiFetch('/api/triggers?action=list', { signal })
+      if (!response.ok) throw new Error('Failed to fetch triggers')
+      const result = await response.json()
+      return result.data || result
     },
     { immediate: true }
   )
@@ -177,9 +211,6 @@ export function TriggersPage() {
     return 0
   })
 
-  console.log('TriggersPage - triggers:', triggers)
-  console.log('TriggersPage - filteredTriggers:', filteredTriggers)
-
   const getTriggerIcon = (triggerType: string) => {
     switch (triggerType) {
       case 'item_created':
@@ -220,14 +251,6 @@ export function TriggersPage() {
 
   const getStatusBadgeColor = (isActive: boolean) => {
     return isActive ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'
-  }
-
-  const handleToggleTrigger = (trigger: Trigger) => {
-    console.log('Toggle trigger:', trigger.id)
-  }
-
-  const handleExecuteTrigger = (trigger: Trigger) => {
-    console.log('Execute trigger:', trigger.id)
   }
 
   const handleViewExecutions = (trigger: Trigger) => {
@@ -271,8 +294,8 @@ export function TriggersPage() {
           iconColor: "text-green-600"
         },
         {
-          title: "Executions Today",
-          value: "47",
+          title: "Total Fires",
+          value: (triggers || []).reduce((sum, t) => sum + (t.trigger_count || 0), 0),
           icon: Clock,
           iconColor: "text-orange-600"
         }
@@ -340,15 +363,15 @@ export function TriggersPage() {
                 onSort={handleSort}
               />
               <SortableTableHeader
-                title="Executions"
-                sortKey="execution_count"
+                title="Fires"
+                sortKey="trigger_count"
                 currentSortKey={sortKey}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
               />
               <SortableTableHeader
-                title="Last Run"
-                sortKey="last_execution"
+                title="Last Fired"
+                sortKey="last_triggered"
                 currentSortKey={sortKey}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -387,10 +410,10 @@ export function TriggersPage() {
                   </Badge>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
-                  {trigger.execution_count}
+                  {trigger.trigger_count ?? 0}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                  {trigger.last_execution ? formatDateTime(trigger.last_execution) : 'Never'}
+                  {trigger.last_triggered ? formatDateTime(trigger.last_triggered) : 'Never'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -418,10 +441,12 @@ export function TriggersPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin triggers list page with filtering, sorting, and navigation'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggersPage:component"]
+
+
+
+
+
+
+
+

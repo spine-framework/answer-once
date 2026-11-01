@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 // CIL[DOC-MACRO purpose="module_header module_header"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements module_header."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts"]
@@ -20,6 +20,7 @@ import { Input } from '@core/components/ui/input'
 import { Label } from '@core/components/ui/label'
 import { Progress } from '@core/components/ui/progress'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:module_header:module_header"]
   CheckCircle2,
   ChevronRight,
   ChevronDown,
@@ -46,16 +47,13 @@ import {
 
 
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='module_header module_header'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CilFileStatus:type" type="type" identity="CilFileStatus" parent="none"]
 // CIL[DOC-MACRO purpose="CilFileStatus type"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements CilFileStatus."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -63,6 +61,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="CilFileStatus type definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CilFileStatus:type" type="type" identity="CilFileStatus" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 type CilFileStatus =
   | '2-discovered'
   | '3-selected'
@@ -73,16 +72,15 @@ type CilFileStatus =
   | '8-enriched'
   | '9-embedded'
   | '10-mapped'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CilFileStatus:type"]
 // CIL[DOC-VECTOR type="context" content="purpose='CilFileStatus type'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CilFileStatus:type"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:FileTreeNode:interface" type="interface" identity="FileTreeNode" parent="none"]
 // CIL[DOC-MACRO purpose="FileTreeNode interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements FileTreeNode."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -90,6 +88,7 @@ type CilFileStatus =
 // CIL[DOC-MICRO logic_summary="FileTreeNode interface definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:FileTreeNode:interface" type="interface" identity="FileTreeNode" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 interface FileTreeNode {
   id?: string | null
   name: string
@@ -99,18 +98,17 @@ interface FileTreeNode {
   status?: CilFileStatus
   children?: FileTreeNode[]
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:FileTreeNode:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='FileTreeNode interface'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:FileTreeNode:interface"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:Project:interface" type="interface" identity="Project" parent="none"]
 // CIL[DOC-MACRO purpose="Project interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements Project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -118,6 +116,7 @@ interface FileTreeNode {
 // CIL[DOC-MICRO logic_summary="Project interface definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:Project:interface" type="interface" identity="Project" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 interface Project {
   id: string
   title: string
@@ -135,16 +134,15 @@ interface Project {
     file_statuses?: Record<string, string>
   }
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:Project:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Project interface'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:Project:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:ProjectConfig:interface" type="interface" identity="ProjectConfig" parent="none"]
 // CIL[DOC-MACRO purpose="ProjectConfig interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements ProjectConfig."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -152,22 +150,22 @@ interface Project {
 // CIL[DOC-MICRO logic_summary="ProjectConfig interface definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:ProjectConfig:interface" type="interface" identity="ProjectConfig" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 interface ProjectConfig {
   repo_path: string
   globs: string
   exclude_globs: string
   force_reprocess: boolean
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:ProjectConfig:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='ProjectConfig interface'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:ProjectConfig:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineProgress:interface" type="interface" identity="PipelineProgress" parent="none"]
 // CIL[DOC-MACRO purpose="PipelineProgress interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements PipelineProgress."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -175,18 +173,19 @@ interface ProjectConfig {
 // CIL[DOC-MICRO logic_summary="PipelineProgress interface definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineProgress:interface" type="interface" identity="PipelineProgress" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 interface PipelineProgress {
   total_selected: number
   by_status: Record<string, number>
   total_chunks: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineProgress:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='PipelineProgress interface'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineProgress:interface"]
 
 
 
@@ -194,7 +193,6 @@ interface PipelineProgress {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:STATUS_COLOR:constant" type="constant" identity="STATUS_COLOR" parent="none"]
 // CIL[DOC-MACRO purpose="STATUS_COLOR constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements STATUS_COLOR."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="constant" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -202,6 +200,7 @@ interface PipelineProgress {
 // CIL[DOC-MICRO logic_summary="STATUS_COLOR constant definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:STATUS_COLOR:constant" type="constant" identity="STATUS_COLOR" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 const STATUS_COLOR: Record<CilFileStatus, string> = {
   '2-discovered': 'bg-gray-100 text-gray-600',
   '3-selected': 'bg-indigo-100 text-indigo-700',
@@ -213,18 +212,17 @@ const STATUS_COLOR: Record<CilFileStatus, string> = {
   '9-embedded': 'bg-emerald-100 text-emerald-700',
   '10-mapped': 'bg-amber-100 text-amber-700',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:STATUS_COLOR:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='STATUS_COLOR constant'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:STATUS_COLOR:constant"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineStep:interface" type="interface" identity="PipelineStep" parent="none"]
 // CIL[DOC-MACRO purpose="PipelineStep interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements PipelineStep."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -232,6 +230,7 @@ const STATUS_COLOR: Record<CilFileStatus, string> = {
 // CIL[DOC-MICRO logic_summary="PipelineStep interface definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineStep:interface" type="interface" identity="PipelineStep" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 interface PipelineStep {
   number: number
   key: string
@@ -243,17 +242,16 @@ interface PipelineStep {
   targetStatus: CilFileStatus
   sourceStatus?: CilFileStatus
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineStep:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='PipelineStep interface'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PipelineStep:interface"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PIPELINE_STEPS:constant" type="constant" identity="PIPELINE_STEPS" parent="none"]
 // CIL[DOC-MACRO purpose="PIPELINE_STEPS constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements PIPELINE_STEPS."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="constant" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -261,6 +259,7 @@ interface PipelineStep {
 // CIL[DOC-MICRO logic_summary="PIPELINE_STEPS constant definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PIPELINE_STEPS:constant" type="constant" identity="PIPELINE_STEPS" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 const PIPELINE_STEPS: PipelineStep[] = [
   {
     number: 1,
@@ -364,6 +363,7 @@ const PIPELINE_STEPS: PipelineStep[] = [
     sourceStatus: '9-embedded',
   },
 ]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PIPELINE_STEPS:constant"]
 
 
 
@@ -375,8 +375,6 @@ const PIPELINE_STEPS: PipelineStep[] = [
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:PIPELINE_STEPS:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:collectAllDirPaths:function" type="function" identity="collectAllDirPaths" parent="none"]
 // CIL[DOC-MACRO purpose="collectAllDirPaths function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements collectAllDirPaths."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="logic" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -384,6 +382,7 @@ const PIPELINE_STEPS: PipelineStep[] = [
 // CIL[DOC-MICRO logic_summary="collectAllDirPaths function definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:collectAllDirPaths:function" type="function" identity="collectAllDirPaths" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function collectAllDirPaths(node: FileTreeNode): string[] {
   const paths: string[] = node.type === 'directory' ? [node.path] : []
   if (node.children) {
@@ -392,16 +391,15 @@ function collectAllDirPaths(node: FileTreeNode): string[] {
 
   return paths
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:collectAllDirPaths:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='collectAllDirPaths function'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:collectAllDirPaths:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countFilesInTree:function" type="function" identity="countFilesInTree" parent="none"]
 // CIL[DOC-MACRO purpose="countFilesInTree function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements countFilesInTree."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="logic" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -409,20 +407,20 @@ function collectAllDirPaths(node: FileTreeNode): string[] {
 // CIL[DOC-MICRO logic_summary="countFilesInTree function definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countFilesInTree:function" type="function" identity="countFilesInTree" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function countFilesInTree(node: FileTreeNode): number {
   if (node.type === 'file') return 1
   return (node.children || []).reduce((acc, c) => acc + countFilesInTree(c), 0)
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countFilesInTree:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='countFilesInTree function'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countFilesInTree:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:getFileStatus:function" type="function" identity="getFileStatus" parent="none"]
 // CIL[DOC-MACRO purpose="getFileStatus function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements getFileStatus."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="logic" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -430,6 +428,7 @@ function countFilesInTree(node: FileTreeNode): number {
 // CIL[DOC-MICRO logic_summary="getFileStatus function definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:getFileStatus:function" type="function" identity="getFileStatus" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function getFileStatus(path: string, fileStatuses: Record<string, string>, selectedPaths: string[]): CilFileStatus {
   const explicit = fileStatuses[path] as CilFileStatus | undefined
   if (explicit) return explicit
@@ -437,17 +436,16 @@ function getFileStatus(path: string, fileStatuses: Record<string, string>, selec
   if (selectedPaths.includes(path)) return '3-selected'
   return '2-discovered'
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:getFileStatus:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='getFileStatus function'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:getFileStatus:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countSelectedLeaves:function" type="function" identity="countSelectedLeaves" parent="none"]
 // CIL[DOC-MACRO purpose="countSelectedLeaves function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements countSelectedLeaves."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="logic" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -455,21 +453,21 @@ function getFileStatus(path: string, fileStatuses: Record<string, string>, selec
 // CIL[DOC-MICRO logic_summary="countSelectedLeaves function definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countSelectedLeaves:function" type="function" identity="countSelectedLeaves" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function countSelectedLeaves(node: FileTreeNode, selectedPaths: string[]): number {
   if (node.type === 'file') return selectedPaths.includes(node.path) ? 1 : 0
   return (node.children || []).reduce((sum, c) => sum + countSelectedLeaves(c, selectedPaths), 0)
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countSelectedLeaves:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='countSelectedLeaves function'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countSelectedLeaves:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countLeaves:function" type="function" identity="countLeaves" parent="none"]
 // CIL[DOC-MACRO purpose="countLeaves function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements countLeaves."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="logic" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -477,22 +475,22 @@ function countSelectedLeaves(node: FileTreeNode, selectedPaths: string[]): numbe
 // CIL[DOC-MICRO logic_summary="countLeaves function definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countLeaves:function" type="function" identity="countLeaves" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function countLeaves(node: FileTreeNode): number {
   if (node.type === 'file') return 1
   return (node.children || []).reduce((sum, c) => sum + countLeaves(c), 0)
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countLeaves:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='countLeaves function'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:countLeaves:function"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:TreeNode:component" type="component" identity="TreeNode" parent="none"]
 // CIL[DOC-MACRO purpose="TreeNode component"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements TreeNode."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -500,6 +498,7 @@ function countLeaves(node: FileTreeNode): number {
 // CIL[DOC-MICRO logic_summary="TreeNode component definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:TreeNode:component" type="component" identity="TreeNode" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function TreeNode({
   node,
   selectedPaths,
@@ -605,18 +604,17 @@ function TreeNode({
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:TreeNode:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='TreeNode component'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:TreeNode:component"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:StepRow:component" type="component" identity="StepRow" parent="none"]
 // CIL[DOC-MACRO purpose="StepRow component"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements StepRow."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -624,6 +622,7 @@ function TreeNode({
 // CIL[DOC-MICRO logic_summary="StepRow component definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:StepRow:component" type="component" identity="StepRow" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 function StepRow({
   step,
   fileCount,
@@ -738,18 +737,17 @@ function StepRow({
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:StepRow:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='StepRow component'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:StepRow:component"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CILIngestionPage:component" type="component" identity="CILIngestionPage" parent="none"]
 // CIL[DOC-MACRO purpose="CILIngestionPage component"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements CILIngestionPage."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
@@ -757,6 +755,7 @@ function StepRow({
 // CIL[DOC-MICRO logic_summary="CILIngestionPage component definition." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CILIngestionPage:component" type="component" identity="CILIngestionPage" parent="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx"]
 export default function CILIngestionPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
@@ -1181,17 +1180,6 @@ export default function CILIngestionPage() {
           </a>
         </div>
       </div>
-
-      <PageInstructions
-        description="Run and monitor the CIL ingestion pipeline for a project."
-        sections={[
-          { title: 'What this page is for', content: 'This page controls the multi-pass ingestion process that discovers files, chunks code, generates embeddings, documents contracts, maps calls, and extracts config.' },
-          { title: 'How to read this page', content: 'The top cards show files discovered, files selected, first-pass complete, and fully ingested counts. The steps list shows which pass is active and how many files are done.' },
-          { title: 'How to use this page', content: 'Expand Project Settings to set the repository path, include globs, exclude globs, and Force Reprocess. Save settings, then run the pipeline steps in order. Refresh the progress bar to track status.' },
-          { title: 'Important notes', content: 'Ingestion can be expensive because it uses LLMs. Excluding node_modules, .git, and dist is strongly recommended. Force Reprocess re-runs passes even on already-processed files.' },
-        ]}
-      />
-
       {}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-lg border bg-card p-3">
@@ -1440,10 +1428,10 @@ export default function CILIngestionPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CILIngestionPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='CILIngestionPage component'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILIngestionPage.tsx:CILIngestionPage:component"]

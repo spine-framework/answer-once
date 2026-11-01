@@ -16,6 +16,7 @@ import { Textarea } from '@core/components/ui/textarea'
 import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:module_header:module_header"]
   Bot,
   User,
   ChevronRight,
@@ -31,7 +32,6 @@ import {
 
 
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 
 // CIL[DOC-VECTOR type="context" content="purpose='Chat interface for the CIL agent that answers natural-language questions about indexed code'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -39,8 +39,6 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:Message:interface" type="interface" identity="Message" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Message shape for CIL agent chat exchanges"]
 // CIL[DOC-RESPONSIBILITY responsibility="Describe the fields for a chat message including role, content, optional sources and tool calls"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -49,6 +47,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:Message:interface" type="interface" identity="Message" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 interface Message {
   id: string
   role: 'user' | 'assistant' | 'system'
@@ -59,19 +58,18 @@ interface Message {
   tool_calls_made?: string[]
   loading?: boolean
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:Message:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Message shape for CIL agent chat exchanges'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:Message:interface"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:renderMarkdown:function" type="function" identity="renderMarkdown" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Convert assistant answer text with markdown-like code and emphasis markers into React nodes"]
 // CIL[DOC-RESPONSIBILITY responsibility="Render inline code, bold text, code blocks, and line breaks safely for assistant messages"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -80,6 +78,7 @@ interface Message {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:renderMarkdown:function" type="function" identity="renderMarkdown" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 function renderMarkdown(text: string): React.ReactNode[] {
   const parts: React.ReactNode[] = []
   let key = 0
@@ -119,6 +118,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
   }
   return parts
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:renderMarkdown:function"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Convert assistant answer text with markdown-like code and emphasis markers into React nodes'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -126,12 +126,10 @@ function renderMarkdown(text: string): React.ReactNode[] {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:renderMarkdown:function"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MessageBubble:component" type="component" identity="MessageBubble" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Display a single chat message with avatar, markdown body, and optional tool and source chips"]
 // CIL[DOC-RESPONSIBILITY responsibility="Render user or assistant message and link source chunks to the chunk detail page"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -140,6 +138,7 @@ function renderMarkdown(text: string): React.ReactNode[] {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MessageBubble:component" type="component" identity="MessageBubble" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 function MessageBubble({ message, projectId, appPath }: {
   message: Message
   projectId: string
@@ -249,6 +248,7 @@ function MessageBubble({ message, projectId, appPath }: {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MessageBubble:component"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Display a single chat message with avatar, markdown body, and optional tool and source chips'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -256,11 +256,9 @@ function MessageBubble({ message, projectId, appPath }: {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MessageBubble:component"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:SUGGESTIONS:constant" type="constant" identity="SUGGESTIONS" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Preset example prompts for the CIL agent chat"]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide ready-made questions users can click to start a conversation"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -269,6 +267,7 @@ function MessageBubble({ message, projectId, appPath }: {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:SUGGESTIONS:constant" type="constant" identity="SUGGESTIONS" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 const SUGGESTIONS = [
   'What does the authentication middleware do?',
   'Which functions write to the embeddings table?',
@@ -277,6 +276,7 @@ const SUGGESTIONS = [
   'Which chunks have no callers (potential dead code)?',
   'Show me undocumented chunks in this project',
 ]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:SUGGESTIONS:constant"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Preset example prompts for the CIL agent chat'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -284,9 +284,7 @@ const SUGGESTIONS = [
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:SUGGESTIONS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:mapRecordToMessage:function" type="function" identity="mapRecordToMessage" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Map a persisted thread message record into the chat display Message shape"]
 // CIL[DOC-RESPONSIBILITY responsibility="Translate message_type, tool, and retrieved_sources fields from a messages row into a renderable Message"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -294,6 +292,7 @@ const SUGGESTIONS = [
 // CIL[DOC-MICRO logic_summary="Derives role from message_type, sources from retrieved_sources, and surfaces tool name for tool_call/tool_result rows." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:mapRecordToMessage:function" type="function" identity="mapRecordToMessage" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 function mapRecordToMessage(rec: any): Message {
   const mt = rec?.data?.message_type || 'agent'
   const role: Message['role'] = mt === 'human' ? 'user' : (mt === 'system' ? 'system' : 'assistant')
@@ -312,16 +311,19 @@ function mapRecordToMessage(rec: any): Message {
     sources,
   }
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:mapRecordToMessage:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Map a persisted thread message record into the chat display Message shape'; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="Local impact only; used by CILAgentPage.loadMessages"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:mapRecordToMessage:function"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:TERMINAL_STATUSES:constant" type="constant" identity="TERMINAL_STATUSES" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 const TERMINAL_STATUSES = ['complete', 'awaiting_input', 'failed']
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:TERMINAL_STATUSES:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MAX_STEPS:constant" type="constant" identity="MAX_STEPS" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 const MAX_STEPS = 20
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:MAX_STEPS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:CILAgentPage:component" type="component" identity="CILAgentPage" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 // CIL[DOC-MACRO purpose="Main admin page for the CIL agent chat"]
 // CIL[DOC-RESPONSIBILITY responsibility="Manage chat state, call the CIL agent API, render messages, suggestions, and input"]
 // CIL[DOC-CONTEXT module=".framework/src/pages/admin/cil" layer="admin-ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILAgentPage.tsx"]
@@ -329,6 +331,7 @@ const MAX_STEPS = 20
 // CIL[DOC-MICRO logic_summary="Fetches project title, scrolls to new messages, sends question to API, and renders conversation with suggestions." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:CILAgentPage:component" type="component" identity="CILAgentPage" parent="~/.framework/src/pages/admin/cil/CILAgentPage.tsx"]
 export default function CILAgentPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
@@ -497,17 +500,6 @@ export default function CILAgentPage() {
           )}
         </div>
       </div>
-
-      <PageInstructions
-        description="Ask the CIL agent questions about the indexed codebase."
-        sections={[
-          { title: 'What this page is for', content: 'Use this chat to ask natural-language questions about the indexed codebase. The agent searches chunk contracts and the call graph to answer accurately.' },
-          { title: 'How to use this page', content: 'Type a question in the input and press Enter or click send. Select a suggested prompt to start quickly. The agent returns citations from chunks and may call tools.' },
-          { title: 'How to interpret results', content: 'Assistant messages include source chunk references. Click a reference to open the chunk detail. No project ID means the search spans all indexed chunks.' },
-          { title: 'Important notes', content: 'The agent only knows what has been ingested and embedded. Run the CIL ingestion pipeline first for fresh or missing code.' },
-        ]}
-      />
-
       {}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {isEmpty && (
@@ -585,6 +577,7 @@ export default function CILAgentPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:CILAgentPage:component"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='Main admin page for the CIL agent chat'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/textarea.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -592,4 +585,3 @@ export default function CILAgentPage() {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILAgentPage.tsx:CILAgentPage:component"]

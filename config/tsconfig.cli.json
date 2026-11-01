@@ -8,8 +8,8 @@
     "noEmit": true
   },
   "include": [
-    "cli/**/*",
-    "functions/_shared/**/*"
+    "../.framework/cli/**/*",
+    "../.framework/functions/_shared/**/*"
   ],
   "exclude": [
     "node_modules",

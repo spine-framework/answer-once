@@ -1,17 +1,35 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
-// CIL[DOC-MACRO purpose="Provides the admin UI page for monitoring and managing pipeline execution runs"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders a sortable, filterable list of pipeline executions with status, duration, and trigger metadata; handles search, status filtering, sorting, and navigation to execution detail"]
-// CIL[DOC-CONTEXT module="PipelineExecutionsPage" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="searchTerm, selectedStatus, sortKey, sortDirection, pipeline execution data from useApi, stats data from useApi" outputs="JSX admin list page with filtered/sorted execution rows and status stats" errors="Network errors bubble through useApi; component renders loading/error states" side_effects="Mutates window.location on row click to navigate to execution detail"]
-// CIL[DOC-MICRO logic_summary="Fetches execution list and stats via useApi, filters by search term and status, sorts by selected key/direction, formats duration and status badges, renders AdminListPage with table" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin"]
+/**
+ * @module   PipelineExecutionsPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module represents the Pipeline Executions Page in the admin section of the application, allowing users to view and manage pipeline execution statuses. It integrates with various UI components to present data in a sortable table format and leverages API hooks for data fetching.
+ * INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso LoadingSpinner (provides loading feedback).
+ * @seeAlso Button (used for user actions).
+ * @seeAlso AdminListPage (base component for admin-related lists).
+ * @seeAlso SortableTableHeader (enables sorting functionality in tables).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
 
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Play, CheckCircle, XCircle, Clock, RefreshCw, Zap } from 'lucide-react';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { Button } from '../../components/ui/button'
@@ -20,22 +38,31 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the admin UI page for monitoring and managing pipeline execution runs'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecution:interface" type="interface" identity="PipelineExecution" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the shape of a pipeline execution record"]
-// CIL[DOC-RESPONSIBILITY responsibility="TypeScript interface for pipeline execution data consumed and rendered by PipelineExecutionsPage"]
-// CIL[DOC-CONTEXT module="PipelineExecution" layer="types" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="typed interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes execution status, timing, trigger/result payloads, and optional related pipeline and person objects" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The PipelineExecution interface defines the structure of a pipeline execution record, capturing its status, metadata, and associated entities. It facilitates the management and tracking of pipeline executions within the application.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface PipelineExecution {
   id: string
   pipeline_id: string
@@ -59,23 +86,39 @@ interface PipelineExecution {
   }
   created_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of a pipeline execution record'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecution:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecutionsPage:component" type="component" identity="PipelineExecutionsPage" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
-// CIL[DOC-MACRO purpose="React component that renders the pipeline executions admin list page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetches and displays pipeline executions, supports filtering/sorting, and links to individual execution detail"]
-// CIL[DOC-CONTEXT module="PipelineExecutionsPage" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (UI state only)" outputs="JSX for the pipeline executions page" errors="Renders error from useApi; row navigation uses window.location" side_effects="Navigates on row click, re-fetches data on refetch"]
-// CIL[DOC-MICRO logic_summary="Uses local state for search, status filter, and sort; fetches executions and stats; filters and sorts the list; renders status badges and durations" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The PipelineExecutionsPage component manages the display and interaction with pipeline execution data, allowing users to filter, sort, and navigate to detailed execution views. It fetches execution data and statistics from an API and provides a user-friendly interface for managing this information.
+ *
+ * @macro       User interface component for managing and displaying pipeline execution data.
+ * @micro       Utilizes multiple API calls to fetch pipeline executions, statistics, and pipeline names, and implements local state management for filtering and sorting.
+ * @outputSpec  JSX.Element — renders the pipeline executions page with interactive elements.
+ * @throws      Error — if fetching pipeline executions fails
+ * @sideEffects API calls to '/api/pipeline-executions?action=list', '/api/pipeline-executions?action=stats', and '/api/pipelines?action=list'
+ * @stability   internal
+ * @calls       useApi, apiFetch, useNavigate
+ * @errorHandling throws an error if fetching pipeline executions fails
+ * @cil-generated
+ */
 export function PipelineExecutionsPage() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [sortKey, setSortKey] = useState('started_at')
@@ -101,9 +144,28 @@ export function PipelineExecutionsPage() {
     { immediate: true }
   )
 
+  const { data: pipelines } = useApi<{ id: string; name: string }[]>(
+    async () => {
+      const response = await apiFetch('/api/pipelines?action=list')
+      if (!response.ok) return []
+      const result = await response.json()
+      return result.data || result
+    },
+    { immediate: true }
+  )
+
+  const pipelineNameById = new Map((pipelines || []).map(p => [p.id, p.name]))
+  const pipelineName = (exec: PipelineExecution) =>
+    exec.pipeline?.name || pipelineNameById.get(exec.pipeline_id) || null
+
   const filteredExecutions = (executions || []).filter(exec => {
-    const matchesSearch = exec.pipeline?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         exec.error_message?.toLowerCase().includes(searchTerm.toLowerCase()) || false
+    const term = searchTerm.toLowerCase()
+    const matchesSearch = !term ||
+                         pipelineName(exec)?.toLowerCase().includes(term) ||
+                         exec.pipeline_id?.toLowerCase().includes(term) ||
+                         exec.status?.toLowerCase().includes(term) ||
+                         exec.error_message?.toLowerCase().includes(term) ||
+                         false
     const matchesStatus = selectedStatus === 'all' || exec.status === selectedStatus
     return matchesSearch && matchesStatus
   })
@@ -118,7 +180,7 @@ export function PipelineExecutionsPage() {
   }
 
   const handleRowClick = (exec: PipelineExecution) => {
-    window.location.href = `/spine-framework/admin/observability/executions/${exec.id}`
+    navigate(`/spine-framework/admin/observability/executions/${exec.id}`)
   }
 
   const sortedExecutions = [...(filteredExecutions || [])].sort((a, b) => {
@@ -277,7 +339,7 @@ export function PipelineExecutionsPage() {
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="font-medium text-slate-900">
-                    {exec.pipeline?.name || 'Unknown Pipeline'}
+                    {pipelineName(exec) || 'Unknown Pipeline'}
                   </div>
                   <div className="text-xs text-slate-500 font-mono">{exec.id.slice(0, 8)}</div>
                 </td>
@@ -304,10 +366,11 @@ export function PipelineExecutionsPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='React component that renders the pipeline executions admin list page'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecutionsPage:component"]
+
+
+
+
+
+
+

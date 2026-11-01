@@ -1,18 +1,34 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-MACRO purpose="Module header for admin presentation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Exports the AIAgentsPage component and AIAgent interface for managing AI agents"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Module header with React imports for the AI agents admin page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
-// CIL[DOC-VECTOR type="context" content="purpose='Module header for admin presentation'; responsibilities include exports the aiagentspage component and aiagent interface for managing ai agents. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+/**
+ * @module   AIAgentsPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module represents the AIAgentsPage component, which is responsible for displaying and managing AI agents within the admin interface. It utilizes various hooks and components to facilitate data fetching and rendering of a sortable table. INVARIANT: The component must be used within a routing context to function correctly.
+ *
+ * @seeAlso useApi (provides API interaction capabilities).
+ * @seeAlso AdminListPage (renders the list of admin items).
+ * @seeAlso SortableTableHeader (enables sorting functionality for the table).
+ * @seeAlso apiFetch (handles API requests).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -28,20 +44,29 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { Badge } from '../../components/ui/badge'
 // CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagent:interface" type="interface" identity="aiagent" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the aiagent interface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the TypeScript interface for AI agent records"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AIAgent interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the shape and fields of an AI agent object" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the aiagent interface'; responsibilities include defines the typescript interface for ai agent records. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgent:interface" type="interface" identity="AIAgent" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
+/**
+ * The AIAgent interface defines the structure for AI agents used in the application, encapsulating their properties and configurations. It standardizes how AI agents are represented and managed within the system.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface AIAgent {
   id: string
   name: string
@@ -64,22 +89,37 @@ interface AIAgent {
   app_id?: string
   metadata?: Record<string, any>
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagent:interface"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgent:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagentspage:function" type="function" identity="aiagentspage" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-MACRO purpose="Render AI agents admin page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Displays a searchable, filterable, sortable list of AI agents"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="React state, console logging, URL navigation"]
-// CIL[DOC-MICRO logic_summary="Fetches agents, applies filters and sorting, and renders an admin list table" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render AI agents admin page'; responsibilities include displays a searchable, filterable, sortable list of ai agents. Related files: .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No verified external callers from CIL graph; impacted callers include .framework/functions/ai-agents.ts,.framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AIAgentsPage.tsx" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgentsPage:component" type="component" identity="AIAgentsPage" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
+/**
+ * The AIAgentsPage component provides a user interface for managing AI agents, allowing users to filter, sort, and view agent details. It fetches agent data from an external API and applies various filters based on user input.
+ *
+ * @macro       User interface component for managing AI agents.
+ * @micro       Utilizes state management and API calls to dynamically filter and sort agent data based on user interactions.
+ * @outputSpec  JSX.Element
+ * @throws      Error — if the API response is not ok
+ * @sideEffects API call to '/api/ai-agents?action=list'
+ * @stability   internal
+ * @calls       useApi, apiFetch
+ * @errorHandling throws an error if the API response is not ok
+ * @cil-generated
+ */
 export function AIAgentsPage() {
   const navigate = useNavigate()
   
@@ -132,9 +172,6 @@ export function AIAgentsPage() {
                          (selectedStatus === 'inactive' && !agent.is_active)
     return matchesSearch && matchesType && matchesModel && matchesStatus
   })
-
-  console.log('AIAgentsPage - agents:', agents)
-  console.log('AIAgentsPage - filteredAgents:', filteredAgents)
 
   const getAgentBadgeColor = (agentType: string) => {
     switch (agentType) {
@@ -347,4 +384,5 @@ export function AIAgentsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:aiagentspage:function"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgentsPage:component"]
+

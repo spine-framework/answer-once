@@ -1,12 +1,28 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Provides React, router, icons, and UI component imports for the admin sidebar module"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declares module-level imports required by AdminSidebar"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imported symbols" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, react-router-dom hooks, lucide-react icons, and local sidebar/collapsible UI primitives" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
+/**
+ * @module   AdminSidebar
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The AdminSidebar module provides a navigational sidebar for the admin interface, allowing users to access various administrative functions and settings. It utilizes React components and icons to create an interactive and visually appealing sidebar layout.
+ * INVARIANT: The sidebar must always reflect the current user's permissions and available actions.
+ *
+ * @seeAlso useBranding (provides branding context for the sidebar).
+ * @seeAlso ../ui/sidebar (contains UI components used in the sidebar).
+ * @seeAlso ../ui/collapsible (provides collapsible functionality for sidebar groups).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -14,13 +30,10 @@
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
 import { 
-  PlusIcon, 
-  Database, 
-  Settings, 
+// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header"]
+    Settings, 
   Type, 
-  Users, 
   Layout, 
-  FileText,
   BarChart3,
   AlertTriangle,
   Activity,
@@ -36,7 +49,6 @@ import {
   Lightbulb,
   Key,
   Truck,
-  TestTube,
   UserPlus,
   BookOpen,
   ChevronRight,
@@ -58,25 +70,33 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "../ui/sidebar"
-import { Button } from "../ui/button"
+
 import { useBranding } from "../../hooks/useBranding"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
-// CIL[DOC-VECTOR type="context" content="purpose='Provides React, router, icons, and UI component imports for the admin sidebar module'; No verified external callers; imports: .framework/src/components/ui/sidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationsections:constant" type="constant" identity="navigationSections" parent="none"]
-// CIL[DOC-MACRO purpose="Defines the static navigation section structure for the admin sidebar"]
-// CIL[DOC-RESPONSIBILITY responsibility="Maintain the ordered list of admin navigation sections, routes, and optional nested children"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminSidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="navigationSections: NavigationSection[]" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array of navigation sections with title, icon, optional children, and route URLs" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationSections:constant" type="constant" identity="navigationSections" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
+/**
+ * The 'navigationSections' constant defines the structure of the sidebar navigation for the admin interface, organizing various sections for configuration, access, security, observability, testing, knowledge base, and CIL functionalities. This organization provides a clear and consistent navigation experience for users managing admin functionalities.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const navigationSections = [
   {
     title: "Configs",
@@ -113,32 +133,12 @@ const navigationSections = [
     ]
   },
   {
-    title: "Runtime",
-    items: [
-      { title: "Items", url: "/spine-framework/admin/runtime/items", icon: Database },
-      { title: "Accounts", url: "/spine-framework/admin/runtime/accounts", icon: Users },
-      { title: "People", url: "/spine-framework/admin/runtime/people", icon: Users },
-      { title: "Threads", url: "/spine-framework/admin/runtime/threads", icon: MessageSquare },
-      { title: "Messages", url: "/spine-framework/admin/runtime/messages", icon: FileText },
-      { title: "Attachments", url: "/spine-framework/admin/runtime/attachments", icon: FileSearch },
-      { title: "Watchers", url: "/spine-framework/admin/runtime/watchers", icon: Activity },
-      { title: "Links", url: "/spine-framework/admin/runtime/links", icon: Puzzle },
-      { title: "Progress", url: "/spine-framework/admin/runtime/item_progress", icon: BarChart3 },
-    ]
-  },
-  {
     title: "Observability",
     items: [
       { title: "Dashboard", url: "/spine-framework/admin/observability", icon: BarChart3 },
       { title: "Alerts", url: "/spine-framework/admin/observability/alerts", icon: AlertTriangle },
       { title: "Executions", url: "/spine-framework/admin/observability/executions", icon: Activity },
       { title: "Logs", url: "/spine-framework/admin/observability/logs", icon: FileSearch },
-    ]
-  },
-  {
-    title: "Testing",
-    items: [
-      { title: "Test Runs", url: "/spine-framework/admin/testing", icon: TestTube },
     ]
   },
   {
@@ -159,22 +159,37 @@ const navigationSections = [
     ]
   }
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the static navigation section structure for the admin sidebar'; No verified external callers; imports: .framework/src/components/ui/sidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationsections:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:adminsidebar:function" type="function" identity="AdminSidebar" parent="none"]
-// CIL[DOC-MACRO purpose="Renders the admin sidebar with navigation sections and active route highlighting"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the admin sidebar UI and compute active route state from useLocation"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/AdminSidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="props: React.ComponentProps<typeof Sidebar>" outputs="JSX.Element" errors="none" side_effects="Reads useLocation and renders react-router Link components"]
-// CIL[DOC-MICRO logic_summary="Uses useLocation to determine active routes; maps navigationSections into collapsible sidebar groups and nested items" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationSections:constant"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:AdminSidebar:component" type="component" identity="AdminSidebar" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
+/**
+ * The AdminSidebar component provides a navigational sidebar for admin functionalities, integrating branding and dynamic navigation sections. It enhances user experience by visually indicating active routes.
+ *
+ * @macro       Sidebar navigation component for admin interface.
+ * @micro       Utilizes React Router for navigation and manages active states based on the current URL.
+ * @inputSpec
+ *   props: React.ComponentProps<typeof Sidebar> (required) — properties passed to the Sidebar component.
+ * @outputSpec  JSX.Element — renders the sidebar layout with navigation items.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       useBranding, useLocation, Link
+ * @cil-generated
+ */
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const branding = useBranding()
   const location = useLocation()
@@ -199,12 +214,6 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <SidebarGroup className="py-2">
-          <Button className="w-full" size="sm">
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Quick Create
-          </Button>
-        </SidebarGroup>
       </SidebarHeader>
 
       <SidebarContent>
@@ -288,10 +297,10 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
     </Sidebar>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the admin sidebar with navigation sections and active route highlighting'; No verified external callers; imports: .framework/src/components/ui/sidebar.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/collapsible.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:adminsidebar:function"]
+// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:AdminSidebar:component"]
+
+
+
+
+
+

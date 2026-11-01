@@ -1,12 +1,28 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Provides module-level imports and context for the admin role detail page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Load React, routing, UI primitives, hooks, and utilities used by RoleDetailPage."]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports dependencies for the role detail page." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-frontend"]
+/**
+ * @module   RoleDetailPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * RoleDetailPage is a React component that manages the display and editing of role details within the admin interface. It interacts with the API to fetch and update role information based on the role ID obtained from the URL parameters. INVARIANT: The role ID must always be present in the URL for the component to function correctly.
+ *
+ * @seeAlso useApi (provides API interaction hooks).
+ * @seeAlso apiFetch (handles API requests).
+ * @seeAlso formatDateTime (formats date and time for display).
+ * @seeAlso PageInstructions (provides instructional content for the admin page).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -22,23 +38,31 @@ import { ArrowLeft, ShieldCheck, AlertCircle } from 'lucide-react'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provides module-level imports and context for the admin role detail page.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:Role:interface" type="interface" identity="Role" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the TypeScript shape of a Role record used in the admin UI."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a typed contract for role data, permissions, and metadata."]
-// CIL[DOC-CONTEXT module="admin" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/RoleDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Role type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares the Role interface fields consumed by the detail page and API." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Role interface defines the structure of a role object used in the admin panel, encapsulating essential attributes and permissions associated with a role. It exists to standardize role management within the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface Role {
   id: string
   name: string
@@ -51,22 +75,37 @@ interface Role {
   created_at: string
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the TypeScript shape of a Role record used in the admin UI.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:Role:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:RoleDetailPage:component" type="component" identity="RoleDetailPage" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Renders a create/edit form for admin roles and their permissions."]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch role data, manage form state, validate permissions JSON, submit to the API, and render the admin UI."]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/RoleDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="URL id parameter ('new' or existing role), role data from /api/roles, user input" outputs="Rendered role form, navigation after save" errors="fetchError, save error, invalid permissions JSON" side_effects="Calls /api/roles (POST or PATCH) and navigates on success"]
-// CIL[DOC-MICRO logic_summary="Initializes form from fetched role, parses permissions JSON, handles create/update submission, and renders instructions, alerts, and fields." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The RoleDetailPage component manages the creation and editing of role details in an admin interface. It fetches role data if editing an existing role and handles form submission for creating or updating roles.
+ *
+ * @macro       Component responsible for role management in an admin interface.
+ * @micro       Utilizes React hooks for state management and API calls to handle role data.
+ * @outputSpec  JSX.Element
+ * @throws      Error — Invalid JSON in permissions field, Error — Failed to fetch role, Error — Failed to save role
+ * @sideEffects API calls to fetch and save role data.
+ * @stability   stable
+ * @calls       useParams, useNavigate, useApi, apiFetch
+ * @errorHandling Catches and sets error messages for invalid JSON and API response failures.
+ * @cil-generated
+ */
 export function RoleDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -186,43 +225,6 @@ export function RoleDetailPage() {
           {isCreateMode ? 'Create Role' : role?.name || 'Role Detail'}
         </h1>
       </div>
-
-      <PageInstructions
-        description="Define a role and set its permissions and metadata."
-        sections={[
-          { title: 'What this role controls', content: 'A role is a named permission set assigned to people. It controls which record types a person can create, read, update, delete, or admin, and whether the role can be assigned in the first place.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name</strong> — string, required. The display label such as Sales Manager. Empty name blocks save.</li>
-            <li><strong>Slug</strong> — string, required. A unique URL-friendly identifier. Disabled after creation because permissions and references depend on it.</li>
-            <li><strong>Description</strong> — string. Optional context for other admins.</li>
-            <li><strong>System Role</strong> — checkbox, create-only. Marks a reserved role that cannot be deleted and is protected for core functions.</li>
-            <li><strong>Active</strong> — checkbox. Inactive roles cannot be assigned to people.</li>
-            <li><strong>Permissions (JSON)</strong> — JSON. Maps type slugs to arrays of allowed actions. Invalid JSON or wrong shape will cause save to fail.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Actions per type</strong>: typical values are create, read, update, delete, and admin. Use the array format with a type slug mapped to an array: type_slug: ["read", "write"].</li>
-            <li><strong>System Role</strong>: can only be set during creation and prevents deletion later.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>People assigned to this role receive the effective permissions immediately after the role is saved.</li>
-            <li>The admin-data API and runtime record UIs evaluate the role permissions for every create, read, update, and delete request.</li>
-            <li>Missing or malformed permissions can lock people out of records or grant unintended access.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, enter Name and Slug, then set Active and optionally System. Existing roles cannot change the slug.</li>
-
-
-            <li>Enter valid Permissions JSON mapping type slugs to action arrays.</li>
-            <li>Click Create Role or Update Role. Save fails if the name/slug are empty, the slug is changed, or the permissions JSON cannot be parsed.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Writing permissions as a flat list instead of an object of arrays.</li>
-            <li>Trying to change the slug after creation, which is disabled and will be ignored.</li>
-            <li>Forgetting to mark a role Active, which prevents assignment.</li>
-          </ul> },
-        ]}
-      />
-
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -323,6 +325,14 @@ export function RoleDetailPage() {
               placeholder={`{\n  "item": ["read", "write"],\n  "account": ["read"]\n}`}
               rows={10}
             />
+            {(() => {
+              try {
+                JSON.parse(permissionsJson)
+                return null
+              } catch (err) {
+                return <p className="text-xs text-red-600 mt-2">Invalid JSON: {(err as Error).message}</p>
+              }
+            })()}
             <p className="text-xs text-muted-foreground mt-2">
               Example: <code className="bg-muted px-1 py-0.5 rounded">{`{"ticket": ["read", "write", "admin"]}`}</code>
             </p>
@@ -341,10 +351,11 @@ export function RoleDetailPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a create/edit form for admin roles and their permissions.'; No verified external callers; imports: .framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/textarea.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:RoleDetailPage:component"]
+
+
+
+
+
+
+

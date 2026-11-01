@@ -244,7 +244,8 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('ai_agents')
     .insert({
       app_id: app_id || null,
@@ -258,7 +259,7 @@ export const create = createHandler(async (ctx, body) => {
       capabilities: capabilities || [],
       constraints: constraints || {},
       metadata: metadata || {},
-      created_by: ctx.principal.id
+      created_by: ctx.principal.type === 'human' ? ctx.principal.id : null
     })
     .select()
     .single()
@@ -325,7 +326,8 @@ export const update = createHandler(async (ctx, body) => {
     if (updates[key] !== undefined) updateData[key] = updates[key]
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('ai_agents')
     .update(updateData)
     .eq('id', id)
@@ -383,7 +385,8 @@ export const remove = createHandler(async (ctx, _body) => {
     throw new Error('Agent ID is required')
   }
 
-  const { data: current } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data: current } = await db
     .from('ai_agents')
     .select('id, name')
     .eq('id', id)
@@ -391,7 +394,7 @@ export const remove = createHandler(async (ctx, _body) => {
 
   if (!current) throw new Error('Agent not found')
 
-  const { error: err } = await ctx.db
+  const { error: err } = await db
     .from('ai_agents')
     .delete()
     .eq('id', id)
@@ -449,7 +452,8 @@ export const run = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const { data, error: err } = await ctx.db
+  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { data, error: err } = await db
     .from('threads')
     .select('*, type:types(*)')
     .eq('id', thread_id)

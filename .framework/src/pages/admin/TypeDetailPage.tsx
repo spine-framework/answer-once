@@ -1,12 +1,29 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin type detail page for viewing, creating, and editing Spine type schemas"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports React hooks, shared UI components, and exports the TypeDetailPage component"]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="rendered admin page module" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Top-level module header that wires dependencies for the type detail page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="human, ai"]
+/**
+ * @module   TypeDetailPage
+ * @audience internal
+ * @layer    app-specific
+ * @stability stable
+ *
+ * This module represents the Type Detail Page in the admin section of the application, allowing users to view and manage details of a specific type. It integrates with the API to fetch and update type data, providing a user-friendly interface with various UI components for interaction.
+ * INVARIANT: The user must have appropriate permissions to access this page and perform actions on types.
+ *
+ * @seeAlso useApi (provides API interaction hooks).
+ * @seeAlso Button (UI component for actions).
+ * @seeAlso Modal (UI component for confirmations).
+ * @seeAlso DataTable (UI component for displaying data).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -31,23 +48,31 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { DataTable } from '../../components/ui/DataTable'
 import { ArrowLeft, Pencil, Trash2, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-import { PageInstructions } from '../../components/admin/PageInstructions'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Admin type detail page for viewing, creating, and editing Spine type schemas'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:Type:interface" type="interface" identity="Type" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Shape of a Spine type record used by the admin detail page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the Type data structure including design_schema, validation_schema, view_config, ownership, and timestamps"]
-// CIL[DOC-CONTEXT module="admin" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="API or form data" outputs="Type-typed object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Interface describing a configurable runtime record type with schemas and metadata" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Type interface defines the structure of a type object used in the admin panel, encapsulating various attributes related to types. It serves to standardize the representation of types across the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface Type {
   id: string
   name: string
@@ -61,7 +86,6 @@ interface Type {
     record_permissions?: Record<string, string[]>
   }
   validation_schema?: Record<string, any>
-  view_config?: Record<string, any>
   ownership: string
   is_active: boolean
   app_id?: string
@@ -69,22 +93,31 @@ interface Type {
   created_at: string
   updated_at: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Shape of a Spine type record used by the admin detail page'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:Type:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeItem:interface" type="interface" identity="TypeItem" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Shape of a runtime item that belongs to a Spine type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeItem data structure with data, metadata, and audit fields"]
-// CIL[DOC-CONTEXT module="admin" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="admin-data API response" outputs="TypeItem-typed array" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Interface describing a single runtime record of a type" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TypeItem interface defines the structure of a type item used in the admin module, encapsulating essential attributes for managing type data. It serves as a blueprint for creating and manipulating type items within the application.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
 interface TypeItem {
   id: string
   item_type_id: string
@@ -95,22 +128,37 @@ interface TypeItem {
   created_by: string
   account_id: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Shape of a runtime item that belongs to a Spine type'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeItem:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeDetailPage:component" type="component" identity="TypeDetailPage" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Render and manage the admin type detail page with create, edit, view, and delete flows"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch type and item data, validate JSON schemas, and present edit/read UI"]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/TypeDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="id and kind route params, available apps list, user interactions" outputs="Rendered admin UI, API save/delete requests" errors="Fetch failures, invalid JSON, save errors" side_effects="Browser alert, navigation, useState updates, API calls"]
-// CIL[DOC-MICRO logic_summary="Component loads a type by id or slug, allows editing design/view JSON, lists related items, and supports deletion" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The TypeDetailPage component manages the creation and editing of type entities within the admin interface. It handles fetching available applications and type details based on the provided parameters.
+ *
+ * @macro       Component for managing type details in an admin interface.
+ * @micro       Utilizes React hooks for state management and side effects, including API calls to fetch data.
+ * @outputSpec  JSX.Element — renders the type detail page UI.
+ * @throws      Error — Type ID or slug is required
+ * @sideEffects Fetches data from external API endpoints.
+ * @stability   stable
+ * @calls       apiFetch, useApi, useParams, useNavigate
+ * @errorHandling Logs errors to the console during API fetch failures.
+ * @cil-generated
+ */
 export function TypeDetailPage() {
   const { id, kind } = useParams<{ id: string, kind: string }>()
   const navigate = useNavigate()
@@ -127,13 +175,13 @@ export function TypeDetailPage() {
     color: '',
     kind: typeKind,
     design_schema: { fields: {} },
-    view_config: {},
     ownership: 'app',
     app_id: '',
     is_active: true
   })
   const [schemaText, setSchemaText] = useState(JSON.stringify({ fields: {} }, null, 2))
-  const [viewConfigText, setViewConfigText] = useState(JSON.stringify({}, null, 2))
+  const [formError, setFormError] = useState<string | null>(null)
+
   const [availableApps, setAvailableApps] = useState<Array<{id: string, name: string}>>([])
 
   React.useEffect(() => {
@@ -185,8 +233,8 @@ export function TypeDetailPage() {
         if (!id) throw new Error('Type ID or slug is required')
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
         const url = uuidRegex.test(id)
-          ? `/api/types?action=get&id=${id}`
-          : `/api/types?action=get&slug=${id}`
+          ? `/api/types?action=get&id=${id}&include_schema=true`
+          : `/api/types?action=get&slug=${id}&include_schema=true`
         const response = await apiFetch(url)
         if (!response.ok) {
           throw new Error(response.status === 500 ? 'Type not found' : 'Failed to fetch type')
@@ -208,39 +256,31 @@ export function TypeDetailPage() {
         color: type.color || '',
         kind: type.kind || 'item',
         design_schema: type.design_schema || { fields: {} },
-        view_config: type.view_config || {},
         ownership: type.ownership || 'system',
         app_id: type.app_id || '',
         is_active: type.is_active ?? true
       })
       setSchemaText(JSON.stringify(type.design_schema || { fields: {} }, null, 2))
-      setViewConfigText(JSON.stringify(type.view_config || {}, null, 2))
     }
   }, [type])
 
   const handleSave = async () => {
     try {
+      setFormError(null)
       const { app_id } = editData
       const ownership = (editData.ownership || '').toLowerCase()
       if (ownership !== 'system' && !app_id) {
         throw new Error('App selection is required when ownership is not "System"')
       }
       let parsedSchema = { fields: {} }
-      let parsedViewConfig = {}
       try {
         parsedSchema = JSON.parse(schemaText)
       } catch (error) {
         console.warn('Invalid JSON in schema field, using default:', error)
       }
-      try {
-        parsedViewConfig = JSON.parse(viewConfigText)
-      } catch (error) {
-        console.warn('Invalid JSON in view config field, using default:', error)
-      }
       const saveData = {
         ...editData,
         design_schema: parsedSchema,
-        view_config: parsedViewConfig,
         app_id: editData.app_id || null
       }
       const url = isCreateMode 
@@ -263,7 +303,7 @@ export function TypeDetailPage() {
       }
     } catch (error) {
       console.error(`Error ${isCreateMode ? 'creating' : 'updating'} type:`, error)
-      alert(error instanceof Error ? error.message : 'Unknown error occurred')
+      setFormError(error instanceof Error ? error.message : 'Unknown error occurred')
     }
   }
 
@@ -280,13 +320,11 @@ export function TypeDetailPage() {
         icon: type.icon || '',
         color: type.color || '',
         design_schema: type.design_schema || { fields: {} },
-        view_config: type.view_config || {},
         ownership: type.ownership || 'system',
         app_id: type.app_id || '',
         is_active: type.is_active ?? true
       })
       setSchemaText(JSON.stringify(type.design_schema || { fields: {} }, null, 2))
-      setViewConfigText(JSON.stringify(type.view_config || {}, null, 2))
     }
     setIsEditing(false)
   }
@@ -350,7 +388,6 @@ export function TypeDetailPage() {
         <AlertTitle>Failed to load type details</AlertTitle>
         <AlertDescription>{error || 'Type not found'}</AlertDescription>
         <Button onClick={() => refetch()} variant="outline" className="mt-4">Retry</Button>
-
       </Alert>
     )
   }
@@ -359,15 +396,20 @@ export function TypeDetailPage() {
 
 
 
+/**
+ * The 'itemColumns' constant defines the structure of columns for displaying items in a table format, including their keys, titles, and rendering logic. It is used to present item data in a user-friendly manner within the admin interface.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @calls       formatDateTime
+ * @cil-generated
+ */
   const itemColumns = [
     {
       key: 'id' as keyof TypeItem,
       title: 'ID',
       render: (row: any) => (
         <span className="font-mono text-xs">{row.id?.slice(0, 8)}...</span>
-
-
-
       )
     },
     {
@@ -378,12 +420,26 @@ export function TypeDetailPage() {
 
 
 
+/**
+ * The constant 'firstFieldKey' retrieves the first key from the 'fields' object in the 'design_schema' of a given 'type'. It exists to facilitate access to the first field's key for further processing in the module.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
         const firstFieldKey = Object.keys(type?.design_schema?.fields || {})[0]
 
 
 
 
 
+/**
+ * The constant 'displayValue' determines the value to display based on the presence of 'firstFieldKey'. It defaults to 'No data' if 'firstFieldKey' is not defined or if the corresponding data is unavailable.
+ *
+ * @sideEffects none
+ * @stability   stable
+ * @cil-generated
+ */
         const displayValue = firstFieldKey ? row.data?.[firstFieldKey] : 'No data'
 
         return (
@@ -435,7 +491,8 @@ export function TypeDetailPage() {
           </div>
         </div>
         
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 items-center">
+          {formError && <p className="text-sm text-red-600 mr-auto">{formError}</p>}
           {isEditing ? (
             <>
               <Button variant="outline" onClick={handleCancel}>Cancel</Button>
@@ -463,55 +520,6 @@ export function TypeDetailPage() {
           )}
         </div>
       </div>
-
-      <PageInstructions
-        description="Manage type schemas, fields, and permissions for items, accounts, or people."
-        sections={[
-          { title: 'What this type controls', content: 'A type is the design schema for a runtime record kind. It defines the fields, default list/detail views, record permissions, icon, color, and metadata that the generic admin and runtime UIs use to create, validate, and display records.' },
-          { title: 'Fields explained', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Name</strong> — string. The display label for the type. Empty name blocks save.</li>
-            <li><strong>Slug</strong> — string. A unique, URL-friendly identifier scoped by kind. Used for type resolution and must be globally unique.</li>
-            <li><strong>Description</strong> — string. Optional human-readable context.</li>
-            <li><strong>Kind</strong> — select. item, account, person, thread, or message. Determines which runtime table the type governs.</li>
-            <li><strong>Ownership</strong> — select. system, app, or tenant. Controls the data scope and who can manage the type.</li>
-            <li><strong>Is Active</strong> — checkbox. Inactive types cannot have records created.</li>
-
-]
-            <li><strong>App ID</strong> — select. Optional owning app. None means a system type. Selecting an app scopes the type to that app.</li>
-]
-            <li><strong>Icon</strong> — string. An icon name for the UI stored in the types row.</li>
-            <li><strong>Color</strong> — select. The theme color for the type stored in the types row.</li>
-            <li><strong>Created / Updated</strong> — read-only timestamps.</li>
-            <li><strong>Design Schema (JSON)</strong> — JSON. The full design_schema with fields, views, and record_permissions. The validation_schema is regenerated from this on save.</li>
-            <li><strong>View Config (JSON)</strong> — JSON. Optional view_config object stored alongside the design schema.</li>
-          </ul> },
-          { title: 'Options and values', content: <ul className="list-disc pl-4 space-y-1">
-            <li><strong>Kind</strong>: <em>item</em> for records, <em>account</em> for accounts, <em>person</em> for people, <em>thread</em> for threads, <em>message</em> for messages.</li>
-            <li><strong>Ownership</strong>: <em>system</em> for platform types, <em>app</em> for an app, <em>tenant</em> for account-specific.</li>
-            <li><strong>Color</strong>: blue, green, red, yellow, purple, pink, indigo, gray, slate.</li>
-            <li><strong>Design Schema</strong>: must include fields, default_list, default_detail, and record_permissions to satisfy the generic UI.</li>
-          </ul> },
-          { title: 'Downstream impact', content: <ul className="list-disc pl-4 space-y-1">
-            <li>Generic List and Detail pages render directly from this schema. A missing view or bad field will break those pages.</li>
-            <li>Record creation and validation use the design schema. Bad permissions or data_type values can cause permission errors or failed saves.</li>
-            <li>Other apps, pipelines, and triggers resolve types by slug; duplicate or changed slugs break those lookups.</li>
-          </ul> },
-          { title: 'How to create, save, and validate', content: <ol className="list-decimal pl-4 space-y-1">
-            <li>In create mode, choose a kind, name, slug, and ownership, then fill the Design Schema and optional View Config JSON.</li>
-            <li>Click Create or Save Changes. The form validates that the JSON is valid; the API regenerates validation_schema from design_schema.</li>
-            <li>Delete is disabled for system-owned types. Delete opens a confirmation modal for others.</li>
-          </ol> },
-          { title: 'Common mistakes', content: <ul className="list-disc pl-4 space-y-1">
-
-]
-            <li>Reusing a slug for the same kind, which breaks type resolution.</li>
-]
-            <li>Missing default_list or default_detail in the design schema, causing the generic UI to fail.</li>
-            <li>Using an unknown data_type or display_type, leading to validation or rendering errors.</li>
-          </ul> },
-        ]}
-      />
-
       {isEditing ? (
         <>
           <Card>
@@ -661,20 +669,17 @@ export function TypeDetailPage() {
                   rows={8}
                   placeholder='Enter JSON design schema with fields, views, and record_permissions'
                 />
+                {(() => {
+                  try {
+                    JSON.parse(schemaText)
+                    return null
+                  } catch (err) {
+                    return <p className="text-xs text-red-600">Invalid JSON: {(err as Error).message}</p>
+                  }
+                })()}
                 <p className="text-xs text-muted-foreground">JSON schema defining the fields, list/detail views, and record permissions for this type. The validation_schema is generated from this on save.</p>
               </div>
 
-              <div className="mt-8 space-y-2">
-                <Label>View Config</Label>
-                <Textarea
-                  value={viewConfigText}
-                  onChange={(e) => setViewConfigText(e.target.value)}
-                  className="font-mono text-sm"
-                  rows={4}
-                  placeholder='Enter optional view_config JSON'
-                />
-                <p className="text-xs text-muted-foreground">Optional JSON view configuration stored alongside the design schema.</p>
-              </div>
             </CardContent>
           </Card>
         </>
@@ -760,6 +765,15 @@ export function TypeDetailPage() {
                   {JSON.stringify(type?.design_schema || { fields: {} }, null, 2)}
                 </pre>
               </div>
+
+              {type?.validation_schema && (
+                <div className="mt-4 space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Validation Schema (auto-generated on save)</h3>
+                  <pre className="text-xs bg-muted p-3 rounded border overflow-auto max-h-48">
+                    {JSON.stringify(type.validation_schema, null, 2)}
+                  </pre>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -843,11 +857,11 @@ export function TypeDetailPage() {
     </div>
   )
 }
-
-// CIL[DOC-VECTOR type="context" content="purpose='Render and manage the admin type detail page with create, edit, view, and delete flows'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeDetailPage:component"]
+
+
+
+
+
+
+

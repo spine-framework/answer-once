@@ -10,7 +10,6 @@
     ".framework/src",
     ".framework/tests",
     ".framework/docs",
-    ".framework/mcp",
     ".framework/templates"
   ],
   "framework_files": [
@@ -49,6 +48,10 @@
     "bin/spine-framework.js",
     "bin/ws-shim.mts",
     "bin/ws-shim.ts"
+  ],
+  "agent_files": [
+    { "source": ".framework/templates/agent/AGENTS.md", "dest": "AGENTS.md", "merge": "framework-block" },
+    { "source": ".framework/templates/agent/skills", "dest": ".devin/skills", "merge": "dir-replace" }
   ],
   "exclude_globs": [
     "**/.env",

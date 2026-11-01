@@ -1,12 +1,29 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Admin apps listing page top-level module imports and setup"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import dependencies and prepare the admin apps page module"]
-// CIL[DOC-CONTEXT module="apps-admin-page" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module imports and component exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines the App interface and AppsPage component exports for the admin apps list" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin-frontend-developer"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
+/**
+ * @module   AppsPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * This module represents the AppsPage component in the admin section of the application, providing a user interface for managing applications. It integrates with various UI components and hooks to fetch and display application data in a structured format.
+ * INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso useApi (provides API interaction capabilities).
+ * @seeAlso apiFetch (handles API requests).
+ * @seeAlso AdminListPage (base component for admin list views).
+ * @seeAlso SortableTableHeader (for managing sortable table headers).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -17,6 +34,7 @@ import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
 import { 
+// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header"]
   Plus,
   Box,
   FileText,
@@ -39,21 +57,30 @@ import {
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Admin apps listing page top-level module imports and setup'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:app:interface"]
-// CIL[DOC-MACRO purpose="Define the runtime shape of an App record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeScript interface used by the apps list and API"]
-// CIL[DOC-CONTEXT module="apps-admin-page" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="App TypeScript interface definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Strongly typed App record with metadata, counts, and flags" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:App:interface" type="interface" identity="App" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
+/**
+ * The App interface defines the structure of an application object used within the admin module. It encapsulates essential properties related to an application, such as its identification, configuration, and status.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface App {
   id: string
   slug: string
@@ -64,30 +91,44 @@ interface App {
   config: Record<string, any>
   is_active: boolean
   is_public: boolean
+  is_system?: boolean
+  source?: string
   created_at: string
-  updated_at: string
-  created_by: string
-  account_id: string
-  account_name: string
-  item_count: number
-  user_count: number
+  updated_at?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the runtime shape of an App record'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:app:interface"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:App:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:appspage:function"]
-// CIL[DOC-MACRO purpose="Render the admin apps list with filtering, sorting, and stats"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch apps, filter, sort, and display an admin table with status cards"]
-// CIL[DOC-CONTEXT module="apps-admin-page" layer="pages" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX admin apps list" errors="Displays error card on fetch failure" side_effects="Calls /api/apps?action=list via useApi"]
-// CIL[DOC-MICRO logic_summary="Fetches apps, computes filtered/sorted list, renders stats cards and sortable table" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:AppsPage:component" type="component" identity="AppsPage" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
+/**
+ * The AppsPage component displays a list of applications with filtering, sorting, and navigation capabilities. It fetches app data from an API and allows users to search and filter based on type and status.
+ *
+ * @macro       User interface component for managing and displaying applications.
+ * @micro       Utilizes a custom hook to fetch app data from an external API and manages local state for search and filters.
+ * @outputSpec  JSX.Element — renders the application management interface.
+ * @throws      Error — failed to fetch apps
+ * @sideEffects Fetches data from the external API endpoint '/api/apps?action=list'.
+ * @stability   internal
+ * @calls       useApi, apiFetch, navigate
+ * @errorHandling none
+ * @cil-generated
+ */
 export function AppsPage() {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -108,9 +149,8 @@ export function AppsPage() {
 
   const appTypes = [
     { value: 'all', label: 'All Types' },
-    { value: 'core', label: 'Core Apps' },
-    { value: 'custom', label: 'Custom Apps' },
-    { value: 'marketplace', label: 'Marketplace' }
+    ...Array.from(new Set((apps || []).map(a => a.app_type).filter(Boolean)))
+      .map(type => ({ value: type, label: type.charAt(0).toUpperCase() + type.slice(1) }))
   ]
 
   const filteredApps = (apps || []).filter(app => {
@@ -227,14 +267,14 @@ export function AppsPage() {
       iconColor: 'text-green-500'
     },
     {
-      title: 'Total Items',
-      value: (apps || []).reduce((sum, app) => sum + (app.item_count || 0), 0),
+      title: 'System Apps',
+      value: (apps || []).filter(a => a.is_system).length,
       icon: FileText,
       iconColor: 'text-purple-500'
     },
     {
-      title: 'Total Users',
-      value: (apps || []).reduce((sum, app) => sum + (app.user_count || 0), 0),
+      title: 'Custom Apps',
+      value: (apps || []).filter(a => a.app_type === 'custom').length,
       icon: Calendar,
       iconColor: 'text-orange-500'
     }
@@ -320,8 +360,8 @@ export function AppsPage() {
                 onSort={handleSort}
               />
               <SortableTableHeader
-                title="Resources"
-                sortKey="item_count"
+                title="Source"
+                sortKey="source"
                 currentSortKey={sortKey}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -377,10 +417,7 @@ export function AppsPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  <div className="flex flex-col">
-                    <span>{app.item_count} items</span>
-                    <span>{app.user_count} users</span>
-                  </div>
+                  {app.source || '—'}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {formatDateTime(app.created_at)}
@@ -390,16 +427,17 @@ export function AppsPage() {
                 </TableCell>
               </TableRow>
             ))}
+
           </TableBody>
         </Table>
       )}
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin apps list with filtering, sorting, and stats'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:appspage:function"]
+// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:AppsPage:component"]
+
+
+
+
+
+

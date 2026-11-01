@@ -18,6 +18,7 @@ import { Skeleton } from '@core/components/ui/skeleton'
 import { Textarea } from '@core/components/ui/textarea'
 import { Label } from '@core/components/ui/label'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:module_header:module_header"]
   Select,
   SelectContent,
   SelectItem,
@@ -46,16 +47,13 @@ import {
 
 
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='Imports and page scaffolding for the CIL chunk detail admin page'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkContract:interface" type="interface" identity="ChunkContract" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Defines the data contract for a CIL chunk record"]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a TypeScript shape for chunk contract fields"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -63,6 +61,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Maps all chunk contract fields including identifiers, doc status, tests, call lists, and hashes" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkContract:interface" type="interface" identity="ChunkContract" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 interface ChunkContract {
   id: string
   chunk_name: string
@@ -88,16 +87,15 @@ interface ChunkContract {
   callers: { chunk_id: string; chunk_name: string; file_path: string }[]
   callees: { chunk_id: string; chunk_name: string; file_path: string }[]
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkContract:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the data contract for a CIL chunk record'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkContract:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:EmbeddingStatus:interface" type="interface" identity="EmbeddingStatus" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Tracks vector embedding coverage for a project"]
 // CIL[DOC-RESPONSIBILITY responsibility="Declare the shape of embedding coverage metrics"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -105,24 +103,24 @@ interface ChunkContract {
 // CIL[DOC-MICRO logic_summary="Defines coverage_pct, embedded_chunks, and total_chunks fields" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:EmbeddingStatus:interface" type="interface" identity="EmbeddingStatus" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 interface EmbeddingStatus {
   coverage_pct: number
   embedded_chunks: number
   total_chunks: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:EmbeddingStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Tracks vector embedding coverage for a project'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:EmbeddingStatus:interface"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:doc_and_stability:constant" type="constant" identity="doc_and_stability" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Provides badge configuration for documentation confidence and stability labels"]
 // CIL[DOC-RESPONSIBILITY responsibility="Map doc_confidence and stability enum values to UI labels, colors, and badge variants"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -130,21 +128,25 @@ interface EmbeddingStatus {
 // CIL[DOC-MICRO logic_summary="Defines DOC_CONFIDENCE_CONFIG with label, color, and icon; STABILITY_BADGE maps stability to Badge variant strings" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:DOC_CONFIDENCE_CONFIG:constant" type="constant" identity="DOC_CONFIDENCE_CONFIG" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 const DOC_CONFIDENCE_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   human_verified: { label: 'Human Verified', color: 'text-green-600', icon: CheckCircle2 },
   ai_generated: { label: 'AI Generated', color: 'text-blue-600', icon: Zap },
   unverified_legacy: { label: 'Unverified', color: 'text-amber-600', icon: AlertTriangle },
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:DOC_CONFIDENCE_CONFIG:constant"]
 
 
 
 
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:STABILITY_BADGE:constant" type="constant" identity="STABILITY_BADGE" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 const STABILITY_BADGE: Record<string, 'default' | 'secondary' | 'outline'> = {
   stable: 'default',
   internal: 'secondary',
   experimental: 'outline',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:STABILITY_BADGE:constant"]
 
 
 
@@ -155,8 +157,6 @@ const STABILITY_BADGE: Record<string, 'default' | 'secondary' | 'outline'> = {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:doc_and_stability:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:HashStatusBadge:component" type="component" identity="HashStatusBadge" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Render a Badge indicating the current hash status of a CIL chunk"]
 // CIL[DOC-RESPONSIBILITY responsibility="Display current, drift_detected, or unknown hash status with an icon"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -164,6 +164,7 @@ const STABILITY_BADGE: Record<string, 'default' | 'secondary' | 'outline'> = {
 // CIL[DOC-MICRO logic_summary="Branches on status string and returns a Badge variant with matching icon and label" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:HashStatusBadge:component" type="component" identity="HashStatusBadge" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 function HashStatusBadge({ status }: { status: string }) {
   if (status === 'current') return (
     <Badge variant="default" className="bg-green-600 text-white gap-1">
@@ -181,17 +182,16 @@ function HashStatusBadge({ status }: { status: string }) {
     </Badge>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:HashStatusBadge:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Render a Badge indicating the current hash status of a CIL chunk'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:HashStatusBadge:component"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkLinkCard:component" type="component" identity="ChunkLinkCard" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Render a clickable card linking to another CIL chunk"]
 // CIL[DOC-RESPONSIBILITY responsibility="Format chunk reference as a compact link card"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -199,6 +199,7 @@ function HashStatusBadge({ status }: { status: string }) {
 // CIL[DOC-MICRO logic_summary="Builds admin path, renders file icon, name, path, and hover arrow" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkLinkCard:component" type="component" identity="ChunkLinkCard" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 function ChunkLinkCard({
   chunk,
   label,
@@ -224,6 +225,7 @@ function ChunkLinkCard({
     </a>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkLinkCard:component"]
 
 
 
@@ -233,8 +235,6 @@ function ChunkLinkCard({
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ChunkLinkCard:component"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ContractEditor:component" type="component" identity="ContractEditor" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Edit and persist a CIL chunk contract"]
 // CIL[DOC-RESPONSIBILITY responsibility="Provide a controlled form for macro, micro, I/O, side effects, stability, tests, and confidence"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -242,6 +242,7 @@ function ChunkLinkCard({
 // CIL[DOC-MICRO logic_summary="Maintains local form state, renders labeled Textareas and Selects, submits a PATCH when user clicks Save" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ContractEditor:component" type="component" identity="ContractEditor" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 function ContractEditor({
   contract,
   projectId,
@@ -359,6 +360,7 @@ function ContractEditor({
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ContractEditor:component"]
 
 
 
@@ -368,8 +370,6 @@ function ContractEditor({
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:ContractEditor:component"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:CILChunkDetailPage:component" type="component" identity="CILChunkDetailPage" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 // CIL[DOC-MACRO purpose="Admin page for inspecting a single CIL chunk contract, code, callers, and blast radius"]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch and display chunk contract, validate hash, embed chunk, render graph and blast radius"]
 // CIL[DOC-CONTEXT module="CIL admin UI" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
@@ -377,6 +377,7 @@ function ContractEditor({
 // CIL[DOC-MICRO logic_summary="Loads chunk contract and code, renders hash actions, tabs for contract/graph/code/blast, and link cards for callers/callees" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:CILChunkDetailPage:component" type="component" identity="CILChunkDetailPage" parent="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx"]
 export default function CILChunkDetailPage() {
   const { id: projectId, chunkId } = useParams<{ id: string; chunkId: string }>()
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
@@ -526,17 +527,6 @@ export default function CILChunkDetailPage() {
           </span>
         </div>
       </div>
-
-      <PageInstructions
-        description="Inspect a single CIL chunk, its contract, and its relationships."
-        sections={[
-          { title: 'What this page is for', content: 'This page displays one indexed code chunk, including its contract, code, call graph, and hash/embed status.' },
-          { title: 'How to read this page', content: 'The Contract tab shows macro and micro summaries plus documentation status. The Graph tab lists callers and callees. The Code tab shows the source. Blast Radius appears after calculation.' },
-          { title: 'How to use this page', content: 'Click Validate Hash to confirm the stored hash matches the current file contents. Click Embed Chunk to regenerate its vector embeddings. Click Blast Radius to see impacted chunks.' },
-          { title: 'Important notes', content: 'Dead-code chunks are marked with a destructive badge. Documentation coverage is shown as AI-generated, human-verified, or undocumented.' },
-        ]}
-      />
-
       {}
       <div className="flex items-center gap-3 flex-wrap">
         <HashStatusBadge status={hashStatus} />
@@ -781,11 +771,11 @@ export default function CILChunkDetailPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:CILChunkDetailPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Admin page for inspecting a single CIL chunk contract, code, callers, and blast radius'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILChunkDetailPage.tsx:CILChunkDetailPage:component"]
 

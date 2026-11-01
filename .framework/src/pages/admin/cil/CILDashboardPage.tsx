@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 // CIL[DOC-MACRO purpose="Admin CIL project dashboard page root module: imports dependencies and composes the CILDashboardPage component."]
 // CIL[DOC-RESPONSIBILITY responsibility="Bootstraps the admin CIL dashboard page and wires UI primitives, icons, and the local PageInstructions component."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts"]
@@ -17,6 +17,7 @@ import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Progress } from '@core/components/ui/progress'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:module_header:module_header"]
   CheckCircle2,
   XCircle,
   AlertTriangle,
@@ -36,16 +37,13 @@ import {
   Settings2,
 } from 'lucide-react'
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='Admin CIL project dashboard page root module: imports dependencies and composes the CILDashboardPage component.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:projectstats:interface" type="interface" identity="ProjectStats" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL project ingestion statistics."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provides a typed contract for project-level stats returned from the ingestion pipeline."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -53,6 +51,7 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-MICRO logic_summary="Fields: file_count, chunk_count, proposal_count, approved_count, pending_review_count, total_ingestion_cost_usd, last_ingested_at." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:ProjectStats:interface" type="interface" identity="ProjectStats" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface ProjectStats {
   file_count: number
   chunk_count: number
@@ -62,15 +61,14 @@ interface ProjectStats {
   total_ingestion_cost_usd: number
   last_ingested_at: string | null
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:ProjectStats:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL project ingestion statistics.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:projectstats:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embedstatus:interface" type="interface" identity="EmbedStatus" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL embedding coverage status."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the embedding completeness counts for a project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -78,21 +76,21 @@ interface ProjectStats {
 // CIL[DOC-MICRO logic_summary="Fields: total_chunks, embedded_chunks, coverage_pct, unembedded_chunks." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:EmbedStatus:interface" type="interface" identity="EmbedStatus" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface EmbedStatus {
   total_chunks: number
   embedded_chunks: number
   coverage_pct: number
   unembedded_chunks: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:EmbedStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL embedding coverage status.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embedstatus:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:docstatus:interface" type="interface" identity="DocStatus" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL documentation coverage status."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the documentation coverage counts for a project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -100,6 +98,7 @@ interface EmbedStatus {
 // CIL[DOC-MICRO logic_summary="Fields: total_chunks, documented_count, undocumented_count, ai_generated_count, human_verified_count, coverage_pct." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DocStatus:interface" type="interface" identity="DocStatus" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface DocStatus {
   total_chunks: number
   documented_count: number
@@ -108,15 +107,14 @@ interface DocStatus {
   human_verified_count: number
   coverage_pct: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DocStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL documentation coverage status.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:docstatus:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:callmapstatus:interface" type="interface" identity="CallmapStatus" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL call-map link counts."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the call-map and import link counts for a project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -124,6 +122,7 @@ interface DocStatus {
 // CIL[DOC-MICRO logic_summary="Fields: import_links, call_links, export_links, total_links, tested_by_links." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CallmapStatus:interface" type="interface" identity="CallmapStatus" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface CallmapStatus {
   import_links: number
   call_links: number
@@ -131,15 +130,14 @@ interface CallmapStatus {
   total_links: number
   tested_by_links?: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CallmapStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL call-map link counts.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:callmapstatus:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:configstatus:interface" type="interface" identity="ConfigStatus" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL configuration graph status."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the configuration graph item counts for a project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -147,19 +145,19 @@ interface CallmapStatus {
 // CIL[DOC-MICRO logic_summary="Fields: config_items, configures_links." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:ConfigStatus:interface" type="interface" identity="ConfigStatus" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface ConfigStatus {
   config_items: number
   configures_links: number
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:ConfigStatus:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL configuration graph status.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:configstatus:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:pipelineprogress:interface" type="interface" identity="PipelineProgress" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the shape of CIL pipeline progress aggregation."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the pipeline progress counts and per-file status for a project."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -167,21 +165,21 @@ interface ConfigStatus {
 // CIL[DOC-MICRO logic_summary="Fields: total_selected, total_chunks, by_status, file_statuses." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PipelineProgress:interface" type="interface" identity="PipelineProgress" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface PipelineProgress {
   total_selected: number
   total_chunks: number
   by_status: Record<string, number>
   file_statuses: Record<string, string>
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PipelineProgress:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of CIL pipeline progress aggregation.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:pipelineprogress:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:dashboarddata:interface" type="interface" identity="DashboardData" parent="none"]
 // CIL[DOC-MACRO purpose="Defines the aggregate dashboard data type used by CILDashboardPage."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the unified dashboard data object fetched from multiple endpoints."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="type" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -189,6 +187,7 @@ interface PipelineProgress {
 // CIL[DOC-MICRO logic_summary="Fields: project, embed, doc, callmap, config." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DashboardData:interface" type="interface" identity="DashboardData" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 interface DashboardData {
   project: { id: string; title: string; data: ProjectStats } | null
   embed: EmbedStatus | null
@@ -196,15 +195,14 @@ interface DashboardData {
   callmap: CallmapStatus | null
   config: ConfigStatus | null
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DashboardData:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the aggregate dashboard data type used by CILDashboardPage.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:dashboarddata:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:passcard:function" type="function" identity="PassCard" parent="none"]
 // CIL[DOC-MACRO purpose="Renders a single pipeline pass card with status, icon, metric, and optional link."]
 // CIL[DOC-RESPONSIBILITY responsibility="Visualizes the state of one CIL pipeline stage."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -212,6 +210,7 @@ interface DashboardData {
 // CIL[DOC-MICRO logic_summary="Selects status color, background, and icon from statusConfig and renders a compact linked card." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PassCard:component" type="component" identity="PassCard" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 function PassCard({
   number,
   label,
@@ -263,15 +262,14 @@ function PassCard({
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PassCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a single pipeline pass card with status, icon, metric, and optional link.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:passcard:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stattile:function" type="function" identity="StatTile" parent="none"]
 // CIL[DOC-MACRO purpose="Renders a numeric stat tile with optional sub-label and accent styling."]
 // CIL[DOC-RESPONSIBILITY responsibility="Displays a single dashboard metric."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -279,6 +277,7 @@ function PassCard({
 // CIL[DOC-MICRO logic_summary="Renders a Card with value, label, optional sub, and an icon." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:StatTile:component" type="component" identity="StatTile" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 function StatTile({
   label,
   value,
@@ -307,15 +306,14 @@ function StatTile({
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:StatTile:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a numeric stat tile with optional sub-label and accent styling.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stattile:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:coveragebar:function" type="function" identity="CoverageBar" parent="none"]
 // CIL[DOC-MACRO purpose="Renders a labeled progress bar showing a percentage."]
 // CIL[DOC-RESPONSIBILITY responsibility="Visualizes embedding or documentation coverage as a progress bar."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -323,6 +321,7 @@ function StatTile({
 // CIL[DOC-MICRO logic_summary="Shows a label, percentage, and Progress component." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CoverageBar:component" type="component" identity="CoverageBar" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 function CoverageBar({ label, pct, color = 'bg-indigo-500' }: { label: string; pct: number; color?: string }) {
   return (
     <div className="space-y-1">
@@ -334,15 +333,14 @@ function CoverageBar({ label, pct, color = 'bg-indigo-500' }: { label: string; p
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CoverageBar:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a labeled progress bar showing a percentage.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:coveragebar:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:step_details:constant" type="constant" identity="STEP_DETAILS" parent="none"]
 // CIL[DOC-MACRO purpose="Maps CIL pipeline step slugs to labels, icons, descriptions, and skill tags."]
 // CIL[DOC-RESPONSIBILITY responsibility="Provides the metadata that drives the PassCard rendering for each pipeline stage."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="data" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -350,6 +348,7 @@ function CoverageBar({ label, pct, color = 'bg-indigo-500' }: { label: string; p
 // CIL[DOC-MICRO logic_summary="Record of step slugs to display metadata for the nine CIL pipeline stages." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:STEP_DETAILS:constant" type="constant" identity="STEP_DETAILS" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 const STEP_DETAILS: Record<string, { label: string; icon: React.ElementType; description: string; skill?: string }> = {
   '0-discovered': { label: 'Discover Files', icon: FileCode2, description: 'Walk repo and register source files' },
   '1-selected': { label: 'Select Files', icon: Search, description: 'Files matched by selected paths/globs' },
@@ -361,15 +360,14 @@ const STEP_DETAILS: Record<string, { label: string; icon: React.ElementType; des
   '7-embedded-mapped': { label: 'Embed & Map', icon: Zap, description: 'Generate embeddings and import/call/test edges', skill: 'cil-8' },
   '8-published': { label: 'Publish', icon: CheckCircle2, description: 'Final validation and currentness check' },
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:STEP_DETAILS:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Maps CIL pipeline step slugs to labels, icons, descriptions, and skill tags.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:step_details:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:driftalertcard:function" type="function" identity="DriftAlertCard" parent="none"]
 // CIL[DOC-MACRO purpose="Renders a card that detects and displays CIL chunk hash drift for a project."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetches stored chunks, validates hashes, and surfaces drifted chunks with navigation links."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="component" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -377,6 +375,7 @@ const STEP_DETAILS: Record<string, { label: string; icon: React.ElementType; des
 // CIL[DOC-MICRO logic_summary="Calls admin-data and cil-validate APIs, compares hash status, and lists up to 5 drifted chunks with a count." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DriftAlertCard:component" type="component" identity="DriftAlertCard" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
 function DriftAlertCard({ projectId, appPath }: { projectId: string; appPath: (p: string) => string }) {
   const [driftChunks, setDriftChunks] = useState<any[] | null>(null)
   const [checking, setChecking] = useState(false)
@@ -459,15 +458,14 @@ function DriftAlertCard({ projectId, appPath }: { projectId: string; appPath: (p
     </Card>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:DriftAlertCard:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders a card that detects and displays CIL chunk hash drift for a project.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:driftalertcard:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:cildashboardpage:function" type="function" identity="CILDashboardPage" parent="none"]
 // CIL[DOC-MACRO purpose="Main admin page for reviewing CIL project health, coverage, pipeline status, graph links, and drift."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetches and aggregates project stats, coverage, pipeline progress, callmap, and config; renders the dashboard layout."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="page" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILDashboardPage.tsx"]
@@ -477,12 +475,15 @@ function DriftAlertCard({ projectId, appPath }: { projectId: string; appPath: (p
 // CIL[DOC-STABILITY stability="stable"]
 export default function CILDashboardPage() {
   const { id: projectId } = useParams<{ id: string }>()
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:appPath:function" type="function" identity="appPath" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const appPath = (path: string) => '/spine-framework/admin' + (path.startsWith('/') ? path : '/' + path)
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:appPath:function"]
   const [data, setData] = useState<DashboardData>({ project: null, embed: null, doc: null, callmap: null, config: null })
   const [pipelineProgress, setPipelineProgress] = useState<PipelineProgress | null>(null)
   const [loading, setLoading] = useState(true)
   const [discovering, setDiscovering] = useState(false)
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:load:constant" type="constant" identity="load" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const load = useCallback(async () => {
     if (!projectId) return
     setLoading(true)
@@ -509,11 +510,15 @@ export default function CILDashboardPage() {
       setLoading(false)
     }
   }, [projectId])
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:load:constant"]
 
   useEffect(() => { load() }, [load])
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:project:constant" type="constant" identity="project" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const project = data.project
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:project:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:handleDiscover:constant" type="constant" identity="handleDiscover" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const handleDiscover = useCallback(async () => {
     if (!projectId) return
     setDiscovering(true)
@@ -528,6 +533,7 @@ export default function CILDashboardPage() {
       load()
     }
   }, [projectId, load])
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:handleDiscover:constant"]
 
 
 
@@ -541,28 +547,54 @@ export default function CILDashboardPage() {
     )
   }
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stats:constant" type="constant" identity="stats" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const stats: ProjectStats = project?.data || { file_count: 0, chunk_count: 0, proposal_count: 0, approved_count: 0, pending_review_count: 0, total_ingestion_cost_usd: 0, last_ingested_at: null }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stats:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embed:constant" type="constant" identity="embed" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const embed   = data.embed   || { total_chunks: 0, embedded_chunks: 0, coverage_pct: 0, unembedded_chunks: 0 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embed:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:doc:constant" type="constant" identity="doc" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const doc     = data.doc     || { total_chunks: 0, documented_count: 0, undocumented_count: 0, ai_generated_count: 0, human_verified_count: 0, coverage_pct: 0 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:doc:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:callmap:constant" type="constant" identity="callmap" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const callmap = data.callmap || { import_links: 0, call_links: 0, export_links: 0, total_links: 0, tested_by_links: 0 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:callmap:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:config:constant" type="constant" identity="config" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const config  = data.config  || { config_items: 0, configures_links: 0 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:config:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:pp:constant" type="constant" identity="pp" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const pp = pipelineProgress || { total_selected: 0, total_chunks: 0, by_status: {}, file_statuses: {} }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:pp:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:selectedFiles:constant" type="constant" identity="selectedFiles" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const selectedFiles = pp.total_selected
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:selectedFiles:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:selectedChunks:constant" type="constant" identity="selectedChunks" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const selectedChunks = pp.total_chunks
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:selectedChunks:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:totalTracked:constant" type="constant" identity="totalTracked" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const totalTracked = Object.values(pp.by_status).reduce((a, b) => a + (b || 0), 0)
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:totalTracked:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PIPELINE_ORDER:constant" type="constant" identity="PIPELINE_ORDER" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const PIPELINE_ORDER = [
     '0-discovered', '1-selected', '2-chunked', '3-documented', '4-chunk-validated',
     '5-doc-validated', '6-enriched', '7-embedded-mapped', '8-published',
   ]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:PIPELINE_ORDER:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embedPct:constant" type="constant" identity="embedPct" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const embedPct = selectedChunks > 0 ? Math.round((embed.embedded_chunks / selectedChunks) * 100) : 0
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:embedPct:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:docPct:constant" type="constant" identity="docPct" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const docPct = selectedChunks > 0 ? Math.round((doc.documented_count / selectedChunks) * 100) : 0
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:docPct:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:lastIngested:constant" type="constant" identity="lastIngested" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
   const lastIngested = stats.last_ingested_at
     ? new Date(stats.last_ingested_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     : 'Never'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:lastIngested:constant"]
 
   return (
     <div className="p-6 space-y-6 max-w-5xl">
@@ -602,17 +634,6 @@ export default function CILDashboardPage() {
           </Button>
         </div>
       </div>
-
-      <PageInstructions
-        description="Review CIL project health and ingestion coverage."
-        sections={[
-          { title: 'What this page is for', content: 'This page is the project-level overview for a CIL project. It displays stats, coverage, pipeline status, graph links, and drift alerts.' },
-          { title: 'How to read the cards', content: 'The top tiles show Files, Chunks, Pending Review, and cumulative LLM Cost. The Coverage card shows embedding and documentation coverage plus AI-generated, human-verified, and undocumented counts.' },
-          { title: 'How to read the pipeline', content: 'Pass cards summarize Discover Files, Select Files, Chunk, Document, Validate Chunks, Validate Docs, Enrich, Embed & Map, and Publish. Each card shows status, counts, and a link to the relevant step.' },
-          { title: 'Important notes', content: 'Use Refresh to reload the dashboard and Run Pipeline to start or continue ingestion. A drift alert appears when stored hashes differ from current code.' },
-        ]}
-      />
-
       {}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatTile label="Files" value={selectedFiles.toLocaleString()} sub={`${stats.file_count.toLocaleString()} discovered`} icon={FileCode2} />
@@ -660,26 +681,38 @@ export default function CILDashboardPage() {
         <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3">Pipeline Status</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {(() => {
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:outByIdx:constant" type="constant" identity="outByIdx" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
             const outByIdx = PIPELINE_ORDER.map((_, i) =>
               PIPELINE_ORDER.slice(i === 0 ? 1 : i).reduce((sum, s) => sum + (pp.by_status[s] || 0), 0)
             )
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:outByIdx:constant"]
 
             return PIPELINE_ORDER.map((status, idx) => {
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:detail:constant" type="constant" identity="detail" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
               const detail = STEP_DETAILS[status]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:detail:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:inCount:constant" type="constant" identity="inCount" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
               const inCount = idx === 0 ? totalTracked : outByIdx[idx - 1]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:inCount:constant"]
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:outCount:constant" type="constant" identity="outCount" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
               const outCount = outByIdx[idx]
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:outCount:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stageStatus:constant" type="constant" identity="stageStatus" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
               const stageStatus = inCount === 0
                 ? 'empty'
                 : inCount > 0 && outCount === inCount
                   ? 'complete'
                   : 'partial'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:stageStatus:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:metric:constant" type="constant" identity="metric" parent="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:CILDashboardPage:component"]
               const metric = selectedFiles > 0
                 ? `${inCount.toLocaleString()} / ${outCount.toLocaleString()} files`
                 : 'No files selected'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:metric:constant"]
 
               return (
                 <PassCard
@@ -769,4 +802,3 @@ export default function CILDashboardPage() {
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILDashboardPage.tsx:cildashboardpage:function"]

@@ -1,39 +1,65 @@
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
-// CIL[DOC-MACRO purpose="Top-level module for the admin Integrations page; exports the IntegrationsPage component and Integration interface."]
-// CIL[DOC-RESPONSIBILITY responsibility="Serves as the module entry point and declares the public surface of the admin integrations list page."]
-// CIL[DOC-CONTEXT module="admin/integrations" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="exports IntegrationsPage and Integration" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, utility functions, the API client, and reusable admin components, then re-exports the page component and type interface." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+/**
+ * @module   IntegrationsPage
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The IntegrationsPage module provides an interface for managing integrations within the admin panel of the application. It allows users to view, sort, and interact with a list of integrations, leveraging various UI components for enhanced user experience.
+ * INVARIANT: The user must have admin privileges to access this page.
+ *
+ * @seeAlso AdminListPage (provides the list view for integrations).
+ * @seeAlso SortableTableHeader (enables sorting functionality for the integration list).
+ * @seeAlso useApi (custom hook for API interactions).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Link, CheckCircle, AlertTriangle, Settings, Cog } from 'lucide-react';
 import { formatDateTime } from '../../lib/utils'
 import { apiFetch } from '../../lib/api'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { useApi } from '../../hooks/useApi'
-
-// CIL[DOC-VECTOR type="context" content="purpose='Top-level module for the admin Integrations page; exports the IntegrationsPage component and Integration interface.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:module_header:module_header"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:Integration:interface" type="interface" identity="Integration" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
-// CIL[DOC-MACRO purpose="TypeScript type definition for an integration record used by the admin integrations page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the shape and optional nested fields of an integration for compile-time checking and API response typing."]
-// CIL[DOC-CONTEXT module="admin/integrations" layer="type" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/IntegrationsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Integration interface declaration" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares the Integration interface with identifiers, descriptive fields, provider/version, active and configured flags, sync state, and nested app and creator objects." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The Integration interface defines the structure for integration objects used in the admin panel, encapsulating essential details about each integration, including its status and configuration.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface Integration {
   id: string
   name: string
@@ -59,23 +85,39 @@ interface Integration {
     email: string
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='TypeScript type definition for an integration record used by the admin integrations page.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:Integration:interface"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:IntegrationsPage:component" type="component" identity="IntegrationsPage" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin list page for browsing, filtering, sorting, and navigating external service integrations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Loads integrations via the API, applies search/status/type filters, sorts the results, computes summary statistics, and renders the list with navigation to detail and new pages."]
-// CIL[DOC-CONTEXT module="admin/integrations" layer="presentation" related_files=".framework/src/components/admin/AdminListPage.tsx,.framework/src/components/admin/SortableTableHeader.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/IntegrationsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX for the AdminListPage with filterable, sortable integration table" errors="Propagates fetch failures through useApi; sort fallback returns 0 for unsupported value types" side_effects="Navigates via window.location when a table row is clicked"]
-// CIL[DOC-MICRO logic_summary="Uses useApi to fetch integrations, filters by search term, status, and type, sorts by selected key and direction, builds stats cards, and renders AdminListPage with a SortableTableHeader table and row-click navigation." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+/**
+ * The IntegrationsPage component manages the display and filtering of integrations within an admin interface. It allows users to search, sort, and navigate to detailed views of integrations.
+ *
+ * @macro       Admin interface component for managing integrations.
+ * @micro       Utilizes state management for search, filtering, and sorting of integration data fetched from an external API.
+ * @outputSpec  JSX.Element
+ * @throws      Error — if the API response is not ok
+ * @sideEffects Fetches integration data from an external API.
+ * @stability   internal
+ * @calls       useApi, apiFetch, useNavigate
+ * @errorHandling throws an error if the API response is not ok
+ * @cil-generated
+ */
 export function IntegrationsPage() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
@@ -128,7 +170,7 @@ export function IntegrationsPage() {
   }
 
   const handleRowClick = (integration: Integration) => {
-    window.location.href = `/spine-framework/admin/configs/integrations/${integration.id}`
+    navigate(`/spine-framework/admin/configs/integrations/${integration.id}`)
   }
 
   const sortedIntegrations = [...(filteredIntegrations || [])].sort((a, b) => {
@@ -324,10 +366,10 @@ export function IntegrationsPage() {
     </AdminListPage>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Admin list page for browsing, filtering, sorting, and navigating external service integrations.'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/lib/api.ts,.framework/src/components/admin/AdminListPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:IntegrationsPage:component"]
+
+
+
+
+
+

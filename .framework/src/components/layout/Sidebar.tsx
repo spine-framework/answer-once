@@ -1,12 +1,28 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Sidebar layout module entry point"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import dependencies and export Sidebar components and navigation constants"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module exports, imports, and navigation constants" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Sets up the sidebar module and declares navigation arrays" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="engineers"]
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * @module   Sidebar
+ * @audience both
+ * @layer    shared-core
+ * @stability stable
+ *
+ * The Sidebar component provides a navigational interface for users, allowing them to access various sections of the application. It integrates with authentication and branding contexts to dynamically render links based on user permissions and branding settings.
+ * INVARIANT: The user must be authenticated to access certain links.
+ *
+ * @seeAlso AuthContext.tsx (provides authentication context for user access control).
+ * @seeAlso useBranding.ts (handles branding logic for the application).
+ * @seeAlso Popover.tsx (used for displaying additional options in the sidebar).
+ *
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
 
 
 
@@ -21,6 +37,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useBranding } from '../../hooks/useBranding'
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
 import { 
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
   Home, 
   Box, 
   Users, 
@@ -47,66 +64,92 @@ import {
   Cpu,
   BookOpen
 } from 'lucide-react'
-// CIL[DOC-VECTOR type="context" content="purpose='Sidebar layout module entry point'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarprops:interface" type="interface" identity="sidebarprops" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define Sidebar component props"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type-safe contract for Sidebar open state and close callback"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="open boolean and onClose callback" outputs="SidebarProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares open and onClose fields for the Sidebar shell" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarProps:interface" type="interface" identity="SidebarProps" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * SidebarProps defines the properties required for the Sidebar component, managing its open state and close action. This interface ensures that the Sidebar can be controlled effectively by its parent component.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface SidebarProps {
   open: boolean
   onClose: () => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define Sidebar component props'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarprops:interface"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarProps:interface"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:navigation:constant" type="constant" identity="navigation" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Primary navigation links for the sidebar"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide top-level navigation item data"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="array of navigation entries" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static constant array of top-level navigation objects with name, href, and icon" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:navigation:constant" type="constant" identity="navigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The 'navigation' constant defines the structure of the sidebar navigation items for the application. It provides a consistent way to manage and render navigation links within the sidebar component.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const navigation = [
   { name: 'Dashboard', href: '/spine-framework/admin/configs/types', icon: Home },
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Primary navigation links for the sidebar'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:navigation:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsnavigation:constant" type="constant" identity="configsnavigation" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Configuration section navigation links"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide navigation data for the admin configuration section"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="array of config navigation entries" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array of config navigation items with dividers and icons" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsNavigation:constant" type="constant" identity="configsNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The 'configsNavigation' constant defines a structured navigation menu for the admin configuration section of the application. It organizes various configuration items into a list, including dividers for better visual separation.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const configsNavigation = [
   { name: 'Item Types', href: '/spine-framework/admin/configs/types', icon: Box },
   { divider: true },
@@ -124,136 +167,193 @@ const configsNavigation = [
   { name: 'API Keys', href: '/spine-framework/admin/configs/api-keys', icon: Key },
   { name: 'Deliveries', href: '/spine-framework/admin/configs/deliveries', icon: Truck },
 ] as const
-// CIL[DOC-VECTOR type="context" content="purpose='Configuration section navigation links'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsnavigation:constant"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsNavigation:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilitynavigation:constant" type="constant" identity="observabilitynavigation" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Observability section navigation links"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide navigation data for the observability section"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="array of observability navigation entries" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array of observability navigation items with icons" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilityNavigation:constant" type="constant" identity="observabilityNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The 'observabilityNavigation' constant defines a structured array of navigation items for the observability section of the application. It provides links to various observability features such as Dashboard, Alerts, Executions, and Logs.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const observabilityNavigation = [
   { name: 'Dashboard', href: '/spine-framework/admin/observability', icon: BarChart3 },
   { name: 'Alerts', href: '/spine-framework/admin/observability/alerts', icon: Bell },
   { name: 'Executions', href: '/spine-framework/admin/observability/executions', icon: FlaskConical },
   { name: 'Logs', href: '/spine-framework/admin/observability/logs', icon: FileText },
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Observability section navigation links'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilitynavigation:constant"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilityNavigation:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeentities:constant" type="constant" identity="runtimeentities" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Runtime entity navigation links"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide navigation data for runtime entities section"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="array of runtime entity navigation entries" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array of runtime entity navigation items with icons" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeEntities:constant" type="constant" identity="runtimeEntities" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The constant 'runtimeEntities' defines a list of navigational items for the sidebar in the application. Each item includes a name, a link, and an associated icon for user interface representation.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const runtimeEntities = [
   { name: 'Items', href: '/spine-framework/admin/runtime/items', icon: Box },
   { name: 'Accounts', href: '/spine-framework/admin/runtime/accounts', icon: Building2 },
   { name: 'People', href: '/spine-framework/admin/runtime/people', icon: User },
-  { name: 'Person Types', href: '/spine-framework/admin/runtime/person-types', icon: Users },
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Runtime entity navigation links'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeentities:constant"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeEntities:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbenginenavigation:constant" type="constant" identity="kbenginenavigation" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Knowledge base engine navigation links"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide navigation data for the KB engine section"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="array of KB engine navigation entries" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array of KB engine navigation items with icons" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbEngineNavigation:constant" type="constant" identity="kbEngineNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The constant 'kbEngineNavigation' defines a navigation structure for the Knowledge Base section of the application. It provides links to key resources within the admin interface.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 const kbEngineNavigation = [
   { name: 'Knowledge Base', href: '/spine-framework/admin/kb/kb-spine-public', icon: BookOpen },
   { name: 'Embeddings', href: '/spine-framework/admin/kb/embeddings', icon: Cpu },
 ]
-// CIL[DOC-VECTOR type="context" content="purpose='Knowledge base engine navigation links'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbenginenavigation:constant"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbEngineNavigation:constant"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:classnames:function" type="function" identity="classnames" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Conditionally combine CSS class strings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Filter falsy class values and join remaining classes"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="classes: (string | false | undefined)[]" outputs="space-delimited className string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Filters truthy values from the input array and joins them with spaces" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="param" content="classes: (string | false | undefined)[] - class values to combine"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:classNames:function" type="function" identity="classNames" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The classNames function constructs a single string from an array of class names, filtering out any falsy values. This utility is useful for dynamically generating class attribute values in JSX components.
+ *
+ * @macro       Utility function for generating a concatenated class name string.
+ * @micro       Filters out falsy values from the input array before joining the remaining class names.
+ * @inputSpec
+ *   - classes: (string | false | undefined)[] (required) — an array of class names that may include falsy values.
+ * @outputSpec  string — a single string of class names separated by spaces.
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 function classNames(...classes: (string | false | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
-
-
-
-
-
-// CIL[DOC-VECTOR type="context" content="purpose='Conditionally combine CSS class strings'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:classnames:function"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:classNames:function"]
 
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebar:function" type="function" identity="sidebar" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render responsive sidebar shell"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display a mobile-friendly sidebar overlay with close controls"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="open: boolean, onClose: () => void" outputs="JSX sidebar overlay" errors="none" side_effects="renders DOM elements and attaches click handlers"]
-// CIL[DOC-MICRO logic_summary="Renders a fixed overlay and panel when open is true, delegating content to SidebarContent" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="param" content="open: boolean - whether the sidebar is open"]
-// CIL[DOC-NOTE type="param" content="onClose: () => void - callback to close the sidebar"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:Sidebar:component" type="component" identity="Sidebar" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * The Sidebar component renders a collapsible sidebar interface that displays branding and navigation options. It provides users with a navigational aid that can be opened and closed as needed.
+ *
+ * @macro       UI component responsible for displaying a sidebar with branding and navigation.
+ * @micro       Utilizes conditional rendering to display the sidebar based on the 'open' state.
+ * @inputSpec
+ *   - open: boolean (required) — determines if the sidebar is visible.
+ *   - onClose: function (required) — callback function to close the sidebar.
+ * @outputSpec  JSX.Element — renders the sidebar UI structure.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       useBranding, SidebarContent
+ * @cil-generated
+ */
 export function Sidebar({ open, onClose }: SidebarProps) {
   const branding = useBranding()
   return (
     <>
       <div className={classNames(open && 'fixed inset-0 z-40 flex')}> 
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:Sidebar:component"]
         {open && (
           <div className="fixed inset-0 z-40 flex">
             <div 
@@ -285,42 +385,65 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     </>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render responsive sidebar shell'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebar:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarcontentprops:interface" type="interface" identity="sidebarcontentprops" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define SidebarContent component props"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type-safe contract for optional navigation click handler"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="optional onNavClick callback" outputs="SidebarContentProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares an optional onNavClick callback for navigation items" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContentProps:interface" type="interface" identity="SidebarContentProps" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * SidebarContentProps defines the properties for the sidebar content component, specifically handling navigation click events. It allows for optional navigation click functionality to be passed in as a prop.
+ *
+ * @sideEffects none
+ * @stability   internal
+ * @cil-generated
+ */
 interface SidebarContentProps {
   onNavClick?: () => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define SidebarContent component props'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarcontentprops:interface"]
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContentProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarcontent:function" type="function" identity="sidebarcontent" parent="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render sidebar navigation content"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display navigation sections, user info, and logout action"]
-// CIL[DOC-CONTEXT module=".framework/src/components/layout/Sidebar.tsx" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/components/ui/popover.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="onNavClick?: () => void" outputs="JSX sidebar navigation content" errors="none" side_effects="renders DOM elements, uses React hooks and auth context"]
-// CIL[DOC-MICRO logic_summary="Builds navigation groups with collapsible sections and a user popover; uses useLocation, useAuth, and useState" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="param" content="onNavClick?: () => void - optional click handler for navigation links"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContent:component" type="component" identity="SidebarContent" parent="~/.framework/src/components/layout/Sidebar.tsx"]
+/**
+ * SidebarContent renders a navigation sidebar that allows users to navigate through different sections of the application and conditionally displays additional configuration options for system administrators.
+ *
+ * @macro       Navigation component for application sidebar with conditional rendering for admin options.
+ * @micro       Utilizes React state to manage the open/closed status of various sections based on the current URL path.
+ * @inputSpec
+ *   - onNavClick: function (required) — callback function triggered on navigation item click.
+ * @outputSpec  JSX.Element — renders the sidebar navigation structure.
+ * @sideEffects none
+ * @stability   internal
+ * @calls       useLocation, useAuth, classNames, Link
+ * @cil-generated
+ */
 export function SidebarContent({ onNavClick }: SidebarContentProps) {
   const location = useLocation()
   const { user, logout } = useAuth()
@@ -368,6 +491,7 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
             {item.name}
           </Link>
         ))}
+// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContent:component"]
       </div>
 
       {isSystemAdmin && (
@@ -573,10 +697,9 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
     </nav>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render sidebar navigation content'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/popover.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:sidebarcontent:function"]
+
+
+
+
+
+

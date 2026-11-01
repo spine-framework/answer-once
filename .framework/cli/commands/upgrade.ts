@@ -22,6 +22,8 @@ import {
   mergePackageJson,
   writeFrozenManifest,
   cmpSemver,
+  syncAgentFiles,
+  collectAgentFileHashes,
 } from '../lib/project-files.ts'
 // CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:module_header:module_header"]
 
@@ -167,11 +169,27 @@ function runUpgrade(opts: { dryRun: boolean; force: boolean }): void {
     .filter((rel) => rel.startsWith('.framework/migrations/') && rel.endsWith('.sql') && !(rel in oldFiles))
 
   console.log(`\n  ${added.length} added · ${changed.length} changed · ${removed.length} removed · ${kept} unchanged`)
+
+  // Agent assets are computed before the dry-run exit so the report is complete:
+  // AGENTS.md gets its marker-delimited framework block refreshed in place
+  // (customer content outside the markers is preserved); .devin/skills/spine-*
+  // dirs are replaced wholesale (customer-owned sibling dirs untouched).
+  const agentActions = syncAgentFiles({
+    pkgRoot: PACKAGE_ROOT,
+    projectRoot: PROJECT_ROOT,
+    entries: profile.agent_files ?? [],
+    version: newVersion,
+    dryRun: true,
+  })
+
   if (opts.dryRun) {
     for (const f of added) console.log(`     + ${f}`)
     for (const f of changed) console.log(`     ~ ${f}`)
     for (const f of removed) console.log(`     - ${f}`)
     for (const f of staleOutside) console.log(`     ? ${f} (dropped upstream, left in place)`)
+    for (const a of agentActions) {
+      if (a.action !== 'unchanged') console.log(`     ~ ${a.rel} (agent asset: ${a.action})`)
+    }
     if (newMigrations.length > 0) {
       console.log(`\n  New migrations in this version (${newMigrations.length}):`)
       for (const rel of newMigrations) console.log(`     ${rel.split('/').pop()}`)
@@ -185,6 +203,22 @@ function runUpgrade(opts: { dryRun: boolean; force: boolean }): void {
   for (const rel of removed) rmSync(join(PROJECT_ROOT, rel), { force: true })
   for (const rel of staleOutside) console.log(`  ⚠ ${rel} is no longer shipped upstream — left in place`)
   console.log(`  ✓ framework files synced (${files.length})`)
+
+  // 4b. Apply agent assets (the dry-run pass above reported; this one writes)
+  const applied = syncAgentFiles({
+    pkgRoot: PACKAGE_ROOT,
+    projectRoot: PROJECT_ROOT,
+    entries: profile.agent_files ?? [],
+    version: newVersion,
+  })
+  for (const a of applied) {
+    if (a.action === 'prepended') {
+      console.log(`  ⚠ ${a.rel} had no spine-framework markers — fresh framework block prepended`)
+    } else if (a.action !== 'unchanged') {
+      console.log(`  ✓ ${a.rel} (${a.action})`)
+    }
+  }
+  console.log('  ✓ agent assets synced (AGENTS.md + .devin/skills/spine-*)')
 
   // 5. package.json — framework scripts/deps, exact pin
   const pkgPath = join(PROJECT_ROOT, 'package.json')
@@ -222,6 +256,7 @@ function runUpgrade(opts: { dryRun: boolean; force: boolean }): void {
     projectRoot: PROJECT_ROOT,
     frameworkVersion: newVersion,
     frameworkDeps: merged.frameworkDeps,
+    agentFiles: collectAgentFileHashes(PROJECT_ROOT, profile.agent_files ?? []),
   })
   console.log(`  ✓ .spine-manifest.json regenerated (${manifest.fileCount} files)`)
 

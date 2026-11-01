@@ -42,21 +42,26 @@ const permissions = PermissionEngine as any
 // CIL[DOC-MACRO purpose="List active type definitions with optional filters and pagination"]
 // CIL[DOC-RESPONSIBILITY responsibility="Query the public.types table and sanitize records based on the caller principal"]
 // CIL[DOC-CONTEXT module="types function" layer="framework/functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/_shared/schema-utils.ts,.framework/functions/types.ts"]
-// CIL[DOC-CONTRACT inputs="kind, app_id, ownership, limit, offset, include_schema query parameters" outputs="array of sanitized type rows" errors="Database query errors" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Builds a filtered, paginated Supabase query against the types table and returns sanitized results" notable_decisions="Returns minimal fields for unauthenticated callers; includes schema only when requested"]
+// CIL[DOC-CONTRACT inputs="kind, app_id, ownership, active, limit, offset, include_schema query parameters" outputs="array of sanitized type rows" errors="Database query errors" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Builds a filtered, paginated Supabase query against the types table and returns sanitized results" notable_decisions="Returns minimal fields for unauthenticated callers; includes schema only when requested; active defaults to true, 'all' lists active and inactive, 'false' lists inactive only"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const list = createHandler(async (ctx, body) => {
-  const { kind, app_id, ownership, limit = '50', offset = '0', include_schema } = ctx.query || {}
+  const { kind, app_id, ownership, active, limit = '50', offset = '0', include_schema } = ctx.query || {}
 
   const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
 
   let query = db
     .from('types')
     .select('*')
-    .eq('is_active', true)
     .order('kind')
     .order('name')
+
+  if (active === 'false') {
+    query = query.eq('is_active', false)
+  } else if (active !== 'all') {
+    query = query.eq('is_active', true)
+  }
 
   if (kind) {
     query = query.eq('kind', kind)
@@ -132,7 +137,6 @@ export const get = createHandler(async (ctx, body) => {
     .from('types')
     .select('*')
     .eq('id', id)
-    .eq('is_active', true)
     .single()
 
   if (err) throw err
@@ -237,7 +241,6 @@ export const create = createHandler(async (ctx, body) => {
     app_id = null,
     design_schema = {},
     validation_schema = null,
-    view_config = {},
     description = null,
     icon = null,
     color = null
@@ -272,7 +275,6 @@ export const create = createHandler(async (ctx, body) => {
       app_id,
       design_schema,
       validation_schema: validation,
-      view_config,
       description,
       icon,
       color,
@@ -325,7 +327,6 @@ export const update = createHandler(async (ctx, body) => {
     .from('types')
     .select('*')
     .eq('id', id)
-    .eq('is_active', true)
     .single()
 
   if (!existing) {
@@ -340,7 +341,6 @@ export const update = createHandler(async (ctx, body) => {
     name,
     slug,
     design_schema,
-    view_config,
     description,
     icon,
     color,
@@ -354,7 +354,6 @@ export const update = createHandler(async (ctx, body) => {
 
   if (name !== undefined) updates.name = name
   if (slug !== undefined) updates.slug = slug
-  if (view_config !== undefined) updates.view_config = view_config
   if (description !== undefined) updates.description = description
   if (icon !== undefined) updates.icon = icon
   if (color !== undefined) updates.color = color
@@ -366,6 +365,10 @@ export const update = createHandler(async (ctx, body) => {
   if (design_schema !== undefined) {
     updates.design_schema = design_schema
     updates.validation_schema = generateValidationSchema(design_schema)
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return existing
   }
 
   const { data, error } = await adminDb

@@ -20,6 +20,8 @@ import {
   mergePackageJson,
   writeFrozenManifest,
   sanitizePackageName,
+  syncAgentFiles,
+  collectAgentFileHashes,
 } from '../lib/project-files.ts'
 // CIL[END stable_id="~/.framework/cli/commands/init.ts:module_header:module_header"]
 
@@ -137,11 +139,23 @@ export function registerInitCommands(program: Command) {
           console.log('  ✓ spine.config.json written (neutral template)')
         }
 
-        // 8. Frozen integrity manifest — version + framework-owned dep inventory
+        // 8. Agent assets — AGENTS.md framework block + .devin/skills/spine-*
+        const agentActions = syncAgentFiles({
+          pkgRoot: PACKAGE_ROOT,
+          projectRoot: target,
+          entries: profile.agent_files ?? [],
+          version: frameworkVersion,
+        })
+        for (const a of agentActions) {
+          console.log(`  ✓ ${a.rel} (${a.action}${a.detail ? ` — ${a.detail}` : ''})`)
+        }
+
+        // 9. Frozen integrity manifest — version + framework-owned dep inventory
         const manifest = writeFrozenManifest({
           projectRoot: target,
           frameworkVersion,
           frameworkDeps: merged.frameworkDeps,
+          agentFiles: collectAgentFileHashes(target, profile.agent_files ?? []),
         })
         console.log(`  ✓ .spine-manifest.json written (${manifest.fileCount} protected files, frozen)`)
 
@@ -157,6 +171,11 @@ export function registerInitCommands(program: Command) {
         console.log('  4. Install an app, e.g.: npx <app-package> install')
         console.log('  5. npx spine-framework migrate')
         console.log('  6. npm run dev:netlify')
+        console.log()
+        console.log('Docs + agent assets:')
+        console.log('  - Instruction book: .framework/src/instructions/README.md')
+        console.log('  - Agent rules:      AGENTS.md (framework block refreshes on upgrade)')
+        console.log('  - Agent skills:     .devin/skills/spine-*')
         console.log()
       } catch (err: any) {
         console.error('\n❌ Init failed:', err.message)

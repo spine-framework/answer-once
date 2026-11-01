@@ -17,6 +17,7 @@ import { Skeleton } from '@core/components/ui/skeleton'
 import { Input } from '@core/components/ui/input'
 import { Label } from '@core/components/ui/label'
 import {
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:module_header:module_header"]
   Table,
   TableHeader,
   TableBody,
@@ -26,15 +27,12 @@ import {
 } from '@core/components/ui/table'
 import { GitBranch, Plus } from 'lucide-react'
 
-import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-VECTOR type="context" content="purpose='Declares module-level imports and dependencies for the CIL versions admin page.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:project_id:constant" type="constant" identity="project_id" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Provides the fixed CIL redesign project UUID used to filter and create versions."]
 // CIL[DOC-RESPONSIBILITY responsibility="Hold the project identifier constant referenced by fetch and create operations."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
@@ -43,16 +41,16 @@ import { PageInstructions } from '../../../components/admin/PageInstructions'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:PROJECT_ID:constant" type="constant" identity="PROJECT_ID" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 const PROJECT_ID = '24d2bb67-24be-4cdf-a633-108588d37f00'
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:PROJECT_ID:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Provides the fixed CIL redesign project UUID used to filter and create versions.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:project_id:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersion:interface" type="interface" identity="CILVersion" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Defines the TypeScript shape for CIL version records returned by admin-data."]
 // CIL[DOC-RESPONSIBILITY responsibility="Type the version object consumed and rendered by CILVersionsPage."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
@@ -61,6 +59,7 @@ const PROJECT_ID = '24d2bb67-24be-4cdf-a633-108588d37f00'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersion:interface" type="interface" identity="CILVersion" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 interface CILVersion {
   id: string
   title: string
@@ -73,19 +72,18 @@ interface CILVersion {
   }
   created_at: string
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersion:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the TypeScript shape for CIL version records returned by admin-data.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersion:interface"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:status_variant:constant" type="constant" identity="status_variant" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Maps CIL version status values to Badge component variants."]
 // CIL[DOC-RESPONSIBILITY responsibility="Supply the correct visual variant for active, inactive, and archived version statuses."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
@@ -94,25 +92,25 @@ interface CILVersion {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:STATUS_VARIANT:constant" type="constant" identity="STATUS_VARIANT" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   active: 'default',
   inactive: 'secondary',
   archived: 'outline',
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:STATUS_VARIANT:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Maps CIL version status values to Badge component variants.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:status_variant:constant"]
 
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersionsPage:component" type="component" identity="CILVersionsPage" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 // CIL[DOC-MACRO purpose="Renders and manages CIL project versions: list, create, publish, deactivate, and archive."]
 // CIL[DOC-RESPONSIBILITY responsibility="Fetch, display, create, and transition CIL version statuses through the admin-data API."]
 // CIL[DOC-CONTEXT module="admin/cil" layer="ui" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
@@ -121,6 +119,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'dest
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
+// CIL[BEGIN stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersionsPage:component" type="component" identity="CILVersionsPage" parent="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx"]
 export default function CILVersionsPage() {
   const [versions, setVersions] = useState<CILVersion[]>([])
   const [loading, setLoading] = useState(true)
@@ -209,16 +208,6 @@ export default function CILVersionsPage() {
           </p>
         </div>
       </div>
-
-      <PageInstructions
-        description="Create and manage CIL project versions."
-        sections={[
-          { title: 'What this page is for', content: 'Versions represent distinct snapshots or iterations of a CIL project. Use this page to publish, deactivate, and archive versions.' },
-          { title: 'How to create a version', content: 'Enter a version string (e.g., 1.0.0) and click Create.' },
-          { title: 'Actions', content: 'Publish makes an inactive version active. Deactivate sets a version back to inactive. Archive marks it as archived.' },
-        ]}
-      />
-
       <Card>
         <CardContent className="p-4">
           <form onSubmit={handleCreate} className="flex items-end gap-3">
@@ -325,13 +314,13 @@ export default function CILVersionsPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersionsPage:component"]
 // CIL[DOC-VECTOR type="context" content="purpose='Renders and manages CIL project versions: list, create, publish, deactivate, and archive.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/cil/CILVersionsPage.tsx:CILVersionsPage:component"]
 
 
 

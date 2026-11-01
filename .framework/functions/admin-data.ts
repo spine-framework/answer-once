@@ -1,3 +1,4 @@
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/admin-data.ts"]
 /**
  * @module   admin-data
  * @audience internal
@@ -13,7 +14,6 @@
  *
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="This module handles administrative data operations within the system, providing essential functionalities for managing records and permissions."]
 // CIL[DOC-RESPONSIBILITY responsibility="This module handles administrative data operations within the system, providing essential functionalities for managing records and permissions. It serves as an API handler for various administrative actions, ensuring that only authorized users can perform updates and access sensitive data. INVARIANT: Only users with system admin privileges can execute these operations."]
 // CIL[DOC-CONTEXT module="admin-data" layer="app-specific" related_files="middleware.ts (provides request handling logic).,permissions.ts (manages access control and validation).,db.ts (interfaces with the database for data operations).,principal.ts (determines user roles and permissions)."]
@@ -62,7 +62,6 @@ import { checkTypeSlugRateLimit } from './_shared/security'
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:permissions_all:constant" type="constant" identity="PERMISSIONS_ALL" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="PERMISSIONS_ALL constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the PERMISSIONS_ALL constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -70,11 +69,12 @@ import { checkTypeSlugRateLimit } from './_shared/security'
 // CIL[DOC-MICRO logic_summary="Implements the PERMISSIONS_ALL constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:PERMISSIONS_ALL:constant" type="constant" identity="PERMISSIONS_ALL" parent="~/.framework/functions/admin-data.ts"]
 const PERMISSIONS_ALL = {
   record_permissions: { all: ['create', 'read', 'update', 'delete'] },
   fields: {}
 }
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:permissions_all:constant"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:PERMISSIONS_ALL:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='PERMISSIONS_ALL defines a comprehensive set of permissions for record management, including create, read, update, and delete actions.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -96,7 +96,6 @@ const PERMISSIONS_ALL = {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:valid_entities:constant" type="constant" identity="VALID_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="VALID_ENTITIES constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the VALID_ENTITIES constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -104,8 +103,9 @@ const PERMISSIONS_ALL = {
 // CIL[DOC-MICRO logic_summary="Implements the VALID_ENTITIES constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:VALID_ENTITIES:constant" type="constant" identity="VALID_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'links', 'attachments', 'watchers', 'item_progress', 'logs', 'test_runs', 'observability', 'test_cases', 'types', 'link_types', 'ai_agents', 'prompt_configs']
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:valid_entities:constant"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:VALID_ENTITIES:constant"]
 // CIL[DOC-MACRO purpose="VALID_ENTITIES constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the VALID_ENTITIES constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -134,7 +134,6 @@ const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'l
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:raw_entities:constant" type="constant" identity="RAW_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="RAW_ENTITIES constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the RAW_ENTITIES constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -142,11 +141,14 @@ const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'l
 // CIL[DOC-MICRO logic_summary="Implements the RAW_ENTITIES constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:RAW_ENTITIES:constant" type="constant" identity="RAW_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 const RAW_ENTITIES = ['logs', 'test_runs', 'observability', 'test_cases']
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:RAW_ENTITIES:constant"]
 // Entities with no created_by/updated_by columns — audit stamps must be
 // omitted or writes fail with schema-cache errors.
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:UNAUDITED_ENTITIES:constant" type="constant" identity="UNAUDITED_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 const UNAUDITED_ENTITIES = ['types', 'link_types']
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:raw_entities:constant"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:UNAUDITED_ENTITIES:constant"]
 // CIL[DOC-MACRO purpose="RAW_ENTITIES constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the RAW_ENTITIES constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -175,7 +177,6 @@ const UNAUDITED_ENTITIES = ['types', 'link_types']
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:entity_to_kind:constant" type="constant" identity="ENTITY_TO_KIND" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="ENTITY_TO_KIND constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the ENTITY_TO_KIND constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -183,6 +184,7 @@ const UNAUDITED_ENTITIES = ['types', 'link_types']
 // CIL[DOC-MICRO logic_summary="Implements the ENTITY_TO_KIND constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:ENTITY_TO_KIND:constant" type="constant" identity="ENTITY_TO_KIND" parent="~/.framework/functions/admin-data.ts"]
 const ENTITY_TO_KIND: Record<string, string> = {
   accounts: 'account',
   people: 'person',
@@ -194,7 +196,7 @@ const ENTITY_TO_KIND: Record<string, string> = {
   watchers: 'watcher',
   item_progress: 'item_progress'
 }
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:entity_to_kind:constant"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:ENTITY_TO_KIND:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='ENTITY_TO_KIND is a mapping of entity names to their corresponding kind identifiers.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -217,7 +219,6 @@ const ENTITY_TO_KIND: Record<string, string> = {
  * @calls       withAdminLogging, resolveTypeIds, getSearchField
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="list constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the list constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -225,8 +226,9 @@ const ENTITY_TO_KIND: Record<string, string> = {
 // CIL[DOC-MICRO logic_summary="Implements the list constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/admin-data.ts"]
 export const list = createHandler(async (ctx, _body) => {
-  const { entity, action, method, search, sort_field = 'created_at', sort_direction = 'desc', limit = 50, offset = 0, type_slug, type_slugs, view: viewSlug, flag_only, exclude_flag, ...filters } = ctx.query || {}
+  const { entity, action, method, search, sort_field = 'created_at', sort_direction = 'desc', limit = 50, offset = 0, type_slug, type_slugs, view: viewSlug, flag_only, exclude_flag, include_inactive, ...filters } = ctx.query || {}
 
   return await withAdminLogging(
     ctx,
@@ -291,6 +293,12 @@ export const list = createHandler(async (ctx, _body) => {
           }
         }
       })
+
+      // Soft-deleted rows are hidden by default — pass is_active=false or
+      // include_inactive=true to see them.
+      if (filters.is_active === undefined && include_inactive !== 'true') {
+        query = query.eq('is_active', true)
+      }
 
       // Generic record-flag filters on the row's data jsonb. flag_only=<field>
       // returns only rows where data->>field is 'true'; exclude_flag=<field>
@@ -405,7 +413,6 @@ export const list = createHandler(async (ctx, _body) => {
  * @errorHandling returns null on error during data fetching.
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:attachlineage:function" type="function" identity="attachLineage" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="attachLineage function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the attachLineage function from type-declared lineage config."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -413,6 +420,7 @@ export const list = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Reads functionality.lineage off the record's type design_schema; parents walk declared link_type then parent_fields (5-hop, visited-set cycle guard); children resolve via reverse link_type edges plus per-child-type data field lookups." notable_decisions="['link_type queries are guarded by the declared link_type, parent scan by declared parent_fields, child field lookups by declared children — a type with no lineage block attaches empty arrays with no link/data queries']"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:attachLineage:function" type="function" identity="attachLineage" parent="~/.framework/functions/admin-data.ts"]
 async function attachLineage(record: any, ctx: any): Promise<void> {
   // Lineage is declared per item type in design_schema.functionality.lineage:
   //   { parent_fields: string[], link_type: string, children: { [childTypeSlug]: field } }
@@ -516,7 +524,7 @@ async function attachLineage(record: any, ctx: any): Promise<void> {
   record.parents = parents
   record.children = children
 }
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:attachlineage:function"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:attachLineage:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='The attachLineage function retrieves and attaches parent and child records to a given record based on its lineage in a hierarchical structure.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -540,7 +548,6 @@ async function attachLineage(record: any, ctx: any): Promise<void> {
  * @calls       withAdminLogging, ctx.db.from, sanitizeRecordData, adminDb.from, attachLineage, projectMessageForCustomer
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="get constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the get constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -548,6 +555,7 @@ async function attachLineage(record: any, ctx: any): Promise<void> {
 // CIL[DOC-MICRO logic_summary="Implements the get constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/admin-data.ts"]
 export const get = createHandler(async (ctx, _body) => {
   const { entity, id, view: viewSlug } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
@@ -639,7 +647,6 @@ export const get = createHandler(async (ctx, _body) => {
  * @calls       withAdminLogging, ctx.db.from, fireCreateTriggers, sanitizeRecordData
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="create constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the create constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -647,6 +654,7 @@ export const get = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Implements the create constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/admin-data.ts"]
 export const create = createHandler(async (ctx, body) => {
   const entity = body?.entity || ctx.query?.entity
   const type_slug = body?.type_slug
@@ -686,7 +694,8 @@ export const create = createHandler(async (ctx, body) => {
         if (entity === 'observability' && (!raw.metric_name || raw.metric_value === undefined)) { const e: any = new Error('metric_name and metric_value are required for observability'); e.statusCode = 400; throw e }
         if (entity === 'test_cases' && (!raw.slug || !raw.name)) { const e: any = new Error('slug and name are required for test_cases'); e.statusCode = 400; throw e }
 
-        const { data, error: err } = await ctx.db.from(entity).insert(raw).select().single()
+        const rawInsertDb = (ctx.principal?.isInternal || isSystemAdmin(ctx.principal)) ? adminDb : ctx.db
+        const { data, error: err } = await rawInsertDb.from(entity).insert(raw).select().single()
         if (err) throw err
         // Await the trigger check: the heavy work already offloads to
         // pipeline-runner-background, so this only adds eval + queue insert
@@ -802,7 +811,9 @@ export const create = createHandler(async (ctx, body) => {
         throw e
       }
 
-      const insertDb = entity === 'accounts' ? adminDb : ctx.db
+      // Function-side permission check already ran — write via service role.
+      // ctx.db is PostgREST `authenticated` for humans, which holds SELECT only.
+      const insertDb = adminDb
 
       const { data, error: err } = await insertDb.from(entity)
         .insert(dataToInsert)
@@ -841,7 +852,6 @@ export const create = createHandler(async (ctx, body) => {
  * @calls       withAdminLogging, validateUpdatePermissions, ctx.db.from, fireUpdateTriggers, sanitizeRecordData
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="update constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the update constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -849,6 +859,7 @@ export const create = createHandler(async (ctx, body) => {
 // CIL[DOC-MICRO logic_summary="Implements the update constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/admin-data.ts"]
 export const update = createHandler(async (ctx, body) => {
   const { entity, id } = ctx.query || {}
   const method = ctx.query?.method || 'PATCH'
@@ -910,7 +921,7 @@ export const update = createHandler(async (ctx, body) => {
             updated_at: new Date().toISOString()
           }
 
-      const { data, error: err } = await ctx.db.from(entity)
+      const { data, error: err } = await adminDb.from(entity)
         .update(dataToUpdate)
         .eq('id', id)
         .select()
@@ -950,7 +961,6 @@ export const update = createHandler(async (ctx, body) => {
  * @calls       withAdminLogging, ctx.db.from, resolveFirstSurfacePermissions, entitySupportsSoftDelete, sanitizeRecordData
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="remove constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the remove constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -958,6 +968,7 @@ export const update = createHandler(async (ctx, body) => {
 // CIL[DOC-MICRO logic_summary="Implements the remove constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/admin-data.ts"]
 export const remove = createHandler(async (ctx, _body) => {
   const { entity, id, soft = 'true' } = ctx.query || {}
   const method = ctx.query?.method || 'DELETE'
@@ -1006,7 +1017,7 @@ export const remove = createHandler(async (ctx, _body) => {
       const isSoftDelete = soft === 'true'
 
       if (isSoftDelete && entitySupportsSoftDelete(entity)) {
-        const { data, error: err } = await ctx.db.from(entity)
+        const { data, error: err } = await adminDb.from(entity)
           .update({
             is_active: false,
             updated_by: ctx.principal?.type === 'human' ? ctx.principal.id : null,
@@ -1019,7 +1030,7 @@ export const remove = createHandler(async (ctx, _body) => {
         if (err) throw err
         return { deleted: true, soft: true, data: await sanitizeRecordData(ctx, data, entity) }
       } else {
-        const { error: err } = await ctx.db.from(entity)
+        const { error: err } = await adminDb.from(entity)
           .delete()
           .eq('id', id)
 
@@ -1053,7 +1064,6 @@ export const remove = createHandler(async (ctx, _body) => {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:getsearchfield:function" type="function" identity="getSearchField" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="getSearchField function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the getSearchField function."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -1061,6 +1071,7 @@ export const remove = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Implements the getSearchField function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:getSearchField:function" type="function" identity="getSearchField" parent="~/.framework/functions/admin-data.ts"]
 function getSearchField(entity: string): string {
   const searchFields: Record<string, string> = {
     accounts: 'display_name',
@@ -1079,7 +1090,7 @@ function getSearchField(entity: string): string {
   }
   return searchFields[entity] || 'id'
 }
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:getsearchfield:function"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:getSearchField:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Retrieves the appropriate search field name for a given entity type.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -1103,7 +1114,6 @@ function getSearchField(entity: string): string {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:entitysupportssoftdelete:function" type="function" identity="entitySupportsSoftDelete" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="entitySupportsSoftDelete function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the entitySupportsSoftDelete function."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -1111,11 +1121,12 @@ function getSearchField(entity: string): string {
 // CIL[DOC-MICRO logic_summary="Implements the entitySupportsSoftDelete function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:entitySupportsSoftDelete:function" type="function" identity="entitySupportsSoftDelete" parent="~/.framework/functions/admin-data.ts"]
 function entitySupportsSoftDelete(entity: string): boolean {
   const softDeleteEntities = ['accounts', 'people', 'items', 'threads', 'messages', 'watchers', 'item_progress', 'test_cases']
   return softDeleteEntities.includes(entity)
 }
-// CIL[END stable_id="~/.framework/functions/admin-data.ts:entitysupportssoftdelete:function"]
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:entitySupportsSoftDelete:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Determines if a given entity supports soft deletion by checking against a predefined list of entities.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -1138,7 +1149,6 @@ function entitySupportsSoftDelete(entity: string): boolean {
  * @calls       withAdminLogging, ctx.db.from
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:stats:constant" type="constant" identity="stats" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="stats constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the stats constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -1146,6 +1156,7 @@ function entitySupportsSoftDelete(entity: string): boolean {
 // CIL[DOC-MICRO logic_summary="Implements the stats constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:stats:constant" type="constant" identity="stats" parent="~/.framework/functions/admin-data.ts"]
 export const stats = createHandler(async (ctx, _body) => {
   const { entity } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
@@ -1194,7 +1205,6 @@ export const stats = createHandler(async (ctx, _body) => {
  * @calls       list, get, stats, create, update, remove
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/admin-data.ts"]
 // CIL[DOC-MACRO purpose="handler constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the handler constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -1202,6 +1212,7 @@ export const stats = createHandler(async (ctx, _body) => {
 // CIL[DOC-MICRO logic_summary="Implements the handler constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/admin-data.ts"]
 export const handler = createHandler(async (ctx, body) => {
   const { action } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
