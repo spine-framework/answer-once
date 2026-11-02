@@ -56,11 +56,18 @@ seeds applied. Field-level manifest semantics are in
    validated against `public.actions` stage slugs, and trigger seeds
    resolve `pipeline_slug` → `pipeline_id`.
 
-3. **Package it.** Ship the app directory as an npm package whose files
-   include `index.tsx`, `manifest.json`, and optionally `pages/`,
+3. **Package it.** Ship the app directory as an npm package — declare
+   every shippable entry in `package.json`'s `files` array (npm packs
+   nothing else). Include `index.tsx`, `manifest.json`, and optionally `pages/`,
    `components/`, `hooks/`, `utils/`, `functions/`, `seed/`, `public/` —
-   the installer copies exactly that allowlist
-   (`.framework/cli/commands/install-app.ts`). Validate locally
+   the installer copies a fixed allowlist (`APP_COPY_ENTRIES` in
+   `.framework/cli/commands/install-app.ts`: those dirs plus `lib/`,
+   `views/`, `docs/`, `api/`, `installer/`, `mcp/`, `migrations*`,
+   `tests/`, `standalone.config.json`, `agent/`). `agent/` is staged —
+   `agent/skills/` lands at `custom/.devin/skills/` (requires
+   `manifest.agent.skill_prefix`) and `agent/instructions/` lands at
+   `custom/apps/<slug>/src/instructions/`; see
+   [App manifest reference](../reference/app-manifest.md). Validate locally
    with `npx spine-framework validate-app`.
 
 4. **Install.**
@@ -88,7 +95,9 @@ seeds applied. Field-level manifest semantics are in
      slugs whose DB `design_schema` drifted from the seed.
 
 6. **Uninstall.** `uninstall-app <package>` removes
-   `custom/apps/<slug>/` and runs `npm uninstall` — and nothing else. The
+   `custom/apps/<slug>/`, removes the app's skills
+   (`custom/.devin/skills/<prefix>_*` when `manifest.agent.skill_prefix`
+   is declared), and runs `npm uninstall` — and nothing else. The
    `--keep-data` flag is parsed but never read: seeded rows are **not**
    deleted either way (`.framework/cli/commands/install-app.ts`).
 

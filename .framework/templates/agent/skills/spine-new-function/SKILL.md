@@ -63,3 +63,9 @@ triggers inside admin-data. See
 - If a proposed function reads/writes runtime records, redirect the design to
   `/api/admin-data` and say why.
 - One function per edge case — no catch-all "custom-api.ts" grab bags.
+
+## Docs — part of the change
+
+A function change is incomplete until the owning app's
+`src/instructions/reference/functions` page reflects it — signature,
+env vars, schedule, failure modes. Re-verify and bump `verified_*`.

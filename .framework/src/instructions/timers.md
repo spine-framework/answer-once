@@ -2,8 +2,8 @@
 title: Timers
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: b3b3ae0
+verified_on: 2026-11-01
 source_files:
   - .framework/functions/timers.ts
   - .framework/functions/system-cron.ts
@@ -78,5 +78,7 @@ A support app keeps an `interval` timer with `interval_minutes: 360` to re-check
 
 - The list's "Next Execution" column shows `Not scheduled` when `next_execution` is NULL — an active timer in that state cannot fire until it is re-armed (edit its interval or toggle it off/on).
 - A timer with a blank `pipeline_id` saves fine but is filtered out by `get_due_timers` — always pick the pipeline.
+- **Under `netlify dev`, timers arm but never fire.** Netlify scheduled functions only run on deployed sites — locally, `trigger-scheduler` is loaded but never invoked on schedule. Emulate a tick with `netlify functions:invoke trigger-scheduler` or `curl -X POST localhost:8888/.netlify/functions/trigger-scheduler -H 'x-scheduler-key: <SCHEDULER_API_KEY>'`. A timer that schedules but never executes locally is an environment limitation, not a defect — unless manual invoke also fails.
+- Trigger dispatch requires `INTERNAL_INVOKE_SECRET` set **and a dev-server restart** — a queued execution that never runs usually means the secret is missing (see [Add a trigger](tasks/add-a-trigger.md)).
 - To arm a new timer, set `next_execution` in the DB (e.g. `now() + interval`); after the first successful run, `interval_minutes` keeps it rescheduling.
 - "Success Rate" is `success_count / execution_count`; failures still reschedule — a broken pipeline does not stop the cadence.

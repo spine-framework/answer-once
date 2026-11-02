@@ -3,7 +3,7 @@ title: admin-data
 audience: both
 kind: reference
 verified_against: f69c37d
-verified_on: 2026-10-30
+verified_on: 2026-11-01
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -91,7 +91,9 @@ default), `limit` (default 50), `offset` (default 0), `type_slug`,
 `watchers`). Every other query parameter becomes an `.eq(key, value)`
 filter, with boolean coercion for `is_active`, `is_verified`, `is_primary`.
 Soft-deleted rows are hidden by default — pass `is_active=false` or
-`include_inactive=true` to include them.
+`include_inactive=true` to include them. The default `is_active` filter
+only applies to tables that have the column; `links`, `attachments`,
+`watchers`, `logs`, and `observability` skip it.
 
 **get** (query params): `entity`, `id`, `view`, `lineage` — for `items`,
 parent/child lineage is attached unless `lineage=0`.

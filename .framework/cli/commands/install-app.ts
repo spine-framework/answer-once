@@ -142,7 +142,7 @@ interface SpineConfig {
 // CIL[DOC-AUDIENCE audience="internal"]
 
 import type { Command } from 'commander'
-import { existsSync, readFileSync, mkdirSync, cpSync, writeFileSync, realpathSync, statSync } from 'fs'
+import { existsSync, readFileSync, mkdirSync, cpSync, writeFileSync, realpathSync, statSync, readdirSync, rmSync } from 'fs'
 import { resolve, dirname, join, basename, isAbsolute, sep } from 'path'
 import { fileURLToPath } from 'url'
 import { execSync } from 'child_process'
@@ -319,6 +319,165 @@ const SPINE_CONFIG_PATH = join(PROJECT_ROOT, 'spine.config.json')
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:appcopyentries:constant" type="constant" identity="APP_COPY_ENTRIES" parent="none"]
+// CIL[DOC-MACRO purpose="Single allowlist of package entries copied into custom/apps/<slug>/ on install and update"]
+// CIL[DOC-RESPONSIBILITY responsibility="Declare the shared copy allowlist so install-app and update-app cannot drift apart"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
+// CIL[DOC-CONTRACT inputs="none" outputs="readonly string[] of top-level package entries" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Union of both commands' previous lists plus entries real apps ship (lib/views/docs/installer/mcp/migrations/tests/standalone.config.json); 'agent' is handled separately by syncAppAgentAssets" notable_decisions="['shared_allowlist_prevents_drift','agent_staged_not_copied_verbatim']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+const APP_COPY_ENTRIES: readonly string[] = [
+  'index.tsx', 'manifest.json', 'package.json', 'standalone.config.json',
+  'pages', 'components', 'hooks', 'utils', 'lib', 'views', 'docs',
+  'functions', 'api', 'seed', 'public', 'installer', 'mcp',
+  'migrations', 'migrations-archive', 'tests', 'agent',
+]
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:appcopyentries:constant"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:agentskillprefixre:constant" type="constant" identity="AGENT_SKILL_PREFIX_RE" parent="none"]
+// CIL[DOC-MACRO purpose="Validation regex for manifest agent.skill_prefix"]
+// CIL[DOC-RESPONSIBILITY responsibility="Declare the single source of truth for the skill-prefix rule shared by install and validate paths"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
+// CIL[DOC-CONTRACT inputs="none" outputs="RegExp matching 1-8 char lowercase-alphanumeric prefixes starting with a letter" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="/^[a-z][a-z0-9]{0,7}$/ — letter first, then up to 7 lowercase letters or digits" notable_decisions="['exported_for_shared_use']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+export const AGENT_SKILL_PREFIX_RE = /^[a-z][a-z0-9]{0,7}$/
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:agentskillprefixre:constant"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:syncappagentassets:function" type="function" identity="syncAppAgentAssets" parent="none"]
+// CIL[DOC-MACRO purpose="Sync an installed app's staged agent assets (agent/skills, agent/instructions) to their live locations"]
+// CIL[DOC-RESPONSIBILITY responsibility="Copy agent/skills/<prefix>_* to custom/.devin/skills/ and agent/instructions to the app's src/instructions/, enforcing the manifest-declared skill prefix"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts,.framework/cli/lib/project-files.ts"]
+// CIL[DOC-CONTRACT inputs="appDir (installed app dir), appSlug" outputs="void" errors="Throws when agent/skills exists without manifest.agent.skill_prefix, a dir violates <prefix>_ naming, or SKILL.md name mismatches its dir" side_effects="writes custom/.devin/skills and app src/instructions"]
+// CIL[DOC-MICRO logic_summary="No-op without an agent/ dir; requires manifest.agent.skill_prefix /^[a-z][a-z0-9]{0,7}$/ when skills are staged; fails on cross-app prefix collisions by scanning installed manifests; copies instructions to src/instructions" notable_decisions="['fail_closed_on_missing_prefix','prefix_scoped_ownership']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+function syncAppAgentAssets(appDir: string, appSlug: string): void {
+  const agentDir = join(appDir, 'agent')
+  if (!existsSync(agentDir)) return
+
+  const stagedSkills = join(agentDir, 'skills')
+  const stagedInstructions = join(agentDir, 'instructions')
+  const hasSkills = existsSync(stagedSkills)
+  const hasInstructions = existsSync(stagedInstructions)
+  if (!hasSkills && !hasInstructions) return
+
+  const manifest: Record<string, any> = JSON.parse(readFileSync(join(appDir, 'manifest.json'), 'utf8'))
+  const prefix = manifest.agent?.skill_prefix
+
+  if (hasSkills) {
+    if (typeof prefix !== 'string' || !AGENT_SKILL_PREFIX_RE.test(prefix)) {
+      throw new Error(`manifest.json agent.skill_prefix for "${appSlug}" is required (^[a-z][a-z0-9]{0,7}$) when the package ships agent/skills/`)
+    }
+
+    for (const other of readdirSync(join(PROJECT_ROOT, 'custom', 'apps'), { withFileTypes: true })) {
+      if (!other.isDirectory() || other.name === appSlug) continue
+      const otherManifest = join(PROJECT_ROOT, 'custom', 'apps', other.name, 'manifest.json')
+      try {
+        const m = JSON.parse(readFileSync(otherManifest, 'utf8'))
+        if (m.agent?.skill_prefix === prefix) {
+          throw new Error(`skill_prefix "${prefix}" is already used by app "${other.name}" — prefixes must be unique across installed apps`)
+        }
+      } catch (e: any) {
+        if (e.message?.includes('skill_prefix')) throw e
+      }
+    }
+
+    const skillsDest = join(PROJECT_ROOT, 'custom', '.devin', 'skills')
+    for (const dir of readdirSync(stagedSkills, { withFileTypes: true })) {
+      if (!dir.isDirectory()) continue
+      if (!dir.name.startsWith(`${prefix}_`)) {
+        throw new Error(`agent/skills/${dir.name} does not match the declared prefix "${prefix}_"`)
+      }
+      const skillFile = join(stagedSkills, dir.name, 'SKILL.md')
+      if (!existsSync(skillFile)) {
+        throw new Error(`agent/skills/${dir.name} is missing SKILL.md`)
+      }
+      const nameMatch = /^name:\s*(.+)$/m.exec(readFileSync(skillFile, 'utf8'))
+      if (!nameMatch || nameMatch[1].trim() !== dir.name) {
+        throw new Error(`agent/skills/${dir.name}/SKILL.md name field must equal its directory name "${dir.name}"`)
+      }
+      cpSync(join(stagedSkills, dir.name), join(skillsDest, dir.name), { recursive: true })
+      console.log(`    Skill installed: custom/.devin/skills/${dir.name}`)
+    }
+  }
+
+  if (hasInstructions) {
+    const instrDest = join(appDir, 'src', 'instructions')
+    mkdirSync(instrDest, { recursive: true })
+    cpSync(stagedInstructions, instrDest, { recursive: true })
+    console.log(`    Instructions installed: custom/apps/${appSlug}/src/instructions/`)
+  }
+}
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:syncappagentassets:function"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:removeappagentskills:function" type="function" identity="removeAppAgentSkills" parent="none"]
+// CIL[DOC-MACRO purpose="Remove an app's prefix-scoped skills from custom/.devin/skills on uninstall"]
+// CIL[DOC-RESPONSIBILITY responsibility="Delete only the skill dirs owned by the uninstalled app's declared skill_prefix"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
+// CIL[DOC-CONTRACT inputs="appDir, appSlug" outputs="void" errors="none" side_effects="removes custom/.devin/skills/<prefix>_* dirs"]
+// CIL[DOC-MICRO logic_summary="Reads manifest.agent.skill_prefix from the app dir before deletion; globs <prefix>_* dirs and removes them; never touches unowned dirs" notable_decisions="['prefix_glob_scoped_removal']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+function removeAppAgentSkills(appDir: string, appSlug: string): void {
+  try {
+    const manifest: Record<string, any> = JSON.parse(readFileSync(join(appDir, 'manifest.json'), 'utf8'))
+    const prefix = manifest.agent?.skill_prefix
+    if (typeof prefix !== 'string' || !prefix) return
+    const skillsDir = join(PROJECT_ROOT, 'custom', '.devin', 'skills')
+    if (!existsSync(skillsDir)) return
+    for (const dir of readdirSync(skillsDir, { withFileTypes: true })) {
+      if (dir.isDirectory() && dir.name.startsWith(`${prefix}_`)) {
+        rmSync(join(skillsDir, dir.name), { recursive: true, force: true })
+        console.log(`  ✓ Removed skill custom/.devin/skills/${dir.name}`)
+      }
+    }
+  } catch {
+    console.log(`  ○ No agent.skill_prefix for "${appSlug}" — no skills to remove`)
+  }
+}
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:removeappagentskills:function"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:islocalpackagespec:function" type="function" identity="isLocalPackageSpec" parent="none"]
+// CIL[DOC-MACRO purpose="Detect package specs that resolve to a local path instead of an npm registry name"]
+// CIL[DOC-RESPONSIBILITY responsibility="Return true for file:, ./, ../, / and *.tgz specs so commands can skip registry-only syntax like @latest"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
+// CIL[DOC-CONTRACT inputs="packageName: string (the CLI <package> argument)" outputs="boolean" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Path-shaped specs (file:, dot-relative, absolute, .tgz) are local; everything else is a registry spec" notable_decisions="['local_specs_have_no_version_tag']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+function isLocalPackageSpec(packageName: string): boolean {
+  return packageName.startsWith('file:')
+    || packageName.startsWith('.')
+    || packageName.startsWith('/')
+    || packageName.endsWith('.tgz')
+}
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:islocalpackagespec:function"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/install-app.ts:resolvepackagedirname:function" type="function" identity="resolvePackageDirName" parent="none"]
+// CIL[DOC-MACRO purpose="Resolve the node_modules directory name an install spec lands under"]
+// CIL[DOC-RESPONSIBILITY responsibility="Map install-app/update-app/uninstall-app <package> args — registry names (plain or scoped), tarball paths, and file:/path dirs — to the name npm uses for node_modules/<name>"]
+// CIL[DOC-CONTEXT module="install-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
+// CIL[DOC-CONTRACT inputs="packageName: string" outputs="npm package name (may be scoped, e.g. @scope/name)" errors="throws if a tarball or directory spec has no readable package.json" side_effects="execSync tar for .tgz specs"]
+// CIL[DOC-MICRO logic_summary="Tarballs yield their embedded package/package.json name via tar -xOf; file:/path and relative/absolute dirs read package.json directly; registry specs strip only the trailing @version so scoped names survive" notable_decisions="['tarball_name_comes_from_the_package_not_the_filename','split_on_last_at_preserves_scopes']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+function resolvePackageDirName(packageName: string): string {
+  let spec = packageName
+  if (spec.startsWith('file:')) spec = spec.slice(5)
+  if (spec.endsWith('.tgz')) {
+    const json = execSync(`tar -xOf "${spec}" package/package.json`, { cwd: PROJECT_ROOT, encoding: 'utf8' })
+    return JSON.parse(json).name
+  }
+  if (spec.startsWith('.') || spec.startsWith('/')) {
+    return JSON.parse(readFileSync(join(PROJECT_ROOT, spec, 'package.json'), 'utf8')).name
+  }
+  return packageName.replace(/@[^@/]+$/, '')
+}
+// CIL[END stable_id="~/.framework/cli/commands/install-app.ts:resolvepackagedirname:function"]
+
 // CIL[DOC-MACRO purpose="Command registration and installation handler for Spine Framework apps."]
 // CIL[DOC-RESPONSIBILITY responsibility="Registers a command to install a Spine Framework app from npm and handles the installation process, including file copying and database migrations. This function ensures that the app is properly set up within the project environment."]
 // CIL[DOC-CONTEXT module="install-app" layer="app-specific" related_files=".framework/cli/commands/migrate.js"]
@@ -371,7 +530,7 @@ export function registerInstallAppCommands(program: Command) {
         console.log('  ✓ npm install complete')
 
         
-        const pkgSlug = packageName.split('@')[0] // strip version
+        const pkgSlug = resolvePackageDirName(packageName)
         const pkgPath = join(PROJECT_ROOT, 'node_modules', pkgSlug)
 
         if (!existsSync(pkgPath)) {
@@ -392,14 +551,9 @@ export function registerInstallAppCommands(program: Command) {
         }
 
         
-        const allowedEntries = [
-          'index.tsx', 'manifest.json', 'package.json',
-          'pages', 'components', 'hooks', 'utils', 'functions', 'seed', 'public'
-        ]
-
         console.log(`  Copying files from ${pkgPath} to ${appDest}`)
 
-        for (const entry of allowedEntries) {
+        for (const entry of APP_COPY_ENTRIES) {
           const src = join(pkgPath, entry)
           if (!existsSync(src)) continue
 
@@ -413,6 +567,9 @@ export function registerInstallAppCommands(program: Command) {
           cpSync(src, join(appDest, entry), { recursive: true })
         }
         console.log(`  ✓ App files copied to custom/apps/${appSlug}/`)
+
+        
+        syncAppAgentAssets(appDest, appSlug)
 
         
         console.log('  Running migrations...')
@@ -468,14 +625,14 @@ export function registerInstallAppCommands(program: Command) {
       console.log(`\nUninstalling app: ${packageName}\n`)
       loadEnv()
 
-      const pkgSlug = packageName.split('@')[0]
+      const pkgSlug = resolvePackageDirName(packageName)
       const pkgPath = join(PROJECT_ROOT, 'node_modules', pkgSlug)
       const appSlug = resolveAppSlug(pkgPath, pkgSlug)
       const appDir = join(PROJECT_ROOT, 'custom/apps', appSlug)
 
       try {
         if (existsSync(appDir)) {
-          const { rmSync } = await import('fs')
+          removeAppAgentSkills(appDir, appSlug)
           rmSync(appDir, { recursive: true, force: true })
           console.log(`  ✓ Removed custom/apps/${appSlug}/`)
         } else {
@@ -501,12 +658,12 @@ export function registerInstallAppCommands(program: Command) {
       loadEnv()
 
       try {
-        execSync(`npm install ${packageName}@latest --save`, {
+        execSync(`npm install ${isLocalPackageSpec(packageName) ? packageName : `${packageName}@latest`} --save`, {
           cwd: PROJECT_ROOT,
           stdio: 'inherit',
         })
 
-        const pkgSlug = packageName.split('@')[0]
+        const pkgSlug = resolvePackageDirName(packageName)
         const pkgPath = join(PROJECT_ROOT, 'node_modules', pkgSlug)
         const appSlug = resolveAppSlug(pkgPath, pkgSlug)
         const appDest = join(PROJECT_ROOT, 'custom/apps', appSlug)
@@ -515,12 +672,15 @@ export function registerInstallAppCommands(program: Command) {
           mkdirSync(appDest, { recursive: true })
         }
 
-        for (const entry of ['index.tsx', 'manifest.json', 'pages', 'components', 'hooks', 'api', 'seed']) {
+        for (const entry of APP_COPY_ENTRIES) {
           const src = join(pkgPath, entry)
           if (existsSync(src)) {
+            if (entry === 'manifest.json' && existsSync(join(appDest, 'manifest.json'))) continue
             cpSync(src, join(appDest, entry), { recursive: true })
           }
         }
+
+        syncAppAgentAssets(appDest, appSlug)
 
         
         const manifestPath = join(appDest, 'manifest.json')
@@ -1194,6 +1354,14 @@ function preflightAppInputs(appDir: string, appSlug: string, configPath: string)
   }
   if (manifest.config !== undefined && manifest.config !== null && !isPlainObject(manifest.config)) {
     throw new Error(`manifest.json config for "${appSlug}" must be an object`)
+  }
+  if (manifest.agent !== undefined && manifest.agent !== null) {
+    if (!isPlainObject(manifest.agent)) {
+      throw new Error(`manifest.json agent for "${appSlug}" must be an object`)
+    }
+    if (manifest.agent.skill_prefix !== undefined && !AGENT_SKILL_PREFIX_RE.test(manifest.agent.skill_prefix)) {
+      throw new Error(`manifest.json agent.skill_prefix for "${appSlug}" must match ${AGENT_SKILL_PREFIX_RE}`)
+    }
   }
   if (manifest.owned_types !== undefined) {
     if (!Array.isArray(manifest.owned_types) || manifest.owned_types.some((s: any) => typeof s !== 'string' || !s.trim())) {

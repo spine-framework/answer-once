@@ -2,8 +2,8 @@
 title: Security Checklist
 audience: both
 kind: guide
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: b3b3ae0
+verified_on: 2026-11-01
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts
@@ -96,6 +96,28 @@ Related reading: [Auth & API Keys](../concepts/auth-and-api-keys.md),
 Caveat: blocklist enforcement **fails open** when
 `security_blocklist` is absent (pre-049 installs) — a missing table means
 no blocking, not an error.
+
+## Signup & first-run surface
+
+- **First-registrant claim window.** `handle_new_auth_user` grants
+  `system_admin` to a new registrant only when `public.people` is empty —
+  the *first* person to register claims the instance. On a public
+  deployment, run `npx spine-framework bootstrap` **before** the site is
+  reachable (or disable public signup), or the first stranger who finds
+  `/register` owns the instance. See
+  [Install and first run](../guide/01-install-and-first-run.md).
+- **Post-bootstrap registration is safe to leave on.** With `people`
+  non-empty, subsequent registrants land unplaced/pending — no privilege.
+  Verify once by registering a second user and checking its role.
+- **Turnstile is conditional.** `VITE_TURNSTILE_SITE_KEY` unset → auth
+  pages render with no widget; set → the widget enforces on
+  register/login. Confirm both states at least once per environment —
+  a site key set without the secret (or vice versa) silently degrades to
+  the unset behavior.
+- **Headless access is `x-api-key`, not cookies.** `x-api-key:
+  <SPINE_API_KEY>` authenticates `/api/*` for machine callers — no
+  Turnstile, no session. Scope it (never `*:*`); the full discipline is in
+  "API key hygiene" above.
 
 ## Endpoint exposure notes
 

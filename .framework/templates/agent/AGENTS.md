@@ -137,6 +137,11 @@ The package ships a markdown instruction book at
 
 Project-level skills for common jobs live in `.devin/skills/spine-*/`.
 
+Installed apps may carry their own instruction book at
+`custom/apps/<slug>/src/instructions/` and ship skills to
+`custom/.devin/skills/<prefix>_*` — read them before working inside that
+app.
+
 ## Verify before finishing
 
 - `npm run typecheck` — compile the frontend + assembled sources.
@@ -145,6 +150,18 @@ Project-level skills for common jobs live in `.devin/skills/spine-*/`.
 - `npx spine-framework validate-schema <file>` — check a `design_schema` JSON.
 - `npx spine-framework validate-app <dir>` — check an app package.
 - `npx spine-framework doctor` — health + wiring checks.
+
+## Docs are part of the change
+
+- Editing a file listed in a book page's `source_files` frontmatter
+  requires re-verifying that page in the same change — bump
+  `verified_against`/`verified_on`.
+- Editing an app requires updating its `src/instructions/` in the same
+  change (new page → tasks doc; new function → reference; new seeded
+  type → entity page).
+- Non-obvious decisions/cautions discovered while working go in the
+  relevant page's `## Agent notes`.
+- A code change without its doc update is incomplete.
 <!-- spine-framework:end -->
 
 <!-- Your project rules below this line are never overwritten by spine-framework upgrade -->

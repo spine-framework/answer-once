@@ -20,6 +20,7 @@
 
 import { Command } from 'commander'
 import { readFileSync, existsSync, readdirSync, statSync, realpathSync } from 'fs'
+import { createHash } from 'crypto'
 import { join, dirname, resolve, isAbsolute, sep } from 'path'
 import { fileURLToPath } from 'url'
 // CIL[DOC-VECTOR type="context" content="purpose='Provide module-level imports for the validate-app CLI command'; No verified external callers; imports: none"]
@@ -126,6 +127,10 @@ interface Manifest {
     target_account?: string
     parent_account?: string
     default_workspace_name?: boolean
+  }
+  route_prefix?: string
+  agent?: {
+    skill_prefix?: string
   }
 }
 // CIL[DOC-VECTOR type="context" content="purpose='Define the shape of an app manifest'; No verified external callers; imports: none"]
@@ -337,7 +342,8 @@ function validateAllowedDirectories(appPath: string): void {
   const allowedDirs = [
     'pages', 'components', 'hooks', 'utils', 'functions',
     'seed', 'public', 'lib', 'views', 'docs', 'mcp',
-    'migrations', 'migrations-archive', 'tests'
+    'migrations', 'migrations-archive', 'tests', 'installer',
+    'agent', 'src'
   ]
   
   const entries = readdirSync(appPath, { withFileTypes: true })
@@ -642,6 +648,7 @@ function validateOwnedTypes(appPath: string, manifest: Manifest): void {
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateownedtypes:function"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateknowledgeenvelope:function" type="function" identity="validateKnowledgeEnvelope" parent="~/.framework/cli/commands/validate-app.ts"]
 // CIL[DOC-MACRO purpose="Validate the manifest knowledge envelope and seed prompt-config picks"]
 // CIL[DOC-RESPONSIBILITY responsibility="Check config.knowledge shape and verify seeded prompt_configs' retrieval_policy picks stay inside the envelope — an agent may narrow the app envelope but never widen it"]
 // CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/functions/_shared/kb.ts"]
@@ -740,6 +747,103 @@ function validateKnowledgeEnvelope(appPath: string, manifest: Manifest): void {
 }
 // CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateknowledgeenvelope:function"]
 
+// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateagentdirectory:function" type="function" identity="validateAgentDirectory" parent="~/.framework/cli/commands/validate-app.ts"]
+// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
+// CIL[DOC-MACRO purpose="Validate the app's staged agent/ directory (skills and instructions)"]
+// CIL[DOC-RESPONSIBILITY responsibility="Enforce skill prefix naming and SKILL.md name/dir equality, markdown-only instructions, and warn when staged assets drift from their live copies"]
+// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
+// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on missing skill_prefix, prefix mismatch, missing SKILL.md, or non-markdown instructions" side_effects="logs warnings to stdout on staged-vs-live drift"]
+// CIL[DOC-MICRO logic_summary="agent/skills requires manifest.agent.skill_prefix; every staged dir must start <prefix>_ and its SKILL.md name must equal the dir name; agent/instructions may only contain .md; sha1 snapshots of staged trees are compared to live custom/.devin/skills and src/instructions" notable_decisions="['drift_is_a_warning_not_an_error','skill_prefix_fail_closed']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+function validateAgentDirectory(appPath: string, manifest: Manifest): void {
+  const agentPath = join(appPath, 'agent')
+  if (!existsSync(agentPath)) return
+
+  const skillsPath = join(agentPath, 'skills')
+  const instructionsPath = join(agentPath, 'instructions')
+
+  if (existsSync(skillsPath)) {
+    const prefix = manifest.agent?.skill_prefix
+    if (typeof prefix !== 'string' || !/^[a-z][a-z0-9]{0,7}$/.test(prefix)) {
+      throw new ValidationError(
+        `❌ agent/skills/ requires manifest.json agent.skill_prefix matching /^[a-z][a-z0-9]{0,7}$/`
+      )
+    }
+    for (const dir of readdirSync(skillsPath, { withFileTypes: true })) {
+      if (!dir.isDirectory()) continue
+      if (!dir.name.startsWith(`${prefix}_`)) {
+        throw new ValidationError(
+          `❌ agent/skills/${dir.name} must start with the declared prefix "${prefix}_"`
+        )
+      }
+      const skillFile = join(skillsPath, dir.name, 'SKILL.md')
+      if (!existsSync(skillFile)) {
+        throw new ValidationError(`❌ agent/skills/${dir.name}/ is missing SKILL.md`)
+      }
+      const nameMatch = /^name:\s*(.+)$/m.exec(readFileSync(skillFile, 'utf8'))
+      if (!nameMatch || nameMatch[1].trim() !== dir.name) {
+        throw new ValidationError(
+          `❌ agent/skills/${dir.name}/SKILL.md name must equal its directory name "${dir.name}"`
+        )
+      }
+    }
+  }
+
+  if (existsSync(instructionsPath)) {
+    const checkMarkdownOnly = (dirPath: string): void => {
+      for (const entry of readdirSync(dirPath, { withFileTypes: true })) {
+        const full = join(dirPath, entry.name)
+        if (entry.isDirectory()) checkMarkdownOnly(full)
+        else if (!entry.name.endsWith('.md')) {
+          throw new ValidationError(
+            `❌ agent/instructions may only contain .md files — found ${entry.name}`
+          )
+        }
+      }
+    }
+    checkMarkdownOnly(instructionsPath)
+  }
+
+  // Staged copies should match their live counterparts — drift means one
+  // side was edited without re-staging (or the live install is stale).
+  const snapshot = (root: string): Map<string, string> => {
+    const out = new Map<string, string>()
+    const walk = (dir: string): void => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const full = join(dir, entry.name)
+        if (entry.isDirectory()) walk(full)
+        else out.set(full.slice(root.length + 1), createHash('sha1').update(readFileSync(full)).digest('hex'))
+      }
+    }
+    if (existsSync(root)) walk(root)
+    return out
+  }
+  const sameTree = (a: Map<string, string>, b: Map<string, string>): boolean =>
+    a.size === b.size && [...a].every(([k, v]) => b.get(k) === v)
+
+  if (existsSync(skillsPath)) {
+    const liveSkillsRoot = join(appPath, '..', '..', '.devin', 'skills')
+    for (const dir of readdirSync(skillsPath, { withFileTypes: true })) {
+      if (!dir.isDirectory()) continue
+      if (!sameTree(snapshot(join(skillsPath, dir.name)), snapshot(join(liveSkillsRoot, dir.name)))) {
+        console.warn(`⚠️  agent/skills/${dir.name} differs from live custom/.devin/skills/${dir.name} — re-stage or reinstall`)
+      }
+    }
+  }
+
+  if (existsSync(instructionsPath)) {
+    if (!sameTree(snapshot(instructionsPath), snapshot(join(appPath, 'src', 'instructions')))) {
+      console.warn(`⚠️  agent/instructions differs from src/instructions — re-stage before packaging`)
+    }
+  }
+
+  if (existsSync(skillsPath) || existsSync(instructionsPath)) {
+    console.log(`✅ agent/ staged assets valid`)
+  }
+}
+// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateagentdirectory:function"]
+
 // CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateAppStructure:function" type="function" identity="validateAppStructure" parent="~/.framework/cli/commands/validate-app.ts"]
 // CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
 // CIL[DOC-MACRO purpose="Run the full app structure validation pipeline"]
@@ -755,6 +859,7 @@ export function validateAppStructure(appPath: string): void {
   validateRequiredFiles(appPath, manifest)
   validateAllowedDirectories(appPath)
   validateDevinDirectory(appPath)
+  validateAgentDirectory(appPath, manifest)
   validateRoutes(appPath, manifest)
   validateManifestComponents(appPath, manifest)
   validateSeedBlock(appPath, manifest)

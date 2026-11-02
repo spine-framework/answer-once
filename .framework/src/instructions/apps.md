@@ -2,8 +2,8 @@
 title: Apps
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: b3b3ae0
+verified_on: 2026-11-01
 source_files:
   - .framework/functions/apps.ts
   - .framework/src/pages/admin/AppsPage.tsx
@@ -28,7 +28,7 @@ An **app** is a registered application in Spine. The registry controls navigatio
 - **Active** — boolean. Inactive apps are hidden and cannot be opened.
 - **System** — boolean. Protects the app from tenant-level deletion.
 - **Icon / Color** — UI presentation for the app tile.
-- **Route Prefix** — string, optional. URL prefix (defaults to `/slug`).
+- **Route Prefix** — string, optional. URL prefix where the app mounts (defaults to `/slug`). `"/"` mounts the app at the site root (exactly one app may own it; the app must render its own not-found); nested prefixes like `/crm/sales` work longest-first. `/spine-framework/*` is reserved. See [Apps and Renderers → Mounting](concepts/apps-and-renderers.md#mounting-directory-or-root).
 - **Renderer** — select: `generic` (renders list/detail from type `design_schema.views`), `custom` (app renders its own pages), `none`.
 - **Config (JSON)** — `config` column; runtime config for the app or its generic renderer.
 - **Nav Items (JSON)** — array of navigation items for the app shell.

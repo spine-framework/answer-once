@@ -70,3 +70,10 @@ npm run verify                      # frozen integrity intact
 
 Report what was installed, which seeds ran, and any conflicts needing manual
 resolution.
+
+## Docs — part of the change
+
+After install, the app's `custom/apps/<slug>/src/instructions/` is its
+instruction book and `custom/.devin/skills/<prefix>_*/` are its skills —
+read them before working inside the app, and keep them in sync when you
+change the app.

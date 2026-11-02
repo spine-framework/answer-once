@@ -35,6 +35,7 @@
     "functions/",
     "public/",
     "docs/",
+    "agent/",
     "installer/",
     "README.md",
     "LICENSE.md"

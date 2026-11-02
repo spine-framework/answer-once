@@ -55,3 +55,20 @@ Every `entity` or `ui` doc uses the same seven `##` sections, in order:
 7. `## Agent notes`
 
 `docs-lint` enforces the heading set verbatim.
+
+## Key pages
+
+- Building frontend: [Frontend SDK (`@core`)](reference/frontend-sdk.md) —
+  every importable module, contract-ordered by real usage.
+- Registering/mounting apps:
+  [tasks/register-an-app](tasks/register-an-app.md) +
+  [Mounting](concepts/apps-and-renderers.md#mounting-directory-or-root).
+- App-shipped docs/skills: [tasks/document-your-app](tasks/document-your-app.md).
+
+## `internal/` — the doctrine
+
+`internal/docs-contract.md` is the editorial contract for this book — the
+test rule (every miss is a doc bug), the capture contract (docs are part of
+every code change, core and custom), the layer taxonomy, and the cold-agent
+acceptance matrix that regression-tests the book. Read it before adding or
+restructuring pages.

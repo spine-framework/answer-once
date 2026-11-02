@@ -2,8 +2,8 @@
 title: Apps and Renderers
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: b3b3ae0
+verified_on: 2026-11-01
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/013_get_account_apps_role_filter.sql
@@ -39,6 +39,53 @@ migration 014), `nav_items`, `config`, `integration_deps`, `metadata`,
   `.framework/src/App.tsx` builds a `<Route>` per active app.
 - `is_active: false` removes the app from navigation and routing.
 - `is_system: true` protects the row from tenant-level deletion.
+
+## Mounting: directory or root
+
+`route_prefix` is the whole mount contract. Every routable app
+(`route_prefix != null`, `renderer !== 'none'`) becomes a
+`<Route path="<prefix>/*">` in `.framework/src/App.tsx`:
+
+- **Directory mount** — `"/portal"` → the app owns `/portal/*`.
+- **Root mount** — `"/"` → the app owns `/*` and renders directly at `/` for
+  non-admin users.
+- **Nested mount** — `"/crm/sales"` works mechanically (`/crm/sales/*`);
+  prefixes sort longest-first, so `/crm/sales` wins over `/crm`. Supported
+  but unusual.
+
+Rules that are easy to get wrong:
+
+- **Exactly one app may own `/`.** Two root-mounted apps both compile to
+  `/*` and resolution order silently decides which renders — the registry
+  does not prevent this; don't create it.
+- **A root-mounted app shadows the global not-found page.** Its `/*` route
+  matches every path the more-specific routes don't, so the app must render
+  its own not-found for unknown internal paths (a catch-all
+  `<Route path="*">` inside its `index.tsx` routes).
+- **`system_admin` always lands on `/spine-framework/admin`.**
+  Root-mounting changes what *members* see at `/`, not admins. Non-admin
+  landing at `/`: root-mounted app if one exists → else redirect to the
+  first app's prefix → else `NoAppPage`.
+- **App-internal navigation must be mount-agnostic.** Use
+  `useAppPath()` from `@core/hooks/useAppPath` (or relative paths inside the
+  app's `<Routes>`) for every link and `navigate()` call — it returns the
+  prefix (`''` when mounted at `/`). A hardcoded `navigate('/dashboard')`
+  escapes a directory-mounted app. See [Frontend SDK](../reference/frontend-sdk.md).
+- **`nav_items[].path` accepts two forms** (`GenericAppShell` navigates
+  absolute paths verbatim and prefixes relative ones): absolute
+  *including* the prefix (`/taskboard/tasks`) or relative (`tasks` →
+  resolved to `/taskboard/tasks`). The broken form is absolute *without*
+  the prefix (`/tasks` escapes the app). For a root-mounted app the
+  absolute form is simply `/…`.
+- **`/spine-framework/*` is reserved** (admin, API docs, CLI pages mount
+  there ahead of app routes). Never pick a colliding prefix.
+- **Apps are always behind login.** `is_public`/`auth_required` exist on
+  the manifest, but the unauthenticated router only serves auth pages —
+  a root-mounted app is not a public site mechanism.
+
+Change the mount point via `manifest.route_prefix` + `update-db-app <slug>`
+(or the admin app detail page). On package reinstall the local
+`manifest.json` is preserved, so the file is the durable source.
 
 ## Role gating
 

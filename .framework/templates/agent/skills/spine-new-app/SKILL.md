@@ -50,8 +50,11 @@ package contract.
      them). Every file declared in the `seed` block with `file`, `table`,
      `conflict`.
 
-3. **Routes are root-relative.** `routes` and `nav_items` must NOT include
-   `route_prefix`; links inside the app use `useAppPath()`.
+3. **Nav paths accept two forms.** `nav_items[].path` may be absolute
+   *including* `route_prefix` (`/my-app/tasks`) or relative (`tasks` —
+   the shell prefixes it). The broken form is absolute *without* the
+   prefix (`/tasks` escapes the app). `routes` is declarative
+   root-relative. Links inside the app use `useAppPath()`.
 
 4. **Validate:** `npx spine-framework validate-app custom/apps/<slug>` —
    fix every error before publishing or installing.
@@ -65,3 +68,12 @@ package contract.
 - Keep `package.json` and `manifest.json` versions in lockstep.
 - Seed files must be idempotent — reruns must not duplicate rows.
 - Verification: `validate-app` clean, `npm run typecheck`, `npm run test`.
+
+## Docs — part of the change
+
+An app change is incomplete until `custom/apps/<slug>/src/instructions/`
+reflects it: new page/route → the app's tasks doc; new function →
+`reference/functions`; new seeded type → entity page. Author skills at
+`custom/.devin/skills/<prefix>_*/` (declare `agent.skill_prefix` in
+manifest.json); stage into `agent/skills/` when packaging. See
+`.framework/src/instructions/tasks/document-your-app.md`.

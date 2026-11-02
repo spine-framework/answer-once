@@ -63,3 +63,10 @@ governs how runtime records validate, render, and authorize.
   record-level grant would otherwise allow it.
 - Verification: `validate-schema` clean + a created record reads back with
   the expected `data` shape.
+
+## Docs — part of the change
+
+A type change is incomplete until the owning app's
+`src/instructions/` entity page for that type reflects it (fields, views,
+permissions) — bump `verified_against`/`verified_on`. For framework-side
+type work, re-verify book pages listing edited files in `source_files`.

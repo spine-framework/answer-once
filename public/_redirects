@@ -1,4 +1,0 @@
-/api/*              /.netlify/functions/:splat    200
-/v2/*               /.netlify/v2/functions/:splat  200
-/spine.config.json  /spine.config.json             200
-/*                  /index.html                    200

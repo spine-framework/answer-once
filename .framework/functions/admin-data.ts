@@ -106,6 +106,16 @@ const PERMISSIONS_ALL = {
 // CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:VALID_ENTITIES:constant" type="constant" identity="VALID_ENTITIES" parent="~/.framework/functions/admin-data.ts"]
 const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'links', 'attachments', 'watchers', 'item_progress', 'logs', 'test_runs', 'observability', 'test_cases', 'types', 'link_types', 'ai_agents', 'prompt_configs']
 // CIL[END stable_id="~/.framework/functions/admin-data.ts:VALID_ENTITIES:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/admin-data.ts:ENTITIES_WITHOUT_IS_ACTIVE:constant" type="constant" identity="ENTITIES_WITHOUT_IS_ACTIVE" parent="none"]
+// CIL[DOC-MACRO purpose="Entities whose table has no is_active column — the default soft-delete filter must skip them"]
+// CIL[DOC-RESPONSIBILITY responsibility="List VALID_ENTITIES tables lacking is_active so the list handler only applies the default is_active filter where the column exists"]
+// CIL[DOC-CONTEXT module="admin-data" layer="functions" related_files=".framework/migrations/001_core_schema.sql"]
+// CIL[DOC-CONTRACT inputs="none" outputs="readonly Set<string> of entity names" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="links, attachments, watchers, logs, and observability have no is_active column; applying the default filter to them yields 42703 column-does-not-exist" notable_decisions="['explicit_is_active_param_still_errors_on_these_tables']"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+const ENTITIES_WITHOUT_IS_ACTIVE = new Set(['links', 'attachments', 'watchers', 'logs', 'observability'])
+// CIL[END stable_id="~/.framework/functions/admin-data.ts:ENTITIES_WITHOUT_IS_ACTIVE:constant"]
 // CIL[DOC-MACRO purpose="VALID_ENTITIES constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the VALID_ENTITIES constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/admin-data.ts" layer="app-specific" related_files=""]
@@ -295,8 +305,10 @@ export const list = createHandler(async (ctx, _body) => {
       })
 
       // Soft-deleted rows are hidden by default — pass is_active=false or
-      // include_inactive=true to see them.
-      if (filters.is_active === undefined && include_inactive !== 'true') {
+      // include_inactive=true to see them. Entities without an is_active
+      // column (links, attachments, watchers, logs, observability) skip the
+      // default filter — it would 500 with 42703 column-does-not-exist.
+      if (filters.is_active === undefined && include_inactive !== 'true' && !ENTITIES_WITHOUT_IS_ACTIVE.has(entity)) {
         query = query.eq('is_active', true)
       }
 

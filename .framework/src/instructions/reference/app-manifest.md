@@ -2,8 +2,8 @@
 title: App Manifest Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: b3b3ae0
+verified_on: 2026-11-01
 source_files:
   - .framework/functions/_shared/app-manifest.ts
   - .framework/cli/commands/install-app.ts
@@ -49,7 +49,7 @@ Read by `.framework/functions/_shared/app-manifest.ts` and mirrored onto the
 | `description` | string | `''` |
 | `version` | string | `'1.0.0'` |
 | `required_roles` | string[] | `[]`; `min_role` column becomes `required_roles[0]` (or legacy `min_role`) |
-| `route_prefix` | string | `'/' + slug` |
+| `route_prefix` | string | `'/' + slug` — the SPA mount point. `"/"` mounts at the site root (**one app only**; its `/*` shadows the global not-found, so root apps must render their own not-found); nested prefixes (`/crm/sales`) sort longest-first; `/spine-framework/*` is reserved. Change post-install via `update-db-app` or admin — see [Mounting](../concepts/apps-and-renderers.md#mounting-directory-or-root) |
 | `renderer` | `'generic' \| 'custom' \| 'none'` | `'custom'` — matches the `apps.renderer` CHECK constraint |
 | `routes` | string[] | app route paths; `:param` segments supported |
 | `nav_items` | `NavItem[]` | `[]` — `{title, path, icon?, order?, type_slug?, view?, children?}`. **`path` must include the `route_prefix`** (e.g. `/taskboard/tasks`, not `/tasks`) — the app index navigates to `path` verbatim, so a bare path escapes the app and 404s. `view` is **one slug consumed by both the list and the detail page** — naming `default_list` makes the detail page resolve a list view (which has `fields`, not `sections`) and render empty. Omit `view` to get `default_list` + `default_detail`; a nav item cannot pick list and detail views independently |
@@ -78,6 +78,7 @@ loader:
 | `seed` | `SeedEntry[]` | seed declarations — see below and [Seeds](seeds.md) |
 | `owned_types` | string[] | type slugs this app may reconcile when `--reconcile-owned-types` is passed; every slug must exist in a types seed |
 | `registration` | object | registration policy synced to `apps.config.registration` and `spine.config.json` |
+| `agent` | object | app-shipped agent assets — `{ "skill_prefix": "ao" }`. Required when the package ships `agent/skills/`; must match `^[a-z][a-z0-9]{0,7}$` and be unique across installed apps |
 | `config` | object | merged (shallow) into `apps.config`; existing keys the manifest does not declare survive |
 | `metadata` | object | written to `apps.metadata` |
 
@@ -110,6 +111,39 @@ If `manifest.seed` is absent, the installer falls back to the conventional set:
 as a `permissions_patch` entry even when `seed` is explicit, unless a patch
 entry already exists. Every row of a `types` seed gets a fresh
 `validation_schema` generated from its `design_schema` at apply time.
+
+### `agent` — app-shipped docs and skills
+
+```json
+"agent": { "skill_prefix": "ao" }
+```
+
+A package may stage agent assets under `agent/`; the installer maps them to
+their live locations:
+
+| Package path | Installed to |
+|---|---|
+| `agent/skills/<prefix>_<name>/SKILL.md` | `custom/.devin/skills/<prefix>_<name>/` |
+| `agent/instructions/**` | `custom/apps/<slug>/src/instructions/` |
+
+Rules enforced at install (fail-closed, before any DB writes):
+
+- `agent/skills/` present → `agent.skill_prefix` is required and must match
+  `^[a-z][a-z0-9]{0,7}$`.
+- Every staged skill dir must start with `<prefix>_` and contain a
+  `SKILL.md` whose frontmatter `name:` equals the directory name.
+- `skill_prefix` must be unique across installed apps — `install-app`
+  scans every `custom/apps/*/manifest.json`.
+- `agent/instructions/` may contain only `.md` files.
+- `uninstall-app` removes `custom/.devin/skills/<prefix>_*` — nothing else
+  outside the app dir.
+
+In-project development authors skills directly at
+`custom/.devin/skills/<prefix>_*/` (the discovered location — skills inside
+`custom/apps/<slug>/.devin/` are **not** picked up by agent tooling) and
+instructions at `custom/apps/<slug>/src/instructions/`; stage them under
+`agent/` when packaging. See
+[Document your app](../tasks/document-your-app.md).
 
 ### `registration`
 
