@@ -348,6 +348,7 @@ async function fetchUserContext(maxRetries = 2): Promise<User | null> {
 // CIL[DOC-CONTEXT module="AuthContext" layer="context" related_files=".framework/src/contexts/AuthContext.tsx,.framework/src/lib/api.ts,.framework/src/lib/supabase.ts,.framework/src/types/auth.ts"]
 // CIL[DOC-CONTRACT inputs="children: React.ReactNode" outputs="AuthContext.Provider with value { user, isLoading, login, logout, refreshUser }" errors="login may propagate Supabase error; useAuth throws outside provider" side_effects="updates localStorage, Supabase auth session, account id, and window storage listener"]
 // CIL[DOC-MICRO logic_summary="Initializes from cache, fetches/refresh session on mount, exposes callbacks, and listens to auth/storage events." notable_decisions="[]"]
+// CIL[DOC-NOTE type="caution" content="onAuthStateChange callbacks must not await Supabase calls — auth-js awaits listener callbacks inside initializePromise, so fetchUserContext→apiFetch→getAuthHeaders→getSession deadlocks on expired sessions until SESSION_TIMEOUT_MS (15s spinner before login mounts). Work is deferred via setTimeout."]
 // CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -501,7 +502,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (cancelled) return
 
         if (isLoggingInRef.current) return
@@ -510,14 +511,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
           if (!session?.user) return
           if (userRef.current) return
 
-          const userContext = await fetchUserContext()
-          if (cancelled) return
+          // auth-js awaits listener callbacks inside initializePromise —
+          // awaiting fetchUserContext here deadlocks it via
+          // apiFetch → getAuthHeaders → getSession → initializePromise.
+          setTimeout(async () => {
+            if (cancelled) return
 
-          if (userContext) {
-            applyUserContext(userContext)
-          } else {
-            clearUser()
-          }
+            const userContext = await fetchUserContext()
+            if (cancelled) return
+
+            if (userContext) {
+              applyUserContext(userContext)
+            } else {
+              clearUser()
+            }
+          }, 0)
         } else if (event === 'SIGNED_OUT') {
           clearUser()
         }

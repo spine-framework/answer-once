@@ -2,8 +2,8 @@
 title: People
 audience: both
 kind: entity
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: bc17374
+verified_on: 2026-11-02
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/functions/auth.ts
@@ -84,3 +84,8 @@ skipping the unplaced dance entirely.
   falsy `account_id` → resume-registration routing. Different fixes.
 - `person_id` is the FK used by `watchers`, `messages`, `notifications`,
   `item_progress` — it's `people.id`, never `auth_uid`.
+- `onAuthStateChange` callbacks must never await Supabase calls —
+  auth-js awaits listeners inside `initializePromise`, so
+  `fetchUserContext → apiFetch → getAuthHeaders → getSession` deadlocks
+  until `SESSION_TIMEOUT_MS` (15 s of spinner on every expired-session
+  visit). Defer the work (`setTimeout`) inside the callback.

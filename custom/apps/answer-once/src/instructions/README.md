@@ -36,6 +36,7 @@ and published as knowledge → next customer gets it automatically.
 | Ticketing types | `entities/ticketing.md` |
 | Knowledge types | `entities/knowledge.md` |
 | Custom functions | `reference/functions.md` |
+| Q&A corpus | `qa/README.md` (42 files) |
 
 ## The capture rule
 
