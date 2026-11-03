@@ -14,6 +14,7 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabase'
 import { apiFetch } from '../../lib/api'
+import { resolvePostAuthPath } from '../../lib/app-mount'
 import {
   clearPendingRegistration,
   finalizeRegistration,
@@ -226,13 +227,13 @@ function getPostRegistrationRedirect(
   inviteAccountId?: string
 ): string {
   if (isInvite) {
-    return '/'
+    return { path: '/', appSlug: null }
   }
 
   if (config?.allow_url_override) {
     const appOverride = searchParams.get('app')
     if (appOverride && config.apps[appOverride]?.enabled) {
-      return config.apps[appOverride].path
+      return { path: config.apps[appOverride].path, appSlug: appOverride }
     }
   }
 
@@ -240,15 +241,15 @@ function getPostRegistrationRedirect(
   if (roleForRedirect && config?.default_app_by_role?.[roleForRedirect]) {
     const roleBasedApp = config.default_app_by_role[roleForRedirect]
     if (config.apps[roleBasedApp]?.enabled) {
-      return config.apps[roleBasedApp].path
+      return { path: config.apps[roleBasedApp].path, appSlug: roleBasedApp }
     }
   }
 
   if (config?.default_app && config.apps[config.default_app]?.enabled) {
-    return config.apps[config.default_app].path
+    return { path: config.apps[config.default_app].path, appSlug: config.default_app }
   }
 
-  return '/'
+  return { path: '/', appSlug: null }
 }
 // CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:getpostregistrationredirect:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Resolve the redirect path after successful registration'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
@@ -385,7 +386,10 @@ export function RegisterPage() {
           return
         }
         await refreshUser()
-        navigate(getPostRegistrationRedirect(regConfig, searchParams, false, result.role_slug), { replace: true })
+        {
+          const { path, appSlug } = getPostRegistrationRedirect(regConfig, searchParams, false, result.role_slug)
+          navigate(await resolvePostAuthPath(appSlug, path), { replace: true })
+        }
       } catch (err: any) {
         // Definitive server rejections clear the intent (retrying would fail
         // identically); transient network errors keep it for the next attempt.
@@ -499,10 +503,11 @@ export function RegisterPage() {
         const confirmedAdmin =
           freshUser?.is_system_admin === true ||
           (freshUser?.roles ?? []).includes('system_admin')
+        const { path, appSlug } = getPostRegistrationRedirect(regConfig, searchParams, false, freshUser?.roles?.[0])
         navigate(
           confirmedAdmin
             ? '/spine-framework/admin'
-            : getPostRegistrationRedirect(regConfig, searchParams, false, freshUser?.roles?.[0]),
+            : await resolvePostAuthPath(appSlug, path),
           { replace: true }
         )
         return
@@ -529,7 +534,10 @@ export function RegisterPage() {
 
         await refreshUser()
         // Server-truth role decides the landing path — never the client guess.
-        navigate(getPostRegistrationRedirect(regConfig, searchParams, false, result.role_slug), { replace: true })
+        {
+          const { path, appSlug } = getPostRegistrationRedirect(regConfig, searchParams, false, result.role_slug)
+          navigate(await resolvePostAuthPath(appSlug, path), { replace: true })
+        }
       } catch (err: any) {
         if (!(err instanceof RegistrationError) || err.serverResponded) {
           clearPendingRegistration()

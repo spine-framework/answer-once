@@ -129,6 +129,10 @@ interface Manifest {
     default_workspace_name?: boolean
   }
   route_prefix?: string
+  preview_domain?: string
+  prod_domain?: string
+  preview_route_prefix?: string
+  prod_route_prefix?: string
   agent?: {
     skill_prefix?: string
   }
@@ -420,6 +424,23 @@ function validateDevinDirectory(appPath: string): void {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stable]
 function validateRoutes(appPath: string, manifest: Manifest): void {
+  // Host-keyed mount overrides: an override prefix only makes sense with its
+  // domain trigger, and both must be root-relative.
+  const pairs: [keyof Manifest, keyof Manifest][] = [
+    ['prod_route_prefix', 'prod_domain'],
+    ['preview_route_prefix', 'preview_domain'],
+  ]
+  for (const [prefixKey, domainKey] of pairs) {
+    const prefix = manifest[prefixKey] as string | undefined
+    if (prefix === undefined) continue
+    if (typeof prefix !== 'string' || !prefix.startsWith('/')) {
+      throw new ValidationError(`❌ manifest.json ${prefixKey} "${prefix}" must start with /`)
+    }
+    if (!manifest[domainKey]) {
+      throw new ValidationError(`❌ manifest.json ${prefixKey} requires ${domainKey} — the override has no trigger host without it`)
+    }
+  }
+
   if (!manifest.route_prefix) {
     console.warn('⚠️  manifest.json is missing route_prefix — install-app will default to /{slug}')
     return

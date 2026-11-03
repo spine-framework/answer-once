@@ -86,7 +86,10 @@
   ],
   "netlify": {
     "scheduled_functions": [
-      { "name": "custom_answeronce-autoresolve-cron", "schedule": "0 0 * * *" }
+      {
+        "name": "custom_answeronce-autoresolve-cron",
+        "schedule": "0 0 * * *"
+      }
     ]
   },
   "install": {
@@ -111,7 +114,7 @@
       "support",
       "support_admin"
     ],
-    "route_prefix": "/answer-once",
+    "route_prefix": "/",
     "account_strategy": "new",
     "parent_account": "spine-system",
     "allow_domain_join": false,
@@ -125,7 +128,7 @@
   "package": {
     "name": "answer-once",
     "version": "0.2.0",
-    "description": "Answer Once — standalone Spine Framework app (frozen framework snapshot)",
+    "description": "Answer Once \u2014 standalone Spine Framework app (frozen framework snapshot)",
     "scripts": {
       "dev": "vite --config config/vite.config.ts",
       "dev:netlify": "bash scripts/dev-netlify.sh",

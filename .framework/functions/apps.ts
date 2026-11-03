@@ -204,7 +204,7 @@ export const getSchema = createHandler(async (ctx, body) => {
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[BEGIN stable_id="~/.framework/functions/apps.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/apps.ts"]
 export const create = createHandler(async (ctx, body) => {
-  const { slug, name, description, icon, color, version, app_type, source, owner_account_id, config, nav_items, min_role, required_roles, integration_deps, metadata, route_prefix, renderer } = body
+  const { slug, name, description, icon, color, version, app_type, source, owner_account_id, config, nav_items, min_role, required_roles, integration_deps, metadata, route_prefix, renderer, preview_domain, prod_domain, preview_route_prefix, prod_route_prefix } = body
 
   if (!slug || !name) {
     throw new Error('slug and name are required')
@@ -259,6 +259,10 @@ export const create = createHandler(async (ctx, body) => {
       metadata: metadata || {},
       route_prefix: route_prefix !== undefined ? route_prefix : ('/' + slug),
       renderer: renderer || 'generic',
+      preview_domain: preview_domain ?? null,
+      prod_domain: prod_domain ?? null,
+      preview_route_prefix: preview_route_prefix ?? null,
+      prod_route_prefix: prod_route_prefix ?? null,
       is_active: true,
       is_system: false
     })

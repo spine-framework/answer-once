@@ -5,6 +5,8 @@
   "version": "0.2.6",
   "app_type": "full",
   "route_prefix": "/answer-once",
+  "prod_domain": "support.answer-once.com",
+  "prod_route_prefix": "/",
   "required_roles": [
     "member",
     "member_admin",

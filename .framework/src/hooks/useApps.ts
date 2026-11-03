@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../lib/api'
+import { resolveAppMount } from '../lib/app-mount'
 import { useAuth } from '../contexts/AuthContext'
 // CIL[DOC-VECTOR type="context" content="purpose='Module setup and imports for useApps.ts'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/contexts/AuthContext.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -51,6 +52,8 @@ export interface AppRecord {
   renderer: 'generic' | 'custom' | 'none'
   preview_domain?: string | null
   prod_domain?: string | null
+  preview_route_prefix?: string | null
+  prod_route_prefix?: string | null
 }
 // CIL[DOC-VECTOR type="context" content="purpose='Define the AppRecord shape'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/contexts/AuthContext.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -122,30 +125,23 @@ export function useApps(): UseAppsResult {
 
       const allApps: AppRecord[] = data.data || data || []
 
-      const environment = (import.meta.env.VITE_ENVIRONMENT as string) || 'prod'
-      const currentHost = typeof window !== 'undefined' ? window.location.hostname : ''
+      const accessible = allApps
+        .map(app => ({ app, mount: resolveAppMount(app) }))
+        .filter(({ app, mount }) => {
+          if (!app.is_active) return false
+          if (!mount.routable) return false
 
-      const appMatchesDomain = (app: AppRecord): boolean => {
-        const domain = environment === 'preview' ? app.preview_domain : app.prod_domain
-        if (!domain) return true
-        const hostname = domain.includes('://') ? new URL(domain).hostname : domain.split(':')[0]
-        return currentHost === hostname
-      }
+          const requiredRoles = app.required_roles || (app.min_role ? [app.min_role] : [])
 
-      const accessible = allApps.filter(app => {
-        if (!app.is_active) return false
-        if (!appMatchesDomain(app)) return false
-        
-        const requiredRoles = app.required_roles || (app.min_role ? [app.min_role] : [])
-        
-        if (requiredRoles.length === 0) return true
-        
-        if (!user.roles || user.roles.length === 0) return false
-        
-        if (user.roles.includes('system_admin')) return true
-        
-        return requiredRoles.some(role => user.roles!.includes(role))
-      })
+          if (requiredRoles.length === 0) return true
+
+          if (!user.roles || user.roles.length === 0) return false
+
+          if (user.roles.includes('system_admin')) return true
+
+          return requiredRoles.some(role => user.roles!.includes(role))
+        })
+        .map(({ app, mount }) => ({ ...app, route_prefix: mount.route_prefix }))
 
       setApps(accessible)
     } catch (err) {

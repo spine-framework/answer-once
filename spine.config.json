@@ -24,7 +24,7 @@
           "support_admin"
         ],
         "default_role": "member_admin",
-        "path": "/answer-once",
+        "path": "/",
         "enabled": true,
         "account_strategy": "new",
         "parent_account": "spine-system",

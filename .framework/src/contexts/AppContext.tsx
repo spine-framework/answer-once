@@ -11,6 +11,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
 import { AppRecord } from '../hooks/useApps'
 import { apiFetch } from '../lib/api'
+import { resolveAppMount } from '../lib/app-mount'
 import { useAuth } from './AuthContext'
 // CIL[DOC-VECTOR type="context" content="purpose='Defines React contexts and hooks for the current app and app registry'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/lib/api.ts,.framework/src/contexts/AuthContext.tsx"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -248,7 +249,9 @@ export function AppsRegistryProvider({ children }: AppsRegistryProviderProps) {
       if (data.error) throw new Error(data.error)
 
       const allApps: AppRecord[] = data.data || data || []
-      setApps(allApps)
+      // Resolve the host-keyed mount up front so every consumer sees the
+      // effective route_prefix ('/' on the app's own prod/preview domain).
+      setApps(allApps.map(app => ({ ...app, route_prefix: resolveAppMount(app).route_prefix })))
       loadedForUserRef.current = user.id
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return
@@ -272,18 +275,8 @@ export function AppsRegistryProvider({ children }: AppsRegistryProviderProps) {
 
   const effectiveLoading = loading || (!!user && loadedForUserRef.current !== user.id)
 
-  const environment = (import.meta.env.VITE_ENVIRONMENT as string) || 'prod'
-  const currentHost = typeof window !== 'undefined' ? window.location.hostname : ''
-
-  const appMatchesDomain = (app: AppRecord): boolean => {
-    const domain = environment === 'preview' ? app.preview_domain : app.prod_domain
-    if (!domain) return true
-    const hostname = domain.includes('://') ? new URL(domain).hostname : domain.split(':')[0]
-    return currentHost === hostname
-  }
-
   const routableApps = apps.filter(
-    app => app.route_prefix != null && app.renderer !== 'none' && appMatchesDomain(app)
+    app => app.route_prefix != null && app.renderer !== 'none' && resolveAppMount(app).routable
   )
 
   const refetch = useCallback(() => {

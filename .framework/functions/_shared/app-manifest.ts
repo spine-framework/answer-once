@@ -49,6 +49,8 @@ export interface AppManifest {
   auth_required?: boolean
   preview_domain?: string
   prod_domain?: string
+  preview_route_prefix?: string
+  prod_route_prefix?: string
 }
 // CIL[DOC-VECTOR type="context" content="purpose='Describes the runtime configuration shape of a Spine app manifest'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]

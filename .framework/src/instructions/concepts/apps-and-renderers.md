@@ -53,6 +53,25 @@ migration 014), `nav_items`, `config`, `integration_deps`, `metadata`,
   prefixes sort longest-first, so `/crm/sales` wins over `/crm`. Supported
   but unusual.
 
+### Host-keyed mount overrides
+
+`prod_domain` + `prod_route_prefix` (and the `preview_` pair for
+`VITE_ENVIRONMENT=preview`) let one row mount differently per hostname
+(`.framework/src/lib/app-mount.ts`, resolved in `useApps`/`AppContext` before
+records reach the router):
+
+- Host matches `prod_domain` → app mounts at `prod_route_prefix` (or
+  `route_prefix` when no override is set).
+- Host doesn't match, override set → still routable at `route_prefix`.
+- Host doesn't match, no override → filtered out (legacy domain-lock).
+
+So `route_prefix: "/demo"` + `prod_domain: "demo.example.com"` +
+`prod_route_prefix: "/"` serves the app at `/` on its own site while it
+stays at `/demo` everywhere else. `manifest.json` carries all four fields;
+`validate-app` requires the matching domain whenever an override prefix is
+declared. The unique index `idx_apps_route_prefix_domain` allows `/` per
+prod domain.
+
 Rules that are easy to get wrong:
 
 - **Exactly one app may own `/`.** Two root-mounted apps both compile to
