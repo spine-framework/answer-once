@@ -468,7 +468,7 @@ export const cleanupOldLogs = createHandler(async (ctx, body) => {
     throw new Error('System admin required')
   }
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await adminDb
     .rpc('cleanup_old_logs', {
       p_retention_days: parseInt(days.toString()) || 30,
     })

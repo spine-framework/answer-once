@@ -1448,7 +1448,7 @@ export const cleanup = createHandler(async (ctx, body) => {
 // CIL[DOC-RESPONSIBILITY responsibility="Returns embeddings whose vectors are within a threshold of a query embedding."]
 // CIL[DOC-CONTEXT module="embeddings" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/llm.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/permissions.ts,.framework/functions/_shared/principal.ts,.framework/functions/embeddings.ts"]
 // CIL[DOC-CONTRACT inputs="ctx: RequestContext, body: { query_embedding, model_id?, limit?, threshold? }" outputs="{ results, count, model_id, threshold }" errors="throws if account or query_embedding missing, or RPC fails" side_effects="executes a database RPC"]
-// CIL[DOC-MICRO logic_summary="Validates account and query_embedding, calls the search_similar_embeddings RPC, and returns the results, count, model, and threshold." notable_decisions="none"]
+// CIL[DOC-MICRO logic_summary="Validates account and query_embedding, calls the match_embeddings RPC via adminDb, and returns the results, count, model, and threshold." notable_decisions="adminDb (service role) required — the RPC is service-role-only; scoping is enforced here via filter_account_ids"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="developers"]
@@ -1474,10 +1474,12 @@ export const searchSimilar = createHandler(async (ctx, body) => {
     throw new Error('Account context required')
   }
 
-  const { data, error: err } = await ctx.db.rpc('match_embeddings', {
+  // adminDb (service role): match_embeddings is revoked from anon/authenticated.
+  // Scoping is enforced here — non-system callers may not widen the corpus
+  // beyond their own account.
+  const { data, error: err } = await adminDb.rpc('match_embeddings', {
     query_embedding,
     match_count: parseInt(limit.toString()),
-    // Scoped callers may not widen the corpus beyond their own account.
     filter_account_ids: isSystem ? (filter_account_ids ?? null) : [ctx.accountId],
     filter_vector_type: filter_vector_type ?? null,
     similarity_threshold: parseFloat(threshold.toString()),

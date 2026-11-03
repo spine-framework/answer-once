@@ -99,6 +99,7 @@ beforeEach(() => {
     built.push(b)
     return b
   })
+  vi.mocked(adminDb.rpc).mockResolvedValue({ data: [], error: null })
 })
 
 // ctx.db for non-system callers. In production a machine principal's ctx.db IS
@@ -323,7 +324,8 @@ describe('embeddings account scoping (S-007)', () => {
       query_embedding: [0.1],
       filter_account_ids: ['acct-2'],
     })
-    const rpcArgs = vi.mocked(ctx.db.rpc).mock.calls[0][1] as any
+    // match_embeddings is service-role-only — the call now goes through adminDb.
+    const rpcArgs = vi.mocked(adminDb.rpc).mock.calls[0][1] as any
     expect(rpcArgs.filter_account_ids).toEqual(['acct-1'])
   })
 })
