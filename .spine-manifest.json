@@ -1,7 +1,7 @@
 {
   "format_version": 1,
   "frozen": true,
-  "framework_version": "0.5.0-rc.6",
+  "framework_version": "0.5.0",
   "source_commit": null,
   "tree_digest": "sha256:a198876de1074a506df796f702f119b9d086cfbc428f03aaaa655734ffd89c36",
   "node": ">=22.13.0",
