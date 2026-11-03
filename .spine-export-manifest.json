@@ -2,15 +2,15 @@
   "format_version": 1,
   "app_slug": "answer-once",
   "app_name": "Answer Once",
-  "exported_at": "2026-11-03T01:41:03.574Z",
+  "exported_at": "2026-11-03T01:48:01.568Z",
   "source_root": "/Users/thistle/CascadeProjects/spine-ia",
-  "source_tree_digest": "sha256:fd66c020f7a3961a16c837d8c86e5d69cf4df191c813ef54bfdaf15b5d99eb18",
+  "source_tree_digest": "sha256:3cd3a0d003672e5ca317647b3074ba020cd00503ec1ac1380732778ebbdd7433",
   "source": {
-    "head": "fdb309ac9bb2251541336c0be26dfce172750f89",
+    "head": "d829b439594e97dbc068b97b724528d8c62f5f59",
     "dirty": false,
     "dirty_file_count": 0,
     "status_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "exported_files_digest": "sha256:5b628879cc9fce5376af054479c9619d7145e31bb595c91eeee4a7d51b42532c"
+    "exported_files_digest": "sha256:fd8dfb6fa2c9fd9b5f21814053755c7f099a9e85663e4b2400bc93d1f8e70e04"
   },
   "scheduled_functions": [
     {
@@ -559,7 +559,7 @@
     ".framework/src/pages/admin/kb/KBAdminPage.tsx": "sha256:4c9aeacee3242b060bcd369a87d3f033a90db4ff3a16a71b6859a174b15963a8",
     ".framework/src/pages/auth/AuthConfirmPage.tsx": "sha256:0147dc78f4727dd0f76ff530026bc1d062eff6659377ed8af870b120dcc9ec55",
     ".framework/src/pages/auth/ForgotPasswordPage.tsx": "sha256:bde2d21c10c523247592552cbacf98ed3bb69254e2697786c2c640bd8eeb3a5d",
-    ".framework/src/pages/auth/LoginPage.tsx": "sha256:0e9f4aaa9af88c70d0b3748cc2496f47a84119662ef574c81d32acb3f3c6a555",
+    ".framework/src/pages/auth/LoginPage.tsx": "sha256:2662d2fcccd9046ef4085baf0588c99dce19c6e1e80e37b334b6a3b477af719c",
     ".framework/src/pages/auth/PendingApprovalPage.tsx": "sha256:501c475ee1e8622481c3dbbbb6779a8adae7ad3a06bf18d7948f44037d23a7cd",
     ".framework/src/pages/auth/RegisterPage.tsx": "sha256:d5756fcb2816c8c9efd51d72fb4ccc42edc69e2eee7875d076a92ca8ca316c08",
     ".framework/src/pages/spine-framework/APIPage.tsx": "sha256:16ae2c0dc3f070a2d1b6484264594cd097f764adcc453c4b675eb0b3ba36b19d",
@@ -832,7 +832,7 @@
     "package-lock.json": "sha256:7f9fb622c1c82e0ba470ec09e38bd05e532ab28b5d944540c152798d21af0ae5",
     "spine.config.json": "sha256:89e75fd4d4fc7e76cedda8eb3c09277805d7b680bc555e948e32858deabdb85f",
     "netlify.toml": "sha256:eae749fe41d401a5275826f96cce292a5ec193b6727abe494f60a9e7da3ee35a",
-    ".spine-manifest.json": "sha256:ba0c7726214cdf45ac22561f29b56bdbb79155bd74e7b068a6de7fb9ff705820"
+    ".spine-manifest.json": "sha256:71a59ff04eab0c6b91cdcf427e840705c62dff699d2cb7c003c04314143d40e8"
   },
   "migrations": {
     "framework": [
