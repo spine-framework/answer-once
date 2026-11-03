@@ -1,9 +1,9 @@
 {
   "format_version": 1,
   "frozen": true,
-  "framework_version": "0.5.0-rc.4",
+  "framework_version": "0.5.0-rc.6",
   "source_commit": null,
-  "tree_digest": "sha256:2eacb99164933f8b6c5b7c9509b3c81ad4b1cbdea7e080fd7d2470d49139e38c",
+  "tree_digest": "sha256:a198876de1074a506df796f702f119b9d086cfbc428f03aaaa655734ffd89c36",
   "node": ">=22.13.0",
   "npm": ">=10.0.0",
   "files": {
@@ -629,13 +629,13 @@
     "scripts/assemble.sh": "sha256:0686760a46f3e2de9bea40f309dffe20cf1e5d3091622c34ef836cea2fec2156",
     "scripts/boundary-check.sh": "sha256:65e59e3171a4f165fa349d20d315d8311b0b87fb554c15449e22c7b7970deb85",
     "scripts/build-manifest.sh": "sha256:b73278727cd6fdef14781df546008ed4ef1c44701d8a4122c9951a6f9b998918",
-    "scripts/checksum-manifest.mts": "sha256:2d7dc39d2e1a579784500c56516f7fc0737583718d1204b57365a2a9946b38da",
+    "scripts/checksum-manifest.mts": "sha256:8d8403779005dd1d97ed75bc4142acf16c9ad7a9d6026a818e78b8ec9e557a2e",
     "scripts/dev-clean.sh": "sha256:9e4fb2da0202e48648ebac52a877f8e010d0ae8a1ac49fbe5f2a82e6241cdd38",
     "scripts/dev-netlify.sh": "sha256:70ebd0a7ce0e4e7c740343ed7e4641f454966c93ee75e066d31c255d2fa86984",
     "scripts/export-standalone.ts": "sha256:c35d6447e92b16ba91be383e294d30ef55a291adda24f56df59a5d72688622cd",
     "scripts/netlify-dev-wrapper.sh": "sha256:746a9e4b2e72425401ed95b472d9591ddc82cbfeea5ba7a9992cc6185c4ef3b9",
     "scripts/verify-install.ts": "sha256:d76f2be81f51c47498206db9290b4b8b1f66d0eeb44dafafeaac7b3d9041c488",
     "scripts/verify-integrity.sh": "sha256:df97e4e3b10e016e6b358d3abc35b7fa80d3801c12d0d170ae2917cda75babf6",
-    "scripts/verify-manifest.mts": "sha256:bd7113d9ba49446070e3b2cfac2e255213dec28799818cc538213d56fedb93f8"
+    "scripts/verify-manifest.mts": "sha256:3db8da12397ff6698f05f3a513ad89de7d660ba8f32bc0d1073623b3df30267f"
   }
 }

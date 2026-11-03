@@ -18,6 +18,7 @@ import {
   PROTECTED_DIRS,
   collectProtectedFiles,
   computeTreeDigest,
+  gitTrackedFiles,
   hashEntry,
   topLevelDir,
 } from './checksum-manifest.mts'
@@ -192,7 +193,7 @@ function verifyListedFiles(rootAbs: string, files: Record<string, string>): Fail
 // CIL[DOC-RESPONSIBILITY responsibility="Enumerate the same trees the generator covered (defaults plus any top-level dirs present in the manifest) and flag anything not in the files map"]
 // CIL[DOC-CONTEXT module="spine-integrity" layer="build" related_files="scripts/checksum-manifest.mts"]
 // CIL[DOC-CONTRACT inputs="rootAbs, manifestRel, files map" outputs="Failure[]" errors="none" side_effects="reads filesystem"]
-// CIL[DOC-MICRO logic_summary="Shared collectProtectedFiles keeps exclusion rules identical between generate and verify; the manifest's own path is excluded" notable_decisions="manifest top-level dirs are unioned in so --include-dir manifests verify without extra flags"]
+// CIL[DOC-MICRO logic_summary="Shared collectProtectedFiles keeps exclusion rules identical between generate and verify; the manifest's own path is excluded; results are filtered to git-index files so ignored/untracked scratch files cannot flag EXTRA" notable_decisions="manifest top-level dirs are unioned in so --include-dir manifests verify without extra flags; tracked-filter mirrors the generator — absent from a fresh clone means absent from the manifest"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 function findExtraFiles(rootAbs: string, manifestRel: string, files: Record<string, string>): Failure[] {
@@ -203,7 +204,10 @@ function findExtraFiles(rootAbs: string, manifestRel: string, files: Record<stri
   }
 
   const extraDirs = [...trees].filter((d) => !PROTECTED_DIRS.includes(d))
-  const present = collectProtectedFiles(rootAbs, extraDirs, new Set([manifestRel]))
+  const tracked = gitTrackedFiles(rootAbs)
+  const present = collectProtectedFiles(rootAbs, extraDirs, new Set([manifestRel])).filter(
+    (entry) => tracked === null || tracked.has(entry.rel),
+  )
 
   const failures: Failure[] = []
   for (const entry of present) {

@@ -221,6 +221,29 @@ function getSourceCommit(root: string, manifestRel: string): string | null {
 }
 // CIL[END stable_id="~/scripts/checksum-manifest.mts:getSourceCommit:function"]
 
+// CIL[BEGIN stable_id="~/scripts/checksum-manifest.mts:gitTrackedFiles:function" type="function" identity="gitTrackedFiles" parent="~/scripts/checksum-manifest.mts"]
+// CIL[DOC-MACRO purpose="Resolve the set of git-index file paths for manifest filtering"]
+// CIL[DOC-RESPONSIBILITY responsibility="Run git ls-files -z at root and return its paths as a Set; null when git/index is unavailable or empty"]
+// CIL[DOC-CONTEXT module="spine-integrity" layer="build" related_files="scripts/checksum-manifest.mts,scripts/verify-manifest.mts"]
+// CIL[DOC-CONTRACT inputs="root: project root" outputs="Set of POSIX rel paths or null" errors="returns null when git is missing, root is not a repo, or the index is empty" side_effects="spawns a git subprocess"]
+// CIL[DOC-MICRO logic_summary="The index (not the worktree) defines what a fresh clone will contain — ignored and unstaged-new files are absent" notable_decisions="empty index returns null so a bootstrap repo with no commits still produces a manifest"]
+// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
+// CIL[DOC-STABILITY stability="stable"]
+export function gitTrackedFiles(root: string): Set<string> | null {
+  try {
+    const out = execFileSync('git', ['ls-files', '-z', '--cached'], {
+      cwd: root,
+      maxBuffer: 64 * 1024 * 1024,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+    const rels = out.toString('utf8').split('\0').filter(Boolean)
+    return rels.length > 0 ? new Set(rels) : null
+  } catch {
+    return null
+  }
+}
+// CIL[END stable_id="~/scripts/checksum-manifest.mts:gitTrackedFiles:function"]
+
 // CIL[BEGIN stable_id="~/scripts/checksum-manifest.mts:getFrameworkVersion:function" type="function" identity="getFrameworkVersion" parent="~/scripts/checksum-manifest.mts"]
 // CIL[DOC-MACRO purpose="Resolve framework_version from package.json"]
 // CIL[DOC-RESPONSIBILITY responsibility="Read <root>/package.json and return its version field; null when unreadable"]
@@ -261,7 +284,7 @@ export function computeTreeDigest(files: ReadonlyArray<readonly [string, string]
 // CIL[DOC-RESPONSIBILITY responsibility="Validate argv, build the manifest object, serialize with sorted keys and LF endings, print a summary"]
 // CIL[DOC-CONTEXT module="spine-integrity" layer="build" related_files="scripts/build-manifest.sh,package.json"]
 // CIL[DOC-CONTRACT inputs="argv: <root> <output> [--include-dir <d>...]" outputs="exit 0 with manifest written" errors="exit 2 usage error; exit 1 on fs/git failures" side_effects="writes <output>, stdout summary"]
-// CIL[DOC-MICRO logic_summary="frozen is always true on generated manifests; node/npm baselines are stamped from the plan G baseline (node >=22.13.0, npm >=10.0.0)" notable_decisions="no timestamp — determinism is verified by running the generator twice and diffing"]
+// CIL[DOC-MICRO logic_summary="frozen is always true on generated manifests; node/npm baselines are stamped from the plan G baseline (node >=22.13.0, npm >=10.0.0); collected entries are filtered to git-index files so ignored/untracked scratch files can never produce MISSING failures on fresh clones" notable_decisions="no timestamp — determinism is verified by running the generator twice and diffing; filtering happens in main only because export-standalone shares collectProtectedFiles on a pre-commit output tree"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 function main(): void {
@@ -312,7 +335,11 @@ function main(): void {
   const manifestRel = path.relative(root, output).split(path.sep).join('/')
   const excludeRels = new Set<string>([manifestRel])
 
-  const entries = collectProtectedFiles(root, extraDirs, excludeRels)
+  const tracked = gitTrackedFiles(root)
+  const collected = collectProtectedFiles(root, extraDirs, excludeRels)
+  const entries = tracked === null
+    ? collected
+    : collected.filter((entry) => tracked.has(entry.rel))
   const pairs: Array<readonly [string, string]> = entries.map(
     (entry) => [entry.rel, hashEntry(entry)] as const,
   )
@@ -333,6 +360,9 @@ function main(): void {
 
   fs.writeFileSync(output, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
 
+  if (tracked !== null && collected.length !== entries.length) {
+    console.log(`  untracked files skipped: ${collected.length - entries.length}`)
+  }
   console.log(`  manifest: ${manifestRel}`)
   console.log(`  files hashed: ${pairs.length}`)
   console.log(`  tree_digest: ${manifest.tree_digest}`)
