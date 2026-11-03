@@ -2,15 +2,15 @@
   "format_version": 1,
   "app_slug": "answer-once",
   "app_name": "Answer Once",
-  "exported_at": "2026-11-03T01:48:01.568Z",
+  "exported_at": "2026-11-03T02:46:57.511Z",
   "source_root": "/Users/thistle/CascadeProjects/spine-ia",
   "source_tree_digest": "sha256:3cd3a0d003672e5ca317647b3074ba020cd00503ec1ac1380732778ebbdd7433",
   "source": {
-    "head": "d829b439594e97dbc068b97b724528d8c62f5f59",
+    "head": "2bb409df5293f3ecd1eedfbac9be8edf0348c0bd",
     "dirty": false,
     "dirty_file_count": 0,
     "status_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "exported_files_digest": "sha256:fd8dfb6fa2c9fd9b5f21814053755c7f099a9e85663e4b2400bc93d1f8e70e04"
+    "exported_files_digest": "sha256:3de75609afd73691e475f019fc4a1234d9199c5f332bfcb04928fe46cf26ea23"
   },
   "scheduled_functions": [
     {
@@ -20,7 +20,7 @@
   ],
   "node": "v22.23.2",
   "npm_baseline": ">=10.0.0",
-  "file_count": 794,
+  "file_count": 797,
   "files": {
     ".env.example": "sha256:520e10fdb9060bba62f93f074858951c0ce78916291285ccb5aae032448f0033",
     ".framework/README.md": "sha256:1f35d6efafa4a0f50b1f54c3e7cd3f9553baf33afd82912e503ad52c51055d7d",
@@ -700,6 +700,8 @@
     "custom/apps/answer-once/components/TicketCard.tsx": "sha256:d973c609f3af3de79100b5c27cfe6477d2855a13eabcba54024648a6b0dbce2d",
     "custom/apps/answer-once/components/TicketThread.tsx": "sha256:5cf1510b1a0eb985d706244d6e59163f110eb33ddd45ca74b87a5b701817c261",
     "custom/apps/answer-once/docs/install.md": "sha256:d84bfc26d68c37b5eb2fdcf0dcc65c2d2f19b2001c3bee7643e334c4c305c0c3",
+    "custom/apps/answer-once/emails/confirm.html": "sha256:50c403942b53f6173162c3cc84f722313f125fca663de2e411be65e33320a9dc",
+    "custom/apps/answer-once/emails/invite.html": "sha256:63274ff280e6153a6f676b18b4b13cf865a89d305c3e4124f3a534ea24a235d8",
     "custom/apps/answer-once/functions/_shared": "sha256:757b6491de8155324d16359ee6f69922a37d2bc2a1e6b8fe42ab2d80084c784f",
     "custom/apps/answer-once/functions/admin-data.ts": "sha256:bbd2d194fbd1d2bf181bc276cab230aa98677cd2bd533c2f4425c96f21852360",
     "custom/apps/answer-once/functions/custom_answeronce-autoresolve-cron.ts": "sha256:762dbec3de678e026853b0f2d3764e256710b4c7d06b7fb4e497fee75bef0ca4",
@@ -735,6 +737,7 @@
     "custom/apps/answer-once/pages/customer/TicketsPage.tsx": "sha256:c7950d348a265d3bd5d3767ceb4baafad7154960b86a4a262f8bb0a41815680b",
     "custom/apps/answer-once/public/answer-once-icon.png": "sha256:8b76be71147e345a59bf2ec6610135eadb0af641c16e6417589c783b481bbbc1",
     "custom/apps/answer-once/public/answer-once-icon.svg": "sha256:e863d067e75c74e1421ad8f90514f6b496b7768175643c39dde57897ee6b7015",
+    "custom/apps/answer-once/public/answer-once-logo-wht.png": "sha256:7538517b000fbf469643da96436e5b58681cbd4237ad42bea3ec194d123cdc7f",
     "custom/apps/answer-once/public/answer-once-logo.png": "sha256:2dbe11484c6560481a0bc529f25bcda080885abf7dddb5d8270def3ae627ac14",
     "custom/apps/answer-once/public/answer-once-logo.svg": "sha256:f94d13bfc7e550e9488a34ca8f9971eff804cb9eade7074259d43fbd7b089c1d",
     "custom/apps/answer-once/seed/ai-agents.json": "sha256:d5f1a3ab42f275aec7870d0e7ea31f76381772ccd0bca292687881162420887d",
