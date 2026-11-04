@@ -1,9 +1,9 @@
 {
   "format_version": 1,
   "frozen": true,
-  "framework_version": "0.5.0",
+  "framework_version": "0.5.1",
   "source_commit": null,
-  "tree_digest": "sha256:aa9a87f0ef130934f47998681ae9fc21db2330c02aa5eb7d1954bcda7250eb91",
+  "tree_digest": "sha256:e47b671cd5a8d3a8fa739b326ec5b61cee1d97ea31d2f5f168e80578662922ac",
   "node": ">=22.13.0",
   "npm": ">=10.0.0",
   "files": {
@@ -139,7 +139,7 @@
     ".framework/functions/system.ts": "sha256:97bd7e7328ea20b66fefbb88808708d425aeba6acd09ae84a946d70f7df9abf6",
     ".framework/functions/tests.ts": "sha256:07e8c93c13d69ce41867cfee73464c168e2ee95cbf68541ff0bdb61b2328bd4f",
     ".framework/functions/timers.ts": "sha256:84cd5e887b1e4ca6e88c1468d8f3b0e8681e819a2b85ad787d0c9be6db97dd62",
-    ".framework/functions/trigger-scheduler.ts": "sha256:52969c38eb03c886dbf0498e722d081562b88a4f2588bae7af58cc5f82e5ca14",
+    ".framework/functions/trigger-scheduler.ts": "sha256:839e9e2f9b46f7e992c60a0dbaa690566957efa26aaa36d270bcdf2192ed4c7c",
     ".framework/functions/triggers.ts": "sha256:a2dc87056ce3b89da60d259cdb36296061e2362a66b36a11a701e9800adcbda3",
     ".framework/functions/types.ts": "sha256:b68a66a012756a9ea1aa16eb72b6bd686d5dd0e9fa8a476dff3e06c49d286539",
     ".framework/index.html": "sha256:4ac88b0ac6cdb454be13d81934d94874b788aa010d267416321a71846ee183cf",

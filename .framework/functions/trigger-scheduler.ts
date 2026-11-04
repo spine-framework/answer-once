@@ -23,12 +23,17 @@ import { adminDb } from './_shared/db'
 // present, to guard against future header renames.
 function isNetlifyScheduledInvocation(event: any): boolean {
   // Header+body signals are all client-controlled — they only get to mint a
-  // SYSTEM_PRINCIPAL on hosts where we explicitly trust Netlify's platform
-  // guarantee that scheduled functions can't be invoked by URL. Everywhere
-  // else the check falls through to the normal middleware auth path.
-  const trusted = (globalThis as any).process?.env?.SPINE_TRUST_SCHEDULE_HEADERS ||
-    (globalThis as any).Deno?.env?.get?.('SPINE_TRUST_SCHEDULE_HEADERS')
-  if (trusted !== '1' && trusted !== 'true') return false
+  // SYSTEM_PRINCIPAL where Netlify's platform guarantees scheduled functions
+  // can't be invoked by URL. Detect that by Netlify's injected runtime vars
+  // (SITE_ID/URL/DEPLOY_URL always exist in function runtime) or an explicit
+  // SPINE_TRUST_SCHEDULE_HEADERS override for trusted non-Netlify setups.
+  // build.environment vars do NOT reach function runtime — do not rely on them.
+  const env = (k: string) =>
+    (globalThis as any).process?.env?.[k] ??
+    (globalThis as any).Deno?.env?.get?.(k)
+  const override = env('SPINE_TRUST_SCHEDULE_HEADERS')
+  const onNetlify = Boolean(env('SITE_ID') || env('URL') || env('DEPLOY_URL'))
+  if (override !== '1' && override !== 'true' && !onNetlify) return false
 
   const headers = event.headers || {}
 
