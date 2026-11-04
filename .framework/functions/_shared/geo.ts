@@ -65,6 +65,19 @@ export type ClientGeo = {
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/geo.ts:firstValidIp:function" type="function" identity="firstValidIp" parent="~/.framework/functions/_shared/geo.ts"]
+// CIL[DOC-MACRO purpose="Accept only well-formed IP literals from client-controlled headers"]
+// CIL[DOC-RESPONSIBILITY responsibility="Reject spoofed/garbage x-forwarded-for values before they land in geo/rate-limit state"]
+// CIL[DOC-CONTRACT inputs="candidate string" outputs="string|undefined" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="IPv4 dotted-quad, or hex+colon IPv6 (a colon is required so plain hex words like 'dead' don't pass)" notable_decisions="[]"]
+// CIL[DOC-STABILITY stability="stable"]
+function firstValidIp(v: string | undefined): string | undefined {
+  if (!v) return undefined
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(v) || (v.includes(':') && /^[0-9a-fA-F:]{3,}$/.test(v))) return v
+  return undefined
+}
+// CIL[END stable_id="~/.framework/functions/_shared/geo.ts:firstValidIp:function"]
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/geo.ts:getclientgeo:function" type="function" identity="getClientGeo" parent="~/.framework/functions/_shared/geo.ts"]
 // CIL[DOC-MACRO purpose="Extract client country and IP from request headers"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements getClientGeo"]
@@ -97,7 +110,7 @@ export function getClientGeo(ctx: RequestContext): ClientGeo {
 
   const ip =
     headers['x-nf-client-connection-ip'] ||
-    (headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    firstValidIp((headers['x-forwarded-for'] || '').split(',')[0].trim()) ||
     undefined
 
   return { country, ip }

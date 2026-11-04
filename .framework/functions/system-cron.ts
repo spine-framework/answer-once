@@ -92,7 +92,9 @@ const SCHEDULER_API_KEY: string | undefined = (globalThis as any).process?.env?.
 export const handler = createHandler(async (ctx: RequestContext) => {
   const requestApiKey = ctx.query?.api_key || ctx.query?.scheduler_key
   
-  if (requestApiKey !== SCHEDULER_API_KEY) {
+  // Fail closed: when SCHEDULER_API_KEY is unset, `undefined !== undefined`
+  // is false and any signed-in user would skip auth entirely.
+  if (!SCHEDULER_API_KEY || requestApiKey !== SCHEDULER_API_KEY) {
     if (ctx.principal?.type !== 'machine' || ctx.principal?.machineType !== 'internal') {
       await emitAudit(ctx, 'system_cron.unauthorized_access', {
         type: 'system',

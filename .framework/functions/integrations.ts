@@ -29,6 +29,7 @@ import { joins, adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { sanitizeRecordData } from './_shared/permissions'
 import { isSystemAdmin } from './_shared/principal'
+import { isAccountAdmin } from './_shared/access'
 // CIL[END stable_id="~/.framework/functions/integrations.ts:module_header:module_header"]
 
 
@@ -246,6 +247,26 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
+  if (!isSystemAdmin(ctx.principal) && !isAccountAdmin(ctx, ctx.accountId)) {
+    const e: any = new Error('Insufficient permissions — *_admin role required to manage integrations')
+    e.statusCode = 403
+    throw e
+  }
+
+  // env_var credentials resolve from server process.env — a tenant caller
+  // naming SUPABASE_SERVICE_ROLE_KEY or OPENAI_API_KEY would exfiltrate the
+  // platform secret at outbound time. Only system principals may register
+  // env-sourced credentials; tenants store literal values.
+  if (!isSystemAdmin(ctx.principal) && credentials && typeof credentials === 'object') {
+    for (const entry of Object.values(credentials) as any[]) {
+      if (entry && entry.source === 'env_var') {
+        const e: any = new Error('env_var credentials are restricted to system integrations')
+        e.statusCode = 403
+        throw e
+      }
+    }
+  }
+
   const safeCredentials = credentials || {}
 
   const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
@@ -306,6 +327,11 @@ export const create = createHandler(async (ctx, body) => {
  * @cil-generated
  */
 export const update = createHandler(async (ctx, body) => {
+  if (!isSystemAdmin(ctx.principal) && !isAccountAdmin(ctx, ctx.accountId)) {
+    const e: any = new Error('Insufficient permissions — *_admin role required to manage integrations')
+    e.statusCode = 403
+    throw e
+  }
   const id = body?.id || ctx.query?.id
   const { id: _bodyId, ...updates } = body || {}
 
@@ -320,15 +346,31 @@ export const update = createHandler(async (ctx, body) => {
   }
 
   if (updateData.credentials !== undefined) {
+    if (!isSystemAdmin(ctx.principal)) {
+      for (const entry of Object.values(updateData.credentials) as any[]) {
+        if (entry && entry.source === 'env_var') {
+          const e: any = new Error('env_var credentials are restricted to system integrations')
+          e.statusCode = 403
+          throw e
+        }
+      }
+    }
     updateData.is_configured = computeIsConfigured(updateData.credentials)
   }
 
   const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
 
-  const { data, error: err } = await db
+  let updQ = db
     .from('integrations')
     .update(updateData)
     .eq('id', id)
+  if (!isSystemAdmin(ctx.principal)) {
+    // ctx.db is the service-role client for account-bound machine keys — the
+    // explicit account filter is what stops them rewriting platform or
+    // foreign-tenant integrations.
+    updQ = updQ.eq('account_id', ctx.accountId)
+  }
+  const { data, error: err } = await updQ
     .select()
     .single()
 

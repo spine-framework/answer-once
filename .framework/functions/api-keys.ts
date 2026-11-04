@@ -56,7 +56,7 @@
 import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
 import { sanitizeRecordData } from './_shared/permissions'
 import { hashApiKey, omitSecretFields } from './_shared/hash-api-key'
 import { resolveAppUuid } from './_shared/logging'
@@ -68,11 +68,6 @@ import { resolveAppUuid } from './_shared/logging'
 // produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
 // resolve to the service-role adminDb via getPrincipalDb, so account-bound
 // API keys must be scoped to their own account below.
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/api-keys.ts"]
-function isSystemPrincipal(ctx: any): boolean {
-  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
-}
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:isSystemPrincipal:function"]
 
 
 

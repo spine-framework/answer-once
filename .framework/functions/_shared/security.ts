@@ -99,20 +99,24 @@ async function lookupBlocklist(
 ): Promise<{ type: string; value: string; reason: string | null } | null> {
   if (!checks.length) return null
   try {
-    const or = checks
-      .map(c => `and(type.eq.${c.type},value.eq.${c.value})`)
-      .join(',')
-    const { data, error } = await adminDb
-      .from('security_blocklist')
-      .select('type, value, reason, severity, revoked_at, expires_at')
-      .eq('severity', 'hard')
-      .or(or)
-      .limit(5)
-    if (error) {
-      console.warn('blocklist lookup failed (fail-open):', error.message)
-      return null
+    // Per-check .eq queries — interpolating caller values into a .or()
+    // filter string let a crafted IP/email break the query and fail open.
+    for (const c of checks) {
+      const { data, error } = await adminDb
+        .from('security_blocklist')
+        .select('type, value, reason, severity, revoked_at, expires_at')
+        .eq('severity', 'hard')
+        .eq('type', c.type)
+        .eq('value', c.value)
+        .limit(5)
+      if (error) {
+        console.warn('blocklist lookup failed (fail-open):', error.message)
+        return null
+      }
+      const hit = (data || []).find(isActiveRule)
+      if (hit) return hit
     }
-    return (data || []).find(isActiveRule) ?? null
+    return null
   } catch (err: any) {
     console.warn('blocklist lookup error (fail-open):', err?.message)
     return null

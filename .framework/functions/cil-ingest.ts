@@ -7,7 +7,7 @@
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="both"]
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { create as adminCreate, update as adminUpdate } from './admin-data'
 import { resolveTypeId } from './_shared/resolve-ids'
@@ -2013,6 +2013,10 @@ async function pass2Chunk(
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
+  // CIL is operator tooling — every action touches the service-role client
+  // and server filesystem. System principals only; tenant callers stop here.
+  requireSystemContextWithAudit(ctx)
+
   const action = ctx.query?.action
   const req = body as IngestRequest
 

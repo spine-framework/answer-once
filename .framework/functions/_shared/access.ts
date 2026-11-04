@@ -82,3 +82,114 @@ export function projectMessageForCustomer(
   }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/access.ts:projectMessageForCustomer:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/access.ts:isAdminRole:function" type="function" identity="isAdminRole" parent="~/.framework/functions/_shared/access.ts"]
+// CIL[DOC-MACRO purpose="Classify a role slug as admin-capable"]
+// CIL[DOC-RESPONSIBILITY responsibility="system_admin plus any *_admin slug count as admin roles"]
+// CIL[DOC-CONTRACT inputs="roleSlug" outputs="boolean" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Exact system_admin match or _admin suffix" notable_decisions="[]"]
+// CIL[DOC-STABILITY stability="stable"]
+export function isAdminRole(roleSlug: string | undefined): boolean {
+  return !!roleSlug && (roleSlug === 'system_admin' || roleSlug.endsWith('_admin'))
+}
+// CIL[END stable_id="~/.framework/functions/_shared/access.ts:isAdminRole:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/access.ts:isAccountAdmin:function" type="function" identity="isAccountAdmin" parent="~/.framework/functions/_shared/access.ts"]
+// CIL[DOC-MACRO purpose="True when the principal administers the given account"]
+// CIL[DOC-RESPONSIBILITY responsibility="Gate account-admin surfaces (invites, integrations, member updates) for tenant callers"]
+// CIL[DOC-CONTRACT inputs="ctx, accountId" outputs="boolean" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="System-level principals pass; otherwise principal.accountId must equal the target account and carry an *_admin role" notable_decisions="principal.accountId is server-resolved from the people row — no client input feeds the check"]
+// CIL[DOC-STABILITY stability="stable"]
+export function isAccountAdmin(ctx: any, accountId: string | null | undefined): boolean {
+  const principal = ctx?.principal
+  if (!principal || principal.id === 'anonymous') return false
+  if (principal.permissions?.includes('system') || (principal.roles || []).includes('system_admin')) return true
+  if (principal.isInternal === true && !ctx.accountId) return true
+  return !!accountId && principal.accountId === accountId &&
+    (principal.roles || []).some((r: string) => isAdminRole(r))
+}
+// CIL[END stable_id="~/.framework/functions/_shared/access.ts:isAccountAdmin:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/access.ts:requireAccountAdmin:function" type="function" identity="requireAccountAdmin" parent="~/.framework/functions/_shared/access.ts"]
+// CIL[DOC-MACRO purpose="Throw unless the principal administers the given account"]
+// CIL[DOC-RESPONSIBILITY responsibility="Hard-fail variant of isAccountAdmin for guard-clause use"]
+// CIL[DOC-CONTRACT inputs="ctx, accountId" outputs="void" errors="Authentication required; Insufficient permissions" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Anonymous → Authentication required; otherwise delegates to isAccountAdmin" notable_decisions="[]"]
+// CIL[DOC-STABILITY stability="stable"]
+export function requireAccountAdmin(ctx: any, accountId: string | null | undefined): void {
+  const principal = ctx?.principal
+  if (!principal || principal.id === 'anonymous') {
+    throw new Error('Authentication required')
+  }
+  if (!isAccountAdmin(ctx, accountId)) {
+    throw new Error('Insufficient permissions — *_admin role required for this account')
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/access.ts:requireAccountAdmin:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/access.ts:escapeHtml:function" type="function" identity="escapeHtml" parent="~/.framework/functions/_shared/access.ts"]
+// CIL[DOC-MACRO purpose="Entity-escape a value for safe interpolation into HTML"]
+// CIL[DOC-RESPONSIBILITY responsibility="Neutralize markup injection in server-rendered email templates (invite emails)"]
+// CIL[DOC-CONTRACT inputs="any" outputs="string" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Escapes & < > \" ' to HTML entities" notable_decisions="[]"]
+// CIL[DOC-STABILITY stability="stable"]
+export function escapeHtml(value: any): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+// CIL[END stable_id="~/.framework/functions/_shared/access.ts:escapeHtml:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/access.ts:assertPublicOutboundUrl:function" type="function" identity="assertPublicOutboundUrl" parent="~/.framework/functions/_shared/access.ts"]
+// CIL[DOC-MACRO purpose="SSRF guard: only public http(s) URLs may be fetched by outbound integrations"]
+// CIL[DOC-RESPONSIBILITY responsibility="Reject private/loopback/link-local/metadata IP literals and internal-suffix hostnames before outbound fetch"]
+// CIL[DOC-CONTRACT inputs="rawUrl string" outputs="void" errors="Invalid outbound URL; 403 host not allowed" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Parses URL, requires http(s), rejects PRIVATE_HOSTNAMES, .internal/.local/.corp/.lan suffixes, and RFC1918/loopback/link-local/multicast IP literals" notable_decisions="Hostname-level check only — a public hostname can still resolve to a private IP (DNS rebinding); adapters should pin resolved IPs for full protection"]
+// CIL[DOC-STABILITY stability="stable"]
+const PRIVATE_HOSTNAMES = new Set([
+  'localhost', 'metadata.google.internal', 'instance-data', 'kubernetes.default',
+])
+
+const PRIVATE_HOST_RE = /\.(internal|local|localhost|corp|lan)$/i
+
+function isPrivateIpLiteral(host: string): boolean {
+  const h = host.replace(/^\[|\]$/g, '')
+  if (/^\d+\.\d+\.\d+\.\d+$/.test(h)) {
+    const [a, b] = h.split('.').map(Number)
+    return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) ||
+      (a === 100 && b >= 64 && b <= 127) || a >= 224
+  }
+  if (h.includes(':')) {
+    const lower = h.toLowerCase()
+    return lower === '::1' || lower === '::' || lower.startsWith('fe80:') ||
+      lower.startsWith('fc') || lower.startsWith('fd')
+  }
+  return false
+}
+
+export function assertPublicOutboundUrl(rawUrl: string): void {
+  let url: URL
+  try {
+    url = new URL(rawUrl)
+  } catch {
+    throw new Error(`Invalid outbound URL: ${rawUrl}`)
+  }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+    throw new Error(`Outbound URL must be http(s): ${url.protocol}`)
+  }
+  const host = url.hostname.toLowerCase()
+  if (
+    PRIVATE_HOSTNAMES.has(host) ||
+    PRIVATE_HOST_RE.test(host) ||
+    isPrivateIpLiteral(host)
+  ) {
+    const e: any = new Error(`Outbound URL host is not allowed: ${host}`)
+    e.statusCode = 403
+    throw e
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/access.ts:assertPublicOutboundUrl:function"]

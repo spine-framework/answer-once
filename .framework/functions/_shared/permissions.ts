@@ -316,8 +316,9 @@ class _PermissionEngineInternal {
       return true
     }
     
-    // System role can only read
-    if (ctx.principal?.type === 'machine' && action === 'read') {
+    // Only internal machines read config objects — account-bound API keys
+    // must not get blanket access to other tenants' config tables.
+    if (ctx.principal?.type === 'machine' && action === 'read' && ctx.principal?.isInternal === true) {
       return true
     }
     
@@ -356,9 +357,13 @@ class _PermissionEngineInternal {
       return record
     }
     
-    // System role sees everything if they have read access
+    // Internal machines see everything; account-bound keys only see rows
+    // that carry their own account_id.
     if (ctx.principal?.type === 'machine') {
-      return record
+      if (ctx.principal?.isInternal === true || record?.account_id === ctx.accountId) {
+        return record
+      }
+      return null
     }
     
     // For apps table, include essential routing fields needed by React app
@@ -439,9 +444,10 @@ class _PermissionEngineInternal {
       return true
     }
     
-    // System context has full access
+    // Only internal machines write system metadata — account-bound keys
+    // must not update other tenants' links/system rows.
     if (ctx.principal?.type === 'machine') {
-      return true
+      return ctx.principal?.isInternal === true || record?.account_id === ctx.accountId
     }
     
     // Users can only read their own data
@@ -482,8 +488,11 @@ class _PermissionEngineInternal {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
   private sanitizeSystemMetadata(ctx: RequestContext, record: any): any {
-    // System admin and system role see everything
-    if (this.isSystemAdmin(ctx) || ctx.principal?.type === 'machine') {
+    // System admin and internal machines see everything; account-bound
+    // keys only see rows stamped with their own account.
+    if (this.isSystemAdmin(ctx) ||
+        (ctx.principal?.type === 'machine' &&
+         (ctx.principal?.isInternal === true || record?.account_id === ctx.accountId))) {
       return record
     }
     

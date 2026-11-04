@@ -10,7 +10,8 @@
 import { createHandler, json, error, parseBody } from './_shared/middleware'
 import { emitLog } from './_shared/audit'
 import { adminDb } from './_shared/db'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
+import { scopeFor, ifAccountScope } from './_shared/account-scope'
 // CIL[DOC-VECTOR type="context" content="purpose='Import shared helpers and expose the pipeline-executions handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -38,7 +39,7 @@ import { isSystemAdmin } from './_shared/principal'
 // CIL[DOC-STABILITY stability="stable"]
 export const list = createHandler(async (ctx, body) => {
   const { pipeline_id, status, limit = 100, offset = 0 } = ctx.query || {}
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
   if (!isSystemAdmin(ctx.principal) && !ctx.accountId) {
     throw new Error('Account context required')
@@ -48,6 +49,7 @@ export const list = createHandler(async (ctx, body) => {
     .from('pipeline_executions')
     .select('*')
     .order('created_at', { ascending: false })
+  query = ifAccountScope(query, accountIds)
 
   if (pipeline_id) query = query.eq('pipeline_id', pipeline_id)
   if (status) query = query.eq('status', status)
@@ -83,12 +85,12 @@ export const get = createHandler(async (ctx, body) => {
     throw new Error('Execution ID is required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
-  const { data, error: err } = await db
+  const { data, error: err } = await ifAccountScope(db
     .from('pipeline_executions')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (err) throw err
@@ -164,10 +166,11 @@ export const start = createHandler(async (ctx, body) => {
     throw new Error('Execution ID is required')
   }
 
-  const { data, error: err } = await ctx.db
+  const { db: sdb, accountIds } = await scopeFor(ctx)
+  const { data, error: err } = await ifAccountScope(sdb
     .from('pipeline_executions')
     .update({ status: 'running', started_at: new Date().toISOString() })
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select('id')
     .single()
 
@@ -205,17 +208,18 @@ export const complete = createHandler(async (ctx, body) => {
   const now = new Date().toISOString()
   const finalStatus = error_message ? 'failed' : 'completed'
 
-  const { data: existing } = await ctx.db
+  const { db: cdb, accountIds } = await scopeFor(ctx)
+  const { data: existing } = await ifAccountScope(cdb
     .from('pipeline_executions')
     .select('started_at')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   const duration_ms = existing?.started_at
     ? Math.round(Date.now() - new Date(existing.started_at).getTime())
     : null
 
-  const { data, error: err } = await ctx.db
+  const { data, error: err } = await ifAccountScope(cdb
     .from('pipeline_executions')
     .update({
       status: finalStatus,
@@ -224,7 +228,7 @@ export const complete = createHandler(async (ctx, body) => {
       completed_at: now,
       duration_ms,
     })
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select('id')
     .single()
 
@@ -259,10 +263,11 @@ export const cancel = createHandler(async (ctx, body) => {
     throw new Error('Execution ID is required')
   }
 
-  const { data, error: err } = await ctx.db
+  const { db: xdb, accountIds } = await scopeFor(ctx)
+  const { data, error: err } = await ifAccountScope(xdb
     .from('pipeline_executions')
     .update({ status: 'cancelled', completed_at: new Date().toISOString() })
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select('id')
     .single()
 
@@ -292,7 +297,7 @@ export const cancel = createHandler(async (ctx, body) => {
 // CIL[DOC-STABILITY stability="stable"]
 export const getRunning = createHandler(async (ctx, body) => {
   const { pipeline_id } = ctx.query || {}
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
   if (!isSystemAdmin(ctx.principal) && !ctx.accountId) {
     throw new Error('Account context required')
@@ -303,6 +308,7 @@ export const getRunning = createHandler(async (ctx, body) => {
     .select('*')
     .eq('status', 'running')
     .order('started_at', { ascending: false })
+  query = ifAccountScope(query, accountIds)
 
   if (pipeline_id) query = query.eq('pipeline_id', pipeline_id)
 
@@ -329,7 +335,7 @@ export const getRunning = createHandler(async (ctx, body) => {
 // CIL[DOC-STABILITY stability="stable"]
 export const getStats = createHandler(async (ctx, body) => {
   const { pipeline_id, date_from, date_to } = ctx.query || {}
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
   if (!isSystemAdmin(ctx.principal) && !ctx.accountId) {
     throw new Error('Account context required')
@@ -338,6 +344,7 @@ export const getStats = createHandler(async (ctx, body) => {
   let query = db
     .from('pipeline_executions')
     .select('id, status')
+  query = ifAccountScope(query, accountIds)
 
   if (pipeline_id) query = query.eq('pipeline_id', pipeline_id)
   if (date_from) query = query.gte('created_at', date_from)
@@ -372,6 +379,15 @@ export const getStats = createHandler(async (ctx, body) => {
 // CIL[DOC-STABILITY stability="stable"]
 export const cleanup = createHandler(async (ctx, body) => {
   const { days_to_keep = 30, status_filter } = body
+
+  // cleanup deletes rows platform-wide and machine principals run it on the
+  // service-role client — restrict to system-level callers (same gate as
+  // logs.cleanup).
+  if (!isSystemPrincipal(ctx)) {
+    const e: any = new Error('Insufficient permissions for pipeline execution cleanup')
+    e.statusCode = 403
+    throw e
+  }
 
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - parseInt(days_to_keep.toString()))

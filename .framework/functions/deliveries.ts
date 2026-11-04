@@ -10,7 +10,7 @@
 
 import { createHandler } from './_shared/middleware'
 import { emitLog } from './_shared/audit'
-import { SYSTEM_PRINCIPAL, isSystemAdmin } from './_shared/principal'
+import { SYSTEM_PRINCIPAL, isSystemPrincipal } from './_shared/principal'
 import { execute as executeOutbound } from './integration-outbound'
 // CIL[END stable_id="~/.framework/functions/deliveries.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='Module: webhook delivery handlers'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/audit.ts,.framework/functions/_shared/principal.ts"]
@@ -25,11 +25,6 @@ import { execute as executeOutbound } from './integration-outbound'
 // produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
 // resolve to the service-role adminDb via getPrincipalDb, so account-bound
 // API keys must be scoped to their own account below.
-// CIL[BEGIN stable_id="~/.framework/functions/deliveries.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/deliveries.ts"]
-function isSystemPrincipal(ctx: any): boolean {
-  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
-}
-// CIL[END stable_id="~/.framework/functions/deliveries.ts:isSystemPrincipal:function"]
 
 // CIL[DOC-MACRO purpose="List webhook deliveries for the current account with optional filters."]
 // CIL[DOC-RESPONSIBILITY responsibility="Query and return a paginated list of webhook deliveries."]

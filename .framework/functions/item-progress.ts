@@ -13,6 +13,7 @@
 
 import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
+import { scopeFor, ifAccountScope, canAccessAccount } from './_shared/account-scope'
 import { resolveTypeId } from './_shared/resolve-ids'
 import { emitLog } from './_shared/audit'
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the item-progress module and its CRUD handler exports'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
@@ -139,6 +140,7 @@ export const list = createHandler(async (ctx) => {
   let query = ctx.db
     .from('item_progress')
     .select('*')
+  query = ifAccountScope(query, (await scopeFor(ctx)).accountIds)
     .eq('is_active', true)
     .order('updated_at', { ascending: false })
     .range(Number(offset), Number(offset) + Number(limit) - 1)
@@ -171,10 +173,11 @@ export const get = createHandler(async (ctx) => {
   const id = ctx.query?.id
   if (!id) throw new Error('Progress record ID is required')
 
-  const { data, error } = await ctx.db
+  const { db: gdb, accountIds } = await scopeFor(ctx)
+  const { data, error } = await ifAccountScope(gdb
     .from('item_progress')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (error || !data) throw new Error('Progress record not found')
@@ -204,8 +207,27 @@ export const upsert = createHandler(async (ctx, body) => {
     resolvedTypeId = await resolveTypeId('item_progress', type_slug)
   }
 
-  if (!person_id || !item_id || !resolvedTypeId || !account_id) {
-    throw new Error('person_id, item_id, type_id (or type_slug), and account_id are required')
+  if (!person_id || !item_id || !resolvedTypeId) {
+    throw new Error('person_id, item_id, and type_id (or type_slug) are required')
+  }
+
+  const { db: sdb, accountIds } = await scopeFor(ctx)
+  const effectiveAccountId = accountIds === null ? (account_id || ctx.accountId) : ctx.accountId
+  if (!effectiveAccountId) throw new Error('account_id is required')
+  if (!(await canAccessAccount(ctx, effectiveAccountId))) {
+    const e: any = new Error('Cannot write progress in a different account')
+    e.statusCode = 403
+    throw e
+  }
+  const { data: personRow } = await sdb
+    .from('people')
+    .select('id, account_id')
+    .eq('id', person_id)
+    .maybeSingle()
+  if (personRow && personRow.account_id !== effectiveAccountId) {
+    const e: any = new Error('person_id belongs to a different account')
+    e.statusCode = 403
+    throw e
   }
 
   const { data: typeRecord } = await adminDb
@@ -216,11 +238,11 @@ export const upsert = createHandler(async (ctx, body) => {
 
   const pipeline = getPipeline(typeRecord)
 
-  const { data: existing } = await ctx.db
+  const { data: existing } = await ifAccountScope(sdb
     .from('item_progress')
     .select('*')
     .eq('person_id', person_id)
-    .eq('item_id', item_id)
+    .eq('item_id', item_id), accountIds)
     .maybeSingle()
 
   const currentStatus = existing?.status ?? 'not_started'
@@ -254,7 +276,7 @@ export const upsert = createHandler(async (ctx, body) => {
 
   const payload: any = {
     type_id: resolvedTypeId,
-    account_id,
+    account_id: effectiveAccountId,
     app_id: app_id ?? existing?.app_id ?? null,
     person_id,
     item_id,
@@ -274,7 +296,10 @@ export const upsert = createHandler(async (ctx, body) => {
     payload.updated_by = ctx.principal?.id ?? null
   }
 
-  const { data: result, error } = await ctx.db
+  // account_id is already forced to the caller's account in the payload —
+  // PostgREST ignores filters on upsert, so scoping the builder would be a
+  // no-op (and .in isn't valid on the pre-write builder anyway).
+  const { data: result, error } = await sdb
     .from('item_progress')
     .upsert(payload, { onConflict: 'person_id,item_id' })
     .select()
@@ -310,10 +335,11 @@ export const update = createHandler(async (ctx, body) => {
 
   const { id: _id, force, ...updates } = body || {}
 
-  const { data: existing, error: fetchErr } = await ctx.db
+  const { db: udb, accountIds } = await scopeFor(ctx)
+  const { data: existing, error: fetchErr } = await ifAccountScope(udb
     .from('item_progress')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (fetchErr || !existing) throw new Error('Progress record not found')
@@ -345,10 +371,10 @@ export const update = createHandler(async (ctx, body) => {
     }
   }
 
-  const { data: result, error } = await ctx.db
+  const { data: result, error } = await ifAccountScope(udb
     .from('item_progress')
     .update({ ...updates, updated_by: ctx.principal?.id ?? null, updated_at: new Date().toISOString() })
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select()
     .single()
 

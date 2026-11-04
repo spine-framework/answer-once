@@ -7,6 +7,9 @@
     # Supabase VITE variables are meant to be public in the browser
     SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY,VITE_DB_SCHEMA,VITE_APP_NAME,VITE_ENVIRONMENT,SUPABASE_URL,DB_SCHEMA,APP_BASE_URL,SITE_URL"
     SECRETS_SCAN_OMIT_PATHS = ".framework/.xenv,.framework/.xenv.test"
+    # Only on Netlify may trigger-scheduler trust Clockwork headers — the
+    # platform blocks URL invocation of scheduled functions in production.
+    SPINE_TRUST_SCHEDULE_HEADERS = "1"
 
 # Spine functions configuration - assembled from .framework + custom
 [functions]

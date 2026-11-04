@@ -9,7 +9,7 @@
 // CIL[DOC-AUDIENCE audience="system-admin, developer"]
 
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 // CIL[DOC-VECTOR type="context" content="purpose='Declares the admin-signals function module and its imports'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -27,6 +27,7 @@ import { adminDb } from './_shared/db'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const metrics = createHandler(async (ctx, body) => {
+  requireSystemContextWithAudit(ctx)
   const now = new Date()
   const today = now.toISOString().split('T')[0]
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -145,6 +146,7 @@ export const metrics = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const audit = createHandler(async (ctx, body) => {
+  requireSystemContextWithAudit(ctx)
   const {
     page = '1',
     limit = '50',

@@ -431,8 +431,8 @@ export function RegisterPage() {
     const result = await callInvitesApi('check-domain', { email })
     setDomainCheckLoading(false)
 
-    if (result.data?.match && result.data?.account_id) {
-      setDomainMatchAccountId(result.data.account_id)
+    if (result.data?.match) {
+      setDomainMatchAccountId(result.data.account_id || '__matched__')
     }
   }, [email, inviteToken, useType, isFirstUser, resolveRegistrationContext])
 

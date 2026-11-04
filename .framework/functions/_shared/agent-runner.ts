@@ -1263,6 +1263,28 @@ async function dispatchTools(
               result
             }
           }
+          // The model may name any tool — only those granted to this agent
+          // are runnable. Granted names come from the resolved config:
+          // agent.model_config.tools (OpenAI {function:{name}} objects) and
+          // promptConfig.available_tools (name strings). An empty set keeps
+          // legacy unrestricted dispatch; built-in tools were handled above.
+          const granted = new Set<string>()
+          const cfg = runCtx?.config as any
+          for (const t of cfg?.agent?.model_config?.tools || []) {
+            const name = typeof t === 'string' ? t : t?.function?.name
+            if (name) granted.add(name)
+          }
+          for (const t of cfg?.promptConfig?.available_tools || []) {
+            if (typeof t === 'string') granted.add(t)
+          }
+          if (granted.size && !granted.has(call.tool)) {
+            return {
+              tool: call.tool,
+              id: call.id,
+              result: null,
+              error: `Tool "${call.tool}" is not enabled for this agent`
+            }
+          }
           const { data: action, error } = await adminDb
             .from('actions')
             .select('*')
@@ -2198,6 +2220,36 @@ async function executeQueryItems(
 
 
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:toolWriteGuards:module" type="module" identity="toolWriteGuards" parent="~/.framework/functions/_shared/agent-runner.ts"]
+// CIL[DOC-MACRO purpose="Entity/column guardrails for LLM-callable write tools"]
+// CIL[DOC-RESPONSIBILITY responsibility="Confine agent create/update tools to runtime entities and strip privileged columns from model-supplied data"]
+// CIL[DOC-CONTRACT inputs="entity name, record data" outputs="sanitized data / throws" errors="Error when entity is not writable by agent tools" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="TOOL_WRITABLE_ENTITIES allowlists runtime tables; TOOL_FORBIDDEN_COLUMNS blocks mass-assignment of role_id/account_id/auth_uid/type_id/app_id/design_schema/validation_schema/created_by" notable_decisions="The model may name any entity/column — these lists are the enforcement, prompt config is not"]
+// CIL[DOC-STABILITY stability="stable"]
+const TOOL_WRITABLE_ENTITIES = new Set([
+  'items', 'threads', 'messages', 'attachments', 'watchers', 'item_progress'
+])
+const TOOL_FORBIDDEN_COLUMNS = new Set([
+  'role_id', 'account_id', 'auth_uid', 'type_id', 'app_id',
+  'design_schema', 'validation_schema', 'created_by'
+])
+
+function assertToolEntity(entity: any): void {
+  if (!TOOL_WRITABLE_ENTITIES.has(entity)) {
+    throw new Error(`Entity "${entity}" is not writable by agent tools`)
+  }
+}
+
+function stripToolColumns(data: any): any {
+  if (!data || typeof data !== 'object') return data
+  const clean: any = {}
+  for (const [k, v] of Object.entries(data)) {
+    if (!TOOL_FORBIDDEN_COLUMNS.has(k)) clean[k] = v
+  }
+  return clean
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:toolWriteGuards:module"]
+
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCreateRecord:function" type="function" identity="executeCreateRecord" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Creates a new record in the specified database entity using provided data and context information. This function ensures that the record is associated with the correct account and user details.
@@ -2236,10 +2288,11 @@ async function executeCreateRecord(
   ctx: CoreContext
 ): Promise<any> {
   const { entity, data } = params
+  assertToolEntity(entity)
   const { data: result, error } = await adminDb
     .from(entity)
     .insert({
-      ...data,
+      ...stripToolColumns(data),
       account_id: ctx.accountId,
       created_by: ctx.principal?.id,
       created_at: new Date().toISOString(),
@@ -2308,14 +2361,16 @@ async function executeUpdateItem(
   ctx: CoreContext
 ): Promise<any> {
   const { entity, record_id, data } = params
+  assertToolEntity(entity)
   const { data: result, error } = await adminDb
     .from(entity)
     .update({
-      ...data,
+      ...stripToolColumns(data),
       updated_at: new Date().toISOString(),
       updated_by: ctx.principal?.id
     })
     .eq('id', record_id)
+    .eq('account_id', ctx.accountId)
     .select()
     .single()
   if (error) throw new Error(`Update failed: ${error.message}`)

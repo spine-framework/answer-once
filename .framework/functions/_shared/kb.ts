@@ -10,6 +10,7 @@
 
 import { createHash } from 'crypto'
 import { adminDb } from './db'
+import { isSystemPrincipal, resolveAccessibleAccountIds } from './principal'
 import type { CoreContext } from './middleware'
 import { sanitizeRecordData } from './permissions'
 import { callOpenAIEmbeddings } from './llm'
@@ -659,7 +660,9 @@ export async function kbIngest(ctx: CoreContext, body: { id: string; account_id?
   // Multi-tenant support callers ingest articles owned by
   // customer accounts — the caller passes the record's account_id explicitly.
   // Default remains the caller's own account.
-  const recordAccountId = body.account_id || ctx.accountId
+  const recordAccountId = isSystemPrincipal(ctx)
+    ? (body.account_id || ctx.accountId)
+    : ctx.accountId
   const { data: record, error } = await adminDb
     .from('items')
     .select('*')
@@ -887,12 +890,23 @@ export async function kbRevoke(ctx: CoreContext, body: { id: string }): Promise<
   // Trigger-time evaluation is always stale by the time work runs.
   const { data: doc } = await adminDb
     .from('items')
-    .select('status, data')
+    .select('status, data, account_id')
     .eq('id', id)
     .maybeSingle()
   const docStatus = doc?.status ?? doc?.data?.status
   if (doc && docStatus === 'published') {
     return { ok: true, skipped: true, message: 'document is published — embeddings retained', count: 0 }
+  }
+
+  // Revoke is a delete on the document's search surface — the caller must
+  // be able to reach the owning account unless they're a system principal.
+  if (!isSystemPrincipal(ctx) && doc?.account_id) {
+    const ids = await resolveAccessibleAccountIds(ctx)
+    if (!(ids || []).includes(doc.account_id)) {
+      const e: any = new Error('Item belongs to a different account')
+      e.statusCode = 403
+      throw e
+    }
   }
 
   const count = await clearEmbeddingsForItem(id)
@@ -928,6 +942,12 @@ export async function kbRevoke(ctx: CoreContext, body: { id: string }): Promise<
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="internal"]
 export async function kbReindex(ctx: CoreContext, body: { type_slug: string; app_id?: string }): Promise<{ ok: boolean; count: number; errors?: Array<{ id: string; error: string }> }> {
+  // Re-embedding the whole corpus spends platform AI budget — system only.
+  if (!isSystemPrincipal(ctx)) {
+    const e: any = new Error('Insufficient permissions for corpus reindex')
+    e.statusCode = 403
+    throw e
+  }
   const { type_slug } = body
   if (!type_slug) throw new Error('type_slug is required')
 

@@ -8,7 +8,7 @@
 // CIL[DOC-STABILITY stable]
 // CIL[DOC-AUDIENCE audience="internal"]
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 // CIL[DOC-VECTOR type="context" content="purpose='Module-level imports for the admin funnel metrics handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -26,6 +26,7 @@ import { adminDb } from './_shared/db'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stable]
 export const metrics = createHandler(async (ctx, body) => {
+  requireSystemContextWithAudit(ctx)
   const { data: typeRows } = await adminDb
     .from('types')
     .select('id, slug')

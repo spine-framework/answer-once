@@ -571,7 +571,11 @@ async function resolveHumanPrincipal(token: string, event: any): Promise<Princip
     return ANONYMOUS_PRINCIPAL
   }
   
-  const personId = await resolveInternalPersonId(user.id, user.email)
+  const personId = await resolveInternalPersonId(
+    user.id,
+    user.email,
+    Boolean((user as any).email_confirmed_at || (user as any).confirmed_at)
+  )
   const userDb = getUserDb(token)
   
   const { data: person, error: personError } = await userDb
@@ -644,7 +648,7 @@ async function resolveHumanPrincipal(token: string, event: any): Promise<Princip
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-NOTE type="security" content="Registration/invitation hardening: previously this bound auth_uid to ANY person row matching the JWT email with auth_uid NULL — including unclaimed invite stubs — bypassing the invite token entirely."]
-export async function resolveInternalPersonId(authUserId: string, email?: string): Promise<string> {
+export async function resolveInternalPersonId(authUserId: string, email?: string, emailConfirmed = true): Promise<string> {
   // auth_uid binding is authoritative — resolve it before any email fallback.
   const { data: byAuthId } = await adminDb
     .from('people')
@@ -654,7 +658,10 @@ export async function resolveInternalPersonId(authUserId: string, email?: string
 
   if (byAuthId) return byAuthId.id
 
-  if (email) {
+  // Email binding requires the auth user's email to be confirmed — otherwise
+  // anyone can claim an existing unlinked person row by signing up with its
+  // address (pre-account takeover).
+  if (email && emailConfirmed) {
     const { data: byEmail } = await adminDb
       .from('people')
       .select('id, auth_uid, status, data')
@@ -786,6 +793,43 @@ export function isSystemAdmin(principal: Principal): boolean {
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 // CIL[END stable_id="~/.framework/functions/_shared/principal.ts:isSystemAdmin:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/_shared/principal.ts"]
+// CIL[DOC-MACRO purpose="True for callers trusted to act across accounts"]
+// CIL[DOC-RESPONSIBILITY responsibility="Single trust-boundary check for platform-level access decisions"]
+// CIL[DOC-CONTRACT inputs="ctx (principal + accountId)" outputs="boolean" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="system_admin role, or an unbound internal machine (SYSTEM_PRINCIPAL via INTERNAL_INVOKE_SECRET)" notable_decisions="Account-bound machines (API keys) are NOT system principals — handlers must scope their queries even though getPrincipalDb gives them adminDb"]
+// CIL[DOC-STABILITY stability="stable"]
+export function isSystemPrincipal(ctx: { principal?: Principal | null; accountId?: string | null }): boolean {
+  return isSystemAdmin(ctx?.principal as Principal) || (ctx?.principal?.isInternal === true && !ctx?.accountId)
+}
+// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:isSystemPrincipal:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveAccessibleAccountIds:function" type="function" identity="resolveAccessibleAccountIds" parent="~/.framework/functions/_shared/principal.ts"]
+// CIL[DOC-MACRO purpose="Account ids the caller may touch"]
+// CIL[DOC-RESPONSIBILITY responsibility="Resolve the tenant scope used by account-scoping helpers across adminDb paths"]
+// CIL[DOC-CONTRACT inputs="ctx" outputs="string[] of account ids, or null for system principals" errors="none" side_effects="get_accessible_accounts RPC for human principals; memoized on ctx"]
+// CIL[DOC-MICRO logic_summary="system → null (unscoped); humans → own account ∪ get_accessible_accounts descendants; account-bound machines → their bound account only" notable_decisions="Memoized on the ctx object (key '__accessibleAccountIds') — one RPC resolution per request"]
+// CIL[DOC-STABILITY stability="stable"]
+const accessibleAccountsCacheKey = '__accessibleAccountIds'
+
+export async function resolveAccessibleAccountIds(ctx: any): Promise<string[] | null> {
+  if (isSystemPrincipal(ctx)) return null
+  if (ctx?.[accessibleAccountsCacheKey]) return ctx[accessibleAccountsCacheKey]
+  const ids = new Set<string>()
+  if (ctx?.accountId) ids.add(ctx.accountId)
+  if (ctx?.principal?.type === 'human' && ctx.principal.id) {
+    const res = await adminDb.rpc('get_accessible_accounts', { actor_id: ctx.principal.id })
+    for (const row of res?.data || []) {
+      const id = (row as any)?.account_id ?? row
+      if (id) ids.add(id)
+    }
+  }
+  const result = [...ids]
+  ctx[accessibleAccountsCacheKey] = result
+  return result
+}
+// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveAccessibleAccountIds:function"]
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:getPrincipalDb:function" type="function" identity="getPrincipalDb" parent="~/.framework/functions/_shared/principal.ts"]
 // CIL[DOC-MACRO purpose="Select the appropriate database client for a principal"]

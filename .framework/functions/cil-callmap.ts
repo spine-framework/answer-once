@@ -58,7 +58,7 @@ function getMapSourceFilePaths(projectItem: any, secondPass: boolean): string[] 
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="maintainer"]
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { resolveLinkTypeIds } from './_shared/resolve-ids'
 import { create as adminCreate, update as adminUpdate } from './admin-data'
@@ -1065,6 +1065,10 @@ async function mapTests(
 // CIL[DOC-STABILITY stability="stable"]
 
 export const handler = createHandler(async (ctx, body) => {
+  // CIL is operator tooling — every action touches the service-role client
+  // and server filesystem. System principals only; tenant callers stop here.
+  requireSystemContextWithAudit(ctx)
+
   const action = ctx.query?.action
 
   

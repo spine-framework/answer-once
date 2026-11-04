@@ -242,7 +242,7 @@ describe('sanitizeRecordData — second surface (config objects)', () => {
 
   it('machine principal with *:* receives full config record', async () => {
     const { sanitizeRecordData } = await import('../../functions/_shared/permissions.ts')
-    const principal = makePrincipal({ type: 'machine', scopes: ['*:*'] })
+    const principal = makePrincipal({ type: 'machine', scopes: ['*:*'], roles: ['system_admin'] })
     const ctx = makeCtx(principal)
     const result = await sanitizeRecordData(ctx, configRecord, 'types')
     expect(result).toHaveProperty('id')

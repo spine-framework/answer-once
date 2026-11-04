@@ -1059,7 +1059,7 @@ export function requireSystemContextWithAudit(
       if (!ctx.principal || ctx.principal.id === 'anonymous') {
         throw new Error('Authentication required')
       }
-      if (!isSystemAdmin(ctx.principal)) {
+      if (!isSystemAdmin(ctx.principal) && !(ctx.principal?.isInternal === true && !ctx.accountId)) {
         throw new Error('System context required')
       }
       ;(ctx as any).triggeredBy = ctx.principal.id
@@ -1074,7 +1074,9 @@ export function requireSystemContextWithAudit(
     // {data: {statusCode: 401}} under HTTP 200 (F-051).
     throw Object.assign(new Error('Authentication required'), { statusCode: 401 })
   }
-  if (!isSystemAdmin(ctx.principal)) {
+  // System admins and unbound internal machines (x-internal-secret) pass —
+  // same trust boundary as the isSystemPrincipal convention elsewhere.
+  if (!isSystemAdmin(ctx.principal) && !(ctx.principal?.isInternal === true && !ctx.accountId)) {
     throw Object.assign(new Error('System context required'), { statusCode: 403 })
   }
   ;(ctx as any).triggeredBy = triggeredBy || ctx.principal.id

@@ -12,6 +12,7 @@ import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { sanitizeRecordData } from './_shared/permissions'
 import { isSystemAdmin } from './_shared/principal'
+import { scopeFor, ifAccountScope } from './_shared/account-scope'
 // CIL[DOC-VECTOR type="context" content="purpose='Pipeline handler module imports shared dependencies and exports CRUD and dispatch handlers.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -48,13 +49,14 @@ export const listByTrigger = createHandler(async (ctx, _body) => {
     throw new Error('Account context required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
   let query = db
     .from('pipelines')
     .select('*')
     .eq('trigger_type', trigger_type)
 
+  query = ifAccountScope(query, accountIds)
   if (app_id) {
     query = query.eq('app_id', app_id)
   }
@@ -95,12 +97,13 @@ export const list = createHandler(async (ctx, body) => {
     throw new Error('Account context required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
   let query = db
     .from('pipelines')
     .select('*')
 
+  query = ifAccountScope(query, accountIds)
   if (app_id) {
     query = query.eq('app_id', app_id)
   }
@@ -138,12 +141,12 @@ export const get = createHandler(async (ctx, body) => {
     throw new Error('Pipeline ID is required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
 
-  const { data, error: err } = await db
+  const { data, error: err } = await ifAccountScope(db
     .from('pipelines')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (err) throw err
@@ -176,7 +179,7 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
+  const { db, accountIds } = await scopeFor(ctx)
   const { data, error: err } = await db
     .from('pipelines')
     .insert({
@@ -229,11 +232,11 @@ export const update = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
-  const { data: current } = await db
+  const { db, accountIds } = await scopeFor(ctx)
+  const { data: current } = await ifAccountScope(db
     .from('pipelines')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (!current) {
@@ -250,10 +253,10 @@ export const update = createHandler(async (ctx, body) => {
   if (is_active !== undefined) updateData.is_active = is_active
   if (app_id !== undefined) updateData.app_id = app_id
 
-  const { data, error: err } = await db
+  const { data, error: err } = await ifAccountScope(db
     .from('pipelines')
     .update(updateData)
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select()
     .single()
 
@@ -292,21 +295,21 @@ export const toggle = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
-  const { data: current } = await db
+  const { db, accountIds } = await scopeFor(ctx)
+  const { data: current } = await ifAccountScope(db
     .from('pipelines')
     .select('*')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (!current) {
     throw new Error('Pipeline not found')
   }
 
-  const { data, error: err } = await db
+  const { data, error: err } = await ifAccountScope(db
     .from('pipelines')
     .update({ is_active, updated_at: new Date().toISOString() })
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .select()
     .single()
 
@@ -341,11 +344,11 @@ export const getExecutions = createHandler(async (ctx, _body) => {
     throw new Error('Pipeline ID is required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
-  const { data, error: err } = await db
+  const { db, accountIds } = await scopeFor(ctx)
+  const { data, error: err } = await ifAccountScope(db
     .from('pipeline_executions')
     .select('*')
-    .eq('pipeline_id', pipeline_id)
+    .eq('pipeline_id', pipeline_id), accountIds)
     .order('created_at', { ascending: false })
     .range(
       parseInt(offset.toString()),
@@ -378,19 +381,19 @@ export const remove = createHandler(async (ctx, _body) => {
     throw new Error('Pipeline ID is required')
   }
 
-  const db = isSystemAdmin(ctx.principal) ? adminDb : ctx.db
-  const { data: current } = await db
+  const { db, accountIds } = await scopeFor(ctx)
+  const { data: current } = await ifAccountScope(db
     .from('pipelines')
     .select('id, name')
-    .eq('id', id)
+    .eq('id', id), accountIds)
     .single()
 
   if (!current) throw new Error('Pipeline not found')
 
-  const { error: err } = await db
+  const { error: err } = await ifAccountScope(db
     .from('pipelines')
     .delete()
-    .eq('id', id)
+    .eq('id', id), accountIds)
 
   if (err) throw err
 

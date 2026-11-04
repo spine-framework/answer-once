@@ -25,6 +25,27 @@ import { handler } from '../../functions/trigger-scheduler.ts'
 describe('trigger-scheduler', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    process.env.SPINE_TRUST_SCHEDULE_HEADERS = '1'
+  })
+
+  it('ignores spoofed Clockwork headers when SPINE_TRUST_SCHEDULE_HEADERS is unset', async () => {
+    delete process.env.SPINE_TRUST_SCHEDULE_HEADERS
+    const event = {
+      path: '/.netlify/functions/trigger-scheduler',
+      httpMethod: 'POST',
+      headers: { 'x-nf-event': 'schedule', 'user-agent': 'Netlify Clockwork' },
+      body: JSON.stringify({ next_run: 'x' }),
+    }
+    // No secret + untrusted headers → normal middleware path, not SYSTEM_PRINCIPAL.
+    const res = await handler(event, {})
+    // Either the middleware rejects it (401/403 response) or, if the cron
+    // handler was reached at all, it was not given the system principal.
+    if (cronHandler.mock.calls.length) {
+      const [ctx] = cronHandler.mock.calls[0]
+      expect(ctx?.principal?.id).not.toBe('system')
+    } else {
+      expect(res?.statusCode === 200).toBe(false)
+    }
   })
 
   it('fabricates a system-principal ctx for Netlify Clockwork invocations', async () => {

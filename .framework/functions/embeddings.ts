@@ -453,7 +453,7 @@ import { createHash } from 'crypto'
 import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
 import { sanitizeRecordData } from './_shared/permissions'
 import { callOpenAIEmbeddings, callOpenAIChat } from './_shared/llm'
 // CIL[END stable_id="~/.framework/functions/embeddings.ts:module_header:module_header"]
@@ -463,11 +463,6 @@ import { callOpenAIEmbeddings, callOpenAIChat } from './_shared/llm'
 // produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
 // resolve to the service-role adminDb via getPrincipalDb, so account-bound
 // API keys must be scoped to their own account below.
-// CIL[BEGIN stable_id="~/.framework/functions/embeddings.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/embeddings.ts"]
-function isSystemPrincipal(ctx: any): boolean {
-  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
-}
-// CIL[END stable_id="~/.framework/functions/embeddings.ts:isSystemPrincipal:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Imports shared utilities for the embeddings Netlify function.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]

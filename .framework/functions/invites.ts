@@ -512,15 +512,21 @@ export const checkDomain = createPublicHandler(async (_ctx, _body) => {
     return { match: false }
   }
 
+  // Only return whether the domain is present — the account_id powered
+  // cross-tenant IDOR chains and the join flow only needs the boolean.
+  // Reject wildcard metachars so % and _ can't widen the ilike probe.
+  if (/[%_\\]/.test(domain)) {
+    return { match: false }
+  }
+
   const { data } = await adminDb
     .from('people')
-    .select('account_id')
+    .select('id')
     .ilike('email', `%@${domain}`)
     .eq('status', 'active')
     .limit(1)
 
-  const first = data?.[0]
-  return { match: !!first, account_id: first?.account_id ?? null }
+  return { match: !!(data && data.length) }
 })
 // CIL[END stable_id="~/.framework/functions/invites.ts:checkdomain:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Validates the provided email domain against a list of personal domains and checks for an active account associated with that domain.'; No verified external callers" status="ready"]
@@ -829,12 +835,15 @@ export const createInvite = createHandler(async (ctx, body) => {
   try {
     const { data: emailIntegrations } = await adminDb
       .from('integrations')
-      .select('id, slug, config')
+      .select('id, slug, config, account_id')
       .in('slug', ['invite-email', 'transactional-email'])
       .eq('is_active', true)
+      .or(`account_id.eq.${account_id},account_id.is.null`)
 
     const emailIntegration =
+      (emailIntegrations || []).find((i: any) => i.slug === 'invite-email' && i.account_id === account_id) ||
       (emailIntegrations || []).find((i: any) => i.slug === 'invite-email') ||
+      (emailIntegrations || []).find((i: any) => i.account_id === account_id) ||
       (emailIntegrations || [])[0]
 
     if (emailIntegration) {
@@ -851,17 +860,17 @@ export const createInvite = createHandler(async (ctx, body) => {
       const tpl = emailIntegration.config?.templates?.invite || {}
       const render = (s: string) =>
         (s || '')
-          .replace(/\{\{\s*to_name\s*\}\}/g, stubName || '')
-          .replace(/\{\{\s*invite_url\s*\}\}/g, inviteUrl)
-          .replace(/\{\{\s*account_name\s*\}\}/g, accountName)
-          .replace(/\{\{\s*expires_at\s*\}\}/g, expiresAt || '')
+          .replace(/\{\{\s*to_name\s*\}\}/g, escapeHtml(stubName))
+          .replace(/\{\{\s*invite_url\s*\}\}/g, escapeHtml(inviteUrl))
+          .replace(/\{\{\s*account_name\s*\}\}/g, escapeHtml(accountName))
+          .replace(/\{\{\s*expires_at\s*\}\}/g, escapeHtml(expiresAt))
       const subject = render(tpl.subject) ||
-        `You're invited to join ${accountName || 'your team'}`
+        `You're invited to join ${escapeHtml(accountName) || 'your team'}`
       const html = render(tpl.html) ||
-        `<p>Hi${stubName ? ' ' + stubName : ''},</p>` +
-        `<p>You've been invited to join <strong>${accountName || 'the team'}</strong>.</p>` +
+        `<p>Hi${stubName ? ' ' + escapeHtml(stubName) : ''},</p>` +
+        `<p>You've been invited to join <strong>${escapeHtml(accountName) || 'the team'}</strong>.</p>` +
         `<p><a href="${inviteUrl}">Accept your invitation</a></p>` +
-        `<p>This link expires ${expiresAt || 'soon'}. If the button doesn't work, paste this into your browser:<br>${inviteUrl}</p>`
+        `<p>This link expires ${escapeHtml(expiresAt) || 'soon'}. If the button doesn't work, paste this into your browser:<br>${inviteUrl}</p>`
 
       await checkRateLimit(ctx, 'invite_email', { identifier: `acct:${account_id}` })
       const result = await executeOutbound(ctx, {
@@ -958,8 +967,11 @@ export const listInvites = createHandler(async (ctx, _body) => {
     .order('created_at', { ascending: false })
 
   if (!isSystemAdmin) {
-    const scopedAccountId = queryAccountId || ctx.accountId
+    // A caller-supplied account_id is never honored for tenant callers —
+    // they may only list invites for their own account, as its admin.
+    const scopedAccountId = ctx.accountId
     if (!scopedAccountId) throw new Error('Account scope required')
+    requireAccountAdmin(ctx, scopedAccountId)
     query = query.eq('account_id', scopedAccountId)
   } else if (queryAccountId) {
     query = query.eq('account_id', queryAccountId)

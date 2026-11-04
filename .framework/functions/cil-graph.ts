@@ -9,7 +9,7 @@
 // CIL[DOC-AUDIENCE audience="spine-ia CIL pipeline and web UI"]
 
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { resolveLinkTypeId } from './_shared/resolve-ids'
 import { callOpenAIEmbeddings } from './_shared/llm'
@@ -252,6 +252,10 @@ async function getLinkedChunks(
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
+  // CIL is operator tooling — every action touches the service-role client
+  // and server filesystem. System principals only; tenant callers stop here.
+  requireSystemContextWithAudit(ctx)
+
   const action = ctx.query?.action
 
   

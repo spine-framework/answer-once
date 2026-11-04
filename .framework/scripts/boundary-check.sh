@@ -29,8 +29,9 @@ fi
 echo ""
 
 # Check 2: Core importing custom_ prefixed modules
+# Only flag actual import/require statements — comments and docs are fine
 echo "2. Checking for custom_ module imports in core..."
-if grep -r "from.*custom_\|import.*custom_" .framework/ --include="*.ts" --include="*.tsx" 2>/dev/null; then
+if grep -rE "^\s*(import|export).*['\"].*custom_|require\(['\"].*custom_" .framework/ --include="*.ts" --include="*.tsx" 2>/dev/null; then
     echo "   ❌ FAIL: Core files import custom_ modules"
     VIOLATIONS=$((VIOLATIONS + 1))
 else
@@ -39,8 +40,11 @@ fi
 echo ""
 
 # Check 2b: Custom apps using relative paths to .framework/ (should use @core alias instead)
+# Only flag actual import/require statements — comments and docs are fine.
+# mcp/ dirs are local dev MCP servers, not bundled frontend/function code —
+# @core does not resolve there, so relative imports are the only option.
 echo "2b. Checking custom apps use @core alias (not relative paths to .framework/)..."
-if grep -r "from.*\.\./.*\.framework\|from.*\.framework/" custom/ --include="*.ts" --include="*.tsx" 2>/dev/null; then
+if grep -rE "^\s*(import|export).*from\s+['\"][^'\"]*\.framework|require\(['\"][^'\"]*\.framework" custom/ --include="*.ts" --include="*.tsx" --exclude-dir=mcp 2>/dev/null; then
     echo "   ❌ FAIL: Custom apps use relative paths to .framework/ — use @core alias instead"
     VIOLATIONS=$((VIOLATIONS + 1))
 else

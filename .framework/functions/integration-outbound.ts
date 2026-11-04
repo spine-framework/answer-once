@@ -12,7 +12,8 @@ import { createHandler, CoreContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { resolveCredential, ResolvedCredential } from './_shared/resolve-credentials'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
+import { assertPublicOutboundUrl } from './_shared/access'
 import { get as adminDataGet, update as adminDataUpdate } from './admin-data'
 import * as openaiOutbound from './adapters/openai-outbound'
 import * as genericWebhookOutbound from './adapters/generic-webhook-outbound'
@@ -235,7 +236,9 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
   }
 
   try {
-    const credentialField = action_config.credential_field || 'api_token'
+    const credentialField = isSystemPrincipal(ctx)
+      ? (action_config.credential_field || 'api_token')
+      : 'api_token'
     // An absent or explicitly-empty credential entry means "call without
     // auth" — generic HTTP/webhook targets often need none, and the stock
     // generic-http seed ships api_token {source:'value',value:''} as a
@@ -262,7 +265,9 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
       resolved = await resolveCredential(ctx, integration, credentialField)
     }
 
-    const adapterName = action_config.adapter || integration.config?.outbound_adapter
+    const adapterName = isSystemPrincipal(ctx)
+      ? (action_config.adapter || integration.config?.outbound_adapter)
+      : integration.config?.outbound_adapter
     if (!adapterName) {
       throw new Error('No outbound adapter configured for integration ' + integration_slug)
     }
@@ -272,10 +277,16 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
       throw new Error(`Outbound adapter not found: ${adapterName}`)
     }
 
+    // A system integration's secret may only ride adapters that pin their own
+    // vendor URL — never a caller-chosen webhook URL from a tenant request.
+    const dropsCredential = !isSystemPrincipal(ctx) &&
+      !integration.account_id &&
+      adapterName === 'adapters/generic-webhook-outbound'
+
     const adapterCtx: OutboundAdapterContext = {
       record,
       integration,
-      apiKey: resolved,
+      apiKey: dropsCredential ? undefined : resolved,
       accountId: ctx.accountId,
       appId: (ctx as any).appId || null,
       actionConfig: action_config
@@ -285,6 +296,7 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
     if (!request.url || !request.method) {
       throw new Error('Outbound adapter must return url and method')
     }
+    assertPublicOutboundUrl(request.url)
 
     const startMs = Date.now()
     const response = await fetch(request.url, {
@@ -432,13 +444,10 @@ async function loadOutboundAdapter(functionName: string): Promise<any | null> {
   if (builtInOutboundAdapters[functionName]) {
     return builtInOutboundAdapters[functionName]
   }
-  try {
-    const module = await import(`./${functionName}`)
-    return module.buildRequest ? module : null
-  } catch (err) {
-    console.error(`[integration-outbound] Failed to load adapter ${functionName}:`, err)
-    return null
-  }
+  // Dynamic adapter loading removed: caller-chosen module names are an
+  // arbitrary-code-execution surface. Custom adapters must be registered in
+  // the built-in map.
+  return null
 }
 // CIL[END stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Load an outbound adapter by name from built-ins or dynamic imports'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]

@@ -31,6 +31,7 @@
 
 import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
+import { scopeFor, ifAccountScope } from './_shared/account-scope'
 import { resolveTypeId } from './_shared/resolve-ids'
 import { create } from './admin-data'
 import { emitLog } from './_shared/audit'
@@ -152,9 +153,10 @@ export const listTestCases = createHandler(async (ctx, _body) => {
   const { data: typeRow } = await adminDb
     .from('types').select('id').eq('slug', 'eval_test_case').eq('kind', 'item').maybeSingle()
 
-  let q = ctx.db
+  const { accountIds } = await scopeFor(ctx)
+  let q = ifAccountScope(ctx.db
     .from('items')
-    .select('*')
+    .select('*'), accountIds)
     .eq('status', 'active')
     .order('created_at', { ascending: true })
     .range(Number(offset), Number(offset) + Number(limit) - 1)
@@ -188,7 +190,13 @@ export const runEval = createHandler(async (ctx, body) => {
   const { data: typeRow } = await adminDb
     .from('types').select('id').eq('slug', 'eval_test_case').eq('kind', 'item').maybeSingle()
 
-  let q = adminDb.from('items').select('*').eq('status', 'active').limit(500)
+  const { data: platformAcct } = await adminDb
+    .from('accounts').select('id').eq('slug', 'spine-system').maybeSingle()
+  const evalAccounts = [ctx.accountId]
+  if (platformAcct?.id && platformAcct.id !== ctx.accountId) evalAccounts.push(platformAcct.id)
+
+  let q = adminDb.from('items').select('*').eq('status', 'active')
+    .in('account_id', evalAccounts).limit(500)
   if (typeRow?.id) q = q.eq('type_id', typeRow.id)
   if (test_type)   q = q.eq('data->>test_type', test_type)
   const { data: testCases, error: tcErr } = await q
@@ -367,12 +375,18 @@ export const getCoverage = createHandler(async (ctx, _body) => {
   const { data: typeRow } = await adminDb
     .from('types').select('id').eq('slug', 'eval_test_case').eq('kind', 'item').maybeSingle()
 
-  const { data: testCases } = await adminDb
+  const { data: platformAcct } = await adminDb
+    .from('accounts').select('id').eq('slug', 'spine-system').maybeSingle()
+  const evalAccounts = ctx.accountId ? [ctx.accountId] : []
+  if (platformAcct?.id && platformAcct.id !== ctx.accountId) evalAccounts.push(platformAcct.id)
+
+  let covQ = adminDb
     .from('items')
     .select('data')
     .eq('status', 'active')
     .eq('type_id', typeRow?.id || '00000000-0000-0000-0000-000000000000')
-    .limit(1000)
+  if (evalAccounts.length) covQ = covQ.in('account_id', evalAccounts)
+  const { data: testCases } = await covQ.limit(1000)
 
   const countByType: Record<string, number> = {}
   for (const tt of TEST_TYPES) countByType[tt] = 0

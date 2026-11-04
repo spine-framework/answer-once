@@ -9,7 +9,7 @@
 // CIL[DOC-AUDIENCE audience="admin-api consumer"]
 
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 // CIL[DOC-VECTOR type="context" content="purpose='Netlify function entrypoint for install funnel admin metrics and export handlers'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -27,6 +27,7 @@ import { adminDb } from './_shared/db'
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const metrics = createHandler(async (ctx, body) => {
+  requireSystemContextWithAudit(ctx)
   const { data: typeRows } = await adminDb
     .from('types')
     .select('id, slug')
@@ -216,6 +217,7 @@ export const metrics = createHandler(async (ctx, body) => {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const exportData = createHandler(async (ctx, body) => {
+  requireSystemContextWithAudit(ctx)
   const { data: signalType } = await adminDb
     .from('types')
     .select('id')

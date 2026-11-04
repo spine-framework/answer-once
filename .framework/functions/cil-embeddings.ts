@@ -123,7 +123,7 @@ async function loadSourceChunks(
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="internal"]
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { generate } from './embeddings'
 import { callOpenAIEmbeddings, callEmbeddingApi } from './_shared/llm'
@@ -870,6 +870,10 @@ async function getPlatformAccountId(): Promise<string> {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
+  // CIL is operator tooling — every action touches the service-role client
+  // and server filesystem. System principals only; tenant callers stop here.
+  requireSystemContextWithAudit(ctx)
+
   const action = ctx.query?.action
   const accountId = ctx.accountId || await getPlatformAccountId()
 

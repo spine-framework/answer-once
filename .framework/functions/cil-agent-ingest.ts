@@ -9,7 +9,7 @@
 // CIL[DOC-AUDIENCE audience="cil-workers"]
 
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { create as adminCreate, update as adminUpdate } from './admin-data'
 import { resolveTypeId } from './_shared/resolve-ids'
@@ -383,6 +383,10 @@ function mapAgentDocsToChunkData(docs: AgentParsedDocs): Record<string, any> {
 // CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
+  // CIL is operator tooling — every action touches the service-role client
+  // and server filesystem. System principals only; tenant callers stop here.
+  requireSystemContextWithAudit(ctx)
+
   const action = ctx.query?.action
   const req = body as AgentIngestRequest
 

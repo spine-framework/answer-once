@@ -34,7 +34,9 @@
 import { createHandler } from './_shared/middleware'
 import { sanitizeRecordData, resolveFirstSurfacePermissions, validateUpdatePermissions } from './_shared/permissions'
 import { adminDb } from './_shared/db'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal, resolveAccessibleAccountIds } from './_shared/principal'
+import { applyAccountScope, assertRecordAccess, canAccessAccount, ENTITY_ACCOUNT_KEY } from './_shared/account-scope'
+import { isAccountAdmin } from './_shared/access'
 import { resolveTypeId, resolveTypeIds, resolveTypeRecord } from './_shared/resolve-ids'
 import { fireCreateTriggers, fireUpdateTriggers, fireDeleteTriggers } from './_shared/trigger-engine'
 import { withAdminLogging } from './_shared/logging'
@@ -254,8 +256,10 @@ export const list = createHandler(async (ctx, _body) => {
         throw new Error('Valid entity parameter is required')
       }
 
-      const db = (ctx.principal?.isInternal || isSystemAdmin(ctx.principal)) ? adminDb : ctx.db
+      const db = isSystemPrincipal(ctx) ? adminDb : ctx.db
+      const accountIds = await resolveAccessibleAccountIds(ctx)
       let query = db.from(entity).select('*')
+      query = applyAccountScope(query, entity, accountIds)
 
       // Customer-scoped principals never receive internal threads.
       const internalAudience = hasInternalAudience(ctx.principal)
@@ -600,6 +604,8 @@ export const get = createHandler(async (ctx, _body) => {
         throw new Error('Record not found')
       }
 
+      await assertRecordAccess(ctx, entity, data)
+
       let sanitizedRecord = await sanitizeRecordData(ctx, data, entity)
 
       // Customer-scoped principals cannot fetch internal threads or
@@ -687,6 +693,14 @@ export const create = createHandler(async (ctx, body) => {
         const e: any = new Error('Valid entity parameter is required'); e.statusCode = 400; throw e
       }
 
+      // A body-supplied account_id is only honored for system principals —
+      // checked up front so foreign-account writes fail before any work.
+      if (requestedAccountId && !isSystemPrincipal(ctx) && !(await canAccessAccount(ctx, requestedAccountId))) {
+        const e: any = new Error('Cannot create records in a different account')
+        e.statusCode = 403
+        throw e
+      }
+
       if (RAW_ENTITIES.includes(entity)) {
         const allowed: Record<string, string[]> = {
           logs: ['level', 'message', 'context', 'source', 'source_type', 'source_id', 'person_id', 'account_id', 'app_id', 'created_by', 'metadata', 'created_at'],
@@ -699,7 +713,15 @@ export const create = createHandler(async (ctx, body) => {
         for (const key of fields) {
           if (recordData[key] !== undefined) raw[key] = recordData[key]
         }
-        if (fields.includes('account_id') && raw.account_id === undefined) raw.account_id = ctx.accountId
+        // Non-system callers may never write into a foreign account — a
+        // body-supplied account_id is only honored for system principals.
+        if (fields.includes('account_id')) {
+          if (isSystemPrincipal(ctx)) {
+            if (raw.account_id === undefined) raw.account_id = ctx.accountId
+          } else {
+            raw.account_id = ctx.accountId
+          }
+        }
         if (entity === 'logs' && !raw.created_at) raw.created_at = new Date().toISOString()
         if (entity === 'logs' && (!raw.level || !raw.message)) { const e: any = new Error('level and message are required for logs'); e.statusCode = 400; throw e }
         if (entity === 'test_runs' && !raw.suite) { const e: any = new Error('suite is required for test_runs'); e.statusCode = 400; throw e }
@@ -788,6 +810,17 @@ export const create = createHandler(async (ctx, body) => {
           .eq('slug', 'spine-system')
           .single()
         if (sysAccount?.id) recordAccountId = sysAccount.id
+      }
+
+      // The parent-ref override above can move the write outside the caller's
+      // account — for machine principals the parent lookup ran on adminDb
+      // (no RLS), so re-check the final account. Platform-scope creates are
+      // exempt: the type's own design_schema stamps them into spine-system.
+      if (!isSystemPrincipal(ctx) && entity !== 'accounts' && resolvedScope !== 'platform' &&
+          !(await canAccessAccount(ctx, recordAccountId))) {
+        const e: any = new Error('Cannot create records in a different account')
+        e.statusCode = 403
+        throw e
       }
 
       const dataToInsert: Record<string, any> = {
@@ -906,7 +939,46 @@ export const update = createHandler(async (ctx, body) => {
         throw new Error('Record not found or access denied')
       }
 
-      if (entity === 'people' && requestedAccountId !== undefined) {
+      await assertRecordAccess(ctx, entity, existing)
+
+      if (!isSystemPrincipal(ctx)) {
+        // Privileged columns never come from the request for tenant callers —
+        // sanitizedData copies every non-data key through verbatim, so these
+        // must be dropped here (mass-assignment prevention).
+        for (const k of ['account_id', 'auth_uid', 'app_id', 'type_id', 'created_by', 'design_schema', 'validation_schema']) {
+          delete recordData[k]
+        }
+        if (entity === 'people') {
+          const admin = isAccountAdmin(ctx, existing.account_id)
+          const isSelf = existing.id === ctx.principal?.id
+          if (!admin && !isSelf) {
+            const e: any = new Error('Insufficient permissions to update other members')
+            e.statusCode = 403
+            throw e
+          }
+          if (!admin || isSelf) {
+            delete recordData.role_id
+            delete recordData.status
+            delete recordData.is_active
+          } else if (recordData.role_id !== undefined) {
+            const { data: targetRole } = await adminDb
+              .from('roles')
+              .select('is_system')
+              .eq('id', recordData.role_id)
+              .maybeSingle()
+            if (!targetRole || targetRole.is_system) {
+              const e: any = new Error('Cannot assign a system role')
+              e.statusCode = 403
+              throw e
+            }
+          }
+          if (recordData.data && typeof recordData.data === 'object') {
+            for (const k of Object.keys(recordData.data)) {
+              if (k.startsWith('invite_')) delete recordData.data[k]
+            }
+          }
+        }
+      } else if (entity === 'people' && requestedAccountId !== undefined) {
         recordData.account_id = requestedAccountId
       }
 
@@ -1010,6 +1082,8 @@ export const remove = createHandler(async (ctx, _body) => {
       if (existingErr || !existing) {
         throw new Error('Record not found or access denied')
       }
+
+      await assertRecordAccess(ctx, entity, existing)
 
       const permissionAccountId = existing.account_id || ctx.principal?.accountId
       const perms = await resolveFirstSurfacePermissions(
@@ -1185,8 +1259,12 @@ export const stats = createHandler(async (ctx, _body) => {
         throw new Error('Valid entity parameter is required')
       }
 
-      const { count, error: err } = await ctx.db.from(entity)
+      const db = isSystemPrincipal(ctx) ? adminDb : ctx.db
+      const accountIds = await resolveAccessibleAccountIds(ctx)
+      let query = db.from(entity)
         .select('*', { count: 'exact', head: true })
+      query = applyAccountScope(query, entity, accountIds)
+      const { count, error: err } = await query
 
       if (err) throw err
 

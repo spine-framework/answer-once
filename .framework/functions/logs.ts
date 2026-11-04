@@ -33,20 +33,8 @@
 
 import { createHandler, json, error, parseBody } from './_shared/middleware'
 import { adminDb } from './_shared/db'
-import { isSystemAdmin } from './_shared/principal'
+import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
 // CIL[END stable_id="~/.framework/functions/logs.ts:module_header:module_header"]
-
-
-// True only for platform-level principals: a system_admin role or an
-// internal machine principal with no account binding (SYSTEM_PRINCIPAL,
-// produced only by the INTERNAL_INVOKE_SECRET path). Machine principals
-// resolve to the service-role adminDb via getPrincipalDb, so an
-// account-bound API key must never be treated as system here.
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/logs.ts"]
-function isSystemPrincipal(ctx: any): boolean {
-  return isSystemAdmin(ctx.principal) || (ctx.principal?.isInternal === true && !ctx.accountId)
-}
-// CIL[END stable_id="~/.framework/functions/logs.ts:isSystemPrincipal:function"]
 
 
 
