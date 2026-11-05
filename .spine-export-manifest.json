@@ -2,15 +2,15 @@
   "format_version": 1,
   "app_slug": "answer-once",
   "app_name": "Answer Once",
-  "exported_at": "2026-11-05T01:35:35.344Z",
+  "exported_at": "2026-11-05T01:44:30.201Z",
   "source_root": "/Users/thistle/CascadeProjects/spine-ia",
   "source_tree_digest": "sha256:8a888fd32bc2752bb599a83eec182a1d8bdb6035ae0abfc698c24f8e598650a3",
   "source": {
-    "head": "cd95066af13823da32e8e114738f75feedda230c",
-    "dirty": false,
-    "dirty_file_count": 0,
-    "status_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "exported_files_digest": "sha256:3fb9fa450659a1765d1871504d18bb67723e9b2e78d9ecb43746ba9ec6c6fd37"
+    "head": "3f8d69530c6bdca747be112ee0c712c1202bc935",
+    "dirty": true,
+    "dirty_file_count": 1,
+    "status_digest": "sha256:e8d878fb552d71faea8ecc7fffaadeff66746817da1d3fe81a9bb7f0c2ac4461",
+    "exported_files_digest": "sha256:c553d88501b4929673c9ba132f268b31d17ce456425bdf13c2bcf21ae101a140"
   },
   "scheduled_functions": [
     {
@@ -635,7 +635,7 @@
     ".framework/tests/unit/validate-app.test.ts": "sha256:8e63b24caea75a2a55c1557e9837464111b4d2b0b591d8af32ff63630d3acec9",
     ".gitignore": "sha256:786bfd00fd7a4deb2394b8d0de17af1f5d0f82cf11a7a8e7c5640b5eb9170087",
     "LICENSE.md": "sha256:ef836fd9d6d733f910795e4a2dbecf15863739d231091f547b251632b0da5c53",
-    "README.md": "sha256:b15425c66b6b6bd0e02b928748b0569efac8c2e8bad16a1ade7ff813105602e0",
+    "README.md": "sha256:bc289738d77eb3c93f5c879b1a222bdf333c515ab4c24c236271f172b057de76",
     "bin/spine-framework.cjs": "sha256:21aa613659b23c134cb14a156555ae3f0df9c104f073e61833a704afc10adb1d",
     "bin/spine-framework.js": "sha256:b6964699f7e0a086db7e2bbc44c035d082574b37fcd5f6b6565cf758d7908d56",
     "config/components.json": "sha256:b761d9d0f1fc3cb991c7bbf4f574a4fa5a3661ecb236fff82eaa593c82d26f62",
@@ -706,7 +706,7 @@
     "custom/apps/answer-once/components/TicketCard.tsx": "sha256:d973c609f3af3de79100b5c27cfe6477d2855a13eabcba54024648a6b0dbce2d",
     "custom/apps/answer-once/components/TicketThread.tsx": "sha256:5cf1510b1a0eb985d706244d6e59163f110eb33ddd45ca74b87a5b701817c261",
     "custom/apps/answer-once/docs/install.md": "sha256:d84bfc26d68c37b5eb2fdcf0dcc65c2d2f19b2001c3bee7643e334c4c305c0c3",
-    "custom/apps/answer-once/docs/standalone-readme.md": "sha256:b15425c66b6b6bd0e02b928748b0569efac8c2e8bad16a1ade7ff813105602e0",
+    "custom/apps/answer-once/docs/standalone-readme.md": "sha256:bc289738d77eb3c93f5c879b1a222bdf333c515ab4c24c236271f172b057de76",
     "custom/apps/answer-once/emails/confirm.html": "sha256:b9c50d48821bb2b57c05cbb920416990746ebc63754a317658e9291c8ff4bf3d",
     "custom/apps/answer-once/emails/invite.html": "sha256:2dff51417ad0201113ca3eceeef4c2a5a4f902bd83e1e6dac97868f04fcca3b5",
     "custom/apps/answer-once/functions/_shared": "sha256:757b6491de8155324d16359ee6f69922a37d2bc2a1e6b8fe42ab2d80084c784f",
