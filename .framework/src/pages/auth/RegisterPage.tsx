@@ -476,6 +476,9 @@ export function RegisterPage() {
           // invite_token is required server-side to claim the invite stub
           data: {
             full_name: fullName,
+            // brand stamps auth.users.user_metadata so GoTrue email templates
+            // can branch per brand via {{ .Data.brand }} (subject and body).
+            ...(branding.slug ? { brand: branding.slug } : {}),
             ...(inviteToken ? { invite_token: inviteToken } : {}),
           },
           emailRedirectTo: `${window.location.origin}/auth/confirm`,

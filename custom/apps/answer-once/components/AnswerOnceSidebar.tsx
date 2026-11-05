@@ -53,7 +53,7 @@ import {
 } from "@core/components/ui/dialog"
 import { Button } from "@core/components/ui/button"
 import { Input } from "@core/components/ui/input"
-import answerOnceLogo from "../public/answer-once-logo.svg"
+import { useBranding } from "@core/hooks/useBranding"
 import {
   LayoutDashboard,
   Ticket,
@@ -78,6 +78,7 @@ import {
 export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const appPath = useAppPath()
   const navigate = useNavigate()
+  const branding = useBranding()
   const { user, logout, refreshUser } = useAuth()
   const [settingsOpen, setSettingsOpen] = React.useState(false)
   const [fullName, setFullName] = React.useState('')
@@ -139,7 +140,7 @@ export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Side
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" onClick={() => navigate(appPath("/"))}>
               <a href={appPath("/")}>
-                <img src={answerOnceLogo} alt="Answer Once" className="h-11 w-auto" />
+                <img src={branding.logo_url} alt={branding.app_name} className="h-11 w-auto" />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

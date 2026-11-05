@@ -40,6 +40,13 @@ import { emitOutcome } from './outcomes'
 import { withSpan } from './tracing'
 import { resolveKnowledgeScope, knowledgeRowAllowed } from './kb'
 import { resolveNotificationRecipients } from './notify'
+import {
+  getBrandsConfig,
+  resolveBrand,
+  accountBrandSlugs,
+  brandForAccount,
+  type SiteBrand,
+} from './site-brand'
 // integration-outbound is imported lazily — a static edge closes the cycle
 // middleware → security → rate-limit → funnel → trigger-engine →
 // pipeline-runner → integration-outbound → middleware, leaving createHandler
@@ -263,8 +270,11 @@ interface PipelineStage {
  * @cil-generated
  */
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function" type="function" identity="persistExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
-/**
- * Writes the terminal status of a pipeline execution. The update result
+// CIL[DOC-MACRO purpose="Write the terminal status of a pipeline execution with one loud retry"]
+// CIL[DOC-CONTRACT inputs="ctx, executionId, patch — ctx: CoreContext (request-id logging); executionId: string (pipeline_executions row to update); patch: Record<string,any> (terminal status payload)" outputs="Promise<void>" errors="update errors are retried once then logged" side_effects="Updates public.pipeline_executions; logs on failure"]
+// CIL[DOC-MICRO logic_summary="Update pipeline_executions by id; on error retry once — an unchecked failure is what previously left rows stuck 'running' while audit claimed completion; a retry failure logs loudly so the row can be reconciled" notable_decisions="throws nothing — persistence failure must not mask the pipeline's own result"]
+// CIL[DOC-STABILITY stability="stable"]
+/** The update result
  * is checked and retried once — an unchecked failure is what previously
  * left rows stuck 'running' forever while the audit span still claimed
  * 'pipeline.completed'. A retry failure is logged loudly so the row can
@@ -654,10 +664,22 @@ async function executeStage(
 // CIL[DOC-MICRO logic_summary="Implements the resolveTemplates function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
-function resolveTemplates(value: any, triggerData: any): any {
+function resolveTemplates(value: any, triggerData: any, brand?: SiteBrand | null): any {
   const roots: Record<string, any> = {
     trigger: triggerData,
     record: triggerData?.entity?.data,
+  }
+  // {{brand.*}} — template-facing shape: {{brand.name}}, {{brand.url}},
+  // {{brand.from}}, {{brand.logo_url}}, {{brand.email_logo_url}}, {{brand.slug}}
+  if (brand) {
+    roots.brand = {
+      slug: brand.slug,
+      name: brand.name,
+      url: brand.site_url,
+      from: brand.email_from,
+      logo_url: brand.logo_url,
+      email_logo_url: brand.email_logo_url,
+    }
   }
   if (typeof value === 'string') {
     if (!value.includes('{{')) return value
@@ -753,7 +775,7 @@ async function resolveAccountId(ctx: CoreContext, slug: string): Promise<string>
 // CIL[DOC-MACRO purpose="stageHandlers constant — registry of built-in pipeline stage executors keyed by stage_type slug"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements each built-in stage type: record writes (update_item/create_record), outbound (http_request/send_notification), orchestration (run_pipeline/query_items/agent_inference), knowledge (search_knowledge/generate_embeddings/revoke_embeddings/kb_ingest/kb_revoke), and create_interaction."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=".framework/functions/_shared/kb.ts,.framework/functions/embeddings.ts,.framework/migrations/053_builtin_action_seeds.sql,.framework/migrations/054_kb_ingest_lease.sql"]
-// CIL[DOC-CONTRACT inputs="ctx: CoreContext, config: stage config (item_id/document_id accept {{trigger.entity_id}}/{{entity_id}} templates)" outputs="stage-specific result object" errors="Error on missing required config keys or unresolved templates" side_effects="DB writes and/or outbound calls per stage type"]
+// CIL[DOC-CONTRACT inputs="ctx, entity, config — ctx: CoreContext; entity: runtime table name (items/threads/messages/links); config: stage config (item_id/document_id accept {{trigger.entity_id}}/{{entity_id}} templates)" outputs="stage-specific result object" errors="Error on missing required config keys or unresolved templates" side_effects="DB writes and/or outbound calls per stage type"]
 // CIL[DOC-MICRO logic_summary="Template-bearing id fields resolve against config._triggerData then dynamic-import their engine — kb_ingest/kb_revoke import _shared/kb (canonical typed path with document lease); generate_embeddings/revoke_embeddings import functions/embeddings (legacy engine) and remain for cortex pipelines." notable_decisions="kb_ingest accepts item_id or document_id; kb_revoke accepts document_id or item_id — matching the seeded demo pipeline configs"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
@@ -946,7 +968,10 @@ const stageHandlers: Record<string, Function> = {
       ...entityPersonIds,
       ...(await resolveNotificationRecipients(ctx, recipients.filter((r: any) => typeof r === 'string' && !ENTITY_RECIPIENTS.has(r))))
     ]
-    const message = resolveTemplates(config.message, triggerData)
+    // In-app notifications are branded by the entity's account brand so
+    // {{brand.*}} placeholders resolve the recipient's brand, not the actor's.
+    const notifBrand = await brandForAccount(await getBrandsConfig(), entity?.data?.account_id)
+    const message = resolveTemplates(config.message, triggerData, notifBrand)
     const entity_type = config.entity_type
     // entity_id 'target' resolves the record behind the event (e.g. the ticket
     // a reply was posted on) so notifications deep-link to it.
@@ -1023,18 +1048,16 @@ const stageHandlers: Record<string, Function> = {
 
     // Named templates live on the integration (integration.config.templates.<key>
     // = {subject, html, text}); inline stage config supplies them otherwise.
-    let { subject, html, text } = config
+    // A '<key>:<brand>' template overrides per brand group below.
+    const baseTpl = { subject: config.subject, html: config.html, text: config.text }
     const named = config.template && integration?.config?.templates?.[config.template]
     if (named) {
-      subject = named.subject ?? subject
-      html = named.html ?? html
-      text = named.text ?? text
+      baseTpl.subject = named.subject ?? baseTpl.subject
+      baseTpl.html = named.html ?? baseTpl.html
+      baseTpl.text = named.text ?? baseTpl.text
     }
-    subject = resolveTemplates(subject, triggerData)
-    html = resolveTemplates(html, triggerData)
-    text = resolveTemplates(text, triggerData)
 
-    if (!subject || (!html && !text)) {
+    if (!baseTpl.subject || (!baseTpl.html && !baseTpl.text)) {
       throw new Error('send_email: subject and html or text are required (inline or via integration template)')
     }
 
@@ -1047,33 +1070,63 @@ const stageHandlers: Record<string, Function> = {
       personIds.delete(entity.data.created_by)
     }
 
-    const emails = new Set(recipients.filter((r: any) => typeof r === 'string' && r.includes('@')))
-    if (personIds.size) {
-      const { data: people } = await adminDb
-        .from('people')
-        .select('id, email')
-        .in('id', [...personIds])
-      for (const p of people || []) {
-        if (p?.email) emails.add(p.email)
-      }
-    }
+    const literalEmails = new Set<string>(recipients.filter((r: any) => typeof r === 'string' && r.includes('@')))
+    const { data: people } = personIds.size
+      ? await adminDb
+          .from('people')
+          .select('id, email, account_id')
+          .in('id', [...personIds])
+      : { data: [] as any[] }
 
-    if (!emails.size) return { success: true, emailed_count: 0 }
+    // Group recipients by their account's brand — one branded Resend call per
+    // group. Literal addresses and brand-less accounts land on the default.
+    const brandsCfg = await getBrandsConfig(integrationSlug)
+    const acctBrands = await accountBrandSlugs((people || []).map((p: any) => p.account_id))
+    const byBrand = new Map<string | null, Set<string>>()
+    const addTo = (slug: string | null, addr: string) => {
+      if (!byBrand.has(slug)) byBrand.set(slug, new Set())
+      byBrand.get(slug)!.add(addr)
+    }
+    for (const p of people || []) {
+      if (p?.email) addTo(acctBrands.get(p.account_id) ?? null, p.email)
+    }
+    for (const addr of literalEmails) addTo(null, addr)
+
+    const total = [...byBrand.values()].reduce((n, g) => n + g.size, 0)
+    if (!total) return { success: true, emailed_count: 0 }
 
     try {
-      const result = await executeOutbound(ctx, {
-        integration_slug: integrationSlug,
-        action_config: {
-          action_slug: 'send_email',
-          to: [...emails],
-          subject,
-          html,
-          text,
-          ...(config.from ? { from: config.from } : {}),
-          ...(config.reply_to ? { reply_to: config.reply_to } : {}),
-        },
-      })
-      return { success: !!result?.success, emailed_count: emails.size }
+      let sent = 0
+      for (const [slug, emails] of byBrand) {
+        const brand = resolveBrand(brandsCfg, slug)
+        const variant = config.template
+          ? integration?.config?.templates?.[`${config.template}:${brand.slug}`]
+          : null
+        let { subject, html, text } = baseTpl
+        if (variant) {
+          subject = variant.subject ?? subject
+          html = variant.html ?? html
+          text = variant.text ?? text
+        }
+        subject = resolveTemplates(subject, triggerData, brand)
+        html = resolveTemplates(html, triggerData, brand)
+        text = resolveTemplates(text, triggerData, brand)
+
+        const result = await executeOutbound(ctx, {
+          integration_slug: integrationSlug,
+          action_config: {
+            action_slug: 'send_email',
+            to: [...emails],
+            subject,
+            html,
+            text,
+            ...(config.from || brand.email_from ? { from: config.from || brand.email_from } : {}),
+            ...(config.reply_to ? { reply_to: config.reply_to } : {}),
+          },
+        })
+        if (result?.success) sent += emails.size
+      }
+      return { success: sent > 0, emailed_count: sent }
     } catch (err: any) {
       // Credential/env problems mean the provider was never configured — treat
       // like "not configured" rather than failing the pipeline.

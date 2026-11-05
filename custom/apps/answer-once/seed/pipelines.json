@@ -10,7 +10,7 @@
         "stage_type": "send_notification",
         "continue_on_error": true,
         "config": {
-          "message": "Support replied to your ticket — open Answer Once to read it.",
+          "message": "Support replied to your ticket — open {{brand.name}} to read it.",
           "entity_type": "items",
           "entity_id": "target",
           "recipients": ["owner"]

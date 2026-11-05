@@ -6,11 +6,13 @@
 // CIL[DOC-MICRO logic_summary="Shows evidence_state label, markdown content, source list (clickable for ao_kb_* sources → /kb/:id), and feedback buttons; parses JSON-string data fields and normalizes server feedback values" notable_decisions="admin-data display-formats json fields into strings — cited_sources/retrieved_sources are parsed defensively; server stores feedback as helpful|not_helpful, normalized to up|down"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
+// CIL[DOC-AUDIENCE audience="app developers"]
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bot, ThumbsUp, ThumbsDown, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from '@core/components/ui/button'
 import { useAppPath } from '@core/hooks/useAppPath'
+import { useBranding } from '@core/hooks/useBranding'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useSubmitFeedback } from '../hooks/useTickets'
@@ -35,6 +37,7 @@ export function AIMessageCard({ message, ticketId, messageId, onFeedback }: AIMe
   const { submitFeedback, loading } = useSubmitFeedback()
   const navigate = useNavigate()
   const appPath = useAppPath()
+  const branding = useBranding()
   // Server stores 'helpful' | 'not_helpful' on message.data.feedback.
   const persisted = message.data?.feedback
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(
@@ -80,7 +83,7 @@ export function AIMessageCard({ message, ticketId, messageId, onFeedback }: AIMe
       <div className="max-w-md rounded-lg px-4 py-3 text-sm bg-muted/80 text-foreground border border-border">
         <div className="flex items-center gap-2 mb-2">
           <Bot size={14} className="text-primary" />
-          <span className="text-xs font-medium text-muted-foreground">Answer Once</span>
+          <span className="text-xs font-medium text-muted-foreground">{branding.app_name}</span>
         </div>
         {label && <div className="text-xs text-muted-foreground mt-1">{label}</div>}
         <FormattedAIResponse content={message.content} />

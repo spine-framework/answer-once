@@ -14,6 +14,7 @@ export interface AppMountFields {
   route_prefix: string | null
   preview_domain?: string | null
   prod_domain?: string | null
+  prod_domains?: string[] | null
   preview_route_prefix?: string | null
   prod_route_prefix?: string | null
 }
@@ -28,6 +29,7 @@ export interface AppMountResolution {
 // CIL[DOC-MACRO purpose="Compute the effective route_prefix and routability for an app on the current host"]
 // CIL[DOC-CONTRACT inputs="app: AppMountFields, opts: {hostname?, environment?} (injectable for tests)" outputs="AppMountResolution" errors="malformed domain treated as non-matching" side_effects="none — pure"]
 // CIL[DOC-MICRO logic_summary="Picks preview_* fields when environment==='preview' else prod_*; null domain → default mount; matching host → override ?? route_prefix; non-matching host → routable at route_prefix when an override exists, unroutable when it does not" notable_decisions="opts injection keeps the function testable in the node vitest environment (no jsdom)"]
+// CIL[DOC-STABILITY stability="experimental"]
 export function resolveAppMount(
   app: AppMountFields,
   opts: { hostname?: string; environment?: string } = {},
@@ -39,21 +41,32 @@ export function resolveAppMount(
     (typeof window !== 'undefined' ? window.location.hostname : '')
 
   const isPreview = environment === 'preview'
-  const domain = isPreview ? app.preview_domain : app.prod_domain
   const override = isPreview ? app.preview_route_prefix : app.prod_route_prefix
 
-  if (!domain) {
+  // prod_domains is a multi-host extension of prod_domain — a hostname match
+  // on any entry triggers the same override mount.
+  const domains: string[] = []
+  const single = isPreview ? app.preview_domain : app.prod_domain
+  if (single) domains.push(single)
+  if (!isPreview && Array.isArray(app.prod_domains)) {
+    domains.push(...app.prod_domains.filter((d): d is string => typeof d === 'string' && !!d))
+  }
+
+  if (!domains.length) {
     return { routable: true, route_prefix: app.route_prefix }
   }
 
-  let domainHost = domain
-  try {
-    domainHost = domain.includes('://') ? new URL(domain).hostname : domain.split(':')[0]
-  } catch {
-    // Malformed domain config — treat as non-matching rather than crash routing.
-  }
+  const matched = domains.some(domain => {
+    let domainHost = domain
+    try {
+      domainHost = domain.includes('://') ? new URL(domain).hostname : domain.split(':')[0]
+    } catch {
+      // Malformed domain config — treat as non-matching rather than crash routing.
+    }
+    return hostname === domainHost
+  })
 
-  if (hostname === domainHost) {
+  if (matched) {
     return { routable: true, route_prefix: override ?? app.route_prefix }
   }
 
@@ -67,6 +80,7 @@ export function resolveAppMount(
 // CIL[DOC-MACRO purpose="Resolve where to land a user after login/registration — the target app's effective mount, not the static config path"]
 // CIL[DOC-CONTRACT inputs="preferredAppSlug (app chosen by config policy), fallback path" outputs="effective route_prefix to navigate to" errors="fetch/parse failures return fallback" side_effects="authenticated GET /api/apps?action=list"]
 // CIL[DOC-MICRO logic_summary="Fetches the apps list, resolves each record's effective mount via resolveAppMount, returns the preferred app's prefix when routable else the first routable app's prefix else the fallback" notable_decisions="spine.config.json apps.<slug>.path and default_app_by_role are per-repo hints that are wrong for single-app prod sites — the DB row's resolved mount is authoritative"]
+// CIL[DOC-STABILITY stability="experimental"]
 export async function resolvePostAuthPath(
   preferredAppSlug?: string | null,
   fallback: string = '/',

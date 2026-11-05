@@ -6,6 +6,10 @@
   "app_type": "full",
   "route_prefix": "/answer-once",
   "prod_domain": "support.answer-once.com",
+  "prod_domains": [
+    "support.answer-once.com",
+    "support.spine-framework.com"
+  ],
   "prod_route_prefix": "/",
   "required_roles": [
     "member",

@@ -69,6 +69,47 @@ describe('resolveAppMount', () => {
       .toEqual({ routable: true, route_prefix: '/' })
   })
 
+  it('mounts at prod_route_prefix when the host matches any prod_domains entry', () => {
+    const app = {
+      ...base,
+      prod_domain: 'demo.answer-once.com',
+      prod_domains: ['demo.answer-once.com', 'demo.spine-framework.com'],
+      prod_route_prefix: '/',
+    }
+    expect(resolveAppMount(app, { hostname: 'demo.spine-framework.com', environment: 'prod' }))
+      .toEqual({ routable: true, route_prefix: '/' })
+    expect(resolveAppMount(app, { hostname: 'demo.answer-once.com', environment: 'prod' }))
+      .toEqual({ routable: true, route_prefix: '/' })
+  })
+
+  it('prod_domains works without prod_domain set', () => {
+    const app = {
+      ...base,
+      prod_domains: ['a.example.com', 'b.example.com'],
+      prod_route_prefix: '/',
+    }
+    expect(resolveAppMount(app, { hostname: 'b.example.com', environment: 'prod' }))
+      .toEqual({ routable: true, route_prefix: '/' })
+    // Non-matching host with override → routable at default mount
+    expect(resolveAppMount(app, opts))
+      .toEqual({ routable: true, route_prefix: '/demo' })
+  })
+
+  it('prod_domains without override locks matching like prod_domain', () => {
+    const app = { ...base, prod_domains: ['a.example.com', 'b.example.com'] }
+    expect(resolveAppMount(app, opts)).toEqual({ routable: false, route_prefix: '/demo' })
+    expect(resolveAppMount(app, { hostname: 'a.example.com', environment: 'prod' }))
+      .toEqual({ routable: true, route_prefix: '/demo' })
+  })
+
+  it('ignores malformed prod_domains entries', () => {
+    const app = { ...base, prod_domains: ['', 'b.example.com', 42] as any, prod_route_prefix: '/' }
+    expect(resolveAppMount(app, { hostname: 'b.example.com', environment: 'prod' }))
+      .toEqual({ routable: true, route_prefix: '/' })
+    expect(resolveAppMount(app, opts))
+      .toEqual({ routable: true, route_prefix: '/demo' })
+  })
+
   it('is idempotent — re-resolving a resolved record returns the same mount', () => {
     const app = { ...base, prod_domain: 'demo.answer-once.com', prod_route_prefix: '/' }
     const once = resolveAppMount(app, { hostname: 'demo.answer-once.com', environment: 'prod' })

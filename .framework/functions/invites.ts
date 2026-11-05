@@ -45,6 +45,8 @@ import { getClientGeo } from './_shared/geo'
 import { checkRegistrationBlocklist, recordRegistrationGeo } from './_shared/security'
 import { execute as executeOutbound } from './integration-outbound'
 import { create as adminDataCreate, list as adminDataList, update as adminDataUpdate } from './admin-data'
+import { getBrandsConfig, brandForHost } from './_shared/site-brand'
+import { escapeHtml } from './_shared/access'
 // CIL[END stable_id="~/.framework/functions/invites.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='This module handles invite-related functionalities within the application, integrating with various services to manage invites effectively.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
@@ -675,6 +677,9 @@ export const completeRegistration = createHandler(async (ctx, body) => {
     p_app_slug: app,
     p_path: path,
     p_account_name: account_name ?? null,
+    // The registration host decides the new account's brand — resolved and
+    // stamped inside the RPC so placement writes stay in the RPC boundary.
+    p_host: ctx.headers?.['host'] ?? null,
   })
 
   if (rpcError || !rpcResult) {
@@ -827,6 +832,13 @@ export const createInvite = createHandler(async (ctx, body) => {
   const appBaseUrl = resolveInviteBaseUrl(base_url)
   const inviteUrl = `${appBaseUrl}/register?t=${token}`
 
+  // Brand of the invite email comes from the validated origin the inviter is
+  // on — correct for both customer-account and staff (spine-system) invites.
+  const brandsCfg = await getBrandsConfig()
+  let inviteBrandHost = ''
+  try { inviteBrandHost = new URL(appBaseUrl).hostname } catch {}
+  const inviteBrand = brandForHost(brandsCfg, inviteBrandHost)
+
   // Email delivery: when an 'invite-email' integration (or the shared
   // 'transactional-email' one) is configured, send the invite through the
   // outbound broker. Always return invite_url so the UI can fall back to a
@@ -854,16 +866,22 @@ export const createInvite = createHandler(async (ctx, body) => {
         .maybeSingle()
       const accountName = account?.display_name || ''
 
-      // Email body: integration.config.templates.invite overrides the default.
+      // Email body: integration.config.templates.invite overrides the default,
+      // and templates['invite:<brand>'] overrides that per brand.
       // Template placeholders are {{to_name}}, {{invite_url}}, {{account_name}},
-      // {{expires_at}}.
-      const tpl = emailIntegration.config?.templates?.invite || {}
+      // {{expires_at}}, {{brand_name}}, {{brand_url}}, {{brand_logo_url}}.
+      const tpl =
+        emailIntegration.config?.templates?.[`invite:${inviteBrand.slug}`] ||
+        emailIntegration.config?.templates?.invite || {}
       const render = (s: string) =>
         (s || '')
           .replace(/\{\{\s*to_name\s*\}\}/g, escapeHtml(stubName))
           .replace(/\{\{\s*invite_url\s*\}\}/g, escapeHtml(inviteUrl))
           .replace(/\{\{\s*account_name\s*\}\}/g, escapeHtml(accountName))
           .replace(/\{\{\s*expires_at\s*\}\}/g, escapeHtml(expiresAt))
+          .replace(/\{\{\s*brand_name\s*\}\}/g, escapeHtml(inviteBrand.name))
+          .replace(/\{\{\s*brand_url\s*\}\}/g, escapeHtml(inviteBrand.site_url || appBaseUrl))
+          .replace(/\{\{\s*brand_logo_url\s*\}\}/g, escapeHtml(inviteBrand.email_logo_url || ''))
       const subject = render(tpl.subject) ||
         `You're invited to join ${escapeHtml(accountName) || 'your team'}`
       const html = render(tpl.html) ||
@@ -884,6 +902,7 @@ export const createInvite = createHandler(async (ctx, body) => {
           account_name: accountName,
           invited_by: ctx.principal.id,
           expires_at: expiresAt,
+          ...(inviteBrand.email_from ? { from: inviteBrand.email_from } : {}),
         }
       })
       emailSent = !!result?.success

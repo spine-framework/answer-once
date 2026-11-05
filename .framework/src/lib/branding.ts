@@ -18,11 +18,30 @@
 // CIL[DOC-MICRO logic_summary="app_name drives headings and logo alt; title drives document.title and wordmark text; logo_url and favicon_url are public/ asset paths" notable_decisions="title falls back to app_name, then to 'Spine Framework' when no branding block exists"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
+export interface SiteBrandDefinition {
+  name?: string
+  app_name?: string
+  title?: string
+  site_url?: string
+  logo_url?: string
+  favicon_url?: string
+  email_logo_url?: string
+  email_from?: string
+}
+
+export interface SiteBrandsConfig {
+  default?: string
+  by_host?: Record<string, string>
+  definitions?: Record<string, SiteBrandDefinition>
+}
+
 export interface SpineBranding {
+  slug: string | null
   app_name: string
   title: string
   logo_url: string
   favicon_url: string
+  site_url: string | null
 }
 // CIL[END stable_id="~/.framework/src/lib/branding.ts:spinebranding:interface"]
 
@@ -35,10 +54,12 @@ export interface SpineBranding {
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
 export const DEFAULT_BRANDING: SpineBranding = {
+  slug: null,
   app_name: 'Spine',
   title: 'Spine Framework',
   logo_url: '/spine-logo.svg',
   favicon_url: '/spine-logo.svg',
+  site_url: null,
 }
 // CIL[END stable_id="~/.framework/src/lib/branding.ts:default_branding:constant"]
 
@@ -49,20 +70,41 @@ let inflight: Promise<SpineBranding> | null = null
 // CIL[DOC-MACRO purpose="Merge a raw branding block over defaults"]
 // CIL[DOC-RESPONSIBILITY responsibility="Produce a complete SpineBranding from a possibly partial branding config value"]
 // CIL[DOC-CONTEXT module="framework-api" layer="lib" related_files=".framework/src/lib/branding.ts"]
-// CIL[DOC-CONTRACT inputs="raw: unknown (config.branding)" outputs="SpineBranding" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Each key falls back independently; title falls back to the resolved app_name so app-branded instances get a sane tab title without duplicating config" notable_decisions="non-string values treated as absent"]
+// CIL[DOC-CONTRACT inputs="raw, brands, hostname — raw: unknown (config.branding); brands: SiteBrandsConfig|null (config.brands host-keyed brand map); hostname: string matched against brands.by_host" outputs="SpineBranding" errors="none" side_effects="none"]
+// CIL[DOC-MICRO logic_summary="Brand definition resolved as by_host[hostname] ?? brands.default; its fields merge over flat branding which merges over defaults; title falls back to the resolved app_name" notable_decisions="non-string values treated as absent; unknown/absent brands config degrades to legacy flat-branding behavior"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
-function resolveBranding(raw: unknown): SpineBranding {
+export function resolveBranding(
+  raw: unknown,
+  brands?: SiteBrandsConfig | null,
+  hostname?: string,
+): SpineBranding {
   const b = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>
-  const appName = typeof b.app_name === 'string' && b.app_name ? b.app_name : DEFAULT_BRANDING.app_name
-  const configuredTitle = typeof b.title === 'string' && b.title ? b.title : null
+  const defs = brands?.definitions ?? {}
+  const slug = (hostname ? brands?.by_host?.[hostname] : undefined) ?? brands?.default ?? null
+  const def = (slug && defs[slug]) || {}
+
+  const defName =
+    (typeof def.name === 'string' && def.name) ||
+    (typeof def.app_name === 'string' && def.app_name) ||
+    null
+  const appName = defName ?? (typeof b.app_name === 'string' && b.app_name ? b.app_name : DEFAULT_BRANDING.app_name)
+  const configuredTitle =
+    (typeof def.title === 'string' && def.title ? def.title : null) ??
+    (typeof b.title === 'string' && b.title ? b.title : null)
   return {
+    slug,
     app_name: appName,
-    title: configuredTitle ?? (b.app_name ? appName : DEFAULT_BRANDING.title),
-    logo_url: typeof b.logo_url === 'string' && b.logo_url ? b.logo_url : DEFAULT_BRANDING.logo_url,
+    title: configuredTitle ?? (defName || b.app_name ? appName : DEFAULT_BRANDING.title),
+    logo_url:
+      (typeof def.logo_url === 'string' && def.logo_url) ||
+      (typeof b.logo_url === 'string' && b.logo_url) ||
+      DEFAULT_BRANDING.logo_url,
     favicon_url:
-      typeof b.favicon_url === 'string' && b.favicon_url ? b.favicon_url : DEFAULT_BRANDING.favicon_url,
+      (typeof def.favicon_url === 'string' && def.favicon_url) ||
+      (typeof b.favicon_url === 'string' && b.favicon_url) ||
+      DEFAULT_BRANDING.favicon_url,
+    site_url: (typeof def.site_url === 'string' && def.site_url) || null,
   }
 }
 // CIL[END stable_id="~/.framework/src/lib/branding.ts:resolvebranding:function"]
@@ -81,7 +123,8 @@ export function loadBranding(): Promise<SpineBranding> {
     inflight = fetch('/spine.config.json')
       .then(res => (res.ok ? res.json() : null))
       .then(config => {
-        cached = resolveBranding(config?.branding)
+        const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+        cached = resolveBranding(config?.branding, config?.brands, hostname)
         return cached
       })
       .catch(() => {

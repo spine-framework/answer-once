@@ -49,6 +49,7 @@ export interface AppManifest {
   auth_required?: boolean
   preview_domain?: string
   prod_domain?: string
+  prod_domains?: string[]
   preview_route_prefix?: string
   prod_route_prefix?: string
 }

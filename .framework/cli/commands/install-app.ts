@@ -1651,6 +1651,7 @@ function appRowPayload(manifest: Record<string, any>, appSlug: string, existingC
     min_role: manifest.required_roles?.[0] ?? manifest.min_role ?? null,
     preview_domain: manifest.preview_domain ?? null,
     prod_domain: manifest.prod_domain ?? null,
+    prod_domains: manifest.prod_domains ?? null,
     preview_route_prefix: manifest.preview_route_prefix ?? null,
     prod_route_prefix: manifest.prod_route_prefix ?? null,
     config: mergedConfig,

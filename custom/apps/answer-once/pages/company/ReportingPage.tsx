@@ -8,6 +8,7 @@
 // CIL[DOC-STABILITY stability="experimental"]
 // CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect, useMemo, useCallback, type ReactNode } from 'react'
+import { useBranding } from '@core/hooks/useBranding'
 import { apiFetch } from '@core/lib/api'
 import { useDirectory } from '../../hooks/useDirectory'
 import { Skeleton } from '@core/components/ui/skeleton'
@@ -297,6 +298,7 @@ function bucketKey(iso: string, gran: 'day' | 'week' | 'month') {
 }
 export default function ReportingPage() {
   const { accountName } = useDirectory()
+  const branding = useBranding()
   const [range, setRange] = useState<RangeKey>('30d')
   const [compare, setCompare] = useState<CompareKey>('prev')
   const [customStart, setCustomStart] = useState('')
@@ -461,7 +463,7 @@ export default function ReportingPage() {
     cur === null || prev === null || prev === undefined ? null : cur - prev
 
   const kpis = [
-    { label: 'Answer Once', value: stats.prim.aoRate === null ? '—' : `${Math.round(stats.prim.aoRate * 100)}%`, sub: `${stats.prim.aiResolved} of ${stats.prim.total} resolved w/o a human`, d: delta(stats.prim.aoRate, stats.cmp?.aoRate), unit: 'pts', scale: 100, info: 'Share of all cases resolved to the customer\u2019s satisfaction with zero human involvement. Any human touch or post-close reopen counts against it.' },
+    { label: branding.app_name, value: stats.prim.aoRate === null ? '—' : `${Math.round(stats.prim.aoRate * 100)}%`, sub: `${stats.prim.aiResolved} of ${stats.prim.total} resolved w/o a human`, d: delta(stats.prim.aoRate, stats.cmp?.aoRate), unit: 'pts', scale: 100, info: 'Share of all cases resolved to the customer\u2019s satisfaction with zero human involvement. Any human touch or post-close reopen counts against it.' },
     { label: 'Total demand', value: String(stats.prim.total), sub: 'tickets opened in range', d: delta(stats.prim.total, stats.cmp?.total), unit: '', scale: 1, invert: true, info: 'All tickets opened in the window — the denominator every bucket shares.' },
     { label: 'Est. human hours', value: fmtHours(stats.prim.estMinutes / 60), sub: 'estimate — stamped, procedure, or 15m fallback', d: delta(stats.prim.estMinutes, stats.cmp?.estMinutes), unit: 'm', scale: 1, invert: true, info: 'Estimated human effort: ticket human_minutes, else the linked procedure\u2019s est_minutes, else a 15-minute fallback for human-touched cases. An estimate, not measured labor.' },
     { label: 'Median wait', value: fmtHours(stats.prim.waitMedian), sub: 'open to confident answer or human resolution', d: delta(stats.prim.waitMedian, stats.cmp?.waitMedian), unit: 'h', scale: 1, invert: true, info: 'Typical customer wait: created → confident AI answer, or created → human resolution.' },
@@ -510,7 +512,7 @@ export default function ReportingPage() {
       </Card>
 
       {/* AO trend + change markers */}
-      <Card title="Answer Once trend — volume, rate, and the changes that should move it" info="Ticket volume per bucket with the AO% line overlaid. Vertical lines are change markers — intentional operational changes annotated so a trend shift has an explanation attached.">
+      <Card title={`${branding.app_name} trend — volume, rate, and the changes that should move it`} info="Ticket volume per bucket with the AO% line overlaid. Vertical lines are change markers — intentional operational changes annotated so a trend shift has an explanation attached.">
         {stats.trend.length === 0 ? <Empty /> : (
           <ChartContainer config={trendConfig} className="h-64 w-full">
             <ComposedChart data={stats.trend}>
@@ -628,7 +630,7 @@ export default function ReportingPage() {
       </Card>
 
       {/* Account breakdown */}
-      <Card title="By account" info="Demand, Answer Once %, estimated human hours, and reopens per customer account. The lowest-AO accounts are where seeding knowledge pays off fastest.">
+      <Card title="By account" info={`Demand, ${branding.app_name} %, estimated human hours, and reopens per customer account. The lowest-${branding.app_name} accounts are where seeding knowledge pays off fastest.`}>
         {stats.accountRows.length === 0 ? <Empty /> : (
           <div className="overflow-x-auto -mx-4 px-4">
             <table className="w-full text-sm min-w-[560px]">
@@ -636,7 +638,7 @@ export default function ReportingPage() {
                 <tr className="text-left text-xs text-muted-foreground border-b border-border">
                   <th className="py-2 pr-4 font-medium">Account</th>
                   <th className="py-2 pr-4 font-medium text-right">Tickets</th>
-                  <th className="py-2 pr-4 font-medium text-right">Answer Once</th>
+                  <th className="py-2 pr-4 font-medium text-right">{branding.app_name}</th>
                   <th className="py-2 pr-4 font-medium text-right">Est. hours</th>
                   <th className="py-2 font-medium text-right">Reopened</th>
                 </tr>
@@ -669,7 +671,7 @@ export default function ReportingPage() {
       <div className="px-4 sm:px-6 py-3 border-b border-border flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="min-w-0">
           <h1 className="text-lg font-semibold">Reporting</h1>
-          <p className="text-sm text-muted-foreground">Demand reconciliation and Answer Once economics — {rangeLabel.toLowerCase()}</p>
+          <p className="text-sm text-muted-foreground">Demand reconciliation and {branding.app_name} economics — {rangeLabel.toLowerCase()}</p>
         </div>
         <div className="flex flex-wrap items-center gap-1 shrink-0">
           {RANGES.map(r => (
@@ -722,11 +724,12 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
   onClose: () => void
 }) {
   const [slide, setSlide] = useState(0)
+  const branding = useBranding()
 
   const slides: { title: string; sub: string; body: ReactNode }[] = [
     {
       title: 'Reporting',
-      sub: `Demand reconciliation and Answer Once economics — ${rangeLabel.toLowerCase()}`,
+      sub: `Demand reconciliation and ${branding.app_name} economics — ${rangeLabel.toLowerCase()}`,
       body: (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
           {kpis.map(k => (
@@ -762,7 +765,7 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
       ),
     },
     {
-      title: 'Answer Once trend',
+      title: `${branding.app_name} trend`,
       sub: 'Volume, rate, and the changes that should move it',
       body: stats.trend.length === 0 ? <Empty /> : (
         <ChartContainer config={trendConfig} className="h-[55vh] w-full">
@@ -861,7 +864,7 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
             <tr className="text-left text-xs text-muted-foreground border-b border-border">
               <th className="py-2 pr-4 font-medium">Account</th>
               <th className="py-2 pr-4 font-medium text-right">Tickets</th>
-              <th className="py-2 pr-4 font-medium text-right">Answer Once</th>
+              <th className="py-2 pr-4 font-medium text-right">{branding.app_name}</th>
               <th className="py-2 pr-4 font-medium text-right">Est. hours</th>
               <th className="py-2 font-medium text-right">Reopened</th>
             </tr>

@@ -62,6 +62,7 @@ interface StandaloneProfile {
       logo_url?: string
       favicon_url?: string
     }
+    brands?: Record<string, unknown>
   }
   package: {
     name: string
@@ -377,6 +378,7 @@ function main(): void {
   for (const role of sc.app_roles) byRole[role] = sc.default_app
   const spineConfig = {
     ...(sc.branding ? { branding: sc.branding } : {}),
+    ...(sc.brands ? { brands: sc.brands } : {}),
     registration: {
       default_app: sc.default_app,
       default_role: sc.default_role,

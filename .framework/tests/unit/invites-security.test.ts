@@ -185,6 +185,7 @@ describe('completeRegistration', () => {
       p_app_slug: 'portal',
       p_path: 'new_account',
       p_account_name: 'Acme Co',
+      p_host: null,
     })
     expect(res).toMatchObject({
       status: 'active',

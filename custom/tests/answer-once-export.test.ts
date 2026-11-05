@@ -63,7 +63,7 @@ describe('answer-once standalone profile', () => {
     expect(sc.account_strategy).toBe('new')
     expect(sc.parent_account).toBe('spine-system')
     expect(sc.allow_domain_join).toBe(false)
-    expect(sc.route_prefix).toBe('/answer-once')
+    expect(sc.route_prefix).toBe('/')
   })
 
   it('app_roles never maps system_admin to the app', () => {

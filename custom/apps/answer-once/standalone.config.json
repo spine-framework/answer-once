@@ -126,6 +126,33 @@
       "title": "Answer Once",
       "logo_url": "/answer-once-logo.svg",
       "favicon_url": "/answer-once-icon.svg"
+    },
+    "brands": {
+      "default": "answer-once",
+      "by_host": {
+        "support.answer-once.com": "answer-once",
+        "support.spine-framework.com": "spine"
+      },
+      "definitions": {
+        "answer-once": {
+          "name": "Answer Once",
+          "title": "Answer Once",
+          "site_url": "https://support.answer-once.com",
+          "logo_url": "/answer-once-logo.svg",
+          "favicon_url": "/answer-once-icon.svg",
+          "email_logo_url": "https://support.answer-once.com/answer-once-logo-wht.png",
+          "email_from": "Answer Once Support <noreply@notifications.answer-once.com>"
+        },
+        "spine": {
+          "name": "Spine",
+          "title": "Spine Framework",
+          "site_url": "https://support.spine-framework.com",
+          "logo_url": "/spine-logo.svg",
+          "favicon_url": "/spine-logo.svg",
+          "email_logo_url": "https://support.spine-framework.com/spine-logo.jpg",
+          "email_from": "Spine Framework Support <noreply@notifications.answer-once.com>"
+        }
+      }
     }
   },
   "package": {

@@ -131,6 +131,7 @@ interface Manifest {
   route_prefix?: string
   preview_domain?: string
   prod_domain?: string
+  prod_domains?: string[]
   preview_route_prefix?: string
   prod_route_prefix?: string
   agent?: {
@@ -436,8 +437,17 @@ function validateRoutes(appPath: string, manifest: Manifest): void {
     if (typeof prefix !== 'string' || !prefix.startsWith('/')) {
       throw new ValidationError(`❌ manifest.json ${prefixKey} "${prefix}" must start with /`)
     }
-    if (!manifest[domainKey]) {
+    const hasTrigger = domainKey === 'prod_domain'
+      ? manifest.prod_domain || (Array.isArray(manifest.prod_domains) && manifest.prod_domains.length > 0)
+      : manifest[domainKey]
+    if (!hasTrigger) {
       throw new ValidationError(`❌ manifest.json ${prefixKey} requires ${domainKey} — the override has no trigger host without it`)
+    }
+  }
+
+  if (manifest.prod_domains !== undefined) {
+    if (!Array.isArray(manifest.prod_domains) || manifest.prod_domains.some(d => typeof d !== 'string' || !d)) {
+      throw new ValidationError('❌ manifest.json prod_domains must be an array of non-empty host strings')
     }
   }
 

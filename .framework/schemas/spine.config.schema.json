@@ -28,6 +28,35 @@
         }
       }
     },
+    "brands": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Multi-brand map: by_host resolves hostname → brand slug, definitions holds per-brand identity (name/title/site_url/logo_url/favicon_url/email_logo_url/email_from), default is the fallback slug. Flat 'branding' remains the base for hosts with no brand entry.",
+      "properties": {
+        "default": { "type": "string" },
+        "by_host": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "definitions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "name": { "type": "string" },
+              "app_name": { "type": "string" },
+              "title": { "type": "string" },
+              "site_url": { "type": "string" },
+              "logo_url": { "type": "string" },
+              "favicon_url": { "type": "string" },
+              "email_logo_url": { "type": "string" },
+              "email_from": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
     "registration": {
       "type": "object",
       "additionalProperties": true,

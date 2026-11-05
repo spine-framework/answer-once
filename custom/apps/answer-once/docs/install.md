@@ -142,6 +142,25 @@ migrations without running them.
 
 The export's `netlify.toml` declares `custom_answeronce-autoresolve-cron` on a daily UTC schedule (`0 0 * * *`). It sweeps `pending_resolution` tickets older than 72h across accounts and resolves them with a courtesy message. Netlify blocks public HTTP on scheduled functions in production; locally it runs via `netlify dev`. No auth headers are needed — the function builds an internal system principal.
 
+## Multi-brand: serving two domains from one deploy
+
+One Netlify site can serve multiple branded domains — `support.answer-once.com` and `support.spine-framework.com` ship in the default `brands` map. UI brand is resolved per hostname; email brand is stamped on the account at signup.
+
+**Ops steps to light it up:**
+
+1. **Netlify** → add `support.spine-framework.com` as a domain alias on the site; point DNS at Netlify.
+2. **Supabase dashboard** → Authentication → URL Configuration: add `https://support.spine-framework.com/**` to redirect allowlist. Configure custom SMTP (Resend) with sender `Answer Once Support <noreply@notifications.answer-once.com>` — the From header is a single fixed identity per project, but subject/body/logo brand per `{{ .Data.brand }}` (stamped at `signUp` from the registration hostname). Paste `emails/confirm.html` / `emails/recovery.html` into the Confirm-signup and Reset-password templates; subjects support the same `{{ if eq .Data.brand "spine" }}...{{ end }}` syntax.
+3. **Resend** → verify the `notifications.answer-once.com` subdomain (DKIM/SPF).
+4. **Env** → `ALLOWED_ORIGINS` += `https://support.spine-framework.com`.
+5. **DB** → `npm run spine-framework -- migrate` applies `077` (`apps.prod_domains`, `accounts.brand`) and `064` (integration `config.brands` + per-brand templates). Re-run `seed-app answer-once` so the apps row picks up `prod_domains` from the manifest.
+
+**How it resolves:**
+
+- **UI**: `spine.config.json` `brands.by_host[hostname]` → `definitions[slug]` → logo/favicon/title/app name across login, register, confirm, forgot, and app pages. Unknown hosts (localhost, `*.netlify.app`) use `brands.default` (`answer-once`).
+- **Auth emails**: GoTrue templates branch on `{{ .Data.brand }}` / `{{ .RedirectTo }}` — per-brand subject, logo, copy, links. From header is the shared sender.
+- **Transactional emails** (invites, ticket replies): `send_email` groups recipients by `accounts.brand` and sends per-brand (`email_from`, template variant `templates.<name>:<brand>`); `{{brand.*}}` placeholders render brand-neutral templates. Invites take the inviter's origin host brand.
+- **Cross-brand logins are by design** — brand is cosmetic, not a security boundary.
+
 ## What this install deliberately does NOT do
 
 - No KB articles, embeddings, tickets, or CIL data are seeded — ever. The knowledge base starts empty.

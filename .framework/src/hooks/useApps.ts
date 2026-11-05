@@ -52,6 +52,7 @@ export interface AppRecord {
   renderer: 'generic' | 'custom' | 'none'
   preview_domain?: string | null
   prod_domain?: string | null
+  prod_domains?: string[] | null
   preview_route_prefix?: string | null
   prod_route_prefix?: string | null
 }
