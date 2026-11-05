@@ -30,6 +30,8 @@ interface CopyProfile {
   config_files: string[]
   root_scripts: string[]
   bin: string[]
+  /** dest rel path (e.g. "README.md") → source rel path in the monorepo. For files that must land somewhere other than their source location. */
+  file_map?: Record<string, string>
 }
 
 interface ScheduledFunctionDecl {
@@ -141,7 +143,7 @@ function walkDir(
 
 // CIL[BEGIN stable_id="~/scripts/export-standalone.ts:collect:function" type="function" identity="collectCopyList" parent="~/scripts/export-standalone.ts"]
 // CIL[DOC-MACRO purpose="Resolve the profile copy allowlist into a concrete file list"]
-// CIL[DOC-CONTRACT inputs="srcRoot, profile" outputs="deduped sorted file list" errors="fails on missing declared path" side_effects="reads filesystem"]
+// CIL[DOC-CONTRACT inputs="srcRoot, profile (incl. optional copy.file_map dest→source renames)" outputs="deduped sorted file list keyed by destination rel path" errors="fails on missing declared path, missing file_map source, or unsafe file_map destination" side_effects="reads filesystem"]
 function collectCopyList(srcRoot: string, profile: StandaloneProfile) {
   const excludes = profile.exclude_globs.map(globToRegex)
   const seen = new Map<string, { rel: string; abs: string; symlink: boolean }>()
@@ -185,6 +187,14 @@ function collectCopyList(srcRoot: string, profile: StandaloneProfile) {
   for (const f of profile.copy.bin) {
     if (fs.existsSync(path.join(srcRoot, f))) addFile(f)
     else console.log(`  ○ optional bin ${f} absent — skipped`)
+  }
+  for (const [dest, src] of Object.entries(profile.copy.file_map ?? {})) {
+    if (path.isAbsolute(dest) || dest.split('/').includes('..')) {
+      fail(`file_map destination must be a safe relative path inside the export: ${dest}`)
+    }
+    const abs = path.join(srcRoot, src)
+    if (!fs.existsSync(abs)) fail(`file_map source does not exist: ${src}`)
+    seen.set(dest, { rel: dest, abs, symlink: fs.lstatSync(abs).isSymbolicLink() })
   }
 
   return [...seen.values()].sort((a, b) => Buffer.compare(Buffer.from(a.rel), Buffer.from(b.rel)))

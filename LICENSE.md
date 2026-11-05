@@ -1,8 +1,8 @@
-# Spine Framework Internal Use License 1.0.0
+# Spine Framework / Answer Once Internal Use License 1.0.0
 
 **Source-available. Free for internal use. Commercial rights reserved.**
 
-This license is based on the structure and intent of the PolyForm Internal Use License 1.0.0, but it has been modified for Spine Framework. This is not the unmodified PolyForm Internal Use License.
+This license is based on the structure and intent of the PolyForm Internal Use License 1.0.0, but it has been modified for Spine Framework and Answer Once. This is not the unmodified PolyForm Internal Use License.
 
 ## Required Notice
 
@@ -12,13 +12,13 @@ Required Notice: Copyright © 2026 Dahl Ventures Inc. All rights reserved.
 
 In order to receive any license under these terms, you must agree to these terms as both strict obligations and conditions to all licenses granted to you.
 
-If you do not agree to these terms, you do not have permission to use, copy, modify, run, install, access, or create works based on Spine Framework.
+If you do not agree to these terms, you do not have permission to use, copy, modify, run, install, access, or create works based on the Software.
 
 ## 2. Definitions
 
-**Software** means Spine Framework, including its source code, object code, packages, modules, templates, schemas, migrations, configuration files, documentation, examples, command-line tools, SDKs, application packs, and related materials provided by the licensor.
+**Software** means Spine Framework and Answer Once, including their source code, object code, packages, modules, templates, schemas, migrations, configuration files, documentation, examples, command-line tools, SDKs, application packs, apps, scaffolders, and related materials provided by the licensor, in any distribution (npm package, repository, tarball, or otherwise).
 
-**Licensor** means the legal owner of Spine Framework.
+**Licensor** means the legal owner of the Software.
 
 **You** means the individual or legal entity receiving the Software.
 
@@ -71,7 +71,7 @@ You may not do any of the following without a Commercial License:
 1. Sell, resell, sublicense, rent, lease, lend, transfer, assign, publish, or distribute the Software.
 2. Offer the Software, or any modified version of the Software, to Third Parties as software, infrastructure, a framework, a platform, a service, or a hosted product.
 3. Offer the Software as SaaS, PaaS, IaaS, framework-as-a-service, backend-as-a-service, workflow-as-a-service, automation-as-a-service, AI-agent platform, managed service, support service, or similar commercial service.
-4. White-label, private-label, rebrand, or remove Spine Framework identity from the Software in order to provide it to Third Parties.
+4. White-label, private-label, rebrand, or remove Spine Framework or Answer Once identity from the Software in order to provide it to Third Parties.
 5. Embed, bundle, package, or include the Software in any product, service, appliance, marketplace offering, application pack, starter kit, template library, SDK, CLI, distribution, or managed implementation made available to Third Parties.
 6. Use the Software to operate, power, support, or provide a product or service for Third Parties where those Third Parties receive access to the Software or to functionality substantially provided by the Software.
 7. Use the Software to build, operate, or improve a competing framework, platform, marketplace, application generator, agentic software infrastructure product, or commercial development infrastructure product.
@@ -84,24 +84,24 @@ You may not do any of the following without a Commercial License:
 The following are permitted under this license, provided they are solely for Internal Business Use:
 
 1. A company installs Spine Framework to build its own internal CRM.
-2. A company uses Spine Framework to operate an internal customer support portal for its own support team and its own customers.
-3. A company modifies Spine Framework for its internal workflows, roles, permissions, automations, pipelines, and integrations.
-4. A company lets its employees and authorized contractors configure, maintain, and support its internal Spine Framework installation.
-5. A company creates internal dashboards, agents, knowledge bases, audit trails, and operational tools on top of Spine Framework.
+2. A company uses Answer Once to operate an internal customer support portal for its own support team and its own customers.
+3. A company modifies the Software for its internal workflows, roles, permissions, automations, pipelines, and integrations.
+4. A company lets its employees and authorized contractors configure, maintain, and support its internal installation of the Software.
+5. A company creates internal dashboards, agents, knowledge bases, audit trails, and operational tools on top of the Software.
 
 ## 9. Examples Requiring a Commercial License
 
 The following are not permitted under this license and require a Commercial License:
 
-1. Selling Spine Framework or a modified version of Spine Framework.
-2. Offering Spine Framework as a hosted SaaS product.
-3. Offering a white-labeled application built on Spine Framework to customers.
-4. Packaging Spine Framework into a commercial starter kit, template, marketplace app, agency offering, or developer platform.
-5. Running Spine Framework for multiple clients as a managed service provider, agency, consultant, systems integrator, or outsourcing firm.
-6. Embedding Spine Framework into a product sold to customers.
-7. Forking Spine Framework to launch a competing framework, backend, app platform, AI-agent platform, or development infrastructure product.
-8. Publishing modified Spine Framework source code to a public repository.
-9. Giving a customer, client, partner, reseller, or affiliate a copy of Spine Framework.
+1. Selling the Software or a modified version of the Software.
+2. Offering the Software as a hosted SaaS product.
+3. Offering a white-labeled application built on the Software to customers.
+4. Packaging the Software into a commercial starter kit, template, marketplace app, agency offering, or developer platform.
+5. Running the Software for multiple clients as a managed service provider, agency, consultant, systems integrator, or outsourcing firm.
+6. Embedding the Software into a product sold to customers.
+7. Forking the Software to launch a competing framework, backend, app platform, AI-agent platform, or development infrastructure product.
+8. Publishing modified source code of the Software to a public repository.
+9. Giving a customer, client, partner, reseller, or affiliate a copy of the Software.
 
 ## 10. Distribution
 
@@ -115,7 +115,7 @@ Any copy of the Software must include this license and all Required Notices.
 
 This license does not grant You any right to use the Licensor's names, trademarks, service marks, logos, product names, domain names, or branding except as necessary to identify the Software for Internal Business Use.
 
-You may not use Spine Framework branding in a way that suggests sponsorship, endorsement, partnership, certification, resale authorization, or commercial authorization without written permission from the Licensor.
+You may not use Spine Framework or Answer Once branding in a way that suggests sponsorship, endorsement, partnership, certification, resale authorization, or commercial authorization without written permission from the Licensor.
 
 ## 12. Patent License
 
@@ -192,7 +192,7 @@ Each release, package, download, or copy of the Software is governed by the lice
 
 Updated license terms apply only to future releases, downloads, packages, updates, upgrades, patches, hosted access, or other versions of the Software made available after the updated terms are published.
 
-The Licensor may require acceptance of updated license terms as a condition of receiving or using future releases, updates, hosted services, commercial features, support, documentation, marketplace access, license keys, portals, application packs, or other Spine Framework services.
+The Licensor may require acceptance of updated license terms as a condition of receiving or using future releases, updates, hosted services, commercial features, support, documentation, marketplace access, license keys, portals, application packs, or other Licensor services.
 
 Nothing in this section gives You rights to continue using future versions of the Software under earlier license terms.
 
@@ -210,14 +210,14 @@ These terms are the entire license terms for the Software unless You and the Lic
 
 This summary is not part of the legal license.
 
-You may use Spine Framework inside your own company for your own internal business operations.
+You may use the Software inside your own company for your own internal business operations.
 
-You may modify Spine Framework for your own internal use.
+You may modify the Software for your own internal use.
 
-You may let your employees and contractors work on your internal Spine Framework installation.
+You may let your employees and contractors work on your internal installation of the Software.
 
 You may not sell it, redistribute it, white-label it, host it for others, offer it as SaaS, package it into another product, use it as a managed service offering, or use it to build a competing framework without a separate commercial license.
 
 Future versions, updates, services, support, portals, packs, license keys, and commercial features may require acceptance of updated terms.
 
-Spine Framework is source-available. It is not open source.
+Spine Framework and Answer Once are source-available. They are not open source.
