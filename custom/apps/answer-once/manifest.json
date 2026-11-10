@@ -2,7 +2,7 @@
   "name": "Answer Once",
   "slug": "answer-once",
   "description": "Focused customer-support app that closes the loop between customers, AI, support, and organizational knowledge",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "app_type": "full",
   "route_prefix": "/answer-once",
   "prod_domain": "support.answer-once.com",
@@ -31,6 +31,7 @@
     "/company/tickets/:id",
     "/company/kb",
     "/company/kb/review",
+    "/company/directives",
     "/company/kb/:id",
     "/company/accounts",
     "/company/accounts/:id",
@@ -61,6 +62,12 @@
       "path": "/team",
       "icon": "Users",
       "order": 4
+    },
+    {
+      "title": "Directives",
+      "path": "/company/directives",
+      "icon": "Compass",
+      "order": 5
     }
   ],
   "features": [
@@ -78,6 +85,16 @@
     "accounts",
     "people",
     "links"
+  ],
+  "owned_types": [
+    "ao_support_ticket",
+    "ao_kb_article",
+    "ao_ticket_thread",
+    "ao_ticket_message",
+    "ao_kb_shared",
+    "ao_change_marker",
+    "ao_triage_directive",
+    "ao_directive_subscription"
   ],
   "entry_point": "./index.tsx",
   "sidebar_component": "./components/AnswerOnceSidebar.tsx",
@@ -137,7 +154,11 @@
       },
       "platform": {
         "sources": [
-          "ao_kb_shared"
+          "ao_kb_shared",
+          "ao_triage_directive"
+        ],
+        "actions": [
+          "ao_triage_directive"
         ]
       }
     },
@@ -163,6 +184,12 @@
     },
     "security": {
       "prompt_injection": "block"
+    },
+    "analytics": {
+      "ga4": {
+        "support.answer-once.com": "G-3Y038B3HQG",
+        "support.spine-framework.com": "G-QWZR97CXBN"
+      }
     }
   },
   "agent": {

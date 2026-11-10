@@ -146,19 +146,37 @@ export async function lookupHandler(
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 
-export async function loadHandler(functionName: string): Promise<Function | null> {
-  try {
-    const prefix = functionName.startsWith('custom/') ? '../../../' : '../'
-    const module = await import(`${prefix}${functionName}`)
-    
-    const handler = module.adapt || module.handler || module.default
-    
-    if (typeof handler !== 'function') {
-      console.error(`[webhook-registry] No 'adapt' or 'handler' export found in ${functionName}`)
-      return null
-    }
+// Dynamic import of caller-chosen paths cannot work: esbuild only bundles
+// literal import() specifiers, and raw .ts shipped via included_files cannot
+// execute under the bundled CJS context (functions-serve package.json is
+// type:commonjs). function_name therefore resolves through this static
+// allowlist keyed by flat assembled basename — same security/bundling model
+// as integration-outbound's builtInOutboundAdapters (DB-driven module names
+// are also an arbitrary-code-execution surface). Register new inbound
+// webhook handler modules here; @ts-ignores are required because the flat
+// siblings only exist in .assembled/, not in the .framework source tree.
+const INBOUND_MODULE_LOADERS: Record<string, () => Promise<any>> = {
+  // @ts-ignore — resolved against the assembled flat functions dir
+  'generic-webhook-inbound': () => import('../adapters/generic-webhook-inbound'),
+  // @ts-ignore — resolved against the assembled flat functions dir
+  'custom_make-inbound': () => import('../custom_make-inbound'),
+  // @ts-ignore — resolved against the assembled flat functions dir
+  'custom_portal-signals': () => import('../custom_portal-signals'),
+}
 
-    return handler
+export async function loadHandler(functionName: string): Promise<Function | null> {
+  const basename = functionName.split('/').pop() || functionName
+  const loader = INBOUND_MODULE_LOADERS[basename]
+  if (!loader) {
+    console.error(`[webhook-registry] No built-in loader for ${functionName} (basename '${basename}') — register the module in INBOUND_MODULE_LOADERS`)
+    return null
+  }
+  try {
+    const module = await loader()
+    const handler = module.adapt || module.handler || module.default
+    if (typeof handler === 'function') return handler
+    console.error(`[webhook-registry] No 'adapt' or 'handler' export found in ${functionName}`)
+    return null
   } catch (err) {
     console.error(`[webhook-registry] Failed to load ${functionName}:`, err)
     return null

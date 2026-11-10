@@ -56,6 +56,7 @@ interface RetrySummary {
 // CIL[DOC-MICRO logic_summary="Queries webhook_deliveries table for pending due rows, invokes executeOutbound for outbound deliveries, counts successes/failures, and returns a RetrySummary" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[DOC-NOTE type="caution" content="New outbound deliveries insert as status='pending' with next_attempt_at=null, which satisfies this sweep's filter immediately — any other deployment sharing the DB (e.g. a stale Netlify site running trigger-scheduler with older code) can consume and poison a delivery before or instead of the originating pipeline. When debugging 'adapter not found' or unexpected retry errors, first identify which environment executed the attempt."]
 
 export async function retryPendingDeliveries(ctx: any): Promise<RetrySummary> {
   const summary: RetrySummary = {

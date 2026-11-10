@@ -18,6 +18,7 @@ import { get as adminDataGet, update as adminDataUpdate } from './admin-data'
 import * as openaiOutbound from './adapters/openai-outbound'
 import * as genericWebhookOutbound from './adapters/generic-webhook-outbound'
 import * as resendOutbound from './adapters/resend-outbound'
+import * as makeOutbound from './adapters/make-outbound'
 // CIL[END stable_id="~/.framework/functions/integration-outbound.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='Module header: imports and adapter registration for outbound integration delivery'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -102,6 +103,7 @@ function computeNextAttempt(attemptCount: number, baseMs = 30000, maxDelayMs = 3
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:execute:function" type="function" identity="execute" parent="~/.framework/functions/integration-outbound.ts"]
+// CIL[DOC-LEARNING topic="api_behavior" content="Integration resolution is tenant-first (slug + ctx.accountId) then global fallback (account_id IS NULL). A missing tenant row silently resolves the global integration, so adapters needing per-account config (e.g. make-outbound's scenarios.<key>.url) fail downstream with an adapter config error instead of 'Integration not found'. The resolved row is recorded on webhook_deliveries.integration_id — compare it when triaging 'which integration did this use'. AO pipelines run under the account that owns the ticket (e.g. spine-system), so tenant integrations must exist per-account, not just where they were first tested."]
 export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
   let deliveryId = body?.delivery_id
   let requestBody = body
@@ -422,7 +424,8 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
 const builtInOutboundAdapters: Record<string, any> = {
   'adapters/openai-outbound': openaiOutbound,
   'adapters/generic-webhook-outbound': genericWebhookOutbound,
-  'adapters/resend-outbound': resendOutbound
+  'adapters/resend-outbound': resendOutbound,
+  'adapters/make-outbound': makeOutbound
 }
 // CIL[END stable_id="~/.framework/functions/integration-outbound.ts:builtInOutboundAdapters:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Registry of built-in outbound adapter modules'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
@@ -440,6 +443,7 @@ const builtInOutboundAdapters: Record<string, any> = {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:loadOutboundAdapter:function" type="function" identity="loadOutboundAdapter" parent="~/.framework/functions/integration-outbound.ts"]
+// CIL[DOC-NOTE type="caution" content="'Outbound adapter not found' for a name present in builtInOutboundAdapters means the executing bundle predates the registration — netlify dev bundles each function independently into .netlify/functions-serve, and any other deployment sharing the DB (e.g. a stale site's system-cron sweep) runs its own copy. Identify which environment ran the attempt before re-checking this map."]
 async function loadOutboundAdapter(functionName: string): Promise<any | null> {
   if (builtInOutboundAdapters[functionName]) {
     return builtInOutboundAdapters[functionName]
@@ -473,15 +477,15 @@ const integrationOutbound = createHandler(execute)
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Default export of the integration outbound handler"]
-// CIL[DOC-RESPONSIBILITY responsibility="Export integrationOutbound as the module default"]
+// CIL[DOC-MACRO purpose="Named Netlify v1 handler export for the integration outbound function"]
+// CIL[DOC-RESPONSIBILITY responsibility="Export integrationOutbound as the named 'handler' entry point; MUST stay named — 'export default' makes zip-it-and-ship-it bundle the function as API v2 (Request/Response), which rejects the v1 {statusCode, body} result"]
 // CIL[DOC-CONTEXT module="integration-outbound" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-credentials.ts,.framework/functions/adapters/generic-webhook-outbound.ts,.framework/functions/adapters/openai-outbound.ts,.framework/functions/admin-data.ts,.framework/functions/integration-outbound.ts"]
 // CIL[DOC-CONTRACT inputs="N/A" outputs="integrationOutbound handler" errors="N/A" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="Exports the prebuilt handler as the module default for serverless entry points." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[BEGIN stable_id="~/.framework/functions/integration-outbound.ts:default:function" type="function" identity="default" parent="~/.framework/functions/integration-outbound.ts"]
-export default integrationOutbound
+export const handler = integrationOutbound
 // CIL[END stable_id="~/.framework/functions/integration-outbound.ts:default:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Default export of the integration outbound handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]

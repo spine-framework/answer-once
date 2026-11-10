@@ -384,14 +384,14 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
 // CIL[END stable_id="~/.framework/functions/integration-routes.ts:execute:function"]
 
 // CIL[BEGIN stable_id="~/.framework/functions/integration-routes.ts:default:function" type="function" identity="default" parent="~/.framework/functions/integration-routes.ts"]
-// CIL[DOC-MACRO purpose="Exports the default Netlify handler wrapping execute in public middleware"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose execute as the public Netlify function entry point"]
+// CIL[DOC-MACRO purpose="Exports the named Netlify v1 handler wrapping execute in public middleware"]
+// CIL[DOC-RESPONSIBILITY responsibility="Expose execute as the public Netlify function entry point; MUST stay a named 'handler' export — 'export default' makes zip-it-and-ship-it bundle the function as API v2 (Request/Response), which rejects the v1 {statusCode, body} result"]
 // CIL[DOC-CONTEXT module="integration-routes" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/webhook-registry.ts,.framework/functions/admin-data.ts,.framework/functions/integration-routes.ts"]
 // CIL[DOC-CONTRACT inputs="none (createPublicHandler wraps execute)" outputs="public handler" errors="none" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="Wraps the execute function with createPublicHandler for public invocation" notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
-export default createPublicHandler(execute)
+export const handler = createPublicHandler(execute)
 // CIL[DOC-VECTOR type="context" content="purpose='Exports the default Netlify handler wrapping execute in public middleware'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]

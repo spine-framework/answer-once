@@ -125,6 +125,10 @@
               "value": "agent_requested"
             },
             {
+              "label": "Directive",
+              "value": "directive"
+            },
+            {
               "label": "None",
               "value": "none"
             }
@@ -415,6 +419,34 @@
         "human_minutes": {
           "data_type": "number",
           "required": false
+        },
+        "tags": {
+          "data_type": "json",
+          "required": false
+        },
+        "matched_directive_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "matched_directive_title": {
+          "data_type": "text",
+          "required": false
+        },
+        "matched_directive_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "directive_match_confidence": {
+          "data_type": "number",
+          "required": false
+        },
+        "suggested_directive_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "suggested_reply": {
+          "data_type": "textarea",
+          "required": false
         }
       }
     },
@@ -646,6 +678,10 @@
             {
               "label": "Agent Requested",
               "value": "agent_requested"
+            },
+            {
+              "label": "Directive",
+              "value": "directive"
             },
             {
               "label": "None",
@@ -979,6 +1015,41 @@
         "human_minutes": {
           "label": "Human Minutes (est)",
           "data_type": "number",
+          "required": false
+        },
+        "tags": {
+          "label": "Tags",
+          "data_type": "json",
+          "required": false
+        },
+        "matched_directive_id": {
+          "label": "Matched Directive ID",
+          "data_type": "text",
+          "required": false
+        },
+        "matched_directive_title": {
+          "label": "Matched Directive",
+          "data_type": "text",
+          "required": false
+        },
+        "matched_directive_at": {
+          "label": "Directive Matched At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "directive_match_confidence": {
+          "label": "Directive Match Confidence",
+          "data_type": "number",
+          "required": false
+        },
+        "suggested_directive_id": {
+          "label": "Suggested Directive ID",
+          "data_type": "text",
+          "required": false
+        },
+        "suggested_reply": {
+          "label": "Suggested Reply (Directive)",
+          "data_type": "textarea",
           "required": false
         }
       },
@@ -2711,6 +2782,542 @@
           "required": false
         }
       }
+    }
+  },
+  {
+    "kind": "item",
+    "slug": "ao_triage_directive",
+    "name": "Triage Directive",
+    "description": "Admin-authored routing rule for Answer Once triage. Semantic intent match (match_description embeddings) lets the triage agent select a directive via apply_directive; the runtime executes its structured actions — record ops, reply template, pipelines — deterministically. Never writable by customers.",
+    "icon": "compass",
+    "color": "#8B5CF6",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "required": true
+        },
+        "status": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Suggested",
+              "value": "suggested"
+            },
+            {
+              "label": "Draft",
+              "value": "draft"
+            },
+            {
+              "label": "Active",
+              "value": "active"
+            },
+            {
+              "label": "Disabled",
+              "value": "disabled"
+            }
+          ]
+        },
+        "match_description": {
+          "data_type": "textarea",
+          "required": true
+        },
+        "reply_template": {
+          "data_type": "textarea",
+          "required": false
+        },
+        "mode": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Suggest",
+              "value": "suggest"
+            },
+            {
+              "label": "Auto Reply",
+              "value": "auto_reply"
+            }
+          ]
+        },
+        "priority": {
+          "data_type": "number",
+          "required": false
+        },
+        "match_scope": {
+          "data_type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Every Inbound",
+              "value": "every_inbound"
+            },
+            {
+              "label": "First Inbound",
+              "value": "first_inbound"
+            }
+          ]
+        },
+        "actions": {
+          "data_type": "json",
+          "required": true
+        },
+        "source_ticket_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "source_resolution_message_id": {
+          "data_type": "text",
+          "required": false
+        },
+        "is_ai_generated": {
+          "data_type": "boolean",
+          "required": false
+        },
+        "approved_at": {
+          "data_type": "datetime",
+          "required": false
+        },
+        "approved_by": {
+          "data_type": "text",
+          "required": false
+        },
+        "notes": {
+          "data_type": "textarea",
+          "required": false
+        }
+      }
+    },
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Triage Directives",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "status": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "mode": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "priority": {
+              "sortable": true,
+              "display_type": "number"
+            },
+            "match_scope": {
+              "sortable": false,
+              "display_type": "badge"
+            },
+            "updated_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "priority",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Triage Directive",
+          "sections": [
+            {
+              "title": "Match",
+              "fields": {
+                "title": {},
+                "status": {},
+                "match_description": {},
+                "mode": {},
+                "priority": {},
+                "match_scope": {}
+              }
+            },
+            {
+              "title": "Reply",
+              "fields": {
+                "reply_template": {}
+              }
+            },
+            {
+              "title": "Actions",
+              "fields": {
+                "actions": {}
+              }
+            },
+            {
+              "title": "Provenance",
+              "fields": {
+                "is_ai_generated": {},
+                "source_ticket_id": {},
+                "source_resolution_message_id": {},
+                "approved_at": {},
+                "approved_by": {},
+                "notes": {}
+              }
+            }
+          ]
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "data_type": "text",
+          "required": true,
+          "system": true
+        },
+        "status": {
+          "label": "Status",
+          "data_type": "select",
+          "required": true,
+          "system": true,
+          "default": "draft",
+          "options": [
+            {
+              "label": "Suggested",
+              "value": "suggested"
+            },
+            {
+              "label": "Draft",
+              "value": "draft"
+            },
+            {
+              "label": "Active",
+              "value": "active"
+            },
+            {
+              "label": "Disabled",
+              "value": "disabled"
+            }
+          ]
+        },
+        "match_description": {
+          "label": "Match Description",
+          "data_type": "textarea",
+          "required": true
+        },
+        "reply_template": {
+          "label": "Reply Template",
+          "data_type": "textarea",
+          "required": false
+        },
+        "mode": {
+          "label": "Mode",
+          "data_type": "select",
+          "required": true,
+          "default": "suggest",
+          "options": [
+            {
+              "label": "Suggest",
+              "value": "suggest"
+            },
+            {
+              "label": "Auto Reply",
+              "value": "auto_reply"
+            }
+          ]
+        },
+        "priority": {
+          "label": "Priority",
+          "data_type": "number",
+          "required": false,
+          "default": 100
+        },
+        "match_scope": {
+          "label": "Match Scope",
+          "data_type": "select",
+          "required": false,
+          "default": "every_inbound",
+          "options": [
+            {
+              "label": "Every Inbound",
+              "value": "every_inbound"
+            },
+            {
+              "label": "First Inbound",
+              "value": "first_inbound"
+            }
+          ]
+        },
+        "actions": {
+          "label": "Actions",
+          "data_type": "json",
+          "required": true
+        },
+        "source_ticket_id": {
+          "label": "Source Ticket ID",
+          "data_type": "text",
+          "required": false
+        },
+        "source_resolution_message_id": {
+          "label": "Source Resolution Message ID",
+          "data_type": "text",
+          "required": false
+        },
+        "is_ai_generated": {
+          "label": "AI Generated",
+          "data_type": "boolean",
+          "required": false
+        },
+        "approved_at": {
+          "label": "Approved At",
+          "data_type": "datetime",
+          "required": false
+        },
+        "approved_by": {
+          "label": "Approved By",
+          "data_type": "text",
+          "required": false
+        },
+        "notes": {
+          "label": "Notes",
+          "data_type": "textarea",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support": [
+          "read"
+        ]
+      },
+      "functionality": {
+        "kb": {
+          "vector_fields": [
+            "title",
+            "match_description"
+          ],
+          "chunk_field": "match_description",
+          "chunk_size": 800,
+          "chunk_overlap": 100,
+          "publish_status": "active"
+        }
+      }
+    }
+  },
+  {
+    "kind": "item",
+    "slug": "ao_directive_subscription",
+    "name": "Directive Subscription",
+    "description": "Tenant opt-in that authorizes a platform-authored triage directive to execute gated actions (auto_reply, set_fields, escalate, pipelines) in this account. apply_directive checks for an active subscription with sufficient max_tier whenever a platform directive's required tier exceeds 'annotate'. Written via admin-data — never customer-writable.",
+    "icon": "shield-check",
+    "color": "#0EA5E9",
+    "ownership": "tenant",
+    "is_active": true,
+    "validation_schema": {
+      "fields": {
+        "title": {
+          "data_type": "text",
+          "required": true
+        },
+        "directive_id": {
+          "data_type": "text",
+          "required": true
+        },
+        "directive_title": {
+          "data_type": "text",
+          "required": false
+        },
+        "max_tier": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Respond",
+              "value": "respond"
+            },
+            {
+              "label": "Mutate",
+              "value": "mutate"
+            },
+            {
+              "label": "Orchestrate",
+              "value": "orchestrate"
+            }
+          ]
+        },
+        "status": {
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Active",
+              "value": "active"
+            },
+            {
+              "label": "Disabled",
+              "value": "disabled"
+            }
+          ]
+        },
+        "notes": {
+          "data_type": "textarea",
+          "required": false
+        }
+      }
+    },
+    "design_schema": {
+      "scope": "account",
+      "views": {
+        "default_list": {
+          "type": "list",
+          "display": "table",
+          "label": "Directive Subscriptions",
+          "fields": {
+            "title": {
+              "sortable": true,
+              "display_type": "text"
+            },
+            "directive_title": {
+              "sortable": false,
+              "display_type": "text"
+            },
+            "max_tier": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "status": {
+              "sortable": true,
+              "display_type": "badge"
+            },
+            "updated_at": {
+              "sortable": true,
+              "display_type": "timestamp"
+            }
+          },
+          "default_sort": {
+            "field": "updated_at",
+            "direction": "desc"
+          }
+        },
+        "default_detail": {
+          "type": "detail",
+          "label": "Directive Subscription",
+          "sections": [
+            {
+              "title": "Opt-In",
+              "fields": {
+                "title": {},
+                "directive_id": {},
+                "directive_title": {},
+                "max_tier": {},
+                "status": {}
+              }
+            },
+            {
+              "title": "Notes",
+              "fields": {
+                "notes": {}
+              }
+            }
+          ]
+        }
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "data_type": "text",
+          "required": true,
+          "system": true
+        },
+        "directive_id": {
+          "label": "Directive ID",
+          "data_type": "text",
+          "required": true
+        },
+        "directive_title": {
+          "label": "Directive Title",
+          "data_type": "text",
+          "required": false
+        },
+        "max_tier": {
+          "label": "Maximum Tier",
+          "data_type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Respond",
+              "value": "respond"
+            },
+            {
+              "label": "Mutate",
+              "value": "mutate"
+            },
+            {
+              "label": "Orchestrate",
+              "value": "orchestrate"
+            }
+          ]
+        },
+        "status": {
+          "label": "Status",
+          "data_type": "select",
+          "required": true,
+          "system": true,
+          "default": "active",
+          "options": [
+            {
+              "label": "Active",
+              "value": "active"
+            },
+            {
+              "label": "Disabled",
+              "value": "disabled"
+            }
+          ]
+        },
+        "notes": {
+          "label": "Notes",
+          "data_type": "textarea",
+          "required": false
+        }
+      },
+      "record_permissions": {
+        "system_admin": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "support_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "member_admin": [
+          "create",
+          "read",
+          "update"
+        ],
+        "support": [
+          "read"
+        ],
+        "member": [
+          "read"
+        ]
+      },
+      "functionality": null
     }
   }
 ]

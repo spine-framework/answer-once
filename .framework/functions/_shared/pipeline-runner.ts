@@ -1,3 +1,4 @@
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 /**
  * @module   pipeline-runner
  * @audience internal
@@ -15,7 +16,6 @@
  *
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="This module serves as a pipeline runner that orchestrates the execution of various tasks within the system."]
 // CIL[DOC-RESPONSIBILITY responsibility="This module serves as a pipeline runner that orchestrates the execution of various tasks within the system. It integrates with middleware, database operations, and auditing mechanisms to ensure a cohesive flow of operations. The module is designed to handle multi-step processes, ensuring that each step is executed in the correct order and context. INVARIANT: The CoreContext must always be provided to maintain the integrity of the operations."]
 // CIL[DOC-CONTEXT module="pipeline-runner" layer="shared-core" related_files="middleware (provides context for operations).,db (handles database interactions).,audit (manages auditing of operations).,integration-outbound (executes outbound integrations)."]
@@ -41,6 +41,7 @@ import { withSpan } from './tracing'
 import { resolveKnowledgeScope, knowledgeRowAllowed } from './kb'
 import { resolveNotificationRecipients } from './notify'
 import {
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:module_header:module_header"]
   getBrandsConfig,
   resolveBrand,
   accountBrandSlugs,
@@ -51,9 +52,10 @@ import {
 // middleware → security → rate-limit → funnel → trigger-engine →
 // pipeline-runner → integration-outbound → middleware, leaving createHandler
 // undefined during module evaluation.
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeOutbound:function" type="function" identity="executeOutbound" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 const executeOutbound = async (ctx: CoreContext, args: any) =>
   (await import('../integration-outbound')).execute(ctx, args)
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:module_header:module_header"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeOutbound:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='This module serves as a pipeline runner that orchestrates the execution of various tasks within the system.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -74,7 +76,6 @@ const executeOutbound = async (ctx: CoreContext, args: any) =>
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:uuid_re:constant" type="constant" identity="UUID_RE" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="UUID_RE constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the UUID_RE constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -82,8 +83,9 @@ const executeOutbound = async (ctx: CoreContext, args: any) =>
 // CIL[DOC-MICRO logic_summary="Implements the UUID_RE constant." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:UUID_RE:constant" type="constant" identity="UUID_RE" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:uuid_re:constant"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:UUID_RE:constant"]
 // CIL[DOC-MACRO purpose="UUID_RE constant"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the UUID_RE constant."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -114,7 +116,6 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:isuuid:function" type="function" identity="isUuid" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="isUuid function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the isUuid function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -122,8 +123,9 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // CIL[DOC-MICRO logic_summary="Implements the isUuid function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:isUuid:function" type="function" identity="isUuid" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 function isUuid(v: string | undefined | null): v is string { return !!v && UUID_RE.test(v) }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:isuuid:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:isUuid:function"]
 // CIL[DOC-MACRO purpose="isUuid function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the isUuid function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -151,7 +153,6 @@ function isUuid(v: string | undefined | null): v is string { return !!v && UUID_
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:stageresult:interface" type="interface" identity="StageResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="StageResult interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the StageResult interface."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -159,6 +160,7 @@ function isUuid(v: string | undefined | null): v is string { return !!v && UUID_
 // CIL[DOC-MICRO logic_summary="Implements the StageResult interface." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:StageResult:interface" type="interface" identity="StageResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 export interface StageResult {
   stageIndex: number
   stageType: string
@@ -167,7 +169,7 @@ export interface StageResult {
   error?: string
   durationMs: number
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:stageresult:interface"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:StageResult:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='The StageResult interface defines the structure of the result produced by a stage in a pipeline execution.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -188,7 +190,6 @@ export interface StageResult {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executionresult:interface" type="interface" identity="ExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="ExecutionResult interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the ExecutionResult interface."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -196,6 +197,7 @@ export interface StageResult {
 // CIL[DOC-MICRO logic_summary="Implements the ExecutionResult interface." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:ExecutionResult:interface" type="interface" identity="ExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 export interface ExecutionResult {
   executionId: string
   pipelineId: string
@@ -204,7 +206,7 @@ export interface ExecutionResult {
   durationMs: number
   error?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executionresult:interface"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:ExecutionResult:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='The ExecutionResult interface defines the structure of the result returned after executing a pipeline, including its status and duration.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -225,7 +227,6 @@ export interface ExecutionResult {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:pipelinestage:interface" type="interface" identity="PipelineStage" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="PipelineStage interface"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the PipelineStage interface."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -233,12 +234,13 @@ export interface ExecutionResult {
 // CIL[DOC-MICRO logic_summary="Implements the PipelineStage interface." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:PipelineStage:interface" type="interface" identity="PipelineStage" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 interface PipelineStage {
   stage_type: string
   config?: Record<string, any>
   continue_on_error?: boolean
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:pipelinestage:interface"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:PipelineStage:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='The PipelineStage interface defines the structure for a stage in a data processing pipeline, specifying the type of stage and its configuration options.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -269,11 +271,11 @@ interface PipelineStage {
  * @errorHandling Handles errors at each stage and decides whether to continue based on stage configuration.
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function" type="function" identity="persistExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="Write the terminal status of a pipeline execution with one loud retry"]
 // CIL[DOC-CONTRACT inputs="ctx, executionId, patch — ctx: CoreContext (request-id logging); executionId: string (pipeline_executions row to update); patch: Record<string,any> (terminal status payload)" outputs="Promise<void>" errors="update errors are retried once then logged" side_effects="Updates public.pipeline_executions; logs on failure"]
 // CIL[DOC-MICRO logic_summary="Update pipeline_executions by id; on error retry once — an unchecked failure is what previously left rows stuck 'running' while audit claimed completion; a retry failure logs loudly so the row can be reconciled" notable_decisions="throws nothing — persistence failure must not mask the pipeline's own result"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function" type="function" identity="persistExecutionResult" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 /** The update result
  * is checked and retried once — an unchecked failure is what previously
  * left rows stuck 'running' forever while the audit span still claimed
@@ -313,7 +315,6 @@ async function persistExecutionResult(
 }
 // CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:persistExecutionResult:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:runpipeline:function" type="function" identity="runPipeline" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="runPipeline function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the runPipeline function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -327,8 +328,11 @@ async function persistExecutionResult(
 // staleness window whenever a new pipeline run starts. Fire-and-forget:
 // the sweep is bookkeeping, never on the critical path, and a failed
 // sweep retries on the next run.
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:STALE_EXECUTION_MS:constant" type="constant" identity="STALE_EXECUTION_MS" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 const STALE_EXECUTION_MS = 10 * 60 * 1000
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:STALE_EXECUTION_MS:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:sweepStaleExecutions:function" type="function" identity="sweepStaleExecutions" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 export async function sweepStaleExecutions(): Promise<void> {
   const cutoff = new Date(Date.now() - STALE_EXECUTION_MS).toISOString()
   const { error } = await adminDb
@@ -343,7 +347,9 @@ export async function sweepStaleExecutions(): Promise<void> {
     .lt('updated_at', cutoff)
   if (error) console.warn('pipeline_executions stale sweep failed:', error.message)
 }
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:sweepStaleExecutions:function"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:runPipeline:function" type="function" identity="runPipeline" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 export async function runPipeline(
   pipelineId: string,
   triggerData: any,
@@ -563,7 +569,7 @@ export async function runPipeline(
   }
 }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:runpipeline:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:runPipeline:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Runs a specified pipeline by executing its stages in sequence, tracking their results and handling errors.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -593,7 +599,6 @@ export async function runPipeline(
  * @calls       withSpan, executeFunctionHandler, executeIntegrationHandler, executeWebhookHandler, emitSpan
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executestage:function" type="function" identity="executeStage" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="executeStage function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the executeStage function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -601,6 +606,7 @@ export async function runPipeline(
 // CIL[DOC-MICRO logic_summary="Implements the executeStage function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeStage:function" type="function" identity="executeStage" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function executeStage(
   ctx: CoreContext,
   action: any,
@@ -625,7 +631,7 @@ async function executeStage(
     }
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executestage:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeStage:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Executes a specific stage of a pipeline based on the provided action and configuration.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -656,7 +662,6 @@ async function executeStage(
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolvetemplates:function" type="function" identity="resolveTemplates" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="resolveTemplates function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the resolveTemplates function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -664,6 +669,7 @@ async function executeStage(
 // CIL[DOC-MICRO logic_summary="Implements the resolveTemplates function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveTemplates:function" type="function" identity="resolveTemplates" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 function resolveTemplates(value: any, triggerData: any, brand?: SiteBrand | null): any {
   const roots: Record<string, any> = {
     trigger: triggerData,
@@ -702,7 +708,7 @@ function resolveTemplates(value: any, triggerData: any, brand?: SiteBrand | null
   }
   return value
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolvetemplates:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveTemplates:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Resolves template strings by replacing placeholders with corresponding values from the provided trigger data.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -732,7 +738,6 @@ function resolveTemplates(value: any, triggerData: any, brand?: SiteBrand | null
  * @calls       adminDb.from('accounts')
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveaccountid:function" type="function" identity="resolveAccountId" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="resolveAccountId function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the resolveAccountId function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -740,13 +745,14 @@ function resolveTemplates(value: any, triggerData: any, brand?: SiteBrand | null
 // CIL[DOC-MICRO logic_summary="Implements the resolveAccountId function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveAccountId:function" type="function" identity="resolveAccountId" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function resolveAccountId(ctx: CoreContext, slug: string): Promise<string> {
   const { data } = await adminDb
     .from('accounts').select('id').eq('slug', slug).maybeSingle()
   if (!data?.id) throw new Error(`account_slug '${slug}' did not resolve to an account`)
   return data.id
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveaccountid:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveAccountId:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Resolves an account ID based on a provided slug.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -771,7 +777,6 @@ async function resolveAccountId(ctx: CoreContext, slug: string): Promise<string>
  * @calls       adminDb.from, resolveTemplates, resolveAccountId
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:stagehandlers:constant" type="constant" identity="stageHandlers" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="stageHandlers constant — registry of built-in pipeline stage executors keyed by stage_type slug"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements each built-in stage type: record writes (update_item/create_record), outbound (http_request/send_notification), orchestration (run_pipeline/query_items/agent_inference), knowledge (search_knowledge/generate_embeddings/revoke_embeddings/kb_ingest/kb_revoke), and create_interaction."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=".framework/functions/_shared/kb.ts,.framework/functions/embeddings.ts,.framework/migrations/053_builtin_action_seeds.sql,.framework/migrations/054_kb_ingest_lease.sql"]
@@ -783,10 +788,13 @@ async function resolveAccountId(ctx: CoreContext, slug: string): Promise<string>
 // 'owner' = created_by of the record the trigger fired on (for a message, the
 // record its thread points at); 'watchers' = watchers rows on that record;
 // 'self' = the person who created the triggering record.
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:ENTITY_RECIPIENTS:constant" type="constant" identity="ENTITY_RECIPIENTS" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 const ENTITY_RECIPIENTS = new Set(['owner', 'watchers', 'self'])
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:ENTITY_RECIPIENTS:constant"]
 
 // Walks message -> thread -> target so entity handles resolve against the
 // owning record (e.g. the ticket item behind a reply), not just the event row.
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveEntityTarget:function" type="function" identity="resolveEntityTarget" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function resolveEntityTarget(entity: any): Promise<{ targetTable: string | null, targetId: string | null }> {
   if (!entity?.type || !entity?.id) return { targetTable: null, targetId: null }
   if (entity.type === 'messages' && entity?.data?.thread_id) {
@@ -802,7 +810,9 @@ async function resolveEntityTarget(entity: any): Promise<{ targetTable: string |
   }
   return { targetTable: entity.type, targetId: entity.id }
 }
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveEntityTarget:function"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveEntityRecipients:function" type="function" identity="resolveEntityRecipients" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function resolveEntityRecipients(recipients: any[], entity: any): Promise<string[]> {
   const wanted = (recipients || []).filter((r: any) => ENTITY_RECIPIENTS.has(r))
   if (!wanted.length) return []
@@ -836,6 +846,8 @@ async function resolveEntityRecipients(recipients: any[], entity: any): Promise<
   }
   return [...new Set(ids)]
 }
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:resolveEntityRecipients:function"]
+
 
 const stageHandlers: Record<string, Function> = {
   'update_item': async (ctx: CoreContext, config: any) => {
@@ -949,6 +961,37 @@ const stageHandlers: Record<string, Function> = {
       action_config: { url, method, headers, body: ['POST', 'PUT', 'PATCH'].includes(method) ? body : undefined }
     })
 
+    return {
+      success: true,
+      status: result.response_status,
+      body: result.response_body
+    }
+  },
+
+  // Make.com scenario trigger — routes through the 'make' integration so the
+  // scenario webhook URL lives in integration config (bearer-capability URL)
+  // rather than pipeline stage config. action_config.scenario_key picks an
+  // entry from integration.config.scenarios; the adapter wraps the payload in
+  // a stable envelope and adds x-make-apikey auth.
+  // record_id defaults to the trigger entity so the envelope carries the
+  // actual record (e.g. the matched ticket on directive_matched) — without it
+  // Make scenarios receive record:null. config.body supports {{entity.*}} /
+  // {{trigger.*}} templates like the record stages.
+  'make_scenario': async (ctx: CoreContext, config: any) => {
+    const triggerData = config._triggerData || {}
+    const result = await executeOutbound(ctx, {
+      integration_slug: config.integration_slug || 'make',
+      record_id: config.record_id
+        ? resolveTemplates(config.record_id, triggerData)
+        : (triggerData?.entity_id || null),
+      action_config: {
+        scenario_key: config.scenario_key,
+        event: config.event || 'directive_matched',
+        method: config.method,
+        headers: config.headers,
+        body: config.body ? resolveTemplates(config.body, triggerData) : undefined,
+      }
+    })
     return {
       success: true,
       status: result.response_status,
@@ -1404,7 +1447,7 @@ const stageHandlers: Record<string, Function> = {
     })
   },
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:stagehandlers:constant"]
+
 // CIL[DOC-VECTOR type="context" content="purpose='The stageHandlers constant defines a set of asynchronous functions for handling various stages of a pipeline, specifically for updating and creating records in a database.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -1439,7 +1482,6 @@ const stageHandlers: Record<string, Function> = {
  * @stability   stable
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executefunctionhandler:function" type="function" identity="executeFunctionHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="executeFunctionHandler function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the executeFunctionHandler function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -1447,6 +1489,7 @@ const stageHandlers: Record<string, Function> = {
 // CIL[DOC-MICRO logic_summary="Implements the executeFunctionHandler function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeFunctionHandler:function" type="function" identity="executeFunctionHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function executeFunctionHandler(
   ctx: CoreContext,
   handlerName: string,
@@ -1460,7 +1503,7 @@ async function executeFunctionHandler(
 
   return await handler(ctx, config)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executefunctionhandler:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeFunctionHandler:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Executes a specified function handler with the provided context and configuration.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -1489,7 +1532,6 @@ async function executeFunctionHandler(
  * @calls       execute
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeintegrationhandler:function" type="function" identity="executeIntegrationHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="executeIntegrationHandler function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the executeIntegrationHandler function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -1497,6 +1539,7 @@ async function executeFunctionHandler(
 // CIL[DOC-MICRO logic_summary="Implements the executeIntegrationHandler function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeIntegrationHandler:function" type="function" identity="executeIntegrationHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function executeIntegrationHandler(
   ctx: CoreContext,
   handlerName: string,
@@ -1509,7 +1552,7 @@ async function executeIntegrationHandler(
     action_config: config
   })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeintegrationhandler:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeIntegrationHandler:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Executes an integration handler by importing the execute function from the integration-outbound module and passing the necessary parameters.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
@@ -1537,7 +1580,6 @@ async function executeIntegrationHandler(
  * @calls       execute
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executewebhookhandler:function" type="function" identity="executeWebhookHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 // CIL[DOC-MACRO purpose="executeWebhookHandler function"]
 // CIL[DOC-RESPONSIBILITY responsibility="Implements the executeWebhookHandler function."]
 // CIL[DOC-CONTEXT module=".framework/functions/_shared/pipeline-runner.ts" layer="app-specific" related_files=""]
@@ -1545,6 +1587,7 @@ async function executeIntegrationHandler(
 // CIL[DOC-MICRO logic_summary="Implements the executeWebhookHandler function." notable_decisions="[]"]
 // CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeWebhookHandler:function" type="function" identity="executeWebhookHandler" parent="~/.framework/functions/_shared/pipeline-runner.ts"]
 async function executeWebhookHandler(
   ctx: CoreContext,
   action: any,
@@ -1574,7 +1617,7 @@ async function executeWebhookHandler(
     body: result.response_body
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executewebhookhandler:function"]
+// CIL[END stable_id="~/.framework/functions/_shared/pipeline-runner.ts:executeWebhookHandler:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Executes a webhook action by sending an HTTP request to a specified URL with the provided configuration.'; No verified external callers" status="ready"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]

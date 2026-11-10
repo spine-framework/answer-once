@@ -4,7 +4,10 @@
     "name": "ao_ticket_reply_notify",
     "description": "Fires when support posts an external reply on a ticket thread. Notifies the ticket owner in-app and emails them when the transactional-email integration (Resend) is configured.",
     "trigger_type": "event",
-    "config": { "event": "message_created", "scope": "account" },
+    "config": {
+      "event": "message_created",
+      "scope": "account"
+    },
     "stages": [
       {
         "stage_type": "send_notification",
@@ -13,7 +16,9 @@
           "message": "Support replied to your ticket — open {{brand.name}} to read it.",
           "entity_type": "items",
           "entity_id": "target",
-          "recipients": ["owner"]
+          "recipients": [
+            "owner"
+          ]
         }
       },
       {
@@ -22,7 +27,9 @@
         "config": {
           "integration_slug": "transactional-email",
           "template": "ticket_reply",
-          "recipients": ["owner"],
+          "recipients": [
+            "owner"
+          ],
           "exclude_actor": true
         }
       }
@@ -39,7 +46,10 @@
     "name": "ao_auto_embed_on_publish",
     "description": "Triggered when an Answer Once KB article or shared artifact is published. Generates embeddings via the canonical kb_ingest typed path.",
     "trigger_type": "event",
-    "config": { "event": "item_updated", "scope": "account" },
+    "config": {
+      "event": "item_updated",
+      "scope": "account"
+    },
     "stages": [
       {
         "stage_type": "kb_ingest",
@@ -62,7 +72,10 @@
     "name": "ao_auto_revoke_on_unpublish",
     "description": "Triggered when an Answer Once KB article or shared artifact leaves published status. Revokes embeddings so they are excluded from retrieval.",
     "trigger_type": "event",
-    "config": { "event": "item_updated", "scope": "account" },
+    "config": {
+      "event": "item_updated",
+      "scope": "account"
+    },
     "stages": [
       {
         "stage_type": "kb_revoke",
@@ -74,6 +87,44 @@
     ],
     "metadata": {
       "note": "kb_revoke calls _shared/kb.ts kbRevoke — deletes embeddings and clears the document lease so a republished article re-ingests cleanly."
+    },
+    "ownership": "platform",
+    "is_system": true,
+    "is_active": true
+  },
+  {
+    "slug": "ao_sales_handoff",
+    "name": "ao_sales_handoff",
+    "description": "Directive-dispatched sales handoff: notifies the sales role in-app and fires the Make.com 'sales_handoff' scenario when the make integration is configured. Invoked by apply_directive run_pipelines.",
+    "trigger_type": "manual",
+    "config": {
+      "scope": "account"
+    },
+    "stages": [
+      {
+        "stage_type": "send_notification",
+        "continue_on_error": true,
+        "config": {
+          "message": "Sales directive matched on ticket {{entity.data.title}} — a rep should call the customer.",
+          "entity_type": "items",
+          "entity_id": "target",
+          "recipients": [
+            "role:support_admin"
+          ]
+        }
+      },
+      {
+        "stage_type": "make_scenario",
+        "continue_on_error": true,
+        "config": {
+          "integration_slug": "make",
+          "scenario_key": "sales_handoff",
+          "event": "sales_handoff"
+        }
+      }
+    ],
+    "metadata": {
+      "note": "make_scenario no-ops until the 'make' integration is configured with scenarios.sales_handoff.url and an x-make-apikey credential. recipients 'role:support_admin' resolves account people with that role."
     },
     "ownership": "platform",
     "is_system": true,

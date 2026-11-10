@@ -1,223 +1,43 @@
-# Spine Framework / Answer Once Internal Use License 1.0.0
+# Answer Once Perpetual License 1.0
 
-**Source-available. Free for internal use. Commercial rights reserved.**
+**Buy a license for your organization. Keep using the versions you receive. Upgrades and services are optional.**
 
-This license is based on the structure and intent of the PolyForm Internal Use License 1.0.0, but it has been modified for Spine Framework and Answer Once. This is not the unmodified PolyForm Internal Use License.
-
-## Required Notice
+Version 1.0 — Effective Date: November 9, 2026
 
 Required Notice: Copyright © 2026 Dahl Ventures Inc. All rights reserved.
 
-## 1. Acceptance
+Unpaid installations are licensed for evaluation, testing, and due diligence only — see section 1. Releases supplied under an earlier license remain governed by that license. The current license text, pricing, and the historical license archive are maintained at https://answer-once.com/license.html.
 
-In order to receive any license under these terms, you must agree to these terms as both strict obligations and conditions to all licenses granted to you.
+## 1. Purchase and scope
 
-If you do not agree to these terms, you do not have permission to use, copy, modify, run, install, access, or create works based on the Software.
+This license is between Dahl Ventures Inc. and the organization identified in the accepted order. On payment of the agreed license fee, we grant that organization a non-exclusive license to install, run, make necessary backup copies of, and customize the supplied Answer Once software for its own use. The purchase includes one production deployment plus development and staging, unlimited support agents and customers within that deployment, source access, and the underlying Spine permissions needed to operate Answer Once. "Production deployment" means one operational installation serving a single organization's production use, including the redundancy, failover, and disaster-recovery replicas that serve that same installation. Authorized employees and contractors may work on your installation on your behalf; they receive no independent right to resell or distribute it. Preserve supplied copyright and license notices. This license applies only to releases and purchases expressly supplied under it.
 
-## 2. Definitions
+Before purchase, you may install, run, copy, and modify the Software solely to evaluate, test, and perform due diligence — including running it against non-production data and environments. Evaluation use does not include operating the Software in production, serving real users or customers, handling live support traffic, or distributing the Software. A purchase under an accepted order converts that installation to the perpetual license described above.
 
-**Software** means Spine Framework and Answer Once, including their source code, object code, packages, modules, templates, schemas, migrations, configuration files, documentation, examples, command-line tools, SDKs, application packs, apps, scaffolders, and related materials provided by the licensor, in any distribution (npm package, repository, tarball, or otherwise).
+## 2. Perpetual use and updates
 
-**Licensor** means the legal owner of the Software.
+You may continue using the purchased version and updates supplied to you under this license, subject to compliance with its terms. The purchase includes twelve months of released updates. After that, an optional upgrade costs 50% of the then-current new-license price and includes another twelve months of updates. There is no automatic upgrade purchase or renewal. We do not promise a particular release schedule, lifetime support, lifetime updates, or compatibility with future third-party changes. Ending optional maintenance or DevOps does not itself end your license.
 
-**You** means the individual or legal entity receiving the Software.
+## 3. What requires a separate agreement
 
-**Your Company** means the legal entity on whose behalf you use the Software, including that entity's employees and authorized contractors.
+Obtain our written agreement for additional production deployments, group-wide or multi-entity use, resale, redistribution, sublicensing, OEM/embedded distribution, or operating Answer Once as a hosted offering for other organizations. Ordinary access by your own customers to obtain support from your organization is included. Do not confuse customer support access with selling a hosted software service to other organizations.
 
-**Internal Business Use** means use of the Software solely inside Your Company for Your Company's own internal business operations, internal workflows, internal applications, internal data, internal users, and internal customers or accounts.
+## 4. Ownership and restrictions
 
-**Third Party** means any person or legal entity other than You or Your Company.
+You retain your data, knowledge content, branding, and independently created application work. We retain Answer Once, our pre-existing components, and our trademarks. Source access and customization rights do not transfer ownership of our intellectual property or grant distribution rights. Customizing, renaming, or modifying our software does not create resale, redistribution, OEM, or hosted-service rights. Do not repackage or rebrand our software for resale, remove required notices, or bypass license controls to exceed the granted rights. Third-party components retain their own licenses. Rights not expressly granted are reserved. You may not transfer this license without our written agreement.
 
-**Commercial License** means a separate written agreement signed by the Licensor that grants rights beyond this license.
+## 5. Operations and AI
 
-## 3. Copyright License
+Installation, customization, hosting, AI usage, support, and operational services are separate unless an accepted order says otherwise. You are responsible for your infrastructure, access controls, lawful data use, backups, and third-party accounts except to the extent we expressly undertake that work. Review AI answers, generated knowledge, and automated actions as appropriate; AI can make mistakes. We do not guarantee correct answers, a particular automation rate, savings, uninterrupted availability, or an uptime SLA.
 
-The Licensor grants You a copyright license to do everything with the Software that would otherwise infringe the Licensor's copyright, but only for Internal Business Use and only as permitted by these terms.
+## 6. Breach
 
-You may install, run, access, evaluate, test, configure, and use the Software for Internal Business Use.
+For an ordinary material license breach, we will give written notice and 30 days to cure before terminating the affected license. Deliberate unauthorized resale, redistribution, or circumvention may result in immediate termination on written notice. If the license ends, stop using and distributing our software under that license. You retain your own data and independently owned content. Existing payment obligations, ownership, warranty exclusions, and liability limitations survive as applicable. We cannot end your valid perpetual license merely because you decline optional upgrades or services.
 
-You may copy the Software only as reasonably necessary for Internal Business Use, including backup, deployment, development, testing, staging, disaster recovery, and internal security review.
+## 7. Warranty and liability
 
-You may not distribute the Software except as expressly allowed in these terms.
+TO THE EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS," WITHOUT IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR NON-INFRINGEMENT. WE EXCLUDE INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, AND PUNITIVE DAMAGES, INCLUDING LOST PROFITS, REVENUE, DATA, OR GOODWILL. OUR AGGREGATE LIABILITY UNDER THIS LICENSE IS LIMITED TO THE GREATER OF US $100 OR THE SOFTWARE LICENSE AND UPGRADE FEES YOU PAID US FOR ANSWER ONCE DURING THE TWELVE MONTHS BEFORE THE EVENT GIVING RISE TO THE CLAIM. Separate service agreements govern liability for their work. Nothing excludes rights, liability, or express commitments that cannot lawfully be excluded.
 
-## 4. Changes and New Works
+## 8. Existing releases and general terms
 
-The Licensor grants You a copyright license to modify the Software and create new works based on the Software, but only for Internal Business Use.
-
-You may create internal applications, extensions, workflows, integrations, automations, schemas, roles, agents, triggers, pipelines, dashboards, reports, and other internal business systems using the Software.
-
-You may not distribute, sell, sublicense, transfer, lease, rent, host for others, white-label, resell, or commercially exploit any modified version, derivative work, extension, application pack, template, or implementation of the Software except under a Commercial License.
-
-## 5. Internal Contractors
-
-Your Company may allow employees and contractors to access and use the Software solely on behalf of Your Company and solely for Your Company's Internal Business Use.
-
-Contractors do not receive any independent right to use the Software for themselves, their other clients, their own products, or any Third Party.
-
-Your Company is responsible for all use of the Software by its employees, contractors, agents, and representatives.
-
-## 6. Your Data and Application-Specific Work
-
-As between You and the Licensor, You own Your Company's data, records, content, prompts, business logic, customer records, internal workflows, and application-specific code that You independently create using the Software.
-
-These terms do not give the Licensor ownership of Your Company's data or independently created application-specific business content.
-
-However, ownership of Your Company's data or application-specific work does not give You the right to distribute, resell, white-label, host, or commercially exploit the Software or any portion of the Software except as allowed by these terms or a Commercial License.
-
-## 7. Prohibited Uses
-
-You may not do any of the following without a Commercial License:
-
-1. Sell, resell, sublicense, rent, lease, lend, transfer, assign, publish, or distribute the Software.
-2. Offer the Software, or any modified version of the Software, to Third Parties as software, infrastructure, a framework, a platform, a service, or a hosted product.
-3. Offer the Software as SaaS, PaaS, IaaS, framework-as-a-service, backend-as-a-service, workflow-as-a-service, automation-as-a-service, AI-agent platform, managed service, support service, or similar commercial service.
-4. White-label, private-label, rebrand, or remove Spine Framework or Answer Once identity from the Software in order to provide it to Third Parties.
-5. Embed, bundle, package, or include the Software in any product, service, appliance, marketplace offering, application pack, starter kit, template library, SDK, CLI, distribution, or managed implementation made available to Third Parties.
-6. Use the Software to operate, power, support, or provide a product or service for Third Parties where those Third Parties receive access to the Software or to functionality substantially provided by the Software.
-7. Use the Software to build, operate, or improve a competing framework, platform, marketplace, application generator, agentic software infrastructure product, or commercial development infrastructure product.
-8. Provide implementation, consulting, hosting, support, customization, training, migration, or managed services for the Software to Third Parties as a paid or commercial offering, except as expressly authorized by the Licensor.
-9. Remove, alter, obscure, or bypass copyright notices, license notices, attribution, trademarks, branding, license keys, license checks, usage limits, or technical protection measures included in the Software.
-10. Use the Software in violation of law, regulation, third-party rights, or these terms.
-
-## 8. Examples of Permitted Use
-
-The following are permitted under this license, provided they are solely for Internal Business Use:
-
-1. A company installs Spine Framework to build its own internal CRM.
-2. A company uses Answer Once to operate an internal customer support portal for its own support team and its own customers.
-3. A company modifies the Software for its internal workflows, roles, permissions, automations, pipelines, and integrations.
-4. A company lets its employees and authorized contractors configure, maintain, and support its internal installation of the Software.
-5. A company creates internal dashboards, agents, knowledge bases, audit trails, and operational tools on top of the Software.
-
-## 9. Examples Requiring a Commercial License
-
-The following are not permitted under this license and require a Commercial License:
-
-1. Selling the Software or a modified version of the Software.
-2. Offering the Software as a hosted SaaS product.
-3. Offering a white-labeled application built on the Software to customers.
-4. Packaging the Software into a commercial starter kit, template, marketplace app, agency offering, or developer platform.
-5. Running the Software for multiple clients as a managed service provider, agency, consultant, systems integrator, or outsourcing firm.
-6. Embedding the Software into a product sold to customers.
-7. Forking the Software to launch a competing framework, backend, app platform, AI-agent platform, or development infrastructure product.
-8. Publishing modified source code of the Software to a public repository.
-9. Giving a customer, client, partner, reseller, or affiliate a copy of the Software.
-
-## 10. Distribution
-
-You may not distribute the Software, modified versions of the Software, or works based on the Software to any Third Party except as expressly permitted by these terms or a Commercial License.
-
-You may share copies of the Software with employees and contractors of Your Company only as necessary for Internal Business Use and only if they are bound by obligations consistent with these terms.
-
-Any copy of the Software must include this license and all Required Notices.
-
-## 11. Trademarks
-
-This license does not grant You any right to use the Licensor's names, trademarks, service marks, logos, product names, domain names, or branding except as necessary to identify the Software for Internal Business Use.
-
-You may not use Spine Framework or Answer Once branding in a way that suggests sponsorship, endorsement, partnership, certification, resale authorization, or commercial authorization without written permission from the Licensor.
-
-## 12. Patent License
-
-The Licensor grants You a patent license for the Software that covers patent claims the Licensor can license, or later becomes able to license, that You would infringe by using the Software as permitted by these terms.
-
-## 13. Patent Defense
-
-If You make any written claim that the Software infringes or contributes to infringement of any patent, Your patent license for the Software ends immediately.
-
-If Your Company makes such a claim, Your Company's patent license ends immediately.
-
-## 14. Fair Use and Other Legal Rights
-
-You may have fair use, fair dealing, or other rights under applicable law. These terms do not limit rights that the law does not allow these terms to limit.
-
-## 15. No Other Rights
-
-These terms do not allow You to sublicense, transfer, assign, or delegate any license granted under these terms except as expressly allowed here.
-
-These terms do not prevent the Licensor from granting licenses to anyone else.
-
-These terms do not imply any license other than the licenses expressly granted here.
-
-All rights not expressly granted are reserved by the Licensor.
-
-## 16. Violations and Cure
-
-The first time You are notified in writing that You have violated these terms, or done anything with the Software not covered by these terms, Your licenses can continue if You:
-
-1. come into full compliance with these terms;
-2. take practical steps to correct past violations; and
-3. complete both within 32 days of receiving written notice.
-
-If You do not satisfy those requirements, all licenses granted to You under these terms end immediately.
-
-For any later violation, all licenses granted to You under these terms end immediately without any cure period.
-
-## 17. Termination
-
-When Your licenses end, You must stop all use of the Software and destroy all copies of the Software in Your possession or control, except copies You are legally required to retain for archival, compliance, or legal purposes.
-
-Sections concerning ownership, prohibited uses, trademarks, patent defense, no other rights, violations, termination, no warranty, limitation of liability, and general terms survive termination.
-
-## 18. No Warranty
-
-As far as the law allows, the Software is provided as is and as available, without any warranty or condition, express or implied.
-
-The Licensor disclaims all warranties and conditions, including warranties of merchantability, fitness for a particular purpose, title, non-infringement, availability, accuracy, security, and quiet enjoyment.
-
-## 19. Limitation of Liability
-
-As far as the law allows, the Licensor will not be liable to You for any indirect, incidental, special, consequential, exemplary, punitive, or other damages arising out of these terms or the Software.
-
-As far as the law allows, the Licensor will not be liable for lost profits, lost revenue, lost savings, lost data, business interruption, security incidents, procurement of substitute services, or loss of goodwill.
-
-The Licensor's total liability arising out of these terms or the Software will not exceed the amount You paid the Licensor for the Software during the 12 months before the event giving rise to liability, or USD $100 if You paid nothing.
-
-## 20. Commercial Licensing
-
-Rights not granted under this license may be available under a separate Commercial License from the Licensor.
-
-A Commercial License is required for resale, redistribution, SaaS, managed services, white-label use, OEM use, marketplace distribution, partner use, commercial hosting, commercial support offerings, or any use outside Internal Business Use.
-
-To request commercial rights, contact:
-
- - spine-framework.com
- - webmaster@spine-framework.com
-
-## 21. License Updates
-
-The Licensor may publish updated versions of this license from time to time.
-
-Each release, package, download, or copy of the Software is governed by the license terms included with that release, package, download, or copy, unless You and the Licensor have signed a separate written agreement.
-
-Updated license terms apply only to future releases, downloads, packages, updates, upgrades, patches, hosted access, or other versions of the Software made available after the updated terms are published.
-
-The Licensor may require acceptance of updated license terms as a condition of receiving or using future releases, updates, hosted services, commercial features, support, documentation, marketplace access, license keys, portals, application packs, or other Licensor services.
-
-Nothing in this section gives You rights to continue using future versions of the Software under earlier license terms.
-
-## 22. General Terms
-
-If any part of these terms is held unenforceable, the rest remains in effect as far as the law allows.
-
-Failure by the Licensor to enforce any term is not a waiver.
-
-Any waiver must be in writing and signed by the Licensor.
-
-These terms are the entire license terms for the Software unless You and the Licensor have signed a separate written agreement.
-
-## 23. Plain-English Summary
-
-This summary is not part of the legal license.
-
-You may use the Software inside your own company for your own internal business operations.
-
-You may modify the Software for your own internal use.
-
-You may let your employees and contractors work on your internal installation of the Software.
-
-You may not sell it, redistribute it, white-label it, host it for others, offer it as SaaS, package it into another product, use it as a managed service offering, or use it to build a competing framework without a separate commercial license.
-
-Future versions, updates, services, support, portals, packs, license keys, and commercial features may require acceptance of updated terms.
-
-Spine Framework and Answer Once are source-available. They are not open source.
+Releases previously supplied under another license remain governed by that license; publishing this license does not replace their terms. See the historical license archive at https://answer-once.com/license-1.0.0.html. An accepted order or signed agreement controls where it expressly changes these terms. Use the software lawfully, including applicable export and sanctions requirements. If a provision cannot be enforced, the rest continues. A failure to enforce a term is not a waiver. No additional software rights arise from website marketing alone. Contact us through https://support.answer-once.com for licensing questions.

@@ -348,7 +348,7 @@ function validateAllowedDirectories(appPath: string): void {
     'pages', 'components', 'hooks', 'utils', 'functions',
     'seed', 'public', 'lib', 'views', 'docs', 'mcp',
     'migrations', 'migrations-archive', 'tests', 'installer',
-    'agent', 'src'
+    'agent', 'src', 'emails'
   ]
   
   const entries = readdirSync(appPath, { withFileTypes: true })

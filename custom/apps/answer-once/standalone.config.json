@@ -45,8 +45,7 @@
       "config/components.json",
       "vitest.config.ts",
       ".env.example",
-      ".gitignore",
-      "LICENSE.md"
+      ".gitignore"
     ],
     "root_scripts": [
       "scripts/assemble.sh",
@@ -68,7 +67,8 @@
       "bin/spine-framework.js"
     ],
     "file_map": {
-      "README.md": "custom/apps/answer-once/docs/standalone-readme.md"
+      "README.md": "custom/apps/answer-once/docs/standalone-readme.md",
+      "LICENSE.md": "custom/apps/answer-once/LICENSE.md"
     }
   },
   "exclude_globs": [

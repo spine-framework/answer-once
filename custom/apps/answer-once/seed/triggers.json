@@ -30,7 +30,11 @@
       "entity_type": "items",
       "type_slug": "ao_kb_article",
       "fire_on_transition": true,
-      "filters": { "status": { "$eq": "published" } }
+      "filters": {
+        "status": {
+          "$eq": "published"
+        }
+      }
     },
     "metadata": {},
     "is_system": true
@@ -46,7 +50,11 @@
     "config": {
       "entity_type": "items",
       "type_slug": "ao_kb_article",
-      "filters": { "status": { "$eq": "published" } }
+      "filters": {
+        "status": {
+          "$eq": "published"
+        }
+      }
     },
     "metadata": {},
     "is_system": true
@@ -63,7 +71,11 @@
       "entity_type": "items",
       "type_slug": "ao_kb_shared",
       "fire_on_transition": true,
-      "filters": { "status": { "$eq": "published" } }
+      "filters": {
+        "status": {
+          "$eq": "published"
+        }
+      }
     },
     "metadata": {},
     "is_system": true
@@ -79,7 +91,11 @@
     "config": {
       "entity_type": "items",
       "type_slug": "ao_kb_shared",
-      "filters": { "status": { "$eq": "published" } }
+      "filters": {
+        "status": {
+          "$eq": "published"
+        }
+      }
     },
     "metadata": {},
     "is_system": true
@@ -96,7 +112,11 @@
       "entity_type": "items",
       "type_slug": "ao_kb_article",
       "fire_on_transition": true,
-      "filters": { "status": { "$ne": "published" } }
+      "filters": {
+        "status": {
+          "$ne": "published"
+        }
+      }
     },
     "metadata": {},
     "is_system": true
@@ -113,7 +133,73 @@
       "entity_type": "items",
       "type_slug": "ao_kb_shared",
       "fire_on_transition": true,
-      "filters": { "status": { "$ne": "published" } }
+      "filters": {
+        "status": {
+          "$ne": "published"
+        }
+      }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_directive_active_auto_embed",
+    "name": "ao_directive_active_auto_embed",
+    "description": "When an ao_triage_directive transitions to active, generate embeddings so triage recall can match it.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_triage_directive",
+      "fire_on_transition": true,
+      "filters": {
+        "status": {
+          "$eq": "active"
+        }
+      }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_directive_active_auto_embed_create",
+    "name": "ao_directive_active_auto_embed_create",
+    "description": "When an ao_triage_directive is created already active, generate embeddings automatically.",
+    "trigger_type": "event",
+    "event_type": "item_created",
+    "pipeline_slug": "ao_auto_embed_on_publish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_triage_directive",
+      "filters": {
+        "status": {
+          "$eq": "active"
+        }
+      }
+    },
+    "metadata": {},
+    "is_system": true
+  },
+  {
+    "slug": "ao_directive_inactive_auto_revoke",
+    "name": "ao_directive_inactive_auto_revoke",
+    "description": "When an ao_triage_directive leaves active status, revoke its embeddings so it stops matching.",
+    "trigger_type": "event",
+    "event_type": "item_updated",
+    "pipeline_slug": "ao_auto_revoke_on_unpublish",
+    "is_active": true,
+    "config": {
+      "entity_type": "items",
+      "type_slug": "ao_triage_directive",
+      "fire_on_transition": true,
+      "filters": {
+        "status": {
+          "$ne": "active"
+        }
+      }
     },
     "metadata": {},
     "is_system": true

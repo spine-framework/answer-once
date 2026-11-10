@@ -58,8 +58,9 @@ import { withSpan, startSpan, endSpan } from './tracing'
 import { create as createRecord } from '../admin-data'
 import { callOpenAIEmbeddings, callOpenAIChat } from './llm'
 import { stripCilBoilerplate, computeContentHash } from './cil'
-import { resolveKnowledgeScope, knowledgeRowAllowed, type KnowledgeScope } from './kb'
+import { resolveKnowledgeScope, knowledgeRowAllowed, matchItemType, type KnowledgeScope } from './kb'
 import { resolveNotificationRecipients } from './notify'
+import { resolveTypeId, resolveLinkTypeId } from './resolve-ids'
 import { execute as executeOutbound } from '../integration-outbound'
 import { createHash } from 'crypto'
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:module_header:module_header"]
@@ -117,6 +118,73 @@ import { createHash } from 'crypto'
 
 
 
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveLinkedDirectives:function" type="function" identity="resolveLinkedDirectives" parent="~/.framework/functions/_shared/agent-runner.ts"]
+// CIL[DOC-LEARNING topic="design_decision" content="Article→directive links (ao_article_directive) are the steady-state delivery path for shared actions: a semantically-matched article carries its directive into agent context, while standalone directive recall (promptConfig.metadata.directive_recall) is the bootstrap path and can be disabled via directive_recall.enabled=false once links cover common cases. Only status=active directives surface — suggested/draft candidates stay dormant, and linked directives inherit the source article's similarity."]
+/**
+ * Resolves directive records linked from retrieved articles via the prompt
+ * config's directive_link_type_slug. Only active directives of the declared
+ * directive type are returned; provenance is left to the caller's merge with
+ * recall-matched ids. Executor gates (episode match set, account scope, tier
+ * opt-in) still apply when the model picks one of these ids.
+ *
+ * @macro       Article→directive action surfacing for agent context building.
+ * @micro       Link-type resolve → links by source article ids → hydrate targets → filter to active directives → label with source article title.
+ * @inputSpec   retrievedSources: any[] (required) — hydrated retrieval docs; promptConfig carries metadata.directive_link_type_slug + directive_recall.link_limit.
+ * @outputSpec  Promise<any[]> — doc-shaped entries { document_id, title, content, similarity } for '## Routing Directives'.
+ * @sideEffects DB reads: link_types, links, items.
+ * @stability   experimental
+ * @cil-generated
+ */
+export async function resolveLinkedDirectives(
+  retrievedSources: any[],
+  directiveTypeSlug: string,
+  promptConfig: any
+): Promise<any[]> {
+  const linkTypeSlug = promptConfig?.metadata?.directive_link_type_slug
+  const articleIds = (retrievedSources || [])
+    .filter((d: any) => d.item_type !== 'cil_chunk')
+    .map((d: any) => String(d.document_id))
+    .filter(Boolean)
+  if (!linkTypeSlug || !articleIds.length) return []
+  const linkTypeId = await resolveLinkTypeId(linkTypeSlug).catch(() => null)
+  if (!linkTypeId) return []
+  const { data: articleLinks } = await adminDb
+    .from('links')
+    .select('source_id, target_id')
+    .in('source_id', articleIds)
+    .eq('link_type_id', linkTypeId)
+    .limit(50)
+  const targetIds = [...new Set((articleLinks || []).map((l: any) => l.target_id))]
+  if (!targetIds.length) return []
+  const { data: targets } = await adminDb
+    .from('items')
+    .select('id, title, data, type:types(slug)')
+    .in('id', targetIds)
+    .eq('is_active', true)
+  const articleById = new Map((retrievedSources || []).map((d: any) => [String(d.document_id), d]))
+  const articleByTarget = new Map((articleLinks || []).map((l: any) => [String(l.target_id), String(l.source_id)]))
+  const linkLimit = promptConfig?.metadata?.directive_recall?.link_limit || 5
+  const linked: any[] = []
+  for (const t of targets || []) {
+    if (linked.length >= linkLimit) break
+    // Supabase returns the joined type as object or array depending on the
+    // relation — normalize before reading slug.
+    const tType = Array.isArray(t.type) ? t.type[0] : t.type
+    if (tType?.slug !== directiveTypeSlug) continue
+    if (t.data?.status !== 'active') continue
+    const srcId = articleByTarget.get(String(t.id)) || ''
+    const srcDoc = articleById.get(srcId)
+    linked.push({
+      document_id: t.id,
+      title: `${t.title || t.data?.title || 'directive'} (via article "${srcDoc?.title || 'article'}")`,
+      content: (t.data?.match_description || '').slice(0, 500),
+      similarity: typeof srcDoc?.similarity === 'number' ? srcDoc.similarity : null,
+    })
+  }
+  return linked
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveLinkedDirectives:function"]
 
 async function buildContext(
   config: AgentConfig,
@@ -177,6 +245,74 @@ async function buildContext(
     } catch (err) {
       console.warn('retrieveKnowledge failed — proceeding without context:', err)
     }
+    // Routing directives: prompt configs declaring metadata.directive_type_slug
+    // get a semantic recall over that type's records. Directives are trusted,
+    // admin-authored routing options offered to the apply_directive tool — only
+    // intent text is rendered here; the executor reads actions from the record
+    // the model selects, so customer input can never alter directive behavior.
+    const directiveTypeSlug = (promptConfig.metadata as any)?.directive_type_slug
+    if (directiveTypeSlug) {
+      // The matched set is recorded on the shared episode config so both the
+      // tool surface (inferenceAgent filter + '## Available Tools' listing) and
+      // the executor can gate apply_directive on what recall actually returned
+      // — the model can never apply a directive it was not shown.
+      let matched: any[] = []
+      // directive_recall.enabled=false retires standalone recall once
+      // article→directive links carry the common cases (steady-state model).
+      const recallEnabled = (promptConfig.metadata as any)?.directive_recall?.enabled !== false
+      if (recallEnabled) {
+        try {
+          const { docs: directives } = await retrieveKnowledge(
+            userMessage,
+            [],
+            ctx.accountId!,
+            {
+              item_types: [directiveTypeSlug],
+              vector_types: ['semantic', 'title', 'match_description', 'content'],
+              require_approved: true,
+            },
+            ctx,
+            promptConfig.app_id || agent.app_id || (ctx as any).appId
+          )
+          const directiveLimit = (promptConfig.metadata as any)?.directive_recall?.limit || 3
+          matched = directives.slice(0, directiveLimit)
+        } catch (err) {
+          console.warn('directive recall failed — proceeding without directives:', err)
+        }
+      }
+      // Linked directives: a retrieved article may carry an action via an
+      // article→directive link. The link is admin-authored provenance — the
+      // article matched semantically and the directive rides along with it.
+      // The executor's scope/tier gates still govern what apply_directive runs.
+      const provenance: Record<string, string> = {}
+      for (const doc of matched) if (doc.document_id) provenance[String(doc.document_id)] = 'recall'
+      try {
+        const linked = await resolveLinkedDirectives(retrievedSources, directiveTypeSlug, promptConfig)
+        for (const doc of linked) {
+          const id = String(doc.document_id)
+          if (provenance[id]) provenance[id] = 'both'
+          else { provenance[id] = 'linked'; matched.push(doc) }
+        }
+      } catch (err) {
+        console.warn('directive link resolution failed — proceeding without linked directives:', err)
+      }
+      if (matched.length > 0) {
+        context += '## Routing Directives\n'
+        context += 'The directives below are trusted, admin-authored routing rules for requests the customer wants DONE or routed rather than answered. If the message matches one, call apply_directive with its directive_id — at most one per message.\n'
+        matched.forEach((doc: any, i: number) => {
+          context += `[${i + 1}] [directive] directive_id: ${doc.document_id} — ${doc.title || 'directive'}\n${(doc.content || '').slice(0, 500)}\n\n`
+        })
+      }
+      ;(config as any).matched_directive_ids = matched
+        .map((doc: any) => doc.document_id)
+        .filter(Boolean)
+      ;(config as any).matched_directive_similarity = Object.fromEntries(
+        matched
+          .filter((doc: any) => doc.document_id)
+          .map((doc: any) => [String(doc.document_id), typeof doc.similarity === 'number' ? doc.similarity : null])
+      )
+      ;(config as any).matched_directive_provenance = provenance
+    }
     if (history.length > 0) {
       context += '## Conversation History\n'
       history.forEach(msg => {
@@ -200,7 +336,9 @@ async function buildContext(
     // produced a successful result this episode — the model must gather
     // evidence before it may ask the customer a question.
     const listedTools = (promptConfig.available_tools || []).filter(
-      (t: string) => t !== 'ask_user' || toolResults.some((r: any) => RESEARCH_TOOLS.has(r.tool) && !r.error)
+      (t: string) =>
+        (t !== 'ask_user' || toolResults.some((r: any) => RESEARCH_TOOLS.has(r.tool) && !r.error)) &&
+        (t !== 'apply_directive' || ((config as any).matched_directive_ids || []).length > 0)
     )
     if (listedTools.length > 0) {
       context += '## Available Tools\n'
@@ -1900,6 +2038,8 @@ export async function executeToolAction(
       }
       case 'escalate_to_human':
         return await executeEscalateToHuman(params, ctx, runCtx)
+      case 'apply_directive':
+        return await executeApplyDirective(params, ctx, runCtx)
       case 'search_logs':
         return await executeSearchLogs(params, ctx)
       case 'search_observability':
@@ -1985,6 +2125,417 @@ async function executeEscalateToHuman(
   return { escalated: true, already_escalated: false, reason: params?.reason || null }
 }
 // CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeEscalateToHuman:function"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:DIRECTIVE_SET_FIELDS_ALLOWLIST:constant" type="constant" identity="DIRECTIVE_SET_FIELDS_ALLOWLIST" parent="~/.framework/functions/_shared/agent-runner.ts"]
+/**
+ * Apply an admin-authored routing directive to the thread's target record.
+ * The model selects a directive by id; this executor runs the directive's
+ * structured actions (record_ops / reply / run_pipelines) verbatim from the
+ * record — customer input can never author or alter them. Platform-authored
+ * (spine-system) directives may execute cross-account when the app envelope
+ * action-allowlists the directive type; tiers above 'annotate' additionally
+ * require an active tenant opt-in record with sufficient max_tier.
+ *
+ * @inputSpec
+ *   - params: any (required) — { directive_id: string, rationale?: string, confidence?: number }
+ *   - ctx: CoreContext (required) — account scope for directive + record lookups.
+ *   - runCtx: { threadId?: string; config?: AgentConfig } (optional) — requires an active agent thread.
+ * @outputSpec  Promise<any> — { applied, already_applied?, ends_episode, actions_taken, message? } or { error }
+ * @throws      Error — apply_directive requires an active agent thread context
+ * @sideEffects Item data merge (tags/set_fields/stamps), watcher inserts, optional escalation,
+ *              optional outbound/internal reply message, optional pipeline executions, audit log.
+ * @stability   experimental
+ * @cil-generated
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const DIRECTIVE_SET_FIELDS_ALLOWLIST = new Set(['status', 'priority'])
+
+// Capability tiers for platform-authored directives. A shared directive's
+// required tier is the highest tier its actions/mode touch; annotate-tier
+// directives execute in any tenant zero-config, higher tiers require an
+// active tenant opt-in record with a sufficient max_tier.
+const DIRECTIVE_TIER_ORDER: Record<string, number> = {
+  annotate: 0,
+  respond: 1,
+  mutate: 2,
+  orchestrate: 3,
+}
+type DirectiveTier = 'annotate' | 'respond' | 'mutate' | 'orchestrate'
+
+function directiveRequiredTier(d: any): DirectiveTier {
+  const actions = (d?.actions && typeof d.actions === 'object' && !Array.isArray(d.actions)) ? d.actions : {}
+  const recordOps = (actions.record_ops && typeof actions.record_ops === 'object') ? actions.record_ops : {}
+  if (Array.isArray(actions.run_pipelines) && actions.run_pipelines.length) return 'orchestrate'
+  if (recordOps.set_fields || recordOps.escalate === true) return 'mutate'
+  if (d?.mode === 'auto_reply') return 'respond'
+  return 'annotate'
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:DIRECTIVE_SET_FIELDS_ALLOWLIST:constant"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:renderDirectiveTemplate:function" type="function" identity="renderDirectiveTemplate" parent="~/.framework/functions/_shared/agent-runner.ts"]
+export function renderDirectiveTemplate(template: string, ticket: any): string {
+  return (template || '').replace(/\{\{\s*(ticket|record)\.([\w.]+)\s*\}\}/g, (_m, _ns, path) => {
+    const parts = String(path).split('.')
+    let cur: any = ticket
+    for (const p of parts) {
+      if (cur == null) return ''
+      cur = cur[p] ?? cur?.data?.[p]
+    }
+    return cur == null ? '' : String(cur)
+  })
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:renderDirectiveTemplate:function"]
+
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeApplyDirective:function" type="function" identity="executeApplyDirective" parent="~/.framework/functions/_shared/agent-runner.ts"]
+// CIL[DOC-LEARNING topic="design_decision" content="Directives are trusted admin-authored action records, not retrievable knowledge: the model may only pick a directive_id surfaced by recall or an article link (episode-scoped matched_directive_ids rejects invented ids), and the structured actions execute verbatim so customer input can never author or alter directive behavior."]
+// CIL[DOC-LEARNING topic="tenant_opt_in" content="Platform directives above the annotate tier require an active tenant item of promptConfig.metadata.directive_subscription_type_slug (ao_directive_subscription) with max_tier >= the directive's required tier. Tier derives from the actions/mode (annotate < respond < mutate < orchestrate); own-account directives bypass opt-in and annotate-tier shared directives run zero-config."]
+// CIL[DOC-NOTE type="api_behavior" content="actions shape: record_ops.tags[], record_ops.watchers[] ('role:<slug>' or 'person:<uuid>'), record_ops.set_fields (design-schema non-system fields + DIRECTIVE_SET_FIELDS_ALLOWLIST status/priority — other keys rejected), record_ops.escalate, run_pipelines[] (slugs or ids), continue. reply_template interpolates {{record.<path>}} / {{ticket.<path>}}."]
+export async function executeApplyDirective(
+  params: any,
+  ctx: CoreContext,
+  runCtx?: { threadId?: string; config?: AgentConfig }
+): Promise<any> {
+  const threadId = runCtx?.threadId
+  const promptConfig = runCtx?.config?.promptConfig
+  const agent = runCtx?.config?.agent
+  if (!threadId || !promptConfig) {
+    throw new Error('apply_directive requires an active agent thread context')
+  }
+  const directiveSlug = (promptConfig.metadata as any)?.directive_type_slug
+  const directiveId = params?.directive_id
+  if (!directiveSlug) {
+    return { applied: false, error: 'apply_directive is not configured for this agent (no directive_type_slug)' }
+  }
+  if (!directiveId) {
+    return { applied: false, error: 'directive_id is required' }
+  }
+
+  // Episode-scoped apply guard: when buildContext recorded which directives
+  // recall matched for this message, the model may only apply one of those —
+  // invented directive_ids are rejected before any record access. An undefined
+  // set (direct dispatch, legacy callers) falls through to the record checks.
+  const matchedIds: string[] | undefined = (runCtx?.config as any)?.matched_directive_ids
+  if (Array.isArray(matchedIds)) {
+    if (matchedIds.length === 0) {
+      return { applied: false, error: 'no routing directives were matched for this message — answer from evidence or escalate instead of calling apply_directive' }
+    }
+    if (!matchedIds.includes(String(directiveId))) {
+      return { applied: false, error: `directive_id "${directiveId}" is not among the directives matched for this message — use only a directive_id listed under "## Routing Directives"` }
+    }
+  }
+
+  const { data: thread } = await adminDb
+    .from('threads')
+    .select('*, type:types(*)')
+    .eq('id', threadId)
+    .single()
+  const ticketId = thread?.target_id ?? thread?.data?.target_id
+  if (!ticketId) {
+    return { applied: false, error: 'thread has no target record — cannot apply directive' }
+  }
+  const [{ data: ticket }, { data: directive }] = await Promise.all([
+    adminDb.from('items').select('*, type:types(slug,design_schema)').eq('id', ticketId).single(),
+    adminDb.from('items').select('*, type:types(slug)').eq('id', directiveId).single(),
+  ])
+  if (!ticket) {
+    return { applied: false, error: `target record not found: ${ticketId}` }
+  }
+  if (!directive || directive.type?.slug !== directiveSlug) {
+    return { applied: false, error: 'directive not found or is not the declared directive type' }
+  }
+  // Cross-account execution: only platform-authored (spine-system) directives
+  // may run in a tenant, and only when the app envelope action-allowlists
+  // this directive type. Retrieval admission (platform.sources) and execution
+  // admission (platform.actions) are separate gates. The scope lookup is lazy
+  // — it only runs on the cross-account path.
+  let directiveScope: 'account' | 'platform' = 'account'
+  let platformAccountId: string | null = null
+  if (directive.account_id && ctx.accountId && directive.account_id !== ctx.accountId) {
+    const appRef = promptConfig.app_id || agent?.app_id || (ctx as any).appId || null
+    const scope = await resolveKnowledgeScope(ctx, appRef, {}).catch(() => null)
+    platformAccountId = scope?.platformAccountId ?? null
+    if (!platformAccountId || directive.account_id !== platformAccountId) {
+      return { applied: false, error: 'directive belongs to a different account' }
+    }
+    if (!matchItemType(scope!.platformActionItemTypes, directiveSlug)) {
+      return { applied: false, error: `directive type "${directiveSlug}" is not action-allowlisted for platform records in this app's knowledge envelope` }
+    }
+    directiveScope = 'platform'
+  }
+  const d = directive.data || {}
+  const directiveTitle = directive.title || d.title || null
+  // Model-supplied confidence wins; fall back to the recall similarity that
+  // matched this directive so downstream stamps and messages carry a real score.
+  const matchConfidence = typeof params?.confidence === 'number'
+    ? params.confidence
+    : ((runCtx?.config as any)?.matched_directive_similarity?.[directive.id] ?? null)
+  if (d.status !== 'active') {
+    return { applied: false, error: `directive "${d.title || directive.id}" is ${d.status || 'unknown'} — only active directives can be applied` }
+  }
+  if (ticket.data?.matched_directive_id === directive.id) {
+    return { applied: false, already_applied: true, directive_id: directive.id }
+  }
+
+  // Tenant opt-in gate: platform directives above the annotate tier require
+  // an active subscription record in this account with sufficient max_tier.
+  // Own-account directives bypass opt-in — tenant-authored is self-authorized.
+  const requiredTier = directiveRequiredTier(d)
+  let subscription: any = null
+  if (directiveScope === 'platform' && DIRECTIVE_TIER_ORDER[requiredTier] > DIRECTIVE_TIER_ORDER.annotate) {
+    const subTypeSlug = (promptConfig.metadata as any)?.directive_subscription_type_slug
+    if (!subTypeSlug) {
+      return { applied: false, error: `platform directive "${directiveTitle || directive.id}" requires tenant opt-in (tier "${requiredTier}") but this agent declares no directive_subscription_type_slug — escalate to a human instead` }
+    }
+    const subTypeId = await resolveTypeId('item', subTypeSlug).catch(() => null)
+    const { data: subs } = subTypeId ? await adminDb
+      .from('items')
+      .select('id, data')
+      .eq('type_id', subTypeId)
+      .eq('account_id', ctx.accountId)
+      .eq('is_active', true)
+      .filter('data->>directive_id', 'eq', directive.id)
+      : { data: [] as any[] }
+    subscription = (subs || []).find((s: any) => (s.data?.status || 'active') === 'active') || null
+    if (!subscription) {
+      return { applied: false, error: `platform directive "${directiveTitle || directive.id}" requires tenant opt-in for tier "${requiredTier}" — no active ${subTypeSlug} subscription exists for this account; escalate to a human instead` }
+    }
+    const maxTier = subscription.data?.max_tier
+    if ((DIRECTIVE_TIER_ORDER[maxTier] ?? -1) < DIRECTIVE_TIER_ORDER[requiredTier]) {
+      return { applied: false, error: `subscription max_tier "${maxTier || 'unset'}" does not permit directive tier "${requiredTier}" — escalate to a human instead` }
+    }
+  }
+
+  const actions = (d.actions && typeof d.actions === 'object' && !Array.isArray(d.actions)) ? d.actions : {}
+  const recordOps = (actions.record_ops && typeof actions.record_ops === 'object') ? actions.record_ops : {}
+  const actionsTaken: string[] = []
+  const dataPatch: Record<string, any> = {}
+  const ticketFields = ticket.type?.design_schema?.fields || {}
+
+  // set_fields — allowlist-enforced: declared non-system fields only, plus
+  // an explicit escape list. Anything else is rejected, not silently dropped.
+  if (recordOps.set_fields && typeof recordOps.set_fields === 'object') {
+    const rejected: string[] = []
+    for (const [key, value] of Object.entries(recordOps.set_fields)) {
+      const fieldSpec = ticketFields[key]
+      if (!fieldSpec || (fieldSpec.system === true && !DIRECTIVE_SET_FIELDS_ALLOWLIST.has(key))) {
+        rejected.push(key)
+        continue
+      }
+      dataPatch[key] = value
+    }
+    if (rejected.length) {
+      return { applied: false, error: `set_fields rejected undeclared or system fields: ${rejected.join(', ')}` }
+    }
+    if (Object.keys(dataPatch).length) actionsTaken.push('set_fields')
+  }
+
+  // tags — union-merge into data.tags (string array)
+  if (Array.isArray(recordOps.tags) && recordOps.tags.length) {
+    const existing = Array.isArray(ticket.data?.tags) ? ticket.data.tags : []
+    dataPatch.tags = [...new Set([...existing, ...recordOps.tags.map(String)])]
+    actionsTaken.push('tags')
+  }
+
+  // watchers — resolve role:/person: handles to people ids, dedupe via the
+  // (target_type, target_id, person_id) unique constraint; conflicts are skipped.
+  if (Array.isArray(recordOps.watchers) && recordOps.watchers.length) {
+    const personIds = await resolveNotificationRecipients(
+      ctx,
+      recordOps.watchers.map((w: any) => String(w).replace(/^person:/, ''))
+    )
+    if (personIds.length) {
+      const watcherTypeId = await resolveTypeId('watcher', 'watcher')
+      for (const personId of personIds) {
+        const { error: watchErr } = await adminDb.from('watchers').insert({
+          type_id: watcherTypeId,
+          account_id: ctx.accountId ?? ticket.account_id,
+          target_type: 'item',
+          target_id: ticket.id,
+          person_id: personId,
+          watch_type: 'all',
+        })
+        if (watchErr && !String(watchErr.message || '').includes('duplicate')) {
+          console.warn(`apply_directive watcher insert failed for ${personId}: ${watchErr.message}`)
+        }
+      }
+      actionsTaken.push('watchers')
+    }
+  }
+
+  // escalation — reuse the standard handoff so ownership + notify stay consistent
+  if (recordOps.escalate === true) {
+    await handleEscalation(threadId, matchConfidence ?? 0, promptConfig, ctx, 'directive', runCtx?.config?.leaseToken)
+    actionsTaken.push('escalate')
+  }
+
+  // reply — auto_reply posts the customer-facing message; suggest stages it as
+  // an internal note plus ticket fields for staff review.
+  let replyMessage: any = null
+  const mode = d.mode === 'auto_reply' ? 'auto_reply' : 'suggest'
+  if (d.reply_template) {
+    const rendered = renderDirectiveTemplate(d.reply_template, ticket)
+    const replyTypeSlug = getReplyTypeSlug(thread.type)
+    if (mode === 'auto_reply') {
+      replyMessage = await saveMessage(threadId, rendered, 'final', {
+        directive_id: directive.id,
+        directive_title: directiveTitle,
+        confidence: matchConfidence,
+        agent_id: agent?.id,
+        prompt_config_id: promptConfig.id,
+        sender_type: 'agent',
+      }, ctx, replyTypeSlug, 'external')
+      actionsTaken.push('reply')
+    } else {
+      replyMessage = await saveMessage(threadId,
+        `Suggested reply (directive "${directiveTitle || directive.id}"):\n\n${rendered}`,
+        'plan', {
+          directive_id: directive.id,
+          suggested_reply: rendered,
+          agent_id: agent?.id,
+          prompt_config_id: promptConfig.id,
+          sender_type: 'agent',
+        }, ctx, replyTypeSlug, 'internal')
+      dataPatch.suggested_directive_id = directive.id
+      dataPatch.suggested_reply = rendered
+      actionsTaken.push('suggested_reply')
+    }
+  }
+
+  // run_pipelines — named pipelines execute with the directive match as trigger
+  // data; failures are collected, never fatal to the episode.
+  if (Array.isArray(actions.run_pipelines) && actions.run_pipelines.length) {
+    const { runPipeline } = await import('./pipeline-runner')
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    for (const ref of actions.run_pipelines) {
+      try {
+        let pipelineId = String(ref)
+        if (!isUuid.test(pipelineId)) {
+          // Tenant-first, platform fallback: a pipeline owned by this account
+          // wins over the platform-provided implementation; the final
+          // unscoped lookup preserves legacy app-level pipeline behavior.
+          let pipeline: any = null
+          for (const ownerId of [ctx.accountId, platformAccountId]) {
+            if (!ownerId || pipeline) continue
+            const { data } = await adminDb
+              .from('pipelines')
+              .select('id')
+              .eq('slug', pipelineId)
+              .eq('account_id', ownerId)
+              .eq('is_active', true)
+              .maybeSingle()
+            pipeline = data
+          }
+          if (!pipeline) {
+            const { data } = await adminDb
+              .from('pipelines')
+              .select('id')
+              .eq('slug', pipelineId)
+              .eq('is_active', true)
+              .maybeSingle()
+            pipeline = data
+          }
+          if (!pipeline) {
+            console.warn(`apply_directive pipeline not found: ${ref}`)
+            continue
+          }
+          pipelineId = pipeline.id
+        }
+        await runPipeline(pipelineId, {
+          trigger: 'directive_matched',
+          entity_type: 'items',
+          entity_id: ticket.id,
+          entity: ticket,
+          directive: { id: directive.id, slug: directiveSlug, title: d.title },
+          thread_id: threadId,
+        }, ctx)
+        actionsTaken.push(`pipeline:${ref}`)
+      } catch (err: any) {
+        console.warn(`apply_directive pipeline '${ref}' failed: ${err?.message || err}`)
+      }
+    }
+  }
+
+  // Stamp the match on the ticket for reporting and idempotency. Re-read
+  // the blob first — handleEscalation above already wrote keys like
+  // aim_escalation_reason, and merging onto the stale snapshot loaded
+  // before the actions ran would clobber them.
+  const { data: freshItem } = await adminDb
+    .from('items')
+    .select('data')
+    .eq('id', ticket.id)
+    .single()
+  dataPatch.matched_directive_id = directive.id
+  dataPatch.matched_directive_title = directiveTitle
+  dataPatch.matched_directive_at = new Date().toISOString()
+  dataPatch.directive_scope = directiveScope
+  dataPatch.directive_account_id = directive.account_id || null
+  if (typeof matchConfidence === 'number') dataPatch.directive_match_confidence = matchConfidence
+  await adminDb
+    .from('items')
+    .update({ data: { ...((freshItem?.data || ticket.data) || {}), ...dataPatch } })
+    .eq('id', ticket.id)
+
+  await emitAudit(ctx, 'agent.directive.applied', {
+    type: 'item',
+    id: ticket.id,
+    account_id: ctx.accountId ?? undefined,
+  }, {
+    directive_id: directive.id,
+    directive_slug: directiveSlug,
+    directive_scope: directiveScope,
+    required_tier: requiredTier,
+    subscription_id: subscription?.id ?? null,
+    rationale: params?.rationale || null,
+    actions_taken: actionsTaken,
+    mode,
+  })
+
+  return {
+    applied: true,
+    directive_id: directive.id,
+    directive_title: directiveTitle,
+    mode,
+    actions_taken: actionsTaken,
+    reply_posted: mode === 'auto_reply' && !!replyMessage,
+    ends_episode: actions.continue !== true,
+    message: replyMessage,
+  }
+}
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeApplyDirective:function"]
 
 
 
@@ -2220,26 +2771,32 @@ async function executeQueryItems(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:toolWriteGuards:module" type="module" identity="toolWriteGuards" parent="~/.framework/functions/_shared/agent-runner.ts"]
 // CIL[DOC-MACRO purpose="Entity/column guardrails for LLM-callable write tools"]
 // CIL[DOC-RESPONSIBILITY responsibility="Confine agent create/update tools to runtime entities and strip privileged columns from model-supplied data"]
 // CIL[DOC-CONTRACT inputs="entity name, record data" outputs="sanitized data / throws" errors="Error when entity is not writable by agent tools" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="TOOL_WRITABLE_ENTITIES allowlists runtime tables; TOOL_FORBIDDEN_COLUMNS blocks mass-assignment of role_id/account_id/auth_uid/type_id/app_id/design_schema/validation_schema/created_by" notable_decisions="The model may name any entity/column — these lists are the enforcement, prompt config is not"]
 // CIL[DOC-STABILITY stability="stable"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_WRITABLE_ENTITIES:constant" type="constant" identity="TOOL_WRITABLE_ENTITIES" parent="~/.framework/functions/_shared/agent-runner.ts"]
 const TOOL_WRITABLE_ENTITIES = new Set([
   'items', 'threads', 'messages', 'attachments', 'watchers', 'item_progress'
 ])
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_WRITABLE_ENTITIES:constant"]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_FORBIDDEN_COLUMNS:constant" type="constant" identity="TOOL_FORBIDDEN_COLUMNS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 const TOOL_FORBIDDEN_COLUMNS = new Set([
   'role_id', 'account_id', 'auth_uid', 'type_id', 'app_id',
   'design_schema', 'validation_schema', 'created_by'
 ])
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_FORBIDDEN_COLUMNS:constant"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:assertToolEntity:function" type="function" identity="assertToolEntity" parent="~/.framework/functions/_shared/agent-runner.ts"]
 function assertToolEntity(entity: any): void {
   if (!TOOL_WRITABLE_ENTITIES.has(entity)) {
     throw new Error(`Entity "${entity}" is not writable by agent tools`)
   }
 }
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:assertToolEntity:function"]
 
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:stripToolColumns:function" type="function" identity="stripToolColumns" parent="~/.framework/functions/_shared/agent-runner.ts"]
 function stripToolColumns(data: any): any {
   if (!data || typeof data !== 'object') return data
   const clean: any = {}
@@ -2248,7 +2805,7 @@ function stripToolColumns(data: any): any {
   }
   return clean
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:toolWriteGuards:module"]
+// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:stripToolColumns:function"]
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCreateRecord:function" type="function" identity="executeCreateRecord" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
@@ -2609,7 +3166,7 @@ async function handleEscalation(
           thread_id: threadId,
           confidence,
           threshold: promptConfig.confidence_threshold,
-          reason: 'low_confidence'
+          reason: escalationReason
         },
         ctx
       )
@@ -3271,6 +3828,19 @@ const CIL_TOOLS: any[] = [
         question: { type: 'string', description: 'The question to ask the user' },
       },
       required: ['question'],
+    },
+  },
+  {
+    name: 'apply_directive',
+    description: 'Apply a routing directive from the "## Routing Directives" list when the customer is asking for something to be done or routed rather than asking a question. Executes the directive\'s admin-authored actions (reply, tags, watchers, escalation, pipelines). Call this instead of answering or escalating when a directive matches — at most one per message.',
+    parameters: {
+      type: 'object',
+      properties: {
+        directive_id: { type: 'string', description: 'The directive_id of the matching entry in "## Routing Directives"' },
+        rationale: { type: 'string', description: 'Why this directive matches the customer message' },
+        confidence: { type: 'number', description: 'Optional 0-1 confidence that this directive is the right match' },
+      },
+      required: ['directive_id'],
     },
   },
 ]
@@ -4271,7 +4841,7 @@ export async function runAgentStep(
   userMessage: string,
   ctx: CoreContext,
   config: AgentConfig
-): Promise<{ message: any; state: ResearchState; confidence?: number; evidenceState?: EvidenceState; escalated?: boolean }> {
+): Promise<{ message: any; state: ResearchState; confidence?: number; evidenceState?: EvidenceState; escalated?: boolean; directive_applied?: boolean }> {
   return withSpan(ctx, 'agent.run_step', async (ctx) => {
     const { agent, promptConfig, thread, threadType } = config
     const replyTypeSlug = getReplyTypeSlug(threadType)
@@ -4344,9 +4914,14 @@ export async function runAgentStep(
       ), { docs: retrievedSources, meanSimilarity })
     }
 
-    const inferenceAgent = researchAttempted || !agent.model_config?.tools?.length
+    const hiddenToolNames = new Set<string>()
+    if (!researchAttempted) hiddenToolNames.add('ask_user')
+    // apply_directive is offered only when recall actually matched a directive
+    // for this message — an empty match set just invites invented directive_ids.
+    if (!((config as any).matched_directive_ids || []).length) hiddenToolNames.add('apply_directive')
+    const inferenceAgent = hiddenToolNames.size === 0 || !agent.model_config?.tools?.length
       ? agent
-      : { ...agent, model_config: { ...agent.model_config, tools: agent.model_config.tools.filter((t: any) => t.function?.name !== 'ask_user') } }
+      : { ...agent, model_config: { ...agent.model_config, tools: agent.model_config.tools.filter((t: any) => !hiddenToolNames.has(t.function?.name)) } }
     // Heartbeat again after buildContext — it can take tens of seconds,
     // and stale-gated detached steals key on heartbeat age. One extra RPC
     // keeps a healthy long-build driver unstealable through inference.
@@ -4452,6 +5027,33 @@ export async function runAgentStep(
           sender_type: 'agent'
         }, ctx, replyTypeSlug, 'external')
         return { message: escMsg, state, confidence, escalated: true }
+      }
+
+      // A terminal apply_directive call ends the episode — the executor has
+      // already applied record ops and posted any reply. When the directive
+      // escalated without a reply of its own, narrate the standard handoff so
+      // the customer still hears back.
+      const directiveApplied = toolResults.find((tr: any) => tr.tool === 'apply_directive' && tr.result?.applied && tr.result?.ends_episode)
+      if (directiveApplied) {
+        state.status = 'complete'
+        state.completed_at = new Date().toISOString()
+        await setResearchState(threadId, state, thread.data, config.leaseToken)
+        if (directiveApplied.result?.reply_posted && directiveApplied.result?.message) {
+          return { message: directiveApplied.result.message, state, confidence, directive_applied: true }
+        }
+        if (directiveApplied.result?.actions_taken?.includes('escalate')) {
+          const escDirectiveMsg = await saveMessage(threadId, "I've escalated this to a human support agent — they'll review your request and follow up shortly.", 'final', {
+            escalated: true,
+            escalation_notice: true,
+            directive_id: directiveApplied.result?.directive_id,
+            confidence,
+            agent_id: agent.id,
+            prompt_config_id: promptConfig.id,
+            sender_type: 'agent'
+          }, ctx, replyTypeSlug, 'external')
+          return { message: escDirectiveMsg, state, confidence, escalated: true, directive_applied: true }
+        }
+        return { message: directiveApplied.result?.message || null, state, confidence, directive_applied: true }
       }
 
       const ask = toolResults.find((tr: any) => tr.result?._awaiting_input)
@@ -4845,7 +5447,9 @@ export async function runAgent(
           const finalConfidence = step.confidence ?? final.data?.confidence
           const finalEvidence = step.evidenceState ?? final.data?.evidence_state
           const finalEscalated = step.escalated ?? final.data?.escalated
-          if (!finalEscalated &&
+          // directive_applied episodes end with the directive's own actions —
+          // a low composite score must not escalate on top of them.
+          if (!finalEscalated && !step.directive_applied &&
               finalConfidence < (promptConfig.confidence_threshold || 0) &&
               finalEvidence !== 'evidence_found') {
             await handleEscalation(threadId, finalConfidence, promptConfig, ctx, 'low_confidence', config.leaseToken)
@@ -4913,7 +5517,9 @@ export async function runAgent(
         const finalConfidence = lastStep?.confidence ?? final.data?.confidence
         const finalEvidence = lastStep?.evidenceState ?? final.data?.evidence_state
         const finalEscalated = lastStep?.escalated ?? final.data?.escalated
-        if (!finalEscalated &&
+        // directive_applied episodes end with the directive's own actions —
+        // a low composite score must not escalate on top of them.
+        if (!finalEscalated && !lastStep?.directive_applied &&
             finalConfidence < (promptConfig.confidence_threshold || 0) &&
             finalEvidence !== 'evidence_found') {
           await handleEscalation(threadId, finalConfidence, promptConfig, ctx, 'low_confidence', config.leaseToken)
@@ -6431,9 +7037,9 @@ async function isAnsweredQuestionReplay(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function" type="function" identity="isHumanOwned" parent="~/.framework/functions/_shared/agent-runner.ts"]
 // CIL[DOC-LEARNING topic="human_owner_gate" content="thread.data.owner:'human' is THE human/agent gate — while set, no agent episode may be claimed, narrated, or run. It is semantic ownership, orthogonal to the episode lease (who may write now). Both must hold for agent work: a free lease alone is not permission. The gate exists because serverless invocations freeze and resume into a changed world — a driver resuming after handoff found the lease free and re-escalated a thread waiting on a human (prod, Oct 2026)."]
 // CIL[DOC-NOTE type="caution" content="Core must NEVER gate on app-level item statuses (human_assigned, pending_resolution, human_action...) — core is domain-agnostic. Apps translate their workflow into the framework signal by stamping threads.data.owner:'human' themselves. The only core writer is handleEscalation."]
+// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function" type="function" identity="isHumanOwned" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The human/agent ownership gate. `thread.data.owner === 'human'` means a
  * person owns this conversation and NO agent episode may be claimed,

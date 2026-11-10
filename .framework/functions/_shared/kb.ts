@@ -347,7 +347,8 @@ async function ensurePlatformAccountId(): Promise<string | null> {
 // CIL[DOC-RESPONSIBILITY responsibility="Declares the maximum set of KB/platform/CIL corpora any agent in an app may reach; deny-by-default when absent"]
 // CIL[DOC-CONTEXT module="functions/_shared" layer="kb" related_files=".framework/functions/_shared/agent-runner.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/cli/commands/install-app.ts"]
 // CIL[DOC-CONTRACT inputs="apps.config.knowledge (persisted from manifest.config.knowledge)" outputs="KnowledgeEnvelope" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="account gates own/descendant corpora (item_types supports trailing-* prefixes, scope self|self_and_descendants); platform.sources allowlists platform-account item types; cil requires explicit project_ids and governs every cil_chunk row" notable_decisions="missing envelope = no access; envelope is the ceiling, per-agent retrieval_policy picks may only narrow it"]
+// CIL[DOC-MICRO logic_summary="account gates own/descendant corpora (item_types supports trailing-* prefixes, scope self|self_and_descendants); platform.sources allowlists platform-account item types for retrieval while platform.actions separately allowlists platform item_types whose structured actions may execute in-account; cil requires explicit project_ids and governs every cil_chunk row" notable_decisions="missing envelope = no access; envelope is the ceiling, per-agent retrieval_policy picks may only narrow it; retrieval (sources) and execution (actions) are independent gates — readable platform knowledge never implies executable actions"]
+// CIL[DOC-LEARNING topic="design_decision" content="platform.sources and platform.actions are separate allowlists by design so shared platform articles can answer tenant questions while platform-authored directives only execute when the app action-allowlists the type — this is what lets Answer Once share KB articles + routing directives from one platform account without per-account KB copies. AO manifest: sources=[ao_kb_shared, ao_triage_directive], actions=[ao_triage_directive]."]
 // CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
 // CIL[DOC-STABILITY stability="experimental"]
 export interface KnowledgeEnvelope {
@@ -355,8 +356,11 @@ export interface KnowledgeEnvelope {
    *  scope ('self' | 'self_and_descendants') and item_types patterns
    *  (exact slug or 'prefix*'). Omitted/false = no account KB access. */
   account?: boolean | { scope?: 'self' | 'self_and_descendants'; item_types?: string[] }
-  /** Platform (spine-system) corpus. sources = allowed item_type patterns. */
-  platform?: boolean | { sources?: string[] }
+  /** Platform (spine-system) corpus. sources = allowed item_type patterns
+   *  for retrieval; actions = platform item_types whose structured actions
+   *  may EXECUTE in this account (e.g. apply_directive) — separate gate,
+   *  deny-by-default. Reading platform knowledge never implies action. */
+  platform?: boolean | { sources?: string[]; actions?: string[] }
   /** CIL corpus. Only granted when an explicit project id list resolves. */
   cil?: boolean | { project_ids?: string[] }
 }
@@ -364,7 +368,7 @@ export interface KnowledgeEnvelope {
 
 // CIL[BEGIN stable_id="~/.framework/functions/_shared/kb.ts:knowledgescope:interface" type="interface" identity="KnowledgeScope" parent="~/.framework/functions/_shared/kb.ts"]
 // CIL[DOC-MACRO purpose="Resolved effective knowledge access for one request/run"]
-// CIL[DOC-RESPONSIBILITY responsibility="Carries the envelope∩pick intersection: permitted account ids, per-corpus item type allowlists, CIL project ids, and out-of-envelope violations"]
+// CIL[DOC-RESPONSIBILITY responsibility="Carries the envelope∩pick intersection: permitted account ids, per-corpus item type allowlists, the platform action-execution allowlist, CIL project ids, and out-of-envelope violations"]
 // CIL[DOC-CONTEXT module="functions/_shared" layer="kb" related_files=".framework/functions/_shared/kb.ts"]
 // CIL[DOC-CONTRACT inputs="KnowledgeEnvelope + agent retrieval_policy pick + caller account tree" outputs="KnowledgeScope" errors="violations[] for picks outside the envelope" side_effects="none"]
 // CIL[DOC-STABILITY stability="experimental"]
@@ -379,6 +383,10 @@ export interface KnowledgeScope {
   /** null = unrestricted within the corpus; [] = corpus disabled. */
   accountItemTypes: string[] | null
   platformItemTypes: string[] | null
+  /** Platform item_types whose structured actions may execute in this
+   *  account (envelope platform.actions). Not pick-intersected — this is an
+   *  executor gate, not a search filter. [] = no platform actions allowed. */
+  platformActionItemTypes: string[]
   /** null = CIL denied. Always an explicit list when enabled. */
   cilProjectIds: string[] | null
   /** Safe filter_item_types for match_embeddings, or null when a wildcard/unrestricted corpus exists. */
@@ -446,6 +454,7 @@ export async function resolveKnowledgeScope(
     platformAccountId: null,
     accountItemTypes: [],
     platformItemTypes: [],
+    platformActionItemTypes: [],
     cilProjectIds: null,
     rpcItemTypes: null,
     violations: [],
@@ -549,6 +558,10 @@ export async function resolveKnowledgeScope(
   }
   const accountItemTypes = pickTypes ? pickTypes.filter((t) => matchItemType(envAccountTypes, t)) : envAccountTypes
   const platformItemTypes = pickTypes ? pickTypes.filter((t) => matchItemType(envPlatformTypes, t)) : envPlatformTypes
+  // Execution allowlist for platform-authored structured actions (e.g.
+  // directives). Not intersected with the agent pick — an executor that
+  // needs it reads the full grant.
+  const platformActionItemTypes = platformEnabled ? (platformBlock.actions ?? []) : []
   if (cilDeniedPicks.length) violations.push(`cil projects outside envelope: ${cilDeniedPicks.join(',')}`)
 
   const accountIds = [
@@ -590,6 +603,7 @@ export async function resolveKnowledgeScope(
     platformAccountId,
     accountItemTypes,
     platformItemTypes,
+    platformActionItemTypes,
     cilProjectIds,
     rpcItemTypes,
     violations,
@@ -673,13 +687,13 @@ export async function kbIngest(ctx: CoreContext, body: { id: string; account_id?
   if (error) throw error
   if (!record) throw new Error('record not found')
 
-  if (record.status !== 'published') {
-    await kbRevoke(ctx, { id })
-    return { ok: true, message: 'record is not published; embeddings revoked if any' }
-  }
-
   const designSchema = record.design_schema || {}
   const kbConfig = designSchema.functionality?.kb || {}
+  const publishStatus = kbConfig.publish_status || 'published'
+  if (record.status !== publishStatus) {
+    await kbRevoke(ctx, { id })
+    return { ok: true, message: `record is not ${publishStatus}; embeddings revoked if any` }
+  }
   const vectorFields = kbConfig.vector_fields || ['title', 'content']
   const chunkField = kbConfig.chunk_field || 'content'
   const chunkSize = kbConfig.chunk_size || DEFAULT_CHUNK_SIZE

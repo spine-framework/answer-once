@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 // CIL[DOC-MACRO purpose="Company ticket workspace — external customer thread + internal notes + actions"]
 // CIL[DOC-RESPONSIBILITY responsibility="Show ticket detail with external/internal threads, reply box, and resolution actions for support"]
 // CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/TicketPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/hooks/useSupportThreads.ts"]
@@ -26,11 +26,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@core/components/ui/tabs'
 import { ArrowLeft, Send, Lock, Globe, Bot, User, CheckCircle, Clock, Brain, BookOpen, Eye, EyeOff, Info } from 'lucide-react'
 import { useState, useCallback, useEffect, useRef } from 'react'
-
-const STEP_TYPES = new Set(['plan', 'thinking', 'tool_call', 'tool_result'])
-const isStepMessage = (m: any) => STEP_TYPES.has(m.data?.message_type)
 // CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:module_header:module_header"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:STEP_TYPES:constant" type="constant" identity="STEP_TYPES" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
+const STEP_TYPES = new Set(['plan', 'thinking', 'tool_call', 'tool_result'])
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:STEP_TYPES:constant"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:isStepMessage:function" type="function" identity="isStepMessage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
+const isStepMessage = (m: any) => STEP_TYPES.has(m.data?.message_type)
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:isStepMessage:function"]
+
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:ThreadMessage:component" type="component" identity="ThreadMessage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 function ThreadMessage({ msg }: { msg: any }) {
   const mt = msg.data?.message_type
   const isAgent = mt === 'agent' || mt === 'final'
@@ -74,7 +79,9 @@ function ThreadMessage({ msg }: { msg: any }) {
     </div>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:ThreadMessage:component"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:TicketPage:component" type="component" identity="TicketPage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 export default function TicketPage() {
   const { id } = useParams<{ id: string }>()
   const appPath = useAppPath()
@@ -502,6 +509,37 @@ export default function TicketPage() {
         <p className="text-sm">{personName(ticket?.created_by) || '—'}</p>
       </div>
 
+      {/* Routing Directive — match stamp from apply_directive, plus
+          approve-and-send for suggest-mode replies */}
+      {(ticket?.data?.matched_directive_id || ticket?.data?.suggested_reply) && (
+        <div>
+          <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">Routing Directive</h3>
+          <div className="space-y-1 text-sm">
+            {ticket.data.matched_directive_title && (
+              <p>Matched: <span className="font-medium">{ticket.data.matched_directive_title}</span></p>
+            )}
+            {ticket.data.suggested_reply && (
+              <div className="border rounded p-2 space-y-2">
+                <p className="text-xs text-muted-foreground">Suggested reply</p>
+                <p className="text-sm whitespace-pre-wrap">{ticket.data.suggested_reply}</p>
+                <button
+                  className="text-xs border rounded px-2 py-1"
+                  onClick={async () => {
+                    await sendExternalReply(ticket.data.suggested_reply, { name: user?.full_name || user?.email, role: 'Support' })
+                    await updateTicket(id!, {
+                      data: { ...normalizeDataForWrite(ticket.data || {}), suggested_directive_id: null, suggested_reply: null },
+                    })
+                    await refetch?.()
+                  }}
+                >
+                  Approve &amp; send
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* AI Triage */}
       {ticket?.data?.aim_triage_agent_id && (
         <div>
@@ -717,6 +755,41 @@ export default function TicketPage() {
               ) : (
                 <div className="border-t border-border p-4">
                   <div className="flex items-center gap-2 justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      title="Turn this resolution into a triage directive draft — the routing rule applies next time a similar request arrives"
+                      onClick={() => {
+                        const lastHumanReply = [...(externalMessages || [])]
+                          .reverse()
+                          .find((m: any) => m.direction === 'outbound' && (m.data?.message_type === 'human' || m.data?.human_reply === true))
+                        const escalated = !!ticket?.data?.aim_escalation_reason && ticket.data.aim_escalation_reason !== 'none'
+                        navigate(appPath('/company/directives'), {
+                          state: {
+                            newDirective: {
+                              title: ticket?.title || '',
+                              match_description: ticket?.data?.description || ticket?.title || '',
+                              reply_template: lastHumanReply?.content || '',
+                              mode: 'suggest',
+                              priority: 100,
+                              source_ticket_id: id,
+                              actions: JSON.stringify({
+                                record_ops: {
+                                  tags: Array.isArray(ticket?.data?.tags) ? ticket.data.tags : [],
+                                  watchers: [],
+                                  set_fields: {},
+                                  escalate: escalated,
+                                },
+                                run_pipelines: [],
+                                continue: false,
+                              }, null, 2),
+                            },
+                          },
+                        })
+                      }}
+                    >
+                      Save as directive
+                    </Button>
                     <Button variant="outline" size="sm" onClick={handleReopen} disabled={updating}>
                       Reopen
                     </Button>
@@ -779,3 +852,4 @@ export default function TicketPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:TicketPage:component"]

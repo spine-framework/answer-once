@@ -124,6 +124,6 @@ To run **this repo** directly: same steps as above minus `npm create` —
 
 ## License
 
-See [LICENSE.md](LICENSE.md) — Spine Framework / Answer Once Internal Use
-License. Free for internal business use; commercial redistribution requires a
-separate license (see spine-framework.com).
+See [LICENSE.md](LICENSE.md) — Answer Once Perpetual License. Unpaid installs
+are licensed for evaluation, testing, and due diligence only; production use
+requires a purchased license (see answer-once.com/license.html).

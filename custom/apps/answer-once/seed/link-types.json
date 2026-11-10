@@ -8,5 +8,15 @@
       "source_kind": "item",
       "target_kind": "item"
     }
+  },
+  {
+    "slug": "ao_article_directive",
+    "name": "Article Directive",
+    "description": "Action link from a knowledge article to the triage directive it carries — retrieval surfaces the linked directive to apply_directive through the article",
+    "is_active": true,
+    "config": {
+      "source_kind": "item",
+      "target_kind": "item"
+    }
   }
 ]

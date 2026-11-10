@@ -1,8 +1,8 @@
 {
   "name": "@spine-framework/answer-once",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "private": false,
-  "description": "Answer Once \u2014 focused customer-support and knowledge-loop app for Spine Framework",
+  "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE.md",
   "publishConfig": {

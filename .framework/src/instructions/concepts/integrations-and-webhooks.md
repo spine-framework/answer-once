@@ -60,15 +60,32 @@ calls all go through its `execute`:
    `api_token`) — skipped when the entry is absent or an empty
    `source: 'value'` literal, which means "call without auth"; the adapter
    then decides whether a key is required — and **pick an adapter**:
-   `action_config.adapter || integration.config.outbound_adapter`. Built-ins:
-   `adapters/openai-outbound`, `adapters/generic-webhook-outbound`,
-   `adapters/resend-outbound`; anything else is dynamically imported as a
-   sibling module exposing `buildRequest`.
+   `action_config.adapter || integration.config.outbound_adapter`. Built-ins
+   are a static map (`builtInOutboundAdapters`): `adapters/openai-outbound`,
+   `adapters/generic-webhook-outbound`, `adapters/resend-outbound`,
+   `adapters/make-outbound`. Dynamic module loading was removed —
+   caller-chosen module names are an arbitrary-code-execution surface — so
+   custom adapters must be registered in the map, and an `Outbound adapter
+   not found` error for a registered name means the executing bundle predates
+   the registration (stale build or another deployment sharing the DB), not a
+   misspelled name.
 4. **Send**: the adapter builds `{ url, method, headers, body }`; the function
    fetches it, then updates the delivery to `delivered` (with
    `response_status`, `response_body`, `duration_ms`) or `pending`/`failed`.
 5. Optionally, `action_config.update_record` stamps
    `last_outbound_status` / `last_outbound_at` back onto the source item.
+
+Resolution is tenant-first, then the system row (`account_id IS NULL`) — a
+missing tenant row silently resolves the system integration, so adapters
+needing per-account config fail downstream rather than at lookup.
+`adapters/make-outbound` is the example: the global `make` seed ships
+`config.scenarios = {}`, and every account that sends to Make needs its own
+`make` integration row with `config.scenarios.<key>.url` and
+`credentials.api_token` (sent as `x-make-apikey`). When triaging a failed
+outbound, read `webhook_deliveries` (`status`, `last_error`,
+`integration_id`, `account_id`) plus the `logs` events
+`integration.outbound.*` keyed by `delivery_id` — `integration_id` tells you
+which row was resolved.
 
 ## Delivery and retry semantics
 
@@ -83,7 +100,12 @@ every tick (see [automation](./automation.md)). It sweeps `webhook_deliveries`
 rows that are `pending`, `attempt_count < 10`, and `next_attempt_at` due (or
 null), up to 100 per pass, and re-invokes `integration-outbound` with
 `delivery_id` under the system principal — the `delivery_id` path reuses the
-existing row instead of inserting a duplicate. You can also retry one delivery
+existing row instead of inserting a duplicate. Because the filter also
+matches brand-new deliveries (`pending` with `next_attempt_at` null), any
+second deployment sharing the database — e.g. a stale Netlify site whose
+`trigger-scheduler` still fires `system-cron` — can consume and poison a
+delivery with outdated code before the originating pipeline's wire call
+settles. You can also retry one delivery
 manually via `POST /api/deliveries?action=retry { id }`
 (`.framework/functions/deliveries.ts`); manual retry is outbound-only. Inbound
 retry is not implemented — inbound failures are counted and logged.

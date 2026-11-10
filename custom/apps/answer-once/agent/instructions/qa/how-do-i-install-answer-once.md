@@ -27,7 +27,7 @@ npm install
 npm run verify
 npm run spine-framework -- migrate
 npm run spine-framework -- seed-app answer-once
-npm run verify:install
+npm run verify:install -- --app answer-once
 npm run dev:netlify
 ```
 

@@ -20,7 +20,7 @@ npm install
 npm run verify
 npm run spine-framework -- migrate
 npm run spine-framework -- seed-app answer-once
-npm run verify:install
+npm run verify:install -- --app answer-once
 npm run dev:netlify
 ```
 
@@ -61,7 +61,7 @@ Both upgrade commands refuse to overwrite files you modified locally; pass
 - Node.js 22+
 - `spine-framework` `>=0.4.0 <0.6.0` (peer dependency)
 - A [Supabase](https://supabase.com) project; [Netlify](https://netlify.com)
-  for deployment (`netlify dev` for local — pinned as a devDependency)
+  for deployment (`npm run dev:netlify` for local — CLI pinned as a devDependency)
 
 ## Status
 
@@ -71,6 +71,6 @@ change between minor versions.
 
 ## License
 
-See LICENSE.md — Spine Framework / Answer Once Internal Use License (free for
-internal business use; commercial redistribution requires a separate license —
-see spine-framework.com).
+See LICENSE.md — Answer Once Perpetual License. Unpaid installs are licensed
+for evaluation, testing, and due diligence only; production use requires a
+purchased license (see answer-once.com/license.html).

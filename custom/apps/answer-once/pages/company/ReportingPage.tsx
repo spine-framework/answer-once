@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 // CIL[DOC-MACRO purpose="Executive reporting — reconciles all demand into outcome buckets, tracks Answer Once economics, and annotates intentional changes; renders as a dashboard or a fullscreen presentation"]
 // CIL[DOC-RESPONSIBILITY responsibility="Aggregate ao_support_ticket / ao_kb_article / ao_change_marker / ao_ticket_message records client-side into: demand reconciliation (validated AO / human action / exception / knowledge gap / unclassified / in flight), KPI cards with period-over-period or year-over-year deltas, AO trend with change-marker reference lines, human-action procedure table, exception taxonomy, gap topics, knowledge funnel, per-account breakdown, friction + integrity metrics, and estimated human hours"]
 // CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/ReportingPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, .framework/src/components/ui/chart.tsx, custom/apps/answer-once/hooks/useDirectory.ts, custom/apps/answer-once/pages/company/TicketPage.tsx, custom/apps/answer-once/pages/company/KBArticlePage.tsx"]
@@ -17,6 +17,7 @@ import { Input } from '@core/components/ui/input'
 import { Textarea } from '@core/components/ui/textarea'
 import { Label } from '@core/components/ui/label'
 import {
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:module_header:module_header"]
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@core/components/ui/select'
 import {
@@ -30,18 +31,24 @@ import {
 } from 'recharts'
 import { ChevronLeft, ChevronRight, Flag, Info, Presentation, X } from 'lucide-react'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@core/components/ui/hover-card'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:module_header:module_header"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fetchJSON:function" type="function" identity="fetchJSON" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 async function fetchJSON(path: string, init?: RequestInit) {
   const res = await apiFetch(path, { headers: { 'Content-Type': 'application/json' }, ...init })
   const json = await res.json().catch(() => null)
   if (!res.ok || json?.error) throw new Error(json?.error || `HTTP ${res.status}`)
   return json?.data
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fetchJSON:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RangeKey:type" type="type" identity="RangeKey" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 type RangeKey = 'today' | 'yesterday' | '7d' | '30d' | '90d' | 'mtd' | 'qtd' | 'ytd' | 'all' | 'custom'
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RangeKey:type"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:CompareKey:type" type="type" identity="CompareKey" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 type CompareKey = 'none' | 'prev' | 'yoy'
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:CompareKey:type"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RANGES:constant" type="constant" identity="RANGES" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const RANGES: { key: RangeKey; label: string }[] = [
   { key: 'today', label: 'Today' },
   { key: 'yesterday', label: 'Yesterday' },
@@ -54,17 +61,25 @@ const RANGES: { key: RangeKey; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'custom', label: 'Custom' },
 ]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RANGES:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:COMPARES:constant" type="constant" identity="COMPARES" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const COMPARES: { key: CompareKey; label: string }[] = [
   { key: 'none', label: 'No compare' },
   { key: 'prev', label: 'vs previous' },
   { key: 'yoy', label: 'vs year ago' },
 ]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:COMPARES:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Window:interface" type="interface" identity="Window" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 interface Window { start: number; end: number }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Window:interface"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:startOfDay:function" type="function" identity="startOfDay" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function startOfDay(t: number) { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime() }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:startOfDay:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:rangeWindow:function" type="function" identity="rangeWindow" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function rangeWindow(key: RangeKey, customStart: string, customEnd: string): Window {
   const now = Date.now()
   const day = 86400000
@@ -86,7 +101,9 @@ function rangeWindow(key: RangeKey, customStart: string, customEnd: string): Win
     default: return { start: now - 30 * day, end: now }
   }
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:rangeWindow:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:compareWindow:function" type="function" identity="compareWindow" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function compareWindow(win: Window, key: CompareKey): Window | null {
   if (key === 'none' || win.start === 0) return null
   if (key === 'prev') { const len = win.end - win.start; return { start: win.start - len, end: win.start } }
@@ -94,50 +111,68 @@ function compareWindow(win: Window, key: CompareKey): Window | null {
   const e = new Date(win.end); e.setFullYear(e.getFullYear() - 1)
   return { start: s.getTime(), end: e.getTime() }
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:compareWindow:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RESOLVED_STATUSES:constant" type="constant" identity="RESOLVED_STATUSES" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const RESOLVED_STATUSES = new Set(['resolved', 'closed'])
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:RESOLVED_STATUSES:constant"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:AI_VIA:constant" type="constant" identity="AI_VIA" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const AI_VIA = new Set(['ai_confirmed', 'ai_auto'])
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:AI_VIA:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:inWindow:function" type="function" identity="inWindow" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function inWindow(iso: string | undefined, w: Window) {
   if (!iso) return false
   const t = new Date(iso).getTime()
   return !Number.isNaN(t) && t >= w.start && t <= w.end
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:inWindow:function"]
 
 // boolean fields can arrive display-formatted ("Yes"/"No") through admin-data
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:isTrue:function" type="function" identity="isTrue" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const isTrue = (v: any) => v === true || v === 'true' || v === 'Yes'
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:isTrue:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:numOrNull:function" type="function" identity="numOrNull" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function numOrNull(v: any): number | null {
   if (v === null || v === undefined || v === '') return null
   const n = Number(v)
   return Number.isFinite(n) ? n : null
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:numOrNull:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:median:function" type="function" identity="median" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function median(values: number[]) {
   if (!values.length) return null
   const s = [...values].sort((a, b) => a - b)
   const mid = Math.floor(s.length / 2)
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:median:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fmtHours:function" type="function" identity="fmtHours" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function fmtHours(h: number | null) {
   if (h === null) return '—'
   if (h < 1) return `${Math.round(h * 60)}m`
   if (h < 48) return `${h.toFixed(1)}h`
   return `${(h / 24).toFixed(1)}d`
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fmtHours:function"]
 
 // Final resolution attribution. resolved_via is authoritative; legacy tickets
 // resolved before the stamp fall back to aim_resolved_by_ai.
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:isAiResolved:function" type="function" identity="isAiResolved" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function isAiResolved(t: any) {
   if (!RESOLVED_STATUSES.has(t.status)) return false
   const via = t.data?.resolved_via
   if (via) return AI_VIA.has(via)
   return isTrue(t.data?.aim_resolved_by_ai)
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:isAiResolved:function"]
 
 // Customer wait — AI cases clock out at the confident answer
 // (resolve_pending_since), human cases at resolved_at.
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:waitHours:function" type="function" identity="waitHours" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function waitHours(t: any): number | null {
   const end = isAiResolved(t)
     ? (t.data?.resolve_pending_since || t.data?.resolved_at || t.updated_at)
@@ -146,25 +181,33 @@ function waitHours(t: any): number | null {
   const ms = new Date(String(end).replace(/ at /i, ' ')).getTime() - new Date(t.created_at).getTime()
   return Number.isNaN(ms) || ms < 0 ? null : ms / 3600000
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:waitHours:function"]
 
 // --- Demand reconciliation -------------------------------------------------
 // Every ticket lands in exactly one bucket. Explicit demand_class stamps win
 // for human-resolved cases; everything else is derived at read time.
 
-type DemandClass = 'validated_ao' | 'human_action' | 'exception' | 'knowledge_gap' | 'unclassified' | 'in_flight'
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:DemandClass:type" type="type" identity="DemandClass" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
+type DemandClass = 'validated_ao' | 'human_action' | 'exception' | 'knowledge_gap' | 'directive_handled' | 'unclassified' | 'in_flight'
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:DemandClass:type"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:DEMAND_CLASSES:constant" type="constant" identity="DEMAND_CLASSES" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const DEMAND_CLASSES: { key: DemandClass; label: string; color: string; desc: string }[] = [
   { key: 'validated_ao', label: 'Validated AO', color: 'hsl(216 100% 50%)', desc: 'Resolved by AI — confirmed by the customer or unchallenged through the auto-resolve window' },
   { key: 'human_action', label: 'Human Action', color: 'hsl(208 100% 60%)', desc: 'A person followed a known procedure — tracked per article with estimated minutes' },
   { key: 'exception', label: 'Exception', color: 'hsl(219 72% 25%)', desc: 'Reopened or escalated — judgment calls, not knowledge gaps' },
   { key: 'knowledge_gap', label: 'Knowledge Gap', color: 'hsl(38 92% 55%)', desc: 'No answer existed — this is the KB write-backlog' },
+  { key: 'directive_handled', label: 'Directive Handled', color: 'hsl(262 80% 60%)', desc: 'Matched a routing directive — action applied without human triage' },
   { key: 'unclassified', label: 'Unclassified', color: 'hsl(214 25% 60%)', desc: 'Human-resolved but not yet classified — classify on the ticket page' },
   { key: 'in_flight', label: 'In Flight', color: 'hsl(214 55% 78%)', desc: 'Still open, awaiting confirmation, or being worked' },
 ]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:DEMAND_CLASSES:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:classifyTicket:function" type="function" identity="classifyTicket" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function classifyTicket(t: any): DemandClass {
   if (!RESOLVED_STATUSES.has(t.status)) return 'in_flight'
   if (isAiResolved(t)) return 'validated_ao'
+  if (t.data?.matched_directive_id) return 'directive_handled'
   const dc = t.data?.demand_class
   if (dc === 'human_action' || t.data?.ha_article_id) return 'human_action'
   if (dc === 'exception' || dc === 'knowledge_gap' || dc === 'unclassified') return dc
@@ -172,10 +215,12 @@ function classifyTicket(t: any): DemandClass {
   if (t.data?.kb_article_id) return 'knowledge_gap'
   return 'unclassified'
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:classifyTicket:function"]
 
 // Estimated human minutes — stamped human_minutes, else the linked procedure's
 // est_minutes, else a 15-minute fallback for cases a human touched. AI-validated
 // and AI-owned in-flight cases estimate to zero. Always an estimate.
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:estHumanMinutes:function" type="function" identity="estHumanMinutes" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function estHumanMinutes(t: any, articleById: Map<string, any>): number {
   const stamped = numOrNull(t.data?.human_minutes)
   if (stamped != null) return stamped
@@ -187,9 +232,13 @@ function estHumanMinutes(t: any, articleById: Map<string, any>): number {
   if (cls === 'in_flight') return (t.status === 'human_assigned' || t.status === 'in_progress') ? 15 : 0
   return 15
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:estHumanMinutes:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:STOPWORDS:constant" type="constant" identity="STOPWORDS" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const STOPWORDS = new Set('the a an to for and or of in on at is it its do does did can could we you your i me my our us they them their this that these those are was were be been with without not no yes how what when where why which who get got use used using need needs have has had help issue problem question ticket about from as by will would should just also new make made want know'.split(' '))
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:STOPWORDS:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:titleKeywords:function" type="function" identity="titleKeywords" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function titleKeywords(tickets: any[]): [string, number][] {
   const counts = new Map<string, number>()
   for (const t of tickets) {
@@ -203,9 +252,11 @@ function titleKeywords(tickets: any[]): [string, number][] {
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1])
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:titleKeywords:function"]
 
 // --- Primitives (cheap, also used for comparison windows + marker evals) ----
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PrimitiveStats:interface" type="interface" identity="PrimitiveStats" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 interface PrimitiveStats {
   total: number
   aiResolved: number
@@ -219,7 +270,9 @@ interface PrimitiveStats {
   frictionCount: number
   frictionRate: number | null
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PrimitiveStats:interface"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:primitiveStats:function" type="function" identity="primitiveStats" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function primitiveStats(tickets: any[], articleById: Map<string, any>, win: Window): PrimitiveStats {
   const inR = tickets.filter(t => inWindow(t.created_at, win))
   const aiResolved = inR.filter(isAiResolved)
@@ -244,9 +297,11 @@ function primitiveStats(tickets: any[], articleById: Map<string, any>, win: Wind
     frictionRate: inR.length ? friction.length / inR.length : null,
   }
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:primitiveStats:function"]
 
 // Observed before/after value for a marker's tracked metric over its
 // evaluation_days window — powers the live hypothesis check.
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:markerMetricValue:function" type="function" identity="markerMetricValue" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function markerMetricValue(metric: string, p: PrimitiveStats): number | null {
   switch (metric) {
     case 'ao_pct': return p.aoRate === null ? null : p.aoRate * 100
@@ -258,12 +313,16 @@ function markerMetricValue(metric: string, p: PrimitiveStats): number | null {
     default: return null
   }
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:markerMetricValue:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:METRIC_LABELS:constant" type="constant" identity="METRIC_LABELS" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const METRIC_LABELS: Record<string, string> = {
   ao_pct: 'Answer Once %', reopen_rate: 'Reopen rate', human_hours: 'Human hours',
   wait_time: 'Customer wait', volume: 'Ticket volume', friction: 'Friction rate',
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:METRIC_LABELS:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:MARKER_TYPES:constant" type="constant" identity="MARKER_TYPES" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const MARKER_TYPES: { value: string; label: string }[] = [
   { value: 'process', label: 'Process' }, { value: 'kb_overhaul', label: 'KB overhaul' },
   { value: 'automation', label: 'Automation' }, { value: 'staffing', label: 'Staffing' },
@@ -271,23 +330,31 @@ const MARKER_TYPES: { value: string; label: string }[] = [
   { value: 'routing', label: 'Routing' }, { value: 'policy', label: 'Policy' },
   { value: 'tooling', label: 'Tooling' }, { value: 'other', label: 'Other' },
 ]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:MARKER_TYPES:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:trendConfig:constant" type="constant" identity="trendConfig" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const trendConfig: ChartConfig = {
   volume: { label: 'Tickets', color: 'hsl(214 55% 78%)' },
   ao: { label: 'Answer Once %', color: 'hsl(216 100% 50%)' },
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:trendConfig:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:CLASS_COLORS:constant" type="constant" identity="CLASS_COLORS" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 const CLASS_COLORS = Object.fromEntries(DEMAND_CLASSES.map(c => [c.key, c.color]))
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:CLASS_COLORS:constant"]
 
 // Bucket granularity follows the window length: days for short ranges, weeks
 // for quarter-ish views, months for long ones.
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:bucketGranularity:function" type="function" identity="bucketGranularity" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function bucketGranularity(win: Window): 'day' | 'week' | 'month' {
   const days = (win.end - win.start) / 86400000
   if (days <= 14) return 'day'
   if (days <= 130) return 'week'
   return 'month'
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:bucketGranularity:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:bucketKey:function" type="function" identity="bucketKey" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function bucketKey(iso: string, gran: 'day' | 'week' | 'month') {
   const d = new Date(iso)
   if (gran === 'day') return d.toISOString().slice(0, 10)
@@ -296,6 +363,8 @@ function bucketKey(iso: string, gran: 'day' | 'week' | 'month') {
   d.setDate(d.getDate() - day + 1)
   return d.toISOString().slice(0, 10)
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:bucketKey:function"]
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:ReportingPage:component" type="component" identity="ReportingPage" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 export default function ReportingPage() {
   const { accountName } = useDirectory()
   const branding = useBranding()
@@ -711,6 +780,7 @@ export default function ReportingPage() {
     </div>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:ReportingPage:component"]
 // --- Presentation mode --------------------------------------------------------
 // Same computed stats, re-laid-out as a fullscreen sequence. Arrow keys /
 // buttons navigate, Esc exits. Slides are deliberately information-dense —
@@ -724,8 +794,11 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
   onClose: () => void
 }) {
   const [slide, setSlide] = useState(0)
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:branding:constant" type="constant" identity="branding" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PresentationOverlay:component"]
   const branding = useBranding()
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:branding:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:slides:constant" type="constant" identity="slides" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PresentationOverlay:component"]
   const slides: { title: string; sub: string; body: ReactNode }[] = [
     {
       title: 'Reporting',
@@ -884,20 +957,27 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
       ),
     },
   ]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:slides:constant"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:go:constant" type="constant" identity="go" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PresentationOverlay:component"]
   const go = useCallback((d: number) => setSlide(s => Math.min(Math.max(s + d, 0), slides.length - 1)), [slides.length])
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:go:constant"]
 
   useEffect(() => {
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:onKey:function" type="function" identity="onKey" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PresentationOverlay:component"]
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       else if (e.key === 'ArrowRight' || e.key === ' ') go(1)
       else if (e.key === 'ArrowLeft') go(-1)
     }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:onKey:function"]
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [go, onClose])
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:s:constant" type="constant" identity="s" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:PresentationOverlay:component"]
   const s = slides[slide]
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:s:constant"]
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       <div className="px-6 py-3 border-b border-border flex items-center justify-between">
@@ -921,6 +1001,7 @@ function PresentationOverlay({ stats, kpis, rangeLabel, accountName, onClose }: 
 
 // --- Marker creation ---------------------------------------------------------
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:MarkerDialog:component" type="component" identity="MarkerDialog" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function MarkerDialog({ open, onClose, onSaved }: { open: boolean; onClose: () => void; onSaved: () => void }) {
   const [form, setForm] = useState({ title: '', when: '', change_type: 'process', metric: 'ao_pct', expected_direction: '', expected_magnitude: '', evaluation_days: '30', why: '' })
   const [saving, setSaving] = useState(false)
@@ -1033,9 +1114,11 @@ function MarkerDialog({ open, onClose, onSaved }: { open: boolean; onClose: () =
     </Dialog>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:MarkerDialog:component"]
 
 // --- Small presentational pieces ----------------------------------------------
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:InfoTip:component" type="component" identity="InfoTip" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function InfoTip({ text }: { text: string }) {
   return (
     <HoverCard openDelay={150} closeDelay={100}>
@@ -1048,7 +1131,9 @@ function InfoTip({ text }: { text: string }) {
     </HoverCard>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:InfoTip:component"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fmtDelta:function" type="function" identity="fmtDelta" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function fmtDelta(d: { value: number; unit: string; invert: boolean }) {
   if (d.value === 0) return null
   const favorable = d.invert ? d.value < 0 : d.value > 0
@@ -1059,7 +1144,9 @@ function fmtDelta(d: { value: number; unit: string; invert: boolean }) {
       : `${sign}${Math.round(d.value)}`
   return { text, favorable }
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:fmtDelta:function"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Stat:component" type="component" identity="Stat" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function Stat({ label, value, sub, info, delta }: {
   label: string; value: string; sub: string; info?: string
   delta?: { value: number; unit: string; invert: boolean } | null
@@ -1081,7 +1168,9 @@ function Stat({ label, value, sub, info, delta }: {
     </div>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Stat:component"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:BarRow:component" type="component" identity="BarRow" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function BarRow({ label, count, max, color, large }: { label: string; count: number; max: number; color: string; large?: boolean }) {
   return (
     <div className="flex items-center gap-3">
@@ -1093,7 +1182,9 @@ function BarRow({ label, count, max, color, large }: { label: string; count: num
     </div>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:BarRow:component"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Card:component" type="component" identity="Card" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function Card({ title, children, info }: { title: string; children: ReactNode; info?: string }) {
   return (
     <section className="rounded-lg border border-border bg-card p-4">
@@ -1105,7 +1196,10 @@ function Card({ title, children, info }: { title: string; children: ReactNode; i
     </section>
   )
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Card:component"]
 
+// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Empty:component" type="component" identity="Empty" parent="~/custom/apps/answer-once/pages/company/ReportingPage.tsx"]
 function Empty() {
   return <p className="text-sm text-muted-foreground py-8 text-center">No data in this range.</p>
 }
+// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ReportingPage.tsx:Empty:component"]

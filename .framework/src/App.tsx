@@ -26,6 +26,7 @@ import { NotFoundPage } from './pages/NotFoundPage'
 import { SetupPage } from './pages/SetupPage'
 import { AppWrapper } from './components/AppWrapper'
 import { AppsRegistryProvider, useAppsRegistry } from './contexts/AppContext'
+import { AnalyticsTracker } from './components/AnalyticsTracker'
 import { CustomAppLoader } from './components/CustomAppLoader'
 import { GenericAppShell } from './components/app-shell/GenericAppShell'
 import { APIPage } from './pages/spine-framework/APIPage'
@@ -212,6 +213,7 @@ function AuthenticatedRouter() {
 
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
+      <AnalyticsTracker />
       <Routes>
         <Route path="/spine-framework/admin/*" element={<AdminApp />} />
         <Route path="/spine-framework/api" element={<APIPage />} />

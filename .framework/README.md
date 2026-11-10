@@ -44,4 +44,4 @@ to apply any new framework migrations.
 ## License
 
 Part of Spine Framework — see `LICENSE.md` at the project root
-(Spine Framework / Answer Once Internal Use License).
+(Spine Framework Business Use License).

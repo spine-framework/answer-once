@@ -61,6 +61,7 @@ import {
   Users,
   Building2,
   BarChart3,
+  Compass,
   MoreVertical,
   Settings,
   LogOut,
@@ -114,6 +115,7 @@ export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Side
 
   const roles = user?.roles || []
   const isCompany = roles.includes("support") || roles.includes("support_admin") || roles.includes("system_admin")
+  const isAdmin = roles.includes("support_admin") || roles.includes("system_admin")
 
   const customerNav = [
     { title: "Dashboard", url: appPath("/dashboard"), icon: LayoutDashboard },
@@ -128,6 +130,7 @@ export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Side
     { title: "Knowledgebase", url: appPath("/company/kb"), icon: BookOpen },
     { title: "Accounts", url: appPath("/company/accounts"), icon: Building2 },
     { title: "Team", url: appPath("/company/team"), icon: Users },
+    ...(isAdmin ? [{ title: "Directives", url: appPath("/company/directives"), icon: Compass }] : []),
     { title: "Reporting", url: appPath("/company/reporting"), icon: BarChart3 },
   ]
 
