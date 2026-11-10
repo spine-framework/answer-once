@@ -2,15 +2,15 @@
   "format_version": 1,
   "app_slug": "answer-once",
   "app_name": "Answer Once",
-  "exported_at": "2026-11-10T23:28:20.624Z",
+  "exported_at": "2026-11-10T23:46:47.665Z",
   "source_root": "/Users/thistle/CascadeProjects/spine-ia",
-  "source_tree_digest": "sha256:f7b5282b318cd74ec26b20663bcd8a011b7835eac5523d5770d54993a22c5d5f",
+  "source_tree_digest": "sha256:dd6508e130586a92f636da70c31d00ad974f3a57fdaeda1f0c1f08627a1c3e50",
   "source": {
-    "head": "675a2b02005785b16739f18ec2d6ee3f1232bd8a",
+    "head": "81f7461779a87480906a67f5e033489afc80bf45",
     "dirty": false,
     "dirty_file_count": 0,
     "status_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "exported_files_digest": "sha256:4855d295ac23b875fc278bed992d899791d2f2a7e94996d6ea2305616335f05c"
+    "exported_files_digest": "sha256:cc9de0ce20c191be218df0be0874976c5718f8af4b93dd9119bcac2bed090eeb"
   },
   "scheduled_functions": [
     {
@@ -828,7 +828,7 @@
     "custom/tests/answer-once-seeds.test.ts": "sha256:1ba57d0de0ae76c89c6b7db013962879ec68269962eecdd304a20cb5747bc15f",
     "custom/tests/answer-once-ui.test.ts": "sha256:f68fc1c0f2b54d754e3b81dd26852c614d276cb8b5db544e2d6079cfb09e47bc",
     "scripts/assemble-frontend.sh": "sha256:437e2dedfa325c0017f770018c03c740c2bae14c04b147a8ebd309c9f0fe309d",
-    "scripts/assemble-functions.sh": "sha256:b52c4d3eecae52b72e9f9d446ec21b29d6d0181b14138d12ef5195330fcf4d02",
+    "scripts/assemble-functions.sh": "sha256:2adee5da7db5b3afe646715db8b64c2ad15a1308bf9dbc2e39501345bb0daf73",
     "scripts/assemble.sh": "sha256:0686760a46f3e2de9bea40f309dffe20cf1e5d3091622c34ef836cea2fec2156",
     "scripts/boundary-check.sh": "sha256:65e59e3171a4f165fa349d20d315d8311b0b87fb554c15449e22c7b7970deb85",
     "scripts/build-manifest.sh": "sha256:b73278727cd6fdef14781df546008ed4ef1c44701d8a4122c9951a6f9b998918",
@@ -857,7 +857,7 @@
     "package-lock.json": "sha256:7f6bdffa0a0abdf0d5d864126c6202d5c647faa3c5786e61e5f3a5fffa80a8c3",
     "spine.config.json": "sha256:1cde4afd55bdffa218adcbf91608ad3c96a3d8e2dae9bb7f6e27dd0a1c085a01",
     "netlify.toml": "sha256:f4ba25567aea3354040b17549a9e89434cadecb96321adb6c47d416ab1528821",
-    ".spine-manifest.json": "sha256:52ee96eed148a74264a71c56f77d20986722d0d633e3cca950c364b4cc64cf54"
+    ".spine-manifest.json": "sha256:0ca7dbda14178731d8bdb2013842861a63a606d00bbff4e09661c19ef504808a"
   },
   "migrations": {
     "framework": [

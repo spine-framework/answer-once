@@ -169,6 +169,31 @@ else
   echo "  ○ Custom: (empty)"
 fi
 
+# 3c. Emit stubs for dynamic-import specifiers in staged subdirs (e.g.
+# _shared/webhook-registry's INBOUND_MODULE_LOADERS) that reference modules
+# absent from this deployment's function set. Standalone exports only ship
+# their own app's functions, and esbuild fails the whole build on an
+# unresolved literal import(). A stub keeps bundling green — it can only
+# throw if invoked, which requires a registered handler that isn't installed.
+STUB_COUNT=0
+while IFS= read -r spec; do
+  [ -e "$TMP_DIR/$spec.ts" ] && continue
+  [ -e "$TMP_DIR/$spec/index.ts" ] && continue
+  [ -d "$TMP_DIR/$spec" ] && continue
+  mkdir -p "$(dirname "$TMP_DIR/$spec")"
+  cat > "$TMP_DIR/$spec.ts" <<STUB
+// Auto-generated assemble stub: a _shared import map references this module
+// but it is not part of this deployment's function set. The stub satisfies
+// esbuild's static bundling; it throws only if invoked, which cannot happen
+// without a registered handler for it.
+export function adapt(): never { throw new Error('$spec is not installed in this build') }
+export function handler(): never { throw new Error('$spec is not installed in this build') }
+export default adapt
+STUB
+  STUB_COUNT=$((STUB_COUNT + 1))
+  echo "  ✓ Stubbed missing import target: $spec"
+done < <(grep -rhoE "import\('\.\./[A-Za-z0-9_/.-]+'\)" "$TMP_DIR"/*/*.ts 2>/dev/null | sed -E "s/import\('\.\.\///; s/'\)//" | sort -u)
+
 # 4. Sync temp into place. -c compares content checksums; deliberately NO -t —
 # otherwise rsync "corrects" mtimes of unchanged files to the fresh temp-copy
 # time and Netlify/esbuild reloads all ~100 functions on every assemble.

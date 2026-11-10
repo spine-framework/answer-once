@@ -3,7 +3,7 @@
   "frozen": true,
   "framework_version": "0.5.3",
   "source_commit": null,
-  "tree_digest": "sha256:f7b5282b318cd74ec26b20663bcd8a011b7835eac5523d5770d54993a22c5d5f",
+  "tree_digest": "sha256:dd6508e130586a92f636da70c31d00ad974f3a57fdaeda1f0c1f08627a1c3e50",
   "node": ">=22.13.0",
   "npm": ">=10.0.0",
   "files": {
@@ -640,7 +640,7 @@
     "config/tsconfig.node.json": "sha256:b84a7a4fc490a0caca112de9ceb92353981c7925ca9c36fc9fef468927cc88de",
     "config/vite.config.ts": "sha256:4fa95bc431423c7b1048c18cc6019a14b4e07f215debd104709eae6b4ab832ec",
     "scripts/assemble-frontend.sh": "sha256:437e2dedfa325c0017f770018c03c740c2bae14c04b147a8ebd309c9f0fe309d",
-    "scripts/assemble-functions.sh": "sha256:b52c4d3eecae52b72e9f9d446ec21b29d6d0181b14138d12ef5195330fcf4d02",
+    "scripts/assemble-functions.sh": "sha256:2adee5da7db5b3afe646715db8b64c2ad15a1308bf9dbc2e39501345bb0daf73",
     "scripts/assemble.sh": "sha256:0686760a46f3e2de9bea40f309dffe20cf1e5d3091622c34ef836cea2fec2156",
     "scripts/boundary-check.sh": "sha256:65e59e3171a4f165fa349d20d315d8311b0b87fb554c15449e22c7b7970deb85",
     "scripts/build-manifest.sh": "sha256:b73278727cd6fdef14781df546008ed4ef1c44701d8a4122c9951a6f9b998918",
