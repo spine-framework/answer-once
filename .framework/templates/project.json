@@ -1,6 +1,7 @@
 {
   "framework_dirs": [
     ".framework/cli",
+    ".framework/decisions",
     ".framework/functions",
     ".framework/migrations",
     ".framework/public",

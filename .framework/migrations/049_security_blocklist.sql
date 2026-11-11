@@ -133,7 +133,7 @@ set design_schema = jsonb_set(
       }'::jsonb,
       true
     )
-where slug in ('ao_ticket_message', 'ao_support_ticket');
+where slug in ('ao_ticket_message', 'ao_support_ticket'); -- ref-optional: Answer Once app types — no-op where the app is not seeded
 
 -- ── Starter disposable-email domain denylist ───────────────────────
 INSERT INTO public.security_blocklist (type, value, severity, reason)

@@ -151,6 +151,25 @@ app.
 - `npx spine-framework validate-app <dir>` — check an app package.
 - `npx spine-framework doctor` — health + wiring checks.
 
+## Decision records
+
+The repo keeps versioned decision records (the *why* behind non-obvious
+choices) in git:
+
+- `.framework/decisions/` — framework-owned.
+- `custom/apps/<slug>/decisions/` — package-owned for DAHL-shipped apps
+  (overwritten by upgrades).
+- `custom/decisions/` — yours; upgrades never touch it.
+
+**Before editing** related code, read the records whose `applies_to` covers
+the files you're touching — especially records with `status: accepted` or
+`superseded` (a superseded record names the replacement to follow instead).
+
+**When you make a consequential choice** — pick between alternatives,
+reject a design, discover an invariant, add a workaround — record it with
+the `spine-decision-capture` skill. Your records go in `custom/decisions/`
+(`owner: customer`); never write into package-owned `decisions/` dirs.
+
 ## Docs are part of the change
 
 - Editing a file listed in a book page's `source_files` frontmatter

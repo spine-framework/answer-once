@@ -37,9 +37,12 @@ and published as knowledge → next customer gets it automatically.
 | Knowledge types | `entities/knowledge.md` |
 | Custom functions | `reference/functions.md` |
 | Q&A corpus | `qa/README.md` (42 files) |
+| Decision records | `../../decisions/` — read before touching directive/KB/agent code |
 
 ## The capture rule
 
 Editing this app requires updating these pages in the same change —
 new function → `reference/functions.md`; new seeded type → entity page;
-new route → doc map.
+new route → doc map. Consequential choices (alternatives rejected,
+invariants, workarounds) also get a record in `../../decisions/` —
+`status: proposed`, `owner: package`; see the `decision-capture` skill.

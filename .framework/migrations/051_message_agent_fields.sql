@@ -59,7 +59,7 @@ set design_schema = jsonb_set(
       }'::jsonb,
       true
     )
-where kind = 'message' and slug in ('support_reply', 'community_reply');
+where kind = 'message' and slug in ('support_reply', 'community_reply'); -- ref-optional: app-seeded types — no-op on databases without them
 
 -- Restamp existing message records — design_schema/validation_schema are
 -- snapshotted onto each record at creation, so the type-level update alone

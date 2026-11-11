@@ -241,4 +241,4 @@ SET design_schema = jsonb_set(
       }$F$::jsonb,
       true
     )
-WHERE kind = 'message' AND slug = 'support_reply';
+WHERE kind = 'message' AND slug = 'support_reply'; -- ref-optional: app-seeded type — no-op on databases without the portal/demo seeds

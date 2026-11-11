@@ -1,6 +1,6 @@
 {
   "name": "@spine-framework/answer-once",
-  "version": "0.2.8",
+  "version": "0.2.10",
   "private": false,
   "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
   "type": "module",
@@ -36,6 +36,7 @@
     "public/",
     "docs/",
     "agent/",
+    "decisions/",
     "installer/",
     "README.md",
     "LICENSE.md"

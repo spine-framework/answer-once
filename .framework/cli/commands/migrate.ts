@@ -1,4 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // CIL[DOC-MACRO purpose="Provides the migrate command for applying database migrations to a Supabase project."]
 // CIL[DOC-RESPONSIBILITY responsibility="Bootstraps imports and module context for the migrate CLI command."]
 // CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".framework/cli/commands/migrate.ts"]
@@ -8,20 +8,11 @@
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
 
-
-
-
-
-
-
-
-
-
-
 import type { Command } from 'commander'
 import { existsSync, readdirSync, readFileSync } from 'fs'
 import { resolve, dirname, join } from 'path'
 import { fileURLToPath } from 'url'
+import { runPreflight, type DbProbe } from '../lib/migrate-preflight.ts'
 // CIL[END stable_id="~/.framework/cli/commands/migrate.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='Provides the migrate command for applying database migrations to a Supabase project.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -38,7 +29,7 @@ import { fileURLToPath } from 'url'
 // CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
 // CIL[DOC-MICRO logic_summary="Converts import.meta.url to a file path and assigns to __filename." notable_decisions="none"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:__filename:constant" type="constant" identity="__filename" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:__filename:constant" type="constant" identity="__filename" parent="none"]
 const __filename = fileURLToPath(import.meta.url)
 // CIL[END stable_id="~/.framework/cli/commands/migrate.ts:__filename:constant"]
 // CIL[DOC-CONTEXT module="unknown" layer="unknown" related_files=".framework/cli/commands/migrate.ts"]
@@ -56,7 +47,7 @@ const __filename = fileURLToPath(import.meta.url)
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-MICRO logic_summary="Computes the directory of the current file and assigns to __dirname." notable_decisions="none"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:__dirname:constant" type="constant" identity="__dirname" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:__dirname:constant" type="constant" identity="__dirname" parent="none"]
 const __dirname = dirname(__filename)
 // CIL[END stable_id="~/.framework/cli/commands/migrate.ts:__dirname:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the current module directory.'; No verified external callers; imports: none"]
@@ -73,9 +64,9 @@ const __dirname = dirname(__filename)
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:PACKAGE_ROOT:constant" type="constant" identity="PACKAGE_ROOT" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:package_root:constant" type="constant" identity="PACKAGE_ROOT" parent="none"]
 const PACKAGE_ROOT = resolve(__dirname, '../../../')
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:PACKAGE_ROOT:constant"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:package_root:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the package root path.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -90,16 +81,15 @@ const PACKAGE_ROOT = resolve(__dirname, '../../../')
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:PROJECT_ROOT:constant" type="constant" identity="PROJECT_ROOT" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:project_root:constant" type="constant" identity="PROJECT_ROOT" parent="none"]
 const PROJECT_ROOT = process.cwd()
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:PROJECT_ROOT:constant"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:project_root:constant"]
 // CIL[DOC-VECTOR type="context" content="purpose='Defines the project root path.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
 // CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
 // CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
 // CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-
 
 // CIL[DOC-MACRO purpose="Declares the migrate command options."]
 // CIL[DOC-RESPONSIBILITY responsibility="Types the CLI flags and optional db password."]
@@ -109,13 +99,15 @@ const PROJECT_ROOT = process.cwd()
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:MigrateOptions:interface" type="interface" identity="MigrateOptions" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:migrateoptions:interface" type="interface" identity="MigrateOptions" parent="none"]
 interface MigrateOptions {
   dbPassword?: string
   dryRun: boolean
   frameworkOnly: boolean
+  preflight?: boolean
+  skipPreflight?: boolean
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:MigrateOptions:interface"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:migrateoptions:interface"]
 // CIL[DOC-VECTOR type="context" content="purpose='Declares the migrate command options.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -131,8 +123,15 @@ interface MigrateOptions {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:runMigrations:function" type="function" identity="runMigrations" parent="~/.framework/cli/commands/migrate.ts"]
-export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Promise<{ applied: number; skipped: number; failed: number } | null> {
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:pgclient:type" type="type" identity="PgClient" parent="none"]
+type PgClient = { query: (text: string, params?: any[]) => Promise<{ rows: any[]; rowCount?: number | null }>; connect: () => Promise<void>; end: () => Promise<void> }
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:pgclient:type"]
+
+/** Build + connect a pg client from env. Returns null when credentials are
+ *  absent/placeholder; throws when SUPABASE_URL is malformed. Shared by
+ *  runMigrations and the read-only preflight path. */
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:connectdb:function" type="function" identity="connectDb" parent="none"]
+async function connectDb(): Promise<PgClient | null> {
   const supabaseUrl = process.env.SUPABASE_URL
   if (!supabaseUrl || supabaseUrl.includes('placeholder') || supabaseUrl.includes('your-project')) {
     return null
@@ -163,9 +162,6 @@ export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Pro
     throw new Error('Invalid SUPABASE_URL — expected a URL like https://<project-ref>.supabase.co')
   }
 
-  const migrationFiles = collectMigrations(opts.frameworkOnly ?? false)
-  if (migrationFiles.length === 0) return { applied: 0, skipped: 0, failed: 0 }
-
   const { default: pg } = await import('pg')
   const client = new pg.Client(
     process.env.SUPABASE_DB_URL
@@ -177,8 +173,19 @@ export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Pro
           port: 5432,
           database: 'postgres',
         }
-  )
+  ) as PgClient
   await client.connect()
+  return client
+}
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:connectdb:function"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:runmigrations:function" type="function" identity="runMigrations" parent="none"]
+export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Promise<{ applied: number; skipped: number; failed: number } | null> {
+  const migrationFiles = collectMigrations(opts.frameworkOnly ?? false)
+  if (migrationFiles.length === 0) return { applied: 0, skipped: 0, failed: 0 }
+
+  const client = await connectDb()
+  if (!client) return null
 
   let applied = 0, skipped = 0, failed = 0
 
@@ -228,7 +235,7 @@ export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Pro
 
   return { applied, skipped, failed }
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:runMigrations:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:runmigrations:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Applies pending SQL migration files to the Supabase database and tracks which have been applied.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -244,11 +251,42 @@ export async function runMigrations(opts: { frameworkOnly?: boolean } = {}): Pro
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:migrateCommand:function" type="function" identity="migrateCommand" parent="~/.framework/cli/commands/migrate.ts"]
+/** Read-only preflight: resolves every UPDATE slug/name reference in the
+ *  pending migrations — "pending NNN" when an earlier pending file provides
+ *  it, "observed" when a live SELECT finds it, missing otherwise. Never
+ *  writes: a missing _spine_migrations table simply means every file is
+ *  pending. */
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:preflightreport:function" type="function" identity="preflightReport" parent="none"]
+async function preflightReport(migrationFiles: { name: string; path: string }[]) {
+  const client = await connectDb()
+  if (!client) throw new Error('Could not connect: SUPABASE_URL or SUPABASE_DB_PASSWORD missing.')
+  try {
+    let applied = new Set<string>()
+    try {
+      const { rows } = await client.query('SELECT filename FROM _spine_migrations')
+      applied = new Set(rows.map((r: { filename: string }) => r.filename))
+    } catch {
+      // tracking table doesn't exist yet — treat every file as pending
+    }
+    const pending = migrationFiles.filter(f => !applied.has(f.name))
+    const probe: DbProbe = {
+      hasRow: async (table, column, value) => {
+        // table/column come from the extractor's REF_TABLES whitelist; value parameterized
+        const r = await client.query(`SELECT 1 FROM ${table} WHERE ${column} = $1 LIMIT 1`, [value])
+        return (r.rowCount ?? r.rows.length) > 0
+      },
+    }
+    return await runPreflight({ migrations: pending.map(m => ({ name: m.name, sql: readFileSync(m.path, 'utf8') })), probe })
+  } finally {
+    await client.end().catch(() => { /* non-fatal */ })
+  }
+}
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:preflightreport:function"]
+
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:migratecommand:function" type="function" identity="migrateCommand" parent="none"]
 async function migrateCommand(options: MigrateOptions): Promise<void> {
   console.log('\nRunning Spine Framework migrations...\n')
 
-  
   loadEnv()
 
   const envPath = join(PROJECT_ROOT, '.env')
@@ -282,7 +320,6 @@ async function migrateCommand(options: MigrateOptions): Promise<void> {
     process.exit(1)
   }
 
-  
   if (options.dbPassword) process.env.SUPABASE_DB_PASSWORD = options.dbPassword
 
   const migrationFiles = collectMigrations(options.frameworkOnly)
@@ -300,6 +337,39 @@ async function migrateCommand(options: MigrateOptions): Promise<void> {
     }
     console.log('\nDry run complete — no changes made.\n')
     return
+  }
+
+  if (options.preflight && options.skipPreflight) {
+    console.error('❌ --preflight and --skip-preflight are mutually exclusive.')
+    process.exit(1)
+  }
+
+  if (!options.skipPreflight) {
+    console.log('  Preflight: checking migration references (read-only)...\n')
+    const { checks, blocked, warnings } = await preflightReport(migrationFiles)
+    for (const c of checks) {
+      const ref = `${c.table}.${c.column} = '${c.value}'`
+      if (c.status === 'pending') console.log(`    ✓ ${c.file}:${c.line} ${ref} — source: pending ${c.pendingFrom}`)
+      else if (c.status === 'observed') console.log(`    ✓ ${c.file}:${c.line} ${ref} — observed`)
+      else if (c.status === 'ok') console.log(`    · ${c.file}:${c.line} ${ref} — ref-ok`)
+      else if (c.status === 'optional-missing') console.log(`    ⚠ ${c.file}:${c.line} ${ref} — missing (ref-optional)`)
+      else console.log(`    ✗ ${c.file}:${c.line} ${ref} — MISSING`)
+    }
+    if (warnings.length > 0) console.log(`\n  ${warnings.length} ref-optional reference(s) unresolved — continuing`)
+    if (options.preflight) {
+      if (blocked.length > 0) {
+        console.error(`\n❌ Preflight failed: ${blocked.length} mandatory reference(s) unresolved.\n`)
+        process.exit(1)
+      }
+      console.log('\nPreflight complete — all references resolve.\n')
+      return
+    }
+    if (blocked.length > 0) {
+      console.error(`\n❌ Preflight blocked: ${blocked.length} mandatory reference(s) unresolved.`)
+      console.error('   Provide the rows, annotate truly-optional refs with `-- ref-optional`, or rerun with --skip-preflight.\n')
+      process.exit(1)
+    }
+    console.log('')
   }
 
   const result = await runMigrations({ frameworkOnly: options.frameworkOnly })
@@ -322,7 +392,7 @@ async function migrateCommand(options: MigrateOptions): Promise<void> {
   console.log('  (optional) npx spine-framework install-app <app-package> — only for')
   console.log('  additional app packs; core/admin apps are already seeded\n')
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:migrateCommand:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:migratecommand:function"]
 
 // CIL[DOC-VECTOR type="context" content="purpose='CLI action that collects, optionally dry-runs, and applies framework migrations.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
@@ -338,7 +408,7 @@ async function migrateCommand(options: MigrateOptions): Promise<void> {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:registerMigrateCommands:function" type="function" identity="registerMigrateCommands" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:registermigratecommands:function" type="function" identity="registerMigrateCommands" parent="none"]
 export function registerMigrateCommands(program: Command) {
   program
     .command('migrate')
@@ -346,6 +416,8 @@ export function registerMigrateCommands(program: Command) {
     .option('--db-password <password>', 'DB password (default: reads SUPABASE_DB_PASSWORD from .env)')
     .option('--dry-run', 'Show pending migrations without applying them', false)
     .option('--framework-only', 'Only apply .framework/migrations/, skip custom/', false)
+    .option('--preflight', 'Read-only: report how every pending UPDATE reference resolves, then stop', false)
+    .option('--skip-preflight', 'Apply without the read-only reference check', false)
     .action(async (opts) => {
       try {
         await migrateCommand(opts)
@@ -356,7 +428,7 @@ export function registerMigrateCommands(program: Command) {
       }
     })
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:registerMigrateCommands:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:registermigratecommands:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Registers the migrate command with the Commander program.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -372,7 +444,7 @@ export function registerMigrateCommands(program: Command) {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:loadEnv:function" type="function" identity="loadEnv" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:loadenv:function" type="function" identity="loadEnv" parent="none"]
 function loadEnv() {
   const envPath = join(PROJECT_ROOT, '.env')
   if (!existsSync(envPath)) return
@@ -387,7 +459,7 @@ function loadEnv() {
     if (key && !(key in process.env)) process.env[key] = val
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:loadEnv:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:loadenv:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Loads key=value pairs from the project .env file into process.env.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -403,11 +475,10 @@ function loadEnv() {
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:collectMigrations:function" type="function" identity="collectMigrations" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:collectmigrations:function" type="function" identity="collectMigrations" parent="none"]
 export function collectMigrations(frameworkOnly: boolean): { name: string; path: string }[] {
   const files: { name: string; path: string }[] = []
 
-  
   const fwMigrationsDir = existsSync(join(PROJECT_ROOT, '.framework/migrations'))
     ? join(PROJECT_ROOT, '.framework/migrations')
     : join(PACKAGE_ROOT, '.framework/migrations')
@@ -419,7 +490,6 @@ export function collectMigrations(frameworkOnly: boolean): { name: string; path:
       .forEach(f => files.push({ name: f, path: join(fwMigrationsDir, f) }))
   }
 
-  
   if (!frameworkOnly) {
     const customMigrationsDir = join(PROJECT_ROOT, 'custom/migrations')
     if (existsSync(customMigrationsDir)) {
@@ -432,7 +502,7 @@ export function collectMigrations(frameworkOnly: boolean): { name: string; path:
 
   return files
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:collectMigrations:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:collectmigrations:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Collects SQL migration files from framework and custom directories.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
@@ -448,7 +518,7 @@ export function collectMigrations(frameworkOnly: boolean): { name: string; path:
 // CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
 // CIL[DOC-STABILITY stability="stable"]
 // CIL[DOC-AUDIENCE audience="engineers"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:splitSqlStatements:function" type="function" identity="splitSqlStatements" parent="~/.framework/cli/commands/migrate.ts"]
+// CIL[BEGIN stable_id="~/.framework/cli/commands/migrate.ts:splitsqlstatements:function" type="function" identity="splitSqlStatements" parent="none"]
 export function splitSqlStatements(sql: string): string[] {
   // Single-pass scanner: a ; only ends a statement in normal state. Comments
   // are dropped; string literals, quoted identifiers, and dollar-quoted blocks
@@ -503,7 +573,7 @@ export function splitSqlStatements(sql: string): string[] {
   if (tail) statements.push(tail + ';')
   return statements
 }
-// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:splitSqlStatements:function"]
+// CIL[END stable_id="~/.framework/cli/commands/migrate.ts:splitsqlstatements:function"]
 // CIL[DOC-VECTOR type="context" content="purpose='Splits SQL into executable statements while preserving dollar-quoted blocks.'; No verified external callers; imports: none"]
 // CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
 // CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]

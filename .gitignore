@@ -38,6 +38,10 @@ _quarantine/
 __pycache__/
 *.tmp.mjs
 *.tmp.mts
+
+# update-app guard runtime state (pristine-package cache, pre-update backups)
+.spine/cache/
+.spine/backups/
 .tmp-*.mts
 test_*.mjs
 mobile-screenshot/
@@ -47,6 +51,5 @@ Screen Shot *.png
 # npm pack staging artifacts — recreated by prepack, removed by postpack
 templates/project/
 custom/apps/answer-once/installer/migrations/
-custom/apps/answer-once/LICENSE.md
 custom/npm/create-answer-once/LICENSE.md
 # --- monorepo-only: end ---

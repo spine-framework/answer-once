@@ -96,6 +96,7 @@ describe('spine-* skill files', () => {
       'spine-add-automation',
       'spine-add-integration',
       'spine-architect',
+      'spine-decision-capture',
       'spine-install-app',
       'spine-migration',
       'spine-new-app',
@@ -156,7 +157,7 @@ describe('syncAgentFiles — init path (real package templates)', () => {
     expect(agents).not.toContain('{{SPINE_VERSION}}')
 
     const skills = readdirSync(join(workdir, '.devin/skills')).sort()
-    expect(skills.length).toBe(13)
+    expect(skills.length).toBe(14)
     for (const name of skills) {
       expect(name.startsWith('spine-')).toBe(true)
       expect(existsSync(join(workdir, '.devin/skills', name, 'SKILL.md'))).toBe(true)
@@ -175,7 +176,7 @@ describe('syncAgentFiles — init path (real package templates)', () => {
 
     expect(hashes['AGENTS.md']).toMatch(/^sha256:[0-9a-f]{64}$/)
     const skillEntries = Object.keys(hashes).filter((k) => k.startsWith('.devin/skills/spine-'))
-    expect(skillEntries.length).toBe(13)
+    expect(skillEntries.length).toBe(14)
 
     mkdirSync(join(workdir, '.framework/cli'), { recursive: true })
     writeFileSync(join(workdir, '.framework/cli/x.ts'), 'export {}\n')
@@ -190,7 +191,7 @@ describe('syncAgentFiles — init path (real package templates)', () => {
     expect(manifest.files['AGENTS.md']).toBeUndefined()
     expect(Object.keys(manifest.files).every((k) => !k.startsWith('.devin/'))).toBe(true)
     expect(manifest.agent_files['AGENTS.md']).toMatch(/^sha256:/)
-    expect(Object.keys(manifest.agent_files).filter((k) => k.startsWith('.devin/skills/')).length).toBe(13)
+    expect(Object.keys(manifest.agent_files).filter((k) => k.startsWith('.devin/skills/')).length).toBe(14)
   })
 })
 

@@ -150,6 +150,7 @@ import * as readline from 'readline'
 import { createClient } from '@supabase/supabase-js'
 import { runMigrations } from './migrate.js'
 import { validateAppStructure } from './validate-app.js'
+import { guardUpdateApp } from '../lib/update-app-guard.js'
 import { generateValidationSchema } from '../../functions/_shared/schema-utils.ts'
 // CIL[END stable_id="~/.framework/cli/commands/install-app.ts:module_header:module_header"]
 // CIL[DOC-VECTOR type="context" content="purpose='This module handles the installation of applications by managing file operations and executing necessary migrations.'; No verified external callers" status="ready"]
@@ -331,7 +332,7 @@ const APP_COPY_ENTRIES: readonly string[] = [
   'index.tsx', 'manifest.json', 'package.json', 'standalone.config.json',
   'pages', 'components', 'hooks', 'utils', 'lib', 'views', 'docs',
   'functions', 'api', 'seed', 'public', 'installer', 'mcp',
-  'migrations', 'migrations-archive', 'tests', 'agent',
+  'migrations', 'migrations-archive', 'tests', 'agent', 'decisions',
 ]
 // CIL[END stable_id="~/.framework/cli/commands/install-app.ts:appcopyentries:constant"]
 
@@ -653,11 +654,36 @@ export function registerInstallAppCommands(program: Command) {
   program
     .command('update-app <package>')
     .description('Update an installed Spine Framework app to a newer version')
-    .action(async (packageName: string) => {
+    .option('--force', 'Overwrite local modifications after writing a backup to .spine/backups/', false)
+    .action(async (packageName: string, opts: { force?: boolean }) => {
       console.log(`\nUpdating app: ${packageName}\n`)
       loadEnv()
 
       try {
+        // Guard first — before npm install changes the lockfile or the
+        // package. The baseline is the currently-installed version.
+        const prePkgSlug = resolvePackageDirName(packageName)
+        const prePkgPath = join(PROJECT_ROOT, 'node_modules', prePkgSlug)
+        const preAppSlug = resolveAppSlug(prePkgPath, prePkgSlug)
+        const preAppDest = join(PROJECT_ROOT, 'custom/apps', preAppSlug)
+
+        if (existsSync(preAppDest)) {
+          const outcome = guardUpdateApp({
+            projectRoot: PROJECT_ROOT,
+            pkgDirName: prePkgSlug,
+            appSlug: preAppSlug,
+            appDest: preAppDest,
+            copyEntries: APP_COPY_ENTRIES,
+            force: opts.force === true,
+          })
+          if (!outcome.proceed) {
+            console.error(`\n❌ Update aborted — ${outcome.baseline}\n`)
+            process.exit(1)
+          }
+        } else {
+          console.log(`  ○ custom/apps/${preAppSlug}/ not found — nothing local to protect`)
+        }
+
         execSync(`npm install ${isLocalPackageSpec(packageName) ? packageName : `${packageName}@latest`} --save`, {
           cwd: PROJECT_ROOT,
           stdio: 'inherit',

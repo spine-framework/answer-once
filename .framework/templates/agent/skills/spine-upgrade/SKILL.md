@@ -67,3 +67,20 @@ npm run typecheck && npm run test    # confirm the tree still builds/tests
 - Upgrade is file-sync, not git-aware; rollback means `git`.
 - A modified `.framework/` file must be resolved (revert or `--force`) —
   never silently accept a mixed-version core.
+
+## update-app — app packages, same protection
+
+`npx spine-framework update-app <pkg>` upgrades an installed app package.
+Before copying it verifies the **exact installed version + integrity** from
+`package-lock.json`, fetches that tarball, and diffs `custom/apps/<slug>/`
+against it:
+
+- **Local modifications** → aborts, lists every modified/added/deleted file;
+  commit or revert them, or rerun with `--force`.
+- **`--force`** → writes `.spine/backups/<slug>-<ver>-<ts>.tar.gz` first and
+  prints the restore command. Every proceeding run backs up.
+- **Unverifiable baseline** (no lockfile entry/integrity, network or
+  integrity mismatch) → aborts `baseline unverifiable: <reason>`; `--force`
+  overrides but still backs up.
+- Local files inside a package-owned `decisions/` dir are reported as
+  "move to `custom/decisions/`" — package dirs are overwritten by upgrades.
