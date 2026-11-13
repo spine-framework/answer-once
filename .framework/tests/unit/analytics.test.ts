@@ -1,13 +1,6 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/analytics.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/analytics.test.ts"]
-// CIL[DOC-MACRO purpose="Unit tests for GA4 app/host resolution in lib/analytics"]
-// CIL[DOC-CONTRACT inputs="matchAppForPath and resolveGa4MeasurementId calls with fixture apps" outputs="vitest assertions" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { describe, it, expect } from 'vitest'
 import { matchAppForPath, resolveGa4MeasurementId, type AnalyticsAppFields } from '../../src/lib/analytics.ts'
-// CIL[END stable_id="~/.framework/tests/unit/analytics.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/analytics.test.ts:fixtures:block" type="block" identity="fixtures" parent="none"]
 const aoApp: AnalyticsAppFields = {
   slug: 'answer-once',
   route_prefix: '/',
@@ -28,9 +21,7 @@ const demoApp: AnalyticsAppFields = {
 }
 
 const bareApp: AnalyticsAppFields = { slug: 'workbench', route_prefix: '/workbench', config: {} }
-// CIL[END stable_id="~/.framework/tests/unit/analytics.test.ts:fixtures:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/analytics.test.ts:matchappforpath_suite:block" type="block" identity="matchappforpath_suite" parent="none"]
 describe('matchAppForPath', () => {
   it("'/' prefix matches every path but loses to longer prefixes", () => {
     const apps = [aoApp, demoApp]
@@ -49,9 +40,7 @@ describe('matchAppForPath', () => {
     expect(matchAppForPath([{ slug: 'x', route_prefix: null }], '/x')).toBeNull()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/analytics.test.ts:matchappforpath_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/analytics.test.ts:resolvega4_suite:block" type="block" identity="resolvega4_suite" parent="none"]
 describe('resolveGa4MeasurementId', () => {
   it('returns the measurement ID for an exact hostname match', () => {
     expect(resolveGa4MeasurementId(aoApp, 'support.answer-once.com')).toBe('G-3Y038B3HQG')
@@ -100,4 +89,3 @@ describe('resolveGa4MeasurementId', () => {
     expect(resolveGa4MeasurementId(noGa4, 'a.com')).toBeNull()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/analytics.test.ts:resolvega4_suite:block"]

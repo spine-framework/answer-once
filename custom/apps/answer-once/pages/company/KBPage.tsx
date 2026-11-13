@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/KBPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company knowledgebase — deduplicated ao_kb_article + ao_kb_shared records with learning-scope badges"]
-// CIL[DOC-RESPONSIBILITY responsibility="List all articles and candidates across both knowledge types, showing each record's learning flavor (private | internal | shared); shared artifacts minted from a listed source collapse into their source row"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/KBPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/components/StatusBadge.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Single admin-data query over type_slugs ao_kb_article+ao_kb_shared; ao_kb_shared rows whose data.source_article_id is also in the result set are dropped (the source row carries the shared badge); flavor derived from type_slug (shared) or data.learning_scope (private|internal)" notable_decisions="shared artifacts whose source is gone still list so the live platform copy stays reachable"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -15,7 +7,6 @@ import { StatusBadge } from '../../components/StatusBadge'
 import { decodeEntities } from '../../utils/text'
 import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/KBPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, { ...options, headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) } })

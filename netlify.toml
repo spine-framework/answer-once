@@ -17,8 +17,7 @@
   included_files = [".assembled/netlify/functions/_shared/**"]
   node_bundler = "esbuild"
   # typescript.js trips a flaky esbuild printer panic under parallel function
-  # bundling (cil-*, ai-agents, custom_case_analysis). Ship it unbundled —
-  # it's a real dependency loaded lazily at runtime.
+  # bundling. Ship it unbundled — it's a real dependency loaded lazily at runtime.
   external_node_modules = ["typescript"]
 
 [dev]
@@ -35,21 +34,6 @@
 # NOTE: app-specific schedules were removed — the root netlify.toml serves the
 # monorepo and must stay generic. Scheduled functions belong to each app's own
 # deployed Netlify config; app installers declare their own custom_* sections.
-
-# CIL ingestion passes are long-running — extend timeout for local dev
-# TODO: migrate to background functions for production
-[functions."cil-ingest"]
-  timeout = 300
-
-[functions."cil-embeddings"]
-  timeout = 300
-
-[functions."cil-callmap"]
-  timeout = 60
-
-# CIL agent can need multiple LLM tool-call rounds for broad questions
-[functions."cil-agent"]
-  timeout = 120
 
 # ai-agents run action drives multi-turn research steps (retrieval + tools + LLM)
 [functions."ai-agents"]

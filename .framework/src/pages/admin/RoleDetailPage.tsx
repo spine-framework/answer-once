@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
 /**
  * @module   RoleDetailPage
  * @audience internal
@@ -38,7 +37,6 @@ import { ArrowLeft, ShieldCheck, AlertCircle } from 'lucide-react'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -55,7 +53,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:Role:interface" type="interface" identity="Role" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
 /**
  * The Role interface defines the structure of a role object used in the admin panel, encapsulating essential attributes and permissions associated with a role. It exists to standardize role management within the application.
  *
@@ -75,7 +72,6 @@ interface Role {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:Role:interface"]
 
 
 
@@ -92,7 +88,6 @@ interface Role {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:RoleDetailPage:component" type="component" identity="RoleDetailPage" parent="~/.framework/src/pages/admin/RoleDetailPage.tsx"]
 /**
  * The RoleDetailPage component manages the creation and editing of role details in an admin interface. It fetches role data if editing an existing role and handles form submission for creating or updating roles.
  *
@@ -351,7 +346,6 @@ export function RoleDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/RoleDetailPage.tsx:RoleDetailPage:component"]
 
 
 

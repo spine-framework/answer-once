@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/TicketThread.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="External customer conversation thread for a ticket"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render messages, send new messages, and show agent steps for the external ao_ticket_thread"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/TicketThread.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTicketThread.ts, custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/AIMessageCard.tsx"]
-// CIL[DOC-CONTRACT inputs="ticketId, ticketStatus, onStatusChange?, initialTriage?, onTriageStarted?, onTriageFinished?" outputs="JSX element" errors="none" side_effects="renders DOM, sends messages"]
-// CIL[DOC-MICRO logic_summary="Uses useTicketThread for external thread; useAgentSteps for triage; useFinalizeTicket to stamp ticket after episode" notable_decisions="customers see only external thread; agent runs only when ticket has triage metadata"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, Bot, AlertCircle, User, Loader2 } from 'lucide-react'
 import { useTicketThread, TicketMessage } from '../hooks/useTicketThread'
@@ -18,7 +9,6 @@ import { Button } from '@core/components/ui/button'
 import { Input } from '@core/components/ui/input'
 import { ScrollArea } from '@core/components/ui/scroll-area'
 import { AIMessageCard } from './AIMessageCard'
-// CIL[END stable_id="~/custom/apps/answer-once/components/TicketThread.tsx:module_header:module_header"]
 
 // Internal agent step rows (plan/thinking/tool_call/tool_result) never render
 // as conversation entries — while the episode runs they narrate inside one

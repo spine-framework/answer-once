@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataHeader.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/runtime/DataHeader.tsx"]
 /**
  * @module   DataHeader
  * @audience both
@@ -29,7 +28,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import * as Icons from 'lucide-react'
-// CIL[END stable_id="~/.framework/src/components/runtime/DataHeader.tsx:module_header:module_header"]
 
 
 
@@ -50,7 +48,6 @@ import * as Icons from 'lucide-react'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataHeader.tsx:DataHeaderProps:interface" type="interface" identity="DataHeaderProps" parent="~/.framework/src/components/runtime/DataHeader.tsx"]
 /**
  * DataHeaderProps defines the properties required for rendering a data header component, providing essential metadata such as title, icon, description, and a link for a new button.
  *
@@ -64,7 +61,6 @@ interface DataHeaderProps {
   description: string
   newButtonHref: string
 }
-// CIL[END stable_id="~/.framework/src/components/runtime/DataHeader.tsx:DataHeaderProps:interface"]
 
 
 
@@ -84,7 +80,6 @@ interface DataHeaderProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataHeader.tsx:DataHeader:component" type="component" identity="DataHeader" parent="~/.framework/src/components/runtime/DataHeader.tsx"]
 /**
  * DataHeader is a React component that displays a header with a title, icon, and description, along with a button to create a new item. It facilitates navigation to a specified URL when the button is clicked.
  *
@@ -122,7 +117,6 @@ export function DataHeader({ title, icon, description, newButtonHref }: DataHead
 
       <Button
         onClick={() => navigate(newButtonHref)}
-// CIL[END stable_id="~/.framework/src/components/runtime/DataHeader.tsx:DataHeader:component"]
 
         className="flex items-center gap-2"
       >

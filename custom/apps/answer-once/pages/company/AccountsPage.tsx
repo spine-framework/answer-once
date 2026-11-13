@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/AccountsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company accounts list"]
-// CIL[DOC-RESPONSIBILITY responsibility="List customer accounts for support context"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/AccountsPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Placeholder — lists accounts via admin-data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -14,7 +6,6 @@ import { apiFetch } from '@core/lib/api'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Button } from '@core/components/ui/button'
 import { Plus } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/AccountsPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, { ...options, headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) } })

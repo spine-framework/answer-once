@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:use_client:directive" type="directive" identity="use_client" parent="none"]
-// CIL[DOC-MACRO purpose="Marks this module for client-side rendering in Next.js"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the use client directive at the top of the file"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="client rendering directive" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains the 'use client' string required by Next.js for client components." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 
 
@@ -27,22 +19,6 @@
 
 
 "use client"
-// CIL[DOC-VECTOR type="context" content="purpose='Marks this module for client-side rendering in Next.js'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:use_client:directive"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Provides the Combobox UI components built on Base UI for the shadcn/ui design system"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import combobox dependencies and re-export the public Combobox component surface"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imports and component exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Sets up React, Base UI Combobox, utility, Button, InputGroup, and icon imports used by all combobox subcomponents." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="frontend-developers"]
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
 import { cn } from "@/lib/utils"
@@ -54,58 +30,13 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the Combobox UI components built on Base UI for the shadcn/ui design system'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:combobox:constant" type="constant" identity="combobox" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Assigns ComboboxPrimitive.Root to a local Combobox constant"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose the root Combobox component under a concise local alias"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Combobox constant alias" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Aliases ComboboxPrimitive.Root as Combobox for the public API." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const Combobox = ComboboxPrimitive.Root
-// CIL[DOC-VECTOR type="context" content="purpose='Assigns ComboboxPrimitive.Root to a local Combobox constant'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:combobox:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxValue:component" type="component" identity="ComboboxValue" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the selected value display inside a combobox"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return a styled ComboboxPrimitive.Value wrapper"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="...props from ComboboxPrimitive.Value.Props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Spreads props onto ComboboxPrimitive.Value with a data-slot attribute." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />
 }
 
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the selected value display inside a combobox'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxValue:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxTrigger:component" type="component" identity="ComboboxTrigger" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the combobox trigger button with a chevron icon"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a trigger element that opens the combobox popup"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, ...props and trigger props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Wraps ComboboxPrimitive.Trigger with cn utilities and appends a ChevronDownIcon." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxTrigger({
   className,
   children,
@@ -122,22 +53,7 @@ function ComboboxTrigger({
     </ComboboxPrimitive.Trigger>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the combobox trigger button with a chevron icon'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxTrigger:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxClear:component" type="component" identity="ComboboxClear" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders a clear button for the combobox selection"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render an accessible clear control as an InputGroupButton"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and clear props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders ComboboxPrimitive.Clear using an icon ghost button and an XIcon." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
@@ -150,22 +66,7 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
     </ComboboxPrimitive.Clear>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a clear button for the combobox selection'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxClear:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxInput:component" type="component" identity="ComboboxInput" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the combobox text input with optional trigger and clear controls"]
-// CIL[DOC-RESPONSIBILITY responsibility="Compose an InputGroup with the primitive input, trigger and clear addons"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, disabled, showTrigger, showClear and input props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Assembles an InputGroup around ComboboxPrimitive.Input and conditionally renders a ComboboxTrigger and ComboboxClear." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxInput({
   className,
   children,
@@ -202,22 +103,7 @@ function ComboboxInput({
     </InputGroup>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the combobox text input with optional trigger and clear controls'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxInput:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxContent:component" type="component" identity="ComboboxContent" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the combobox popup content with positioning"]
-// CIL[DOC-RESPONSIBILITY responsibility="Portal and position the popup surface for the combobox list"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, side, sideOffset, align, alignOffset, anchor, ...props, Pick positioner props and popup props" outputs="React element" errors="none" side_effects="DOM portal"]
-// CIL[DOC-MICRO logic_summary="Uses ComboboxPrimitive.Portal and Positioner to render a themed Popup with animation and data attributes." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxContent({
   className,
   side = "bottom",
@@ -251,22 +137,7 @@ function ComboboxContent({
     </ComboboxPrimitive.Portal>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the combobox popup content with positioning'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxContent:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxList:component" type="component" identity="ComboboxList" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the scrollable list container for combobox items"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a styled ComboboxPrimitive.List with overflow and empty state support"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and list props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Applies a themed className with no-scrollbar, scroll padding and empty-state styling." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   return (
     <ComboboxPrimitive.List
@@ -279,22 +150,7 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the scrollable list container for combobox items'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxList:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxItem:component" type="component" identity="ComboboxItem" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders a selectable item inside the combobox list"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a list item with highlighting, disabled and checked indicator states"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, ...props and item props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Wraps ComboboxPrimitive.Item and renders a CheckIcon indicator when selected." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxItem({
   className,
   children,
@@ -320,22 +176,7 @@ function ComboboxItem({
     </ComboboxPrimitive.Item>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a selectable item inside the combobox list'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxItem:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxGroup:component" type="component" identity="ComboboxGroup" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Groups related combobox items under a common wrapper"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a ComboboxPrimitive.Group with className merging"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and group props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Forwards props to ComboboxPrimitive.Group and applies className via cn." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
   return (
     <ComboboxPrimitive.Group
@@ -345,22 +186,7 @@ function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Groups related combobox items under a common wrapper'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxGroup:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxLabel:component" type="component" identity="ComboboxLabel" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders a label for a combobox group"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a muted group label using ComboboxPrimitive.GroupLabel"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and label props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Applies muted typography and padding to a ComboboxPrimitive.GroupLabel." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxLabel({
   className,
   ...props
@@ -373,43 +199,13 @@ function ComboboxLabel({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a label for a combobox group'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxLabel:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxCollection:component" type="component" identity="ComboboxCollection" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Provides the collection wrapper for combobox options"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a ComboboxPrimitive.Collection with a data-slot attribute"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="...props as collection props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Forwards props to ComboboxPrimitive.Collection and adds a data-slot marker." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
   return (
     <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the collection wrapper for combobox options'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxCollection:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxEmpty:component" type="component" identity="ComboboxEmpty" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the empty state when no combobox items match"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display a centered empty message when the list has no matches"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and empty props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Uses a group-data-empty selector to show the message only when the list is empty." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
   return (
     <ComboboxPrimitive.Empty
@@ -422,22 +218,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the empty state when no combobox items match'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxEmpty:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxSeparator:component" type="component" identity="ComboboxSeparator" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders a visual divider between combobox groups"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a horizontal separator between list groups"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and separator props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Forwards props to ComboboxPrimitive.Separator and applies a border line style." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxSeparator({
   className,
   ...props
@@ -450,22 +231,7 @@ function ComboboxSeparator({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a visual divider between combobox groups'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxSeparator:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChips:component" type="component" identity="ComboboxChips" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the chip container for a multi-select combobox"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a flex-wrapped chip list with focus and invalid states"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props, ComboboxPrimitive chips type and component props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Wraps ComboboxPrimitive.Chips with a styled input-like container and focus ring." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxChips({
   className,
   ...props
@@ -482,22 +248,7 @@ function ComboboxChips({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the chip container for a multi-select combobox'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChips:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChip:component" type="component" identity="ComboboxChip" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders an individual selected chip with optional remove button"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a chip label and conditionally a remove button"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, showRemove, ...props and chip props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders ComboboxPrimitive.Chip and conditionally a ChipRemove button using Button." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxChip({
   className,
   children,
@@ -528,22 +279,7 @@ function ComboboxChip({
     </ComboboxPrimitive.Chip>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders an individual selected chip with optional remove button'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChip:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChipsInput:component" type="component" identity="ComboboxChipsInput" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the inline text input inside the chip container"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a flexible text input for typing within chips"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props and input props" outputs="React element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Forwards props to ComboboxPrimitive.Input and applies a small outline-none className." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ComboboxChipsInput({
   className,
   ...props
@@ -556,40 +292,10 @@ function ComboboxChipsInput({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the inline text input inside the chip container'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:ComboboxChipsInput:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:useComboboxAnchor:hook" type="hook" identity="useComboboxAnchor" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Provides a ref for anchoring the combobox popup"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return a ref that can be attached to an anchor element"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="React ref to HTMLDivElement" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Creates a React ref typed to HTMLDivElement for anchoring." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Provides a ref for anchoring the combobox popup'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:useComboboxAnchor:hook"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/combobox.tsx:combobox:exports" type="export" identity="combobox" parent="~/.framework/src/components/ui/combobox.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Re-exports the public Combobox component surface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose all combobox subcomponents and the anchor hook"]
-// CIL[DOC-CONTEXT module="combobox" layer="components/ui" related_files=".framework/src/components/ui/button.tsx,.framework/src/components/ui/combobox.tsx,.framework/src/components/ui/input-group.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="named exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Lists all named component and hook exports for consumers." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export {
   Combobox,
   ComboboxInput,
@@ -608,10 +314,3 @@ export {
   ComboboxValue,
   useComboboxAnchor,
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Re-exports the public Combobox component surface'; No verified external callers; imports: .framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input-group.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/combobox.tsx:combobox:exports"]

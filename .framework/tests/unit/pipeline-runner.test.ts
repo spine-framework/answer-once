@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Test setup and imports for pipeline runner tests"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure test environment and mock dependencies"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="configured test mocks" errors="none" side_effects="Mocks database and audit modules"]
-// CIL[DOC-MICRO logic_summary="Imports vitest, mocks db and audit, imports pipeline runner" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test maintainers"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { CoreContext } from '../../functions/_shared/middleware.ts'
 
@@ -31,22 +22,7 @@ vi.mock('../../functions/ai-interactions.ts', () => ({
 import { adminDb } from '../../functions/_shared/db.ts'
 import { emitAudit } from '../../functions/_shared/audit.ts'
 import { runPipeline, sweepStaleExecutions } from '../../functions/_shared/pipeline-runner.ts'
-// CIL[DOC-VECTOR type="context" content="purpose='Test setup and imports for pipeline runner tests'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:makeCtx:function" type="function" identity="makeCtx" parent="none"]
-// CIL[DOC-MACRO purpose="Create test context with system principal"]
-// CIL[DOC-RESPONSIBILITY responsibility="Generate test context objects"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: Partial<CoreContext>" outputs="CoreContext object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Creates context with system machine principal and test data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function makeCtx(overrides: Partial<CoreContext> = {}): CoreContext {
   return {
     principal: {
@@ -59,39 +35,9 @@ function makeCtx(overrides: Partial<CoreContext> = {}): CoreContext {
     ...overrides
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Create test context with system principal'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:makeCtx:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:EXEC_ID:block" type="block" identity="EXEC_ID" parent="none"]
-// CIL[DOC-MACRO purpose="Define test execution ID constant"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide consistent test execution identifier"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string constant" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines execution ID used across tests" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const EXEC_ID = 'exec-abc'
-// CIL[DOC-VECTOR type="context" content="purpose='Define test execution ID constant'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:EXEC_ID:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockPipeline:function" type="function" identity="mockPipeline" parent="none"]
-// CIL[DOC-MACRO purpose="Mock database to return pipeline and execution records"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure database mock for pipeline operations"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="stages: any[]" outputs="mocked adminDb.from" errors="none" side_effects="Mocks adminDb.from"]
-// CIL[DOC-MICRO logic_summary="Sets up adminDb.from mock to return pipeline and execution data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mockPipeline(stages: any[]) {
   vi.mocked(adminDb.from).mockImplementation((table: string) => {
     if (table === 'pipelines') {
@@ -123,22 +69,7 @@ function mockPipeline(stages: any[]) {
     } as any
   })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mock database to return pipeline and execution records'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockPipeline:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockAction:function" type="function" identity="mockAction" parent="none"]
-// CIL[DOC-MACRO purpose="Create test action with default values"]
-// CIL[DOC-RESPONSIBILITY responsibility="Generate test action objects"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="handlerName: string, extras: Record<string, any>" outputs="action object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns default action with handler and config" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mockAction(handlerName: string, extras: Record<string, any> = {}) {
   return {
     id: 'action-1',
@@ -150,22 +81,7 @@ function mockAction(handlerName: string, extras: Record<string, any> = {}) {
     ...extras
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Create test action with default values'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockAction:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockPipelineWithAction:function" type="function" identity="mockPipelineWithAction" parent="none"]
-// CIL[DOC-MACRO purpose="Mock database with pipeline and action records"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure database mock for pipeline with actions"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="stages: any[], action: any" outputs="mocked adminDb.from" errors="none" side_effects="Mocks adminDb.from"]
-// CIL[DOC-MICRO logic_summary="Sets up mocks for pipeline, execution, and action table queries" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mockPipelineWithAction(stages: any[], action: any) {
   vi.mocked(adminDb.from).mockImplementation((table: string) => {
     if (table === 'pipelines') {
@@ -200,22 +116,7 @@ function mockPipelineWithAction(stages: any[], action: any) {
     } as any
   })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mock database with pipeline and action records'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:mockPipelineWithAction:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_runPipeline_lifecycle:block" type="block" identity="describe_runPipeline_lifecycle" parent="none"]
-// CIL[DOC-MACRO purpose="Test runPipeline lifecycle and error handling"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify pipeline execution flow and error cases"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests pipeline-runner.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests pipeline lookup, execution creation, and audit emission" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('runPipeline — lifecycle', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -376,22 +277,7 @@ describe('runPipeline — lifecycle', () => {
     ).rejects.toThrow('Failed to claim queued execution missing-exec')
   })
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Test runPipeline lifecycle and error handling'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_runPipeline_lifecycle:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_runPipeline_stageExecution:block" type="block" identity="describe_runPipeline_stageExecution" parent="none"]
-// CIL[DOC-MACRO purpose="Test runPipeline stage execution and failure handling"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify stage execution and error recovery"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests pipeline-runner.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests action lookup, stage failure, and continue_on_error" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('runPipeline — stage execution', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -517,22 +403,7 @@ describe('runPipeline — stage execution', () => {
     expect(result.stages[0].status).toBe('failed')
   })
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Test runPipeline stage execution and failure handling'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_runPipeline_stageExecution:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_builtInStageHandlers:block" type="block" identity="describe_builtInStageHandlers" parent="none"]
-// CIL[DOC-MACRO purpose="Test built-in stage handler implementations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify built-in handler behavior and validation"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests pipeline-runner.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests update_item, create_record, send_notification, run_pipeline handlers" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('built-in stage handlers', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -741,21 +612,7 @@ describe('send_notification — writes to notifications, not watchers', () => {
   })
 })
 
-// CIL[DOC-VECTOR type="context" content="purpose='Test built-in stage handler implementations'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/audit.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_builtInStageHandlers:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sendNotification_roleRecipients:block" type="block" identity="describe_sendNotification_roleRecipients" parent="none"]
-// CIL[DOC-MACRO purpose="Test send_notification role:<slug> recipient resolution in the pipeline stage"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify role: recipients resolve to account-scoped people ids before the notifications insert, UUIDs pass through, and empty role matches yield a valid 0-notification result"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/notify.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/tests/unit/pipeline-runner.test.ts"]
-// CIL[DOC-CONTRACT inputs="stage configs with role:/UUID recipients; mocked people join" outputs="notifications insert assertions and notified_count" errors="none" side_effects="console.warn on unresolvable recipients"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('send_notification — role:<slug> recipient resolution', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -856,7 +713,6 @@ describe('send_notification — role:<slug> recipient resolution', () => {
     }
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sendNotification_roleRecipients:block"]
 // send_email — resolves entity recipients through message->thread->target,
 // composes from integration templates or inline config, and skips cleanly when
 // no provider is configured.
@@ -1020,14 +876,6 @@ describe('send_email — recipient resolution + outbound send', () => {
   })
 })
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sweepStaleExecutions:block" type="block" identity="describe_sweepStaleExecutions" parent="none"]
-// CIL[DOC-MACRO purpose="Test stale execution sweeper"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify sweepStaleExecutions marks stale rows failed and leaves fresh rows alone"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner" layer="test-unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests sweepStaleExecutions"]
-// CIL[DOC-MICRO logic_summary="Mocks adminDb.from('pipeline_executions').update chain and verifies the correct statuses and cutoff are targeted" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('sweepStaleExecutions', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -1071,4 +919,3 @@ describe('sweepStaleExecutions', () => {
     warnSpy.mockRestore()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner.test.ts:describe_sweepStaleExecutions:block"]

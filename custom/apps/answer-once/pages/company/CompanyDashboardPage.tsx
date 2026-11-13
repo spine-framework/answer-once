@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/CompanyDashboardPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company dashboard — support work queue and knowledge review"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show tickets needing attention, recent escalations, and knowledge candidates"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/CompanyDashboardPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Three-column layout: escalated tickets, in-progress tickets, KB candidates" notable_decisions="focuses on what needs attention now"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useTickets } from '../../hooks/useTickets'
 import { TicketCard } from '../../components/TicketCard'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -14,7 +5,6 @@ import { Skeleton } from '@core/components/ui/skeleton'
 import { Button } from '@core/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { AlertCircle, Clock, CheckCircle, BookOpen, TrendingUp } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/CompanyDashboardPage.tsx:module_header:module_header"]
 
 export default function CompanyDashboardPage() {
   const appPath = useAppPath()

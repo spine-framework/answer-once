@@ -2,7 +2,7 @@
   "name": "Answer Once",
   "slug": "answer-once",
   "description": "Focused customer-support app that closes the loop between customers, AI, support, and organizational knowledge",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "app_type": "full",
   "route_prefix": "/answer-once",
   "prod_domain": "support.answer-once.com",

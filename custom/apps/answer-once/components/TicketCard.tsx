@@ -1,15 +1,6 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/TicketCard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Ticket list card for the customer and company ticket queues"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a clickable ticket summary with status badge"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/TicketCard.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/StatusBadge.tsx"]
-// CIL[DOC-CONTRACT inputs="ticket: Ticket, onClick: () => void" outputs="JSX element" errors="none" side_effects="navigation via onClick"]
-// CIL[DOC-MICRO logic_summary="Shows title, status, description snippet, and created date" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { Ticket } from '../hooks/useTickets'
 import { StatusBadge } from './StatusBadge'
 import { Eye } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/components/TicketCard.tsx:module_header:module_header"]
 
 interface TicketCardProps {
   ticket: Ticket

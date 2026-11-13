@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/init.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/init.ts"]
-// CIL[DOC-AUDIENCE audience="internal"]
-// CIL[DOC-MACRO purpose="Scaffold a new Spine Framework project into a directory"]
-// CIL[DOC-RESPONSIBILITY responsibility="Copy the framework-owned file set from .framework/templates/project.json, generate package.json/package-lock.json/.gitignore/netlify.toml/spine.config.json, and write the frozen .spine-manifest.json with framework_version"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".framework/templates/project.json,.framework/cli/lib/project-files.ts,.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-CONTRACT inputs="[dir] (default cwd); spine-framework package on disk" outputs="project tree + frozen manifest" errors="exit 1 on existing .framework or missing package files" side_effects="writes <dir> only; no npm install, network, or DB access"]
-// CIL[DOC-MICRO logic_summary="Framework-only scaffold — apps install themselves via their own installer (e.g. npx <app> install). netlify.toml carries only framework blocks; apps append their own custom_* sections. package.json gets the framework's full dep set inlined plus an exact spine-framework pin so `spine-framework upgrade` can re-sync this copy" notable_decisions="never writes .env (secrets) — prints instructions to copy .env.example; existing files are never overwritten except generated package.json/netlify.toml which merge"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// never writes .env (secrets) — prints instructions to copy .env.example; existing files are never overwritten except generated package.json/netlify.toml which merge
 import type { Command } from 'commander'
 import { existsSync, mkdirSync, writeFileSync, copyFileSync, readFileSync, readdirSync } from 'fs'
 import { resolve, dirname, join, basename } from 'path'
@@ -23,30 +15,12 @@ import {
   syncAgentFiles,
   collectAgentFileHashes,
 } from '../lib/project-files.ts'
-// CIL[END stable_id="~/.framework/cli/commands/init.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/init.ts:paths:block" type="block" identity="paths" parent="~/.framework/cli/commands/init.ts"]
-// CIL[DOC-MACRO purpose="ESM __filename/__dirname shim plus PACKAGE_ROOT — the spine-framework package root this init copies files from"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files="package.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="resolved path constants" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="PACKAGE_ROOT resolves three levels up from commands/ — inside the vendored package payload" notable_decisions="computed at module load from import.meta.url, not cwd"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.95" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const PACKAGE_ROOT = resolve(__dirname, '../../../')
-// CIL[END stable_id="~/.framework/cli/commands/init.ts:paths:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/init.ts:registerInitCommands:function" type="function" identity="registerInitCommands" parent="~/.framework/cli/commands/init.ts"]
-// CIL[DOC-MACRO purpose="Register the `init [dir]` command that scaffolds a neutral framework-only project"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".framework/cli/index.ts,.framework/cli/lib/project-files.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command; [dir] positional (default cwd)" outputs="project tree + frozen manifest" errors="exit 1 on existing .framework or template missing" side_effects="writes <dir> only"]
-// CIL[DOC-MICRO logic_summary="Copies the profile fileset, creates the custom/ workspace, merges package.json with inlined framework deps + exact pin, writes lockfile/gitignore/netlify.toml/neutral spine.config.json, then freezes .spine-manifest.json" notable_decisions="framework-only by design — apps self-install afterwards via their own CLIs"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 export function registerInitCommands(program: Command) {
   program
     .command('init')
@@ -184,16 +158,7 @@ export function registerInitCommands(program: Command) {
       }
     })
 }
-// CIL[END stable_id="~/.framework/cli/commands/init.ts:registerInitCommands:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/init.ts:getPackageVersion:function" type="function" identity="getPackageVersion" parent="~/.framework/cli/commands/init.ts"]
-// CIL[DOC-MACRO purpose="Read the running package's version — becomes the project's frozen framework_version"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files="package.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="semver string" errors="returns '0.0.0' when package.json unreadable" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Reads PACKAGE_ROOT/package.json — the vendored CLI always ships its own manifest" notable_decisions="0.0.0 fallback is defensive only"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.95" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 function getPackageVersion(): string {
   try {
     const pkg = JSON.parse(readFileSync(join(PACKAGE_ROOT, 'package.json'), 'utf8'))
@@ -202,4 +167,3 @@ function getPackageVersion(): string {
     return '0.0.0'
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/init.ts:getPackageVersion:function"]

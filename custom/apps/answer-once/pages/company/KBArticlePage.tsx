@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/KBArticlePage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company KB article detail — review, edit, flavor-select publish"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show article detail with provenance, allow support to edit title/content/tags, move the article through candidate → in_review → published with an explicit learning flavor (private|internal|shared), and trigger re-embedding"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/KBArticlePage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/functions/custom_answeronce-journey.ts, custom/apps/answer-once/components/StatusBadge.tsx"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="none" side_effects="PATCH/POST /api/admin-data, POST publish_article(flavor)/reembed_article"]
-// CIL[DOC-MICRO logic_summary="Edit mode writes title/data.content/data.tags via admin-data — content is authored in RichTextEditor (TipTap HTML output; the readonly viewer also converts legacy markdown bodies so both formats render); saving a published article auto-calls reembed so retrieval stays fresh; publish sends the chosen flavor to the orchestrator — private embeds in place, internal re-homes to spine-system, shared mints an ao_kb_shared platform artifact; warnings require an explicit acknowledgement round-trip" notable_decisions="datetime fields arrive display-formatted from admin-data and are rendered as-is; published articles of both types are editable because support owns the retrieval corpus; shared artifacts expose edit + re-embed/archive (edit implies re-embed)"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
+// datetime fields arrive display-formatted from admin-data and are rendered as-is; published articles of both types are editable because support owns the retrieval corpus; shared artifacts expose edit + re-embed/archive (edit implies re-embed)
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -22,7 +14,6 @@ import { useDirectory } from '../../hooks/useDirectory'
 import { normalizeDataForWrite } from '../../hooks/useWatchers'
 import { decodeEntities } from '../../utils/text'
 import { ArrowLeft, Pencil, Check, X, Send, Archive, RefreshCw, AlertTriangle, Repeat } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/KBArticlePage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

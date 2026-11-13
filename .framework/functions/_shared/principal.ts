@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Shared principal and authorization module for Spine functions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the Principal model, resolves request principals from headers and tokens, and provides role/scope predicates"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts"]
-// CIL[DOC-CONTRACT inputs="HTTP event headers and tokens" outputs="Principal objects and authorization booleans" errors="Invalid or inactive credentials, rate limit exceeded, lookup errors" side_effects="Writes API key usage logs; updates people.auth_uid when linking by email"]
-// CIL[DOC-MICRO logic_summary="Imports shared db/supabase clients and crypto; declares the Principal interface and anonymous/system constants; exports resolvers and helper functions" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="framework developers, ai agents, security reviewers"]
 
 
 
@@ -29,22 +20,7 @@ import { getUserDb, adminDb } from './db'
 import { createClient } from '@supabase/supabase-js'
 
 import { timingSafeEqual, createHash } from 'crypto'
-// CIL[DOC-VECTOR type="context" content="purpose='Shared principal and authorization module for Spine functions'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:isInternalInvokeAuthorized:function" type="function" identity="isInternalInvokeAuthorized" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Verify that a request carries the trusted internal invocation secret"]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate shared secret header using timing-safe comparison"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="event object with headers" outputs="boolean" errors="none (returns false on any failure)" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Compare x-internal-secret against INTERNAL_INVOKE_SECRET using timingSafeEqual" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function isInternalInvokeAuthorized(event: any): boolean {
   const expected = (globalThis as any).process?.env?.INTERNAL_INVOKE_SECRET
   if (!expected) return false
@@ -64,44 +40,14 @@ function isInternalInvokeAuthorized(event: any): boolean {
     return false
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Verify that a request carries the trusted internal invocation secret'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:isInternalInvokeAuthorized:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:env:constant" type="constant" identity="env" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Access process environment variables"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a safe fallback for environment lookups"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Record of environment variables" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return global process.env or an empty object" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const env = (globalThis as any).process?.env || {}
-// CIL[DOC-VECTOR type="context" content="purpose='Access process environment variables'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:env:constant"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:supabase:constant" type="constant" identity="supabase" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Create a Supabase client configured for function use"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide an anon-key Supabase client for auth.getUser JWT verification"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Supabase client" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Instantiate createClient with URL, anon key, and auth options. Realtime transport omitted — this client is used only for supabase.auth.getUser; no realtime channels are opened server-side." notable_decisions="ws realtime transport removed to reduce bundle size and eliminate unnecessary module-level init overhead across every function"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const supabase = createClient(
   env.SUPABASE_URL || 'https://placeholder.supabase.co',
   env.SUPABASE_ANON_KEY || 'placeholder',
@@ -109,23 +55,8 @@ const supabase = createClient(
     auth: { autoRefreshToken: false, persistSession: false },
   }
 )
-// CIL[DOC-VECTOR type="context" content="purpose='Create a Supabase client configured for function use'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:supabase:constant"]
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:Principal:interface" type="interface" identity="Principal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Define the canonical identity shape used across Spine"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe a principal's id, type, account, roles, scopes, machine metadata and provenance"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declare human or machine identity with provenance and optional auth context" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export interface Principal {
   id: string
   type: 'human' | 'machine'
@@ -161,24 +92,9 @@ export interface Principal {
     jwt?: string
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the canonical identity shape used across Spine'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:Principal:interface"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:ANONYMOUS_PRINCIPAL:constant" type="constant" identity="ANONYMOUS_PRINCIPAL" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Provide a default principal for unauthenticated requests"]
-// CIL[DOC-RESPONSIBILITY responsibility="Represent an anonymous machine principal with no scopes"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Principal" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return an anonymous machine principal with manual provenance" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const ANONYMOUS_PRINCIPAL: Principal = {
   id: 'anonymous',
   type: 'machine',
@@ -190,27 +106,12 @@ export const ANONYMOUS_PRINCIPAL: Principal = {
     invokedAt: new Date().toISOString()
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Provide a default principal for unauthenticated requests'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:ANONYMOUS_PRINCIPAL:constant"]
 
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:SYSTEM_PRINCIPAL:constant" type="constant" identity="SYSTEM_PRINCIPAL" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Provide a privileged internal principal for system operations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Represent the system machine principal with full scope"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Principal" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return a machine principal with wildcard scope and internal flag" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const SYSTEM_PRINCIPAL: Principal = {
   id: 'system',
   type: 'machine',
@@ -224,26 +125,11 @@ export const SYSTEM_PRINCIPAL: Principal = {
     invokedAt: new Date().toISOString()
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Provide a privileged internal principal for system operations'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:SYSTEM_PRINCIPAL:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolvePrincipal:function" type="function" identity="resolvePrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Resolve a Principal from incoming request headers"]
-// CIL[DOC-RESPONSIBILITY responsibility="Dispatch to machine, cron, trigger or human resolution based on headers"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="event object with headers" outputs="Principal" errors="Invalid or inactive credentials" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Check x-api-key, internal cron/trigger headers, or Bearer token, falling back to ANONYMOUS_PRINCIPAL" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export async function resolvePrincipal(event: any): Promise<Principal> {
   const apiKey = event.headers?.['x-api-key'] || event.headers?.['X-Api-Key']
   if (apiKey) {
@@ -281,22 +167,7 @@ export async function resolvePrincipal(event: any): Promise<Principal> {
   
   return ANONYMOUS_PRINCIPAL
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a Principal from incoming request headers'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolvePrincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveMachinePrincipal:function" type="function" identity="resolveMachinePrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Resolve a machine principal from an API key"]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate key prefix and hash, enforce rate limits, and return the principal"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="apiKey: string, event: any" outputs="Principal" errors="Invalid or inactive machine principal, rate limit exceeded" side_effects="Inserts api_key_usage_logs row"]
-// CIL[DOC-MICRO logic_summary="Query api_keys by prefix, verify hash, count recent usage, log request, and build the principal" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function resolveMachinePrincipal(apiKey: string, event: any): Promise<Principal> {
   const keyPrefix = apiKey.slice(0, 8)
 
@@ -396,24 +267,9 @@ async function resolveMachinePrincipal(apiKey: string, event: any): Promise<Prin
     // principals regardless, so no downstream consumer needs the credential.
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a machine principal from an API key'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveMachinePrincipal:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveCronPrincipal:function" type="function" identity="resolveCronPrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Resolve a machine principal for a cron schedule"]
-// CIL[DOC-RESPONSIBILITY responsibility="Lookup a schedule, validate its creator, and return its associated machine principal"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="scheduleId string" outputs="Principal" errors="Invalid or inactive schedule, validation failed" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Fetch schedule with machine join, call validate_schedule_creator RPC, and build principal with cron provenance" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function resolveCronPrincipal(scheduleId: string): Promise<Principal> {
   const { data: schedule, error: scheduleError } = await adminDb
     .from('schedules')
@@ -453,22 +309,7 @@ async function resolveCronPrincipal(scheduleId: string): Promise<Principal> {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a machine principal for a cron schedule'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveCronPrincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveTriggerPrincipal:function" type="function" identity="resolveTriggerPrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Resolve a machine principal for a trigger invocation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load trigger, find its action's default machine, and return the principal"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="triggerId: string, event: any" outputs="Principal" errors="Invalid trigger, no machine configured" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Fetch trigger with action join, resolve default machine from api_keys, and build trigger provenance" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function resolveTriggerPrincipal(triggerId: string, event: any): Promise<Principal> {
   const { data: trigger, error: triggerError } = await adminDb
     .from('triggers')
@@ -514,22 +355,8 @@ async function resolveTriggerPrincipal(triggerId: string, event: any): Promise<P
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a machine principal for a trigger invocation'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveTriggerPrincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveHumanPrincipal:function" type="function" identity="resolveHumanPrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Resolve a human principal from a JWT bearer token"]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate Supabase user, map to internal person, and build the principal"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="token: string, event: any" outputs="Principal" errors="Person lookup error, person not found" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Get Supabase user, resolve internal person id, load person with role, and construct human principal; result cached ~60s keyed by token hash, provenance refreshed on hit; principals lacking both account_id and role_id are never cached" notable_decisions="cache avoids three sequential auth/people lookups on every polled request; provenance timestamps are refreshed per request so audit stays honest; unplaced (mid-registration, both fields null) principals skip the cache so placement lands on the next request instead of stalling 60s"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// cache avoids three sequential auth/people lookups on every polled request; provenance timestamps are refreshed per request so audit stays honest; unplaced (mid-registration, both fields null) principals skip the cache so placement lands on the next request instead of stalling 60s
 // Module-level cache: sha256(token) → resolved human principal. Resolution
 // costs 3 sequential round-trips (supabase.auth.getUser, person-id mapping,
 // people+role join) and runs on every request — polling-heavy clients were
@@ -631,23 +458,9 @@ async function resolveHumanPrincipal(token: string, event: any): Promise<Princip
 
   return principal
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a human principal from a JWT bearer token'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveHumanPrincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveInternalPersonId:function" type="function" identity="resolveInternalPersonId" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Map a Supabase auth user to an internal person id"]
-// CIL[DOC-RESPONSIBILITY responsibility="Link auth user to person by email or auth_uid, falling back to the auth id"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="authUserId: string, email?: string" outputs="person id string" errors="none" side_effects="Updates people.auth_uid when linking by email"]
-// CIL[DOC-MICRO logic_summary="auth_uid lookup first (authoritative); email fallback only binds rows that are NOT invite stubs — invited/pending status or a stored invite_token is never claimed by email alone" notable_decisions="Invite stubs are claimed exclusively by the token-gated path in handle_new_auth_user (migration 052); binding one here by email would bypass token/expiry/revocation checks"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="security" content="Registration/invitation hardening: previously this bound auth_uid to ANY person row matching the JWT email with auth_uid NULL — including unclaimed invite stubs — bypassing the invite token entirely."]
+// Invite stubs are claimed exclusively by the token-gated path in handle_new_auth_user (migration 052); binding one here by email would bypass token/expiry/revocation checks
+// Registration/invitation hardening: previously this bound auth_uid to ANY person row matching the JWT email with auth_uid NULL — including unclaimed invite stubs — bypassing the invite token entirely.
 export async function resolveInternalPersonId(authUserId: string, email?: string, emailConfirmed = true): Promise<string> {
   // auth_uid binding is authoritative — resolve it before any email fallback.
   const { data: byAuthId } = await adminDb
@@ -688,22 +501,8 @@ export async function resolveInternalPersonId(authUserId: string, email?: string
 
   return authUserId
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Map a Supabase auth user to an internal person id'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveInternalPersonId:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:getClientIp:function" type="function" identity="getClientIp" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Extract the client IP from request headers or context"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return the most likely originating IP for a request"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="event with headers and requestContext" outputs="ip string or undefined" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Prefer Netlify's x-nf-client-connection-ip (set by the edge, not client-controllable), then x-forwarded-for's first hop, x-real-ip, and requestContext.identity.sourceIp" notable_decisions="x-nf-client-connection-ip first because x-forwarded-for is client-spoofable and feeds rate limiting/provenance"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// x-nf-client-connection-ip first because x-forwarded-for is client-spoofable and feeds rate limiting/provenance
 function getClientIp(event: any): string | undefined {
   // x-nf-client-connection-ip is set by Netlify's edge and cannot be spoofed by
   // the client; x-forwarded-for's first hop is client-controllable, so it is a
@@ -717,22 +516,7 @@ function getClientIp(event: any): string | undefined {
          event.requestContext?.identity?.sourceIp ||
          undefined
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Extract the client IP from request headers or context'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:getClientIp:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:machineHasScope:function" type="function" identity="machineHasScope" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Check whether a machine principal holds a given scope"]
-// CIL[DOC-RESPONSIBILITY responsibility="Evaluate scope including resource wildcard and global wildcard matches"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="principal: Principal, scope: string" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return true if scope, resource wildcard, or global wildcard is present" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function machineHasScope(principal: Principal, scope: string): boolean {
   if (principal.type !== 'machine') return false
   
@@ -747,70 +531,21 @@ export function machineHasScope(principal: Principal, scope: string): boolean {
   
   return false
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Check whether a machine principal holds a given scope'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:machineHasScope:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:humanHasRole:function" type="function" identity="humanHasRole" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Check whether a human principal has a role"]
-// CIL[DOC-RESPONSIBILITY responsibility="Test principal roles array for a role slug"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="principal: Principal, roleSlug: string" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return true if principal is human and roles includes the slug" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function humanHasRole(principal: Principal, roleSlug: string): boolean {
   if (principal.type !== 'human') return false
   return principal.roles?.includes(roleSlug) || false
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Check whether a human principal has a role'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:humanHasRole:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:isSystemAdmin:function" type="function" identity="isSystemAdmin" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Determine if a principal is a system administrator"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check roles for system_admin by slug or object shape"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="principal" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return true if roles contains system_admin as a string or slug property" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function isSystemAdmin(principal: Principal): boolean {
   return principal?.roles?.some(r => r === 'system_admin' || r?.slug === 'system_admin') || false
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Determine if a principal is a system administrator'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:isSystemAdmin:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:isSystemPrincipal:function" type="function" identity="isSystemPrincipal" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="True for callers trusted to act across accounts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Single trust-boundary check for platform-level access decisions"]
-// CIL[DOC-CONTRACT inputs="ctx (principal + accountId)" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="system_admin role, or an unbound internal machine (SYSTEM_PRINCIPAL via INTERNAL_INVOKE_SECRET)" notable_decisions="Account-bound machines (API keys) are NOT system principals — handlers must scope their queries even though getPrincipalDb gives them adminDb"]
-// CIL[DOC-STABILITY stability="stable"]
+// Account-bound machines (API keys) are NOT system principals — handlers must scope their queries even though getPrincipalDb gives them adminDb
 export function isSystemPrincipal(ctx: { principal?: Principal | null; accountId?: string | null }): boolean {
   return isSystemAdmin(ctx?.principal as Principal) || (ctx?.principal?.isInternal === true && !ctx?.accountId)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:isSystemPrincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:resolveAccessibleAccountIds:function" type="function" identity="resolveAccessibleAccountIds" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Account ids the caller may touch"]
-// CIL[DOC-RESPONSIBILITY responsibility="Resolve the tenant scope used by account-scoping helpers across adminDb paths"]
-// CIL[DOC-CONTRACT inputs="ctx" outputs="string[] of account ids, or null for system principals" errors="none" side_effects="get_accessible_accounts RPC for human principals; memoized on ctx"]
-// CIL[DOC-MICRO logic_summary="system → null (unscoped); humans → own account ∪ get_accessible_accounts descendants; account-bound machines → their bound account only" notable_decisions="Memoized on the ctx object (key '__accessibleAccountIds') — one RPC resolution per request"]
-// CIL[DOC-STABILITY stability="stable"]
 const accessibleAccountsCacheKey = '__accessibleAccountIds'
 
 export async function resolveAccessibleAccountIds(ctx: any): Promise<string[] | null> {
@@ -829,16 +564,7 @@ export async function resolveAccessibleAccountIds(ctx: any): Promise<string[] | 
   ctx[accessibleAccountsCacheKey] = result
   return result
 }
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:resolveAccessibleAccountIds:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:getPrincipalDb:function" type="function" identity="getPrincipalDb" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Select the appropriate database client for a principal"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return user-scoped db for humans with JWT, otherwise admin db"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="principal" outputs="Supabase client" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Use getUserDb with JWT for humans, otherwise return adminDb" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function getPrincipalDb(principal: Principal) {
   if (principal.type === 'human' && principal.authContext?.jwt) {
     return getUserDb(principal.authContext.jwt)
@@ -846,22 +572,7 @@ export function getPrincipalDb(principal: Principal) {
   
   return adminDb
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Select the appropriate database client for a principal'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:getPrincipalDb:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/principal.ts:formatPrincipalForAudit:function" type="function" identity="formatPrincipalForAudit" parent="~/.framework/functions/_shared/principal.ts"]
-// CIL[DOC-MACRO purpose="Serialize a principal for audit logs"]
-// CIL[DOC-RESPONSIBILITY responsibility="Produce a safe, structured view of principal identity and provenance"]
-// CIL[DOC-CONTEXT module="functions/_shared/principal" layer="shared" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/principal.ts"]
-// CIL[DOC-CONTRACT inputs="principal" outputs="audit object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return id, type, account_id, human/machine fields, and provenance spread" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 // Deliberately omits authContext — it holds the raw credential (JWT) and must
 // never reach audit rows, log output, or any serialized payload.
 export function formatPrincipalForAudit(principal: Principal): object {
@@ -881,10 +592,3 @@ export function formatPrincipalForAudit(principal: Principal): object {
     provenance: principal.provenance
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Serialize a principal for audit logs'; No verified external callers; imports: .framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/principal.ts:formatPrincipalForAudit:function"]

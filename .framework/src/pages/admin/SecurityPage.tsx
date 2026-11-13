@@ -1,11 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/SecurityPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/SecurityPage.tsx"]
-// CIL[DOC-MACRO purpose="System-admin security console: flagged actors report + blacklist management"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the flagged-accounts report from /api/security, let admins select rows via per-row checkboxes, and apply or lift three-layer bans; also list/revoke blocklist entries"]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/functions/security.ts,.framework/src/lib/api.ts,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/table.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Security admin page JSX" errors="API errors surfaced inline" side_effects="GET flagged_accounts + blocklist; POST ban_user/unban_user/blocklist_revoke via apiFetch"]
-// CIL[DOC-MICRO logic_summary="Load report + blocklist; checkbox Set<string> keyed by row key (person_id or acct:account_id); Add to Blacklist issues one ban_user per selected row and reports per-layer results; refresh after actions" notable_decisions="ban_user accepts person_id OR email OR ip so anonymous-signal rows (no person) still ban by account/ip; all calls go through apiFetch — service role never leaves the server"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="internal"]
+// ban_user accepts person_id OR email OR ip so anonymous-signal rows (no person) still ban by account/ip; all calls go through apiFetch — service role never leaves the server
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { apiFetch } from '../../lib/api'
@@ -307,4 +300,3 @@ export function SecurityPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/SecurityPage.tsx:module_header:module_header"]

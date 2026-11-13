@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/logs.ts"]
 /**
  * @module   logs
  * @audience both
@@ -34,7 +33,6 @@
 import { createHandler, json, error, parseBody } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
-// CIL[END stable_id="~/.framework/functions/logs.ts:module_header:module_header"]
 
 
 
@@ -50,7 +48,6 @@ import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:mapLogRow:function" type="function" identity="mapLogRow" parent="~/.framework/functions/logs.ts"]
 /**
  * The mapLogRow function transforms a log row object into a standardized format for further processing. It extracts and renames fields from the input object to create a more structured output.
  *
@@ -85,7 +82,6 @@ function mapLogRow(row: any) {
     created_at: row.created_at,
   }
 }
-// CIL[END stable_id="~/.framework/functions/logs.ts:mapLogRow:function"]
 
 
 
@@ -101,7 +97,6 @@ function mapLogRow(row: any) {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listAccount:constant" type="constant" identity="listAccount" parent="~/.framework/functions/logs.ts"]
 /**
  * The listAccount function retrieves log entries based on various query parameters, allowing users to filter logs by account, event type, and date range. It ensures that only authorized users can access account-specific logs.
  *
@@ -182,7 +177,6 @@ export const listAccount = createHandler(async (ctx, body) => {
     total: count || 0
   }
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:listAccount:constant"]
 
 
 
@@ -198,7 +192,6 @@ export const listAccount = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listTarget:constant" type="constant" identity="listTarget" parent="~/.framework/functions/logs.ts"]
 /**
  * The listTarget constant defines an asynchronous handler for retrieving log entries based on specified target criteria. It ensures that required parameters are present and fetches logs from the database according to the provided filters.
  *
@@ -239,7 +232,6 @@ export const listTarget = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:listTarget:constant"]
 
 
 
@@ -255,7 +247,6 @@ export const listTarget = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:listPerson:constant" type="constant" identity="listPerson" parent="~/.framework/functions/logs.ts"]
 /**
  * This function retrieves log entries associated with a specific person from the database, handling pagination and filtering based on system log levels. It ensures that the necessary context, such as person ID and account ID, is provided before executing the query.
  *
@@ -298,7 +289,6 @@ export const listPerson = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:listPerson:constant"]
 
 
 
@@ -314,7 +304,6 @@ export const listPerson = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:getStats:constant" type="constant" identity="getStats" parent="~/.framework/functions/logs.ts"]
 /**
  * Fetches log statistics based on various query parameters and the account context. It ensures that the account ID is present before making a database call to retrieve the statistics.
  *
@@ -355,7 +344,6 @@ export const getStats = createHandler(async (ctx, body) => {
     source_types: []
   }
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:getStats:constant"]
 
 
 
@@ -371,7 +359,6 @@ export const getStats = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:search:constant" type="constant" identity="search" parent="~/.framework/functions/logs.ts"]
 /**
  * The 'search' constant defines an asynchronous handler for searching log entries based on a query and optional filters. It ensures that a search query and account context are provided before querying the database for matching log records.
  *
@@ -411,7 +398,6 @@ export const search = createHandler(async (ctx, body) => {
 
   return (data || []).map(mapLogRow)
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:search:constant"]
 
 
 
@@ -427,7 +413,6 @@ export const search = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:log:constant" type="constant" identity="log" parent="~/.framework/functions/logs.ts"]
 /**
  * The log constant is an asynchronous handler that processes logging events by inserting log entries into a database. It ensures that required fields are present and manages the context of the logging operation.
  *
@@ -468,7 +453,6 @@ export const log = createHandler(async (ctx, body) => {
 
   return { log_id: data?.id }
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:log:constant"]
 
 
 
@@ -484,7 +468,6 @@ export const log = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:cleanup:constant" type="constant" identity="cleanup" parent="~/.framework/functions/logs.ts"]
 /**
  * The cleanup constant defines a handler for deleting log entries older than a specified number of days to manage log retention and free up database space. It removes outdated logs from the database.
  *
@@ -519,7 +502,6 @@ export const cleanup = createHandler(async (ctx, body) => {
 
   return { deleted_count: (data || []).length }
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:cleanup:constant"]
 
 
 
@@ -535,7 +517,6 @@ export const cleanup = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/logs.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/logs.ts"]
 /**
  * The handler processes incoming requests based on the specified action and HTTP method, executing the appropriate function for each action. It serves as a centralized entry point for handling various log-related operations.
  *
@@ -574,7 +555,6 @@ export const handler = createHandler(async (ctx, body) => {
 
   throw new Error('Invalid action or method')
 })
-// CIL[END stable_id="~/.framework/functions/logs.ts:handler:constant"]
 
 
 

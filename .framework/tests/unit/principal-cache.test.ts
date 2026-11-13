@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/principal-cache.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for the human principal cache placement guard"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify principals missing both account_id and role_id (mid-registration) are never cached, while placed principals and account-scoped contacts cache normally"]
-// CIL[DOC-CONTEXT module="tests/unit/principal-cache" layer="test-unit" related_files=".framework/functions/_shared/principal.ts,.framework/migrations/052_registration_security.sql"]
-// CIL[DOC-CONTRACT inputs="none" outputs="vitest assertions" errors="none" side_effects="Mocks @supabase/supabase-js createClient and db module"]
-// CIL[DOC-MICRO logic_summary="Drives resolvePrincipal with Bearer tokens while toggling the mocked people row between unplaced and placed states; asserts re-resolution instead of stale cache replay" notable_decisions="Regression coverage for the ~60s 'Account context required' stall documented in app install docs"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test-engineers"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const { mockGetUser, mockPeopleSingle, mockPersonByAuthUid } = vi.hoisted(() => ({
@@ -40,7 +31,6 @@ vi.mock('../../functions/_shared/db.ts', () => ({
 }))
 
 import { resolvePrincipal } from '../../functions/_shared/principal.ts'
-// CIL[DOC-VECTOR type="context" content="purpose='Unit tests for the human principal cache placement guard'; No verified external callers; imports: .framework/functions/_shared/principal.ts" status="ready"]
 
 const event = (token: string) => ({
   headers: { authorization: `Bearer ${token}`, 'user-agent': 'vitest' },
@@ -150,4 +140,3 @@ describe('internal invoke secret', () => {
     expect(p.id).toBe('anonymous')
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/principal-cache.test.ts:module_header:module_header"]

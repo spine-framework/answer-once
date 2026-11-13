@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/AccountPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company account detail — view/edit account, contacts, ticket history"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show a customer account with editable display_name/description, its people, ticket stats, and recent tickets; support edits via admin-data PATCH on the accounts entity"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/AccountPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/components/StatusBadge.tsx, custom/apps/answer-once/hooks/useDirectory.ts"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="not-found and load errors render inline" side_effects="GET /api/admin-data (accounts, people, items); PATCH /api/admin-data?entity=accounts"]
-// CIL[DOC-MICRO logic_summary="Fetches the account by id, people and tickets filtered by account_id; edit mode PATCHes display_name/description only (both declared system fields on the account type — undeclared data.* keys are rejected by field validation); contacts link to /company/contacts/:id detail and an Add contact button opens /company/contacts/new?account_id=<id>" notable_decisions="account data.* extras (segment, lifecycle_stage, temperature, health) render readonly — they are undeclared on the global account type and writes would fail validation"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
+// account data.* extras (segment, lifecycle_stage, temperature, health) render readonly — they are undeclared on the global account type and writes would fail validation
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -18,7 +10,6 @@ import { Input } from '@core/components/ui/input'
 import { Textarea } from '@core/components/ui/textarea'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { ArrowLeft, Pencil, Check, X, Users, Ticket, BookOpen, Plus } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/AccountPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

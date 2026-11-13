@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/TicketPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer ticket detail — conversation with Answer Once"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show the ticket metadata and external conversation thread; handle triage and follow-up messages"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/TicketPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/hooks/useTicketThread.ts, custom/apps/answer-once/components/TicketThread.tsx"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Loads ticket + external thread; if navigated here with triage state, starts agent episode and finalizes" notable_decisions="triage state is passed via React Router location.state from the create flow"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
 import { useTicket, useNewTicket } from '../../hooks/useTickets'
@@ -16,7 +8,6 @@ import { Textarea } from '@core/components/ui/textarea'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { ArrowLeft, Send, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/TicketPage.tsx:module_header:module_header"]
 
 export default function TicketPage() {
   const { id } = useParams<{ id: string }>()

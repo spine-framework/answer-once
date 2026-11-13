@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/kb-ingest-lease.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for kbIngest document-lease branches, supersede_keys supersession, and kbRevoke lease clearing"]
-// CIL[DOC-RESPONSIBILITY responsibility="Exercise acquire_document_lease outcomes (acquired/reused/processing), token-fenced release, release-on-failure, functionality.kb.supersede_keys-driven archival, and kbRevoke's document_leases delete"]
-// CIL[DOC-CONTEXT module="tests/unit/kb-ingest-lease" layer="test-unit" related_files=".framework/functions/_shared/kb.ts,.framework/migrations/054_kb_ingest_lease.sql"]
-// CIL[DOC-CONTRACT inputs="none" outputs="vitest assertions" errors="none" side_effects="Mocks _shared/db.ts adminDb (from + rpc) and _shared/llm.ts callOpenAIEmbeddings"]
-// CIL[DOC-MICRO logic_summary="Fluent thenable mock records each query's method ops; a resolver inspects the recorded ops to return per-table results (items load vs supersession select vs update, embeddings count/insert/delete, document_leases delete)" notable_decisions="ops are recorded rather than pre-programmed per call so assertions can inspect the .or() supersession filter and delete targets"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test maintainers"]
+// ops are recorded rather than pre-programmed per call so assertions can inspect the .or() supersession filter and delete targets
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 vi.mock('../../functions/_shared/db.ts', () => ({
@@ -26,7 +18,6 @@ vi.mock('../../functions/_shared/permissions.ts', () => ({
 import { adminDb } from '../../functions/_shared/db.ts'
 import { callOpenAIEmbeddings } from '../../functions/_shared/llm.ts'
 import { kbIngest, kbRevoke } from '../../functions/_shared/kb.ts'
-// CIL[END stable_id="~/.framework/tests/unit/kb-ingest-lease.test.ts:module_header:module_header"]
 
 type Op = [string, any[]]
 interface QueryLog { table: string; ops: Op[] }

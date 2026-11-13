@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/SimpleDashboard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/SimpleDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Top-level imports and page layout for the admin SimpleDashboard"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare React hooks, UI components, and icons used by the SimpleDashboard page"]
-// CIL[DOC-CONTEXT module="admin" layer="ui" related_files=".framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports dependencies and establishes the module-level context for the admin dashboard component" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="frontend-developers"]
 
 
 
@@ -51,21 +42,6 @@ import {
   Settings
 } from 'lucide-react'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Top-level imports and page layout for the admin SimpleDashboard'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/SimpleDashboard.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/SimpleDashboard.tsx:SimpleDashboard:component" type="component" identity="SimpleDashboard" parent="~/.framework/src/pages/admin/SimpleDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin SimpleDashboard with tabs, stats, and settings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a self-contained dashboard page including search, filter, stats cards, tabbed content, quick actions, reports, and security preferences"]
-// CIL[DOC-CONTEXT module="admin" layer="ui" related_files=".framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/pages/admin/SimpleDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX.Element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Uses local state for selected tab, search query and notifications, renders a dashboard with header, search/filter bar, stats cards, tabbed panels for overview, analytics, reports and settings" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function SimpleDashboard() {
   const [selectedTab, setSelectedTab] = useState('overview')
   const [searchQuery, setSearchQuery] = useState('')
@@ -404,11 +380,3 @@ export function SimpleDashboard() {
     </div>
   )
 }
-
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin SimpleDashboard with tabs, stats, and settings'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/SimpleDashboard.tsx:SimpleDashboard:component"]

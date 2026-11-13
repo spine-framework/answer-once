@@ -12,37 +12,13 @@
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header" type="module_header" identity="module_header" parent=""]
-// CIL[DOC-MACRO purpose="Import dependencies and set up module for the ItemCard and ItemGrid UI components"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare module-level imports for React, types, UI primitives, and utilities used by ItemCard and ItemGrid"]
-// CIL[DOC-CONTEXT module="components/ui" layer="presentation" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imported symbols available to component chunks" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, Item/ItemType, Badge, Button, lucide-react icons, and date/text helpers" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="frontend maintainers"]
 import React from 'react'
 import { Item, ItemType } from '../../types/types'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Box, FileText, Calendar, User, MoreVertical } from 'lucide-react';
 import { formatDateTime, truncateText } from '../../lib/utils'
-// CIL[DOC-VECTOR type="context" content="purpose='Import dependencies and set up module for the ItemCard and ItemGrid UI components'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemCardProps:interface" type="interface" identity="ItemCardProps" parent="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define the accepted props for the ItemCard component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the property contract and rendering options for a single item card"]
-// CIL[DOC-CONTEXT module="components/ui" layer="presentation" related_files=".framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="item, optional callbacks, and display flags" outputs="ItemCardProps TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Props extend Item with an optional item_type string or object plus optional onEdit/onDelete/onView callbacks and layout flags" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface ItemCardProps {
   item: Item & { item_type?: ItemType | string }
   onEdit?: (item: Item) => void
@@ -51,22 +27,7 @@ interface ItemCardProps {
   showActions?: boolean
   compact?: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the accepted props for the ItemCard component'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemCardProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemCard:component" type="component" identity="ItemCard" parent="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a single item as a card, with an optional compact layout and action buttons"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display item title, type badge, description, metadata, and action controls"]
-// CIL[DOC-CONTEXT module="components/ui" layer="presentation" related_files=".framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="ItemCardProps" outputs="React JSX for the item card" errors="none" side_effects="triggers onView/onEdit callbacks when user clicks a button"]
-// CIL[DOC-MICRO logic_summary="Derives primary text, secondary description, type label and badge color, then renders either a compact or full card layout" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ItemCard({
   item,
   onEdit,
@@ -237,22 +198,7 @@ export function ItemCard({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a single item as a card, with an optional compact layout and action buttons'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemCard:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemGridProps:interface" type="interface" identity="ItemGridProps" parent="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define the accepted props for the ItemGrid component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the property contract for rendering a list of items as a grid"]
-// CIL[DOC-CONTEXT module="components/ui" layer="presentation" related_files=".framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="item array, optional callbacks, loading flag, and empty message" outputs="ItemGridProps TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Props describe a list of items with callbacks, loading/empty UI controls, and a compact flag" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface ItemGridProps {
   items: (Item & { item_type: ItemType })[]
   loading?: boolean
@@ -262,22 +208,7 @@ interface ItemGridProps {
   compact?: boolean
   emptyMessage?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the accepted props for the ItemGrid component'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemGridProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemGrid:component" type="component" identity="ItemGrid" parent="~/.framework/src/components/ui/ItemCard.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a responsive grid of ItemCard components with loading and empty states"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map an array of items to ItemCard instances and display loading or empty placeholders"]
-// CIL[DOC-CONTEXT module="components/ui" layer="presentation" related_files=".framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="ItemGridProps" outputs="React JSX grid, loader, or empty message" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Shows a spinner while loading, an empty message when items are absent, or a responsive grid of ItemCard components" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ItemGrid({
   items,
   loading = false,
@@ -322,10 +253,3 @@ export function ItemGrid({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a responsive grid of ItemCard components with loading and empty states'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemCard.tsx:ItemGrid:component"]

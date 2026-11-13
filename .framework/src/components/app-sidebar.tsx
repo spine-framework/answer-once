@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/app-sidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/app-sidebar.tsx:file"]
-// CIL[DOC-MACRO purpose="Provides a documentation navigation sidebar with collapsible sections and search integration"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports React, local sidebar primitives, the search form, and Lucide icons used by AppSidebar"]
-// CIL[DOC-CONTEXT module="app-sidebar.tsx" layer="components" related_files=".framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="local bindings for React, Sidebar primitives, SearchForm, and Lucide icons" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, sidebar UI components, search-form, and icons for the documentation sidebar." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="UI component consumers, React developers, design system maintainers"]
 import * as React from "react"
 
 import { SearchForm } from "./search-form"
@@ -29,21 +20,6 @@ import {
   SidebarRail,
 } from "./ui/sidebar"
 import { GalleryVerticalEndIcon, PlusIcon, MinusIcon } from "lucide-react"
-// CIL[DOC-VECTOR type="context" content="purpose='Provides a documentation navigation sidebar with collapsible sections and search integration'; No verified external callers; imports: .framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-sidebar.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/app-sidebar.tsx:data:constant" type="constant" identity="data" parent="~/.framework/src/components/app-sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Defines the static navigation data for the documentation sidebar sections"]
-// CIL[DOC-RESPONSIBILITY responsibility="Holds the navMain array of documentation topics, URLs, and nested items"]
-// CIL[DOC-CONTEXT module="app-sidebar.tsx" layer="components" related_files=".framework/src/components/app-sidebar.tsx,.framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="data object with navMain navigation tree" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constant object defining documentation navigation sections with titles, URLs, and nested items." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const data = {
   navMain: [
     {
@@ -184,21 +160,6 @@ const data = {
   ],
 }
 
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the static navigation data for the documentation sidebar sections'; No verified external callers; imports: .framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-sidebar.tsx:data:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/components/app-sidebar.tsx:appsidebar:function" type="function" identity="AppSidebar" parent="~/.framework/src/components/app-sidebar.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Renders the application sidebar with a header, search, and collapsible navigation menu"]
-// CIL[DOC-RESPONSIBILITY responsibility="Displays the documentation navigation sidebar using the data constant and UI primitives"]
-// CIL[DOC-CONTEXT module="app-sidebar.tsx" layer="components" related_files=".framework/src/components/app-sidebar.tsx,.framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-CONTRACT inputs="props (React.ComponentProps<typeof Sidebar>)" outputs="JSX.Element" errors="none" side_effects="Renders sidebar DOM elements"]
-// CIL[DOC-MICRO logic_summary="Renders a Sidebar with header, SearchForm, and collapsible nav groups driven by data.navMain." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
@@ -263,10 +224,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the application sidebar with a header, search, and collapsible navigation menu'; No verified external callers; imports: .framework/src/components/search-form.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/sidebar.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-sidebar.tsx:appsidebar:function"]

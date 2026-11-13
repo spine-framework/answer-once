@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="React hooks for asynchronous API operations including fetching, pagination, and mutations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide reusable React hooks that encapsulate data fetching, pagination, and mutation state"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="" outputs="useApi, usePaginatedApi, useMutation" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Exports three hooks for asynchronous API state management" notable_decisions="Keeps related data fetching patterns in a single module"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="frontend-developers"]
 
 
 
@@ -22,44 +13,14 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-// CIL[DOC-VECTOR type="context" content="purpose='React hooks for asynchronous API operations including fetching, pagination, and mutations'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:ApiState:interface" type="interface" identity="ApiState" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for ApiState"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the ApiState interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error, lastFetched" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the ApiState data object" notable_decisions="Tracks lastFetched to record the most recent successful fetch"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface ApiState<T> {
   data: T | null
   loading: boolean
   error: string | null
   lastFetched: Date | null
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for ApiState'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:ApiState:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UseApiOptions:interface" type="interface" identity="UseApiOptions" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UseApiOptions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UseApiOptions interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="immediate, onSuccess, onError, initialData, deps" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UseApiOptions data object" notable_decisions="Uses generics to remain flexible across concrete API payloads"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UseApiOptions<T> {
   immediate?: boolean
   onSuccess?: (data: T) => void
@@ -67,22 +28,7 @@ interface UseApiOptions<T> {
   initialData?: T
   deps?: any[]
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UseApiOptions'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UseApiOptions:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UseApiReturn:interface" type="interface" identity="UseApiReturn" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UseApiReturn"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UseApiReturn interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error, execute, reset, refetch" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UseApiReturn data object" notable_decisions="Returns both state and controller functions"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UseApiReturn<T> {
   data: T | null
   loading: boolean
@@ -91,22 +37,7 @@ interface UseApiReturn<T> {
   reset: () => void
   refetch: () => Promise<T>
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UseApiReturn'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UseApiReturn:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:useApi:hook" type="hook" identity="useApi" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="React hook for fetching data from an API with cancellation support"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage async state and lifecycle for useApi"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="apiFunction returning a Promise<T> and UseApiOptions<T>" outputs="UseApiReturn<T> with data, loading, error, execute, reset, refetch" errors="Throws non-AbortError after updating state.error" side_effects="Calls apiFunction, updates React state, invokes onSuccess/onError, logs metrics"]
-// CIL[DOC-MICRO logic_summary="Encapsulates a single async request lifecycle with request cancellation" notable_decisions="Uses refs to keep the latest callback versions and aborts previous in-flight requests"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function useApi<T>(
   apiFunction: (params?: any) => Promise<T>,
   options: UseApiOptions<T> = {}
@@ -224,22 +155,7 @@ export function useApi<T>(
     refetch
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='React hook for fetching data from an API with cancellation support'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:useApi:hook"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:PaginatedApiState:interface" type="interface" identity="PaginatedApiState" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for PaginatedApiState"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the PaginatedApiState interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error, lastFetched, pagination" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the PaginatedApiState data object" notable_decisions="Extends ApiState with a pagination block"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface PaginatedApiState<T> extends ApiState<T[]> {
   pagination: {
     page: number
@@ -248,41 +164,11 @@ interface PaginatedApiState<T> extends ApiState<T[]> {
     itemsPerPage: number
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for PaginatedApiState'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:PaginatedApiState:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UsePaginatedApiOptions:interface" type="interface" identity="UsePaginatedApiOptions" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UsePaginatedApiOptions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UsePaginatedApiOptions interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="immediate, onSuccess, onError, initialData, deps, itemsPerPage" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UsePaginatedApiOptions data object" notable_decisions="Extends UseApiOptions with pagination settings"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UsePaginatedApiOptions<T> extends UseApiOptions<T[]> {
   itemsPerPage?: number
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UsePaginatedApiOptions'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UsePaginatedApiOptions:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UsePaginatedApiReturn:interface" type="interface" identity="UsePaginatedApiReturn" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UsePaginatedApiReturn"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UsePaginatedApiReturn interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error, execute, reset, refetch, pagination, setPage, setItemsPerPage, nextPage, prevPage, hasNextPage, hasPrevPage" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UsePaginatedApiReturn data object" notable_decisions="Exposes pagination control methods in addition to base useApi return values"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UsePaginatedApiReturn<T> extends UseApiReturn<T[]> {
   pagination: PaginatedApiState<T>['pagination']
   setPage: (page: number) => void
@@ -292,22 +178,7 @@ interface UsePaginatedApiReturn<T> extends UseApiReturn<T[]> {
   hasNextPage: boolean
   hasPrevPage: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UsePaginatedApiReturn'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UsePaginatedApiReturn:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:usePaginatedApi:hook" type="hook" identity="usePaginatedApi" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="React hook for paginated API fetching"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage async state and lifecycle for usePaginatedApi"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="apiFunction returning {data: T[], pagination} and UsePaginatedApiOptions<T>" outputs="UsePaginatedApiReturn<T> with pagination controls" errors="Throws on API error after setting state.error" side_effects="Fetches new page when page or itemsPerPage changes"]
-// CIL[DOC-MICRO logic_summary="Manages paginated state and refetches when pagination parameters change" notable_decisions="Resets to page 1 when itemsPerPage changes and exposes nextPage/prevPage helpers"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function usePaginatedApi<T>(
   apiFunction: (params: { page: number; itemsPerPage: number; [key: string]: any }) => Promise<{
     data: T[]
@@ -444,64 +315,19 @@ export function usePaginatedApi<T>(
     hasPrevPage
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='React hook for paginated API fetching'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:usePaginatedApi:hook"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:MutationState:interface" type="interface" identity="MutationState" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for MutationState"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the MutationState interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the MutationState data object" notable_decisions="Uses generics to remain flexible across concrete API payloads"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface MutationState<T> {
   data: T | null
   loading: boolean
   error: string | null
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for MutationState'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:MutationState:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UseMutationOptions:interface" type="interface" identity="UseMutationOptions" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UseMutationOptions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UseMutationOptions interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="onSuccess, onError, onSettled" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UseMutationOptions data object" notable_decisions="Uses generics to remain flexible across concrete API payloads"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UseMutationOptions<T, P> {
   onSuccess?: (data: T) => void
   onError?: (error: string) => void
   onSettled?: () => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UseMutationOptions'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UseMutationOptions:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:UseMutationReturn:interface" type="interface" identity="UseMutationReturn" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="Type definition for UseMutationReturn"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the fields and shape of the UseMutationReturn interface"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="generic type parameters" outputs="data, loading, error, mutate, reset" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describes the structure of the UseMutationReturn data object" notable_decisions="Provides a mutate trigger and reset for optimistic UIs"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface UseMutationReturn<T, P> {
   data: T | null
   loading: boolean
@@ -509,22 +335,7 @@ interface UseMutationReturn<T, P> {
   mutate: (params: P) => Promise<T>
   reset: () => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for UseMutationReturn'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:UseMutationReturn:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useApi.ts:useMutation:hook" type="hook" identity="useMutation" parent="~/.framework/src/hooks/useApi.ts"]
-// CIL[DOC-MACRO purpose="React hook for mutation operations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage async state and lifecycle for useMutation"]
-// CIL[DOC-CONTEXT module="hooks" layer="frontend" related_files=".framework/src/hooks/useApi.ts"]
-// CIL[DOC-CONTRACT inputs="mutationFunction(params: P) => Promise<T> and UseMutationOptions<T, P>" outputs="UseMutationReturn<T, P> with data, loading, error, mutate, reset" errors="Throws mutation error after setting state.error" side_effects="Updates React state and calls onSuccess/onError/onSettled callbacks"]
-// CIL[DOC-MICRO logic_summary="Encapsulates a mutation request and reset lifecycle" notable_decisions="Calls onSettled in a finally block to allow cleanup after success or failure"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function useMutation<T, P = void>(
   mutationFunction: (params: P) => Promise<T>,
   options: UseMutationOptions<T, P> = {}
@@ -579,10 +390,3 @@ export function useMutation<T, P = void>(
     reset
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='React hook for mutation operations'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/hooks/useApi.ts:useMutation:hook"]

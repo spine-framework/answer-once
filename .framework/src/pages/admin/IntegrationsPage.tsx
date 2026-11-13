@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
 /**
  * @module   IntegrationsPage
  * @audience both
@@ -35,7 +34,6 @@ import { apiFetch } from '../../lib/api'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { useApi } from '../../hooks/useApi'
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:module_header:module_header"]
 
 
 
@@ -52,7 +50,6 @@ import { useApi } from '../../hooks/useApi'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:Integration:interface" type="interface" identity="Integration" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
 /**
  * The Integration interface defines the structure for integration objects used in the admin panel, encapsulating essential details about each integration, including its status and configuration.
  *
@@ -85,7 +82,6 @@ interface Integration {
     email: string
   }
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:Integration:interface"]
 
 
 
@@ -102,7 +98,6 @@ interface Integration {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:IntegrationsPage:component" type="component" identity="IntegrationsPage" parent="~/.framework/src/pages/admin/IntegrationsPage.tsx"]
 /**
  * The IntegrationsPage component manages the display and filtering of integrations within an admin interface. It allows users to search, sort, and navigate to detailed views of integrations.
  *
@@ -366,7 +361,6 @@ export function IntegrationsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationsPage.tsx:IntegrationsPage:component"]
 
 
 

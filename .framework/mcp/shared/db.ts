@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/mcp/shared/db.ts:mcp_db:file" type="file" identity="mcp_db" parent="~/.framework/mcp/shared/db.ts"]
-// CIL[DOC-MACRO purpose="MCP admin-data proxy query builder and type resolver for the Spine framework."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides a fluent Query class that proxies Supabase-style requests to the admin-data Netlify function, plus helpers to resolve type and link type IDs."]
-// CIL[DOC-CONTEXT module="mcp" layer="shared" related_files=".framework/mcp/shared/db.ts"]
-// CIL[DOC-CONTRACT inputs="table names, filters, sort/limit options, insert/update/delete payloads" outputs="records or {data,error} shaped results" errors="Environment missing, network/HTTP errors, record not found" side_effects="Makes fetch calls to the Spine admin-data and function endpoints."]
-// CIL[DOC-MICRO logic_summary="Builds URL query parameters, applies client-side filters/sorting, handles single/maybeSingle semantics, and routes apps/embeddings tables to dedicated function endpoints." notable_decisions="admin-data does not support upsert; apps/embeddings writes are rejected; RPC only supports match_embeddings."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 import { randomUUID } from 'node:crypto'
 
@@ -468,10 +460,3 @@ export async function resolveLinkTypeIds(slugs: string[]): Promise<Record<string
   return result
 }
 
-// CIL[DOC-VECTOR type="context" content="purpose='MCP admin-data proxy query builder and type resolver for the Spine framework.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/shared/db.ts:mcp_db:file"]

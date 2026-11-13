@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // Decision records — validation for git-native, version-scoped decision
 // files. Records are Markdown with YAML frontmatter and live in:
 //
@@ -17,33 +16,21 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { load as yamlLoad } from 'js-yaml'
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decision_statuses:constant" type="constant" identity="DECISION_STATUSES" parent="none"]
 export const DECISION_STATUSES = ['proposed', 'accepted', 'rejected', 'superseded', 'invalidated'] as const
 // A record's decision may stand while its stated rationale is disproven —
 // rationale_status tracks claim validity independently of the decision.
 export const RATIONALE_STATUSES = ['verified', 'invalidated'] as const
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decision_kinds:constant" type="constant" identity="DECISION_KINDS" parent="none"]
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decision_statuses:constant"]
 export const DECISION_KINDS = ['decision', 'invariant', 'lesson', 'workaround', 'rejected-alternative'] as const
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decision_owners:constant" type="constant" identity="DECISION_OWNERS" parent="none"]
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decision_kinds:constant"]
 export const DECISION_OWNERS = ['package', 'customer'] as const
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decision_provenance:constant" type="constant" identity="DECISION_PROVENANCE" parent="none"]
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decision_owners:constant"]
 export const DECISION_PROVENANCE = ['captured', 'reconstructed', 'user-authored'] as const
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decision_provenance:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:required_keys:constant" type="constant" identity="REQUIRED_KEYS" parent="none"]
 const REQUIRED_KEYS = [
   'id', 'title', 'status', 'kind', 'owner',
   'since', 'until', 'supersedes', 'superseded_by', 'links',
   'applies_to', 'enforced_by', 'evidence', 'provenance',
 ] as const
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:required_keys:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decisiondir:interface" type="interface" identity="DecisionDir" parent="none"]
 export interface DecisionDir {
   /** Absolute path of the decisions/ directory */
   dir: string
@@ -52,10 +39,10 @@ export interface DecisionDir {
   owner: 'package' | 'customer'
   /** Expected `id` prefix, e.g. `spine-framework`, `answer-once`, `customer` */
   idPrefix: string
+  /** package.json whose `version` scopes this dir's release exceptions */
+  versionFile?: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decisiondir:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decisionrecord:interface" type="interface" identity="DecisionRecord" parent="none"]
 export interface DecisionRecord {
   /** Path relative to repo root */
   file: string
@@ -63,23 +50,17 @@ export interface DecisionRecord {
   fm: Record<string, any>
   body: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decisionrecord:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:decisionproblem:interface" type="interface" identity="DecisionProblem" parent="none"]
 export interface DecisionProblem {
   file: string
   level: 'error' | 'warning'
   message: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:decisionproblem:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:normalizepkgname:function" type="function" identity="normalizePkgName" parent="none"]
 function normalizePkgName(name: string): string {
   return name.replace(/^@spine-framework\//, '').replace(/^spine-framework-/, '')
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:normalizepkgname:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:ispackageownedapp:function" type="function" identity="isPackageOwnedApp" parent="none"]
 function isPackageOwnedApp(appDir: string): { owned: boolean; pkgPrefix: string } {
   try {
     const pkg = JSON.parse(readFileSync(join(appDir, 'package.json'), 'utf8'))
@@ -90,18 +71,17 @@ function isPackageOwnedApp(appDir: string): { owned: boolean; pkgPrefix: string 
   } catch {}
   return { owned: false, pkgPrefix: 'customer' }
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:ispackageownedapp:function"]
 
 /** Enumerate every decisions/ directory in the repo with its ownership. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:listdecisiondirs:function" type="function" identity="listDecisionDirs" parent="none"]
 export function listDecisionDirs(repoRoot: string): DecisionDir[] {
   const dirs: DecisionDir[] = []
 
+  const rootPkg = join(repoRoot, 'package.json')
   const fw = join(repoRoot, '.framework', 'decisions')
   if (existsSync(fw)) dirs.push({ dir: fw, rel: '.framework/decisions', owner: 'package', idPrefix: 'spine-framework' })
 
   const cust = join(repoRoot, 'custom', 'decisions')
-  if (existsSync(cust)) dirs.push({ dir: cust, rel: 'custom/decisions', owner: 'customer', idPrefix: 'customer' })
+  if (existsSync(cust)) dirs.push({ dir: cust, rel: 'custom/decisions', owner: 'customer', idPrefix: 'customer', versionFile: rootPkg })
 
   const appsRoot = join(repoRoot, 'custom', 'apps')
   if (existsSync(appsRoot)) {
@@ -114,18 +94,59 @@ export function listDecisionDirs(repoRoot: string): DecisionDir[] {
         rel: `custom/apps/${slug}/decisions`,
         owner: owned ? 'package' : 'customer',
         idPrefix: pkgPrefix,
+        versionFile: join(appsRoot, slug, 'package.json'),
       })
     }
   }
   return dirs
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:listdecisiondirs:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:frontmatter_re:constant" type="constant" identity="FRONTMATTER_RE" parent="none"]
+/** Resolve the package version that scopes a dir's release exceptions. */
+function packageVersionFor(dir: DecisionDir, repoRoot: string): string | undefined {
+  try {
+    if (dir.rel === '.framework/decisions') {
+      // Monorepo: the root package IS spine-framework. Downstream installs
+      // vendor .framework/ under a differently-named project package.json —
+      // the installed framework version lives in .spine-manifest.json.
+      const root = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'))
+      if (root?.name === 'spine-framework') return root.version
+      const manifest = JSON.parse(readFileSync(join(repoRoot, '.spine-manifest.json'), 'utf8'))
+      return manifest?.framework_version
+    }
+    if (!dir.versionFile) return undefined
+    return JSON.parse(readFileSync(dir.versionFile, 'utf8'))?.version
+  } catch { return undefined }
+}
+
+/** A release-scoped approval letting one proposed record ship in one version. */
+export interface DecisionException {
+  record: string
+  release: string
+  approved_by: string
+  reason: string
+}
+
+/** Read `<dir>/exceptions.yaml` — the release-scoped proposed-record approvals. */
+export function loadExceptions(dir: DecisionDir): { exceptions: DecisionException[]; errors: string[] } {
+  const file = join(dir.dir, 'exceptions.yaml')
+  if (!existsSync(file)) return { exceptions: [], errors: [] }
+  const errors: string[] = []
+  let parsed: any
+  try { parsed = yamlLoad(readFileSync(file, 'utf8')) }
+  catch (e: any) { return { exceptions: [], errors: [`exceptions.yaml is not valid YAML: ${e.message}`] } }
+  const list = parsed?.exceptions
+  if (!Array.isArray(list)) return { exceptions: [], errors: ['exceptions.yaml must contain an "exceptions" list'] }
+  const exceptions: DecisionException[] = []
+  for (const [i, e] of list.entries()) {
+    const missing = ['record', 'release', 'approved_by', 'reason'].filter(k => !e?.[k])
+    if (missing.length) { errors.push(`exceptions.yaml entry ${i}: missing ${missing.join(', ')}`); continue }
+    exceptions.push({ record: String(e.record), release: String(e.release), approved_by: String(e.approved_by), reason: String(e.reason) })
+  }
+  return { exceptions, errors }
+}
+
 const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:frontmatter_re:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:parsedecisionfile:function" type="function" identity="parseDecisionFile" parent="none"]
 export function parseDecisionFile(absPath: string, relPath: string, dir: DecisionDir): { record?: DecisionRecord; errors: string[] } {
   const errors: string[] = []
   let text: string
@@ -141,24 +162,18 @@ export function parseDecisionFile(absPath: string, relPath: string, dir: Decisio
   if (!fm || typeof fm !== 'object' || Array.isArray(fm)) return { errors: ['frontmatter is not a mapping'] }
   return { record: { file: relPath, dir, fm, body: m[2] }, errors }
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:parsedecisionfile:function"]
 
 /** Resolve an applies_to/enforced_by entry to a repo-relative path (strip #symbol). */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:reftopath:function" type="function" identity="refToPath" parent="none"]
 export function refToPath(ref: string): string {
   return String(ref).split('#')[0]
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:reftopath:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:validateoptions:interface" type="interface" identity="ValidateOptions" parent="none"]
 export interface ValidateOptions {
   /** Treat `status: proposed` records as errors (release gate). Default: warning. */
   strictProposed?: boolean
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:validateoptions:interface"]
 
 /** Validate every decision record in the repo. Returns problems sorted by file. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/decision-records.ts:validatedecisions:function" type="function" identity="validateDecisions" parent="none"]
 export function validateDecisions(repoRoot: string, opts: ValidateOptions = {}): { problems: DecisionProblem[]; records: DecisionRecord[] } {
   const problems: DecisionProblem[] = []
   const records: DecisionRecord[] = []
@@ -181,6 +196,38 @@ export function validateDecisions(repoRoot: string, opts: ValidateOptions = {}):
     const id = String(r.fm.id ?? '')
     if (byId.has(id)) push(r.file, 'error', `duplicate decision id "${id}" (also in ${byId.get(id)!.file})`)
     else byId.set(id, r)
+  }
+
+  // Release exceptions — each approves one proposed record for one version.
+  // Malformed, stale, or obsolete exceptions are always errors: an exception
+  // must name a live proposed record and the current package version, so it
+  // expires automatically when the version moves or the record is adjudicated.
+  const covered = new Set<string>()
+  for (const dir of listDecisionDirs(repoRoot)) {
+    const excRel = relative(repoRoot, join(dir.dir, 'exceptions.yaml')).replace(/\\/g, '/')
+    const { exceptions, errors } = loadExceptions(dir)
+    for (const e of errors) push(excRel, 'error', e)
+    if (!exceptions.length) continue
+    const version = packageVersionFor(dir, repoRoot)
+    for (const e of exceptions) {
+      const target = byId.get(e.record)
+      if (!target) {
+        push(excRel, 'error', `exception for unknown record "${e.record}" — remove it`)
+        continue
+      }
+      if (target.fm.status !== 'proposed') {
+        push(excRel, 'error', `exception for "${e.record}" is obsolete — the record is "${target.fm.status}"`)
+        continue
+      }
+      if (version !== undefined && e.release !== version) {
+        push(excRel, 'error', `exception for "${e.record}" is stale — approved for release ${e.release}, current version is ${version}`)
+        continue
+      }
+      if (version === undefined) {
+        push(excRel, 'warning', `cannot verify exception release for "${e.record}" — no package version resolves for ${dir.rel}`)
+      }
+      covered.add(e.record)
+    }
   }
 
   for (const r of records) {
@@ -229,8 +276,13 @@ export function validateDecisions(repoRoot: string, opts: ValidateOptions = {}):
       if (!fm.superseded_by) push(r.file, 'error', 'superseded records must set "superseded_by"')
     }
     if (fm.status === 'proposed') {
-      push(r.file, opts.strictProposed ? 'error' : 'warning',
-        'status "proposed" — must be accepted or rejected before release')
+      if (covered.has(id)) {
+        push(r.file, 'warning',
+          'status "proposed" — provisional; ships under an approved release exception')
+      } else {
+        push(r.file, opts.strictProposed ? 'error' : 'warning',
+          'status "proposed" — must be accepted or rejected before release')
+      }
     }
     if (fm.rationale_status !== undefined &&
         !(RATIONALE_STATUSES as readonly string[]).includes(fm.rationale_status)) {
@@ -283,4 +335,3 @@ export function validateDecisions(repoRoot: string, opts: ValidateOptions = {}):
   problems.sort((a, b) => a.file.localeCompare(b.file) || a.message.localeCompare(b.message))
   return { problems, records }
 }
-// CIL[END stable_id="~/.framework/cli/lib/decision-records.ts:validatedecisions:function"]

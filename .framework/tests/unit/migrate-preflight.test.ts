@@ -1,9 +1,6 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate-preflight.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 import { describe, it, expect } from 'vitest'
 import { runPreflight, type DbProbe } from '../../cli/lib/migrate-preflight.ts'
-// CIL[END stable_id="~/.framework/tests/unit/migrate-preflight.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate-preflight.test.ts:probe:function" type="function" identity="probe" parent="none"]
 function probe(rows: Record<string, string[]> = {}): DbProbe & { calls: string[] } {
   const calls: string[] = []
   return {
@@ -14,7 +11,6 @@ function probe(rows: Record<string, string[]> = {}): DbProbe & { calls: string[]
     },
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/migrate-preflight.test.ts:probe:function"]
 
 describe('runPreflight', () => {
   it('satisfies a reference from an earlier pending migration', async () => {

@@ -1,33 +1,9 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/system.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/system.ts"]
-// CIL[DOC-MACRO purpose="Provides CLI commands for system discovery and health."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose system discovery and health commands via the CLI."]
-// CIL[DOC-CONTEXT module="system" layer="cli" related_files=".framework/cli/context.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Defines the system command module and its intent, related utilities, and default exports." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
 
 
 
 import type { Command } from 'commander'
 import { buildCliContext, printResult, handleError } from '../context.ts'
-// CIL[DOC-VECTOR type="context" content="purpose='Provides CLI commands for system discovery and health.'; No verified external callers; imports: .framework/cli/context.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/system.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/system.ts:fetchSystemEndpoint:function" type="function" identity="fetchSystemEndpoint" parent="~/.framework/cli/commands/system.ts"]
-// CIL[DOC-MACRO purpose="Calls the local system endpoint for a given action."]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch system data from the local dev server."]
-// CIL[DOC-CONTEXT module="system" layer="cli" related_files=".framework/cli/commands/system.ts,.framework/cli/context.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: any, action: string" outputs="Promise<any>" errors="Error when SUPABASE_URL missing, HTTP error, or connection refused" side_effects="Performs an HTTP GET to the local dev server."]
-// CIL[DOC-MICRO logic_summary="Build a local URL with the action query param, fetch JSON, and map connection failures to a helpful error." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function fetchSystemEndpoint(ctx: any, action: string): Promise<any> {
   const supabaseUrl = process.env.SUPABASE_URL
@@ -63,22 +39,7 @@ async function fetchSystemEndpoint(ctx: any, action: string): Promise<any> {
     throw err
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Calls the local system endpoint for a given action.'; No verified external callers; imports: .framework/cli/context.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/system.ts:fetchSystemEndpoint:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/system.ts:registerSystemCommands:function" type="function" identity="registerSystemCommands" parent="~/.framework/cli/commands/system.ts"]
-// CIL[DOC-MACRO purpose="Registers the 'system' CLI command and its subcommands (manifest, health, openapi)."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose system discovery and health CLI subcommands."]
-// CIL[DOC-CONTEXT module="system" layer="cli" related_files=".framework/cli/commands/system.ts,.framework/cli/context.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="void" errors="[]" side_effects="Writes formatted manifest/health output or JSON to stdout."]
-// CIL[DOC-MICRO logic_summary="Attach a 'system' command to the program, define manifest, health, and openapi subcommands, and render results as JSON or formatted console output." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export function registerSystemCommands(program: Command) {
   const system = program
@@ -190,10 +151,3 @@ export function registerSystemCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Registers the 'system' CLI command and its subcommands (manifest, health, openapi).'; No verified external callers; imports: .framework/cli/context.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/system.ts:registerSystemCommands:function"]

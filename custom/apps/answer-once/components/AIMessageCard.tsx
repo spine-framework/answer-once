@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/AIMessageCard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="AI response card with evidence state and feedback"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render an AI/agent message with citations and thumbs feedback"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/AIMessageCard.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts"]
-// CIL[DOC-CONTRACT inputs="message, ticketId, messageId, onFeedback" outputs="JSX element" errors="none" side_effects="feedback submission"]
-// CIL[DOC-MICRO logic_summary="Shows evidence_state label, markdown content, source list (clickable for ao_kb_* sources → /kb/:id), and feedback buttons; parses JSON-string data fields and normalizes server feedback values" notable_decisions="admin-data display-formats json fields into strings — cited_sources/retrieved_sources are parsed defensively; server stores feedback as helpful|not_helpful, normalized to up|down"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="app developers"]
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bot, ThumbsUp, ThumbsDown, CheckCircle, AlertCircle } from 'lucide-react'
@@ -16,7 +7,6 @@ import { useBranding } from '@core/hooks/useBranding'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useSubmitFeedback } from '../hooks/useTickets'
-// CIL[END stable_id="~/custom/apps/answer-once/components/AIMessageCard.tsx:module_header:module_header"]
 
 function FormattedAIResponse({ content }: { content: string }) {
   return (

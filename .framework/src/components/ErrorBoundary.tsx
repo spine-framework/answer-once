@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ErrorBoundary.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/ErrorBoundary.tsx"]
 /**
  * @module   ErrorBoundary
  * @audience internal
@@ -16,7 +15,6 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 import { Button } from './ui/button'
-// CIL[END stable_id="~/.framework/src/components/ErrorBoundary.tsx:module_header:module_header"]
 
 
 
@@ -27,7 +25,6 @@ import { Button } from './ui/button'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundaryProps:interface" type="interface" identity="ErrorBoundaryProps" parent="~/.framework/src/components/ErrorBoundary.tsx"]
 /**
  * ErrorBoundaryProps defines the properties for the ErrorBoundary component, which is used to handle errors in React component trees. It ensures that child components can be rendered safely even when an error occurs.
  *
@@ -38,7 +35,6 @@ import { Button } from './ui/button'
 interface ErrorBoundaryProps {
   children: ReactNode
 }
-// CIL[END stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundaryProps:interface"]
 
 
 
@@ -50,7 +46,6 @@ interface ErrorBoundaryProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundaryState:interface" type="interface" identity="ErrorBoundaryState" parent="~/.framework/src/components/ErrorBoundary.tsx"]
 /**
  * The ErrorBoundaryState interface defines the structure of the state used in an error boundary component to manage errors that occur during rendering. This facilitates organized error handling in React components.
  *
@@ -61,7 +56,6 @@ interface ErrorBoundaryProps {
 interface ErrorBoundaryState {
   error: Error | null
 }
-// CIL[END stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundaryState:interface"]
 
 
 
@@ -74,7 +68,6 @@ interface ErrorBoundaryState {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundary:class" type="class" identity="ErrorBoundary" parent="~/.framework/src/components/ErrorBoundary.tsx"]
 /**
  * The ErrorBoundary class catches JavaScript errors in its child component tree, logs those errors, and displays a fallback UI to enhance user experience. This prevents the entire application from crashing due to UI errors.
  *
@@ -131,6 +124,5 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     )
   }
 }
-// CIL[END stable_id="~/.framework/src/components/ErrorBoundary.tsx:ErrorBoundary:class"]
 
 

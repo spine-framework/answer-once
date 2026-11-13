@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/episode-lease.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for the atomic episode-lease arbitration in agent-runner"]
-// CIL[DOC-RESPONSIBILITY responsibility="Exercise acquireEpisodeLease verdict mapping (claimed/held/error/malformed), kickAgentEpisode claim-vs-refuse behavior with legacy fallback, heartbeat fencing (EpisodeLeaseLost quiet abort), and terminal lease release in runAgent"]
-// CIL[DOC-CONTEXT module="tests/unit/episode-lease" layer="test-unit" related_files=".framework/functions/_shared/agent-runner.ts,.framework/migrations/064_episode_leases.sql,.framework/tests/unit/agent-runner.test.ts,.framework/tests/unit/kb-ingest-lease.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="vitest assertions" errors="none" side_effects="Mocks _shared/db.ts adminDb (from + rpc), audit, outcomes, llm, admin-data create, integration-outbound, pipeline-runner, funnel"]
-// CIL[DOC-MICRO logic_summary="Per-table thenable mock mirrors agent-runner.test.ts scaffolding; adminDb.rpc is programmed per-RPC-name so acquire/heartbeat/release outcomes can be driven independently" notable_decisions="kickAgentEpisode's detached void runAgent is real — config mocks keep it a quiet no-op run rather than spying on same-module internals"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test maintainers"]
+// kickAgentEpisode's detached void runAgent is real — config mocks keep it a quiet no-op run rather than spying on same-module internals
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { CoreContext } from '../../functions/_shared/middleware.ts'
 
@@ -55,7 +47,6 @@ import {
   kickAgentEpisode,
   runAgent,
 } from '../../functions/_shared/agent-runner.ts'
-// CIL[END stable_id="~/.framework/tests/unit/episode-lease.test.ts:module_header:module_header"]
 
 const THREAD_ID = 'thread-1'
 const AGENT_ID = 'agent-1'
@@ -239,9 +230,6 @@ function mockFinalLlm(content = 'Final answer.') {
   } as any)
 }
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_acquireEpisodeLease:block" type="block" identity="describe_acquireEpisodeLease" parent="none"]
-// CIL[DOC-MACRO purpose="Test acquireEpisodeLease verdict mapping"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify claimed/held/error/malformed RPC responses map to the documented return contract"]
 describe('acquireEpisodeLease', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -303,11 +291,7 @@ describe('acquireEpisodeLease', () => {
     }))
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_acquireEpisodeLease:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_kickAgentEpisode:block" type="block" identity="describe_kickAgentEpisode" parent="none"]
-// CIL[DOC-MACRO purpose="Test kickAgentEpisode atomic claim and legacy fallback"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify a held lease refuses without a state write, a claimed lease stamps driver_id and detaches the run, and an unavailable RPC degrades to the legacy heartbeat check"]
 describe('kickAgentEpisode', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -449,11 +433,7 @@ describe('kickAgentEpisode', () => {
     await new Promise((res) => setTimeout(res, 250))
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_kickAgentEpisode:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_runAgentFencing:block" type="block" identity="describe_runAgentFencing" parent="none"]
-// CIL[DOC-MACRO purpose="Test runAgent lease heartbeat fencing and terminal release"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify a false heartbeat aborts the run quietly without persisting a final message, and a terminal episode releases the lease token"]
 describe('runAgent — lease fencing and release', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -639,11 +619,7 @@ describe('runAgent — lease fencing and release', () => {
     expect(vi.mocked(callOpenAIChat)).toHaveBeenCalled()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_runAgentFencing:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_humanOwnerGate:block" type="block" identity="describe_humanOwnerGate" parent="none"]
-// CIL[DOC-MACRO purpose="Test the human-owner thread gate"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify owner:'human' (and the legacy escalation_status:'pending' key) refuses episode claims, narrations, and inference — the semantic gate that stops frozen serverless resumes from re-entering human-owned threads"]
 describe('human-owner gate', () => {
   beforeEach(() => vi.clearAllMocks())
 
@@ -692,4 +668,3 @@ describe('human-owner gate', () => {
     }))
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/episode-lease.test.ts:describe_humanOwnerGate:block"]

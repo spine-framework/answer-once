@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/lib/app-mount.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/lib/app-mount.ts"]
-// CIL[DOC-MACRO purpose="Resolve an app's effective route_prefix for the current hostname — host-keyed mount overrides"]
-// CIL[DOC-RESPONSIBILITY responsibility="Decide whether an app is routable on this host and at which prefix, honoring prod_domain/preview_domain gating and prod_route_prefix/preview_route_prefix mount overrides"]
-// CIL[DOC-CONTEXT module="framework-api" layer="lib" related_files=".framework/src/hooks/useApps.ts,.framework/src/contexts/AppContext.tsx,.framework/migrations/074_app_route_prefix_domains.sql"]
-// CIL[DOC-CONTRACT inputs="app domain/prefix fields + optional hostname/environment overrides" outputs="{routable, route_prefix}" errors="none" side_effects="reads import.meta.env.VITE_ENVIRONMENT and window.location.hostname unless overridden"]
-// CIL[DOC-MICRO logic_summary="Environment selects the domain/override pair (preview vs prod); host match + override set → override mount; host match without override → default mount; no match with override → still routable at default mount; no match without override → filtered (legacy domain-lock)" notable_decisions="a route_prefix override converts the domain column from a hard visibility filter into a mount selector, preserving legacy prod_domain filter semantics for rows that set no override"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework developers"]
 
 import { apiFetch } from './api'
 
@@ -23,13 +14,7 @@ export interface AppMountResolution {
   routable: boolean
   route_prefix: string | null
 }
-// CIL[END stable_id="~/.framework/src/lib/app-mount.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/lib/app-mount.ts:resolveappmount:function" type="function" identity="resolveAppMount" parent="~/.framework/src/lib/app-mount.ts"]
-// CIL[DOC-MACRO purpose="Compute the effective route_prefix and routability for an app on the current host"]
-// CIL[DOC-CONTRACT inputs="app: AppMountFields, opts: {hostname?, environment?} (injectable for tests)" outputs="AppMountResolution" errors="malformed domain treated as non-matching" side_effects="none — pure"]
-// CIL[DOC-MICRO logic_summary="Picks preview_* fields when environment==='preview' else prod_*; null domain → default mount; matching host → override ?? route_prefix; non-matching host → routable at route_prefix when an override exists, unroutable when it does not" notable_decisions="opts injection keeps the function testable in the node vitest environment (no jsdom)"]
-// CIL[DOC-STABILITY stability="experimental"]
 export function resolveAppMount(
   app: AppMountFields,
   opts: { hostname?: string; environment?: string } = {},
@@ -74,13 +59,7 @@ export function resolveAppMount(
     ? { routable: true, route_prefix: app.route_prefix }
     : { routable: false, route_prefix: app.route_prefix }
 }
-// CIL[END stable_id="~/.framework/src/lib/app-mount.ts:resolveappmount:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/lib/app-mount.ts:resolvepostauthpath:function" type="function" identity="resolvePostAuthPath" parent="~/.framework/src/lib/app-mount.ts"]
-// CIL[DOC-MACRO purpose="Resolve where to land a user after login/registration — the target app's effective mount, not the static config path"]
-// CIL[DOC-CONTRACT inputs="preferredAppSlug (app chosen by config policy), fallback path" outputs="effective route_prefix to navigate to" errors="fetch/parse failures return fallback" side_effects="authenticated GET /api/apps?action=list"]
-// CIL[DOC-MICRO logic_summary="Fetches the apps list, resolves each record's effective mount via resolveAppMount, returns the preferred app's prefix when routable else the first routable app's prefix else the fallback" notable_decisions="spine.config.json apps.<slug>.path and default_app_by_role are per-repo hints that are wrong for single-app prod sites — the DB row's resolved mount is authoritative"]
-// CIL[DOC-STABILITY stability="experimental"]
 export async function resolvePostAuthPath(
   preferredAppSlug?: string | null,
   fallback: string = '/',
@@ -99,4 +78,3 @@ export async function resolvePostAuthPath(
     return fallback
   }
 }
-// CIL[END stable_id="~/.framework/src/lib/app-mount.ts:resolvepostauthpath:function"]

@@ -57,7 +57,7 @@ summary.
 | Function | What it does |
 |---|---|
 | [ai-agents](./ai-agents.md) | Agent CRUD plus `action=run` multi-turn inference. |
-| [ai-interactions](./ai-interactions.md) | Feedback and interaction capture (`submit_feedback`, `create_interaction`, CIL learning proposals). |
+| [ai-interactions](./ai-interactions.md) | Feedback and interaction capture (`submit_feedback`, `create_interaction`). |
 | [deliveries](./deliveries.md) | `webhook_deliveries` list/get plus outbound `action=retry`. |
 | [embeddings](./embeddings.md) | Embedding lifecycle — `generate`, `search-similar`/`search-semantic`, `revoke`, `approve`, `cleanup`. |
 | [eval-harness](./eval-harness.md) | AI eval cases, runs, results, and coverage reporting. |
@@ -80,24 +80,3 @@ summary.
 | [system](./system.md) | Deployment `manifest`, `health`, and `openapi` descriptors. |
 | [tests](./tests.md) | `test_runs`/`test_results` reporting — list, get, 30-day per-suite stats. |
 
-## Internal — `cil-*` tooling
-
-The Code Intelligence Layer functions. These are internal tooling for
-Spine's code-understanding index (chunks, docs, links, embeddings stored
-as runtime records); they are not part of the app-facing API and have no
-reference pages.
-
-| Function | What it does |
-|---|---|
-| cil-agent | LLM tool-use agent over the CIL index (chunk lookup, contracts, blast radius, hash validation). |
-| cil-agent-ingest | Ingests agent session/doc content into CIL chunk fields. |
-| cil-callmap | Derives file-level call/import links into the CIL graph. |
-| cil-config | CIL project config extraction and status (`run`/`extract`/`status`). |
-| cil-context | Context-brief assembly for a chunk (contract, callers, tests, dependencies). |
-| cil-doc | LLM-backed doc generation/sync for chunks. |
-| cil-embeddings | Embedding generation for CIL chunks. |
-| cil-graph | Graph queries over CIL `links` (callers/callees, blast radius). |
-| cil-ingest | AST chunking and marker sync for source files. |
-| cil-pipeline | CIL pipeline status and per-step file readiness. |
-| cil-project | CIL project CRUD (method-dispatched). |
-| cil-validate | Doc/freshness validation and hash updates for CIL chunks. |

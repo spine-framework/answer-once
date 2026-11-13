@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/CustomerDashboardPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer dashboard — recent tickets and knowledgebase"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show recent ticket activity and published knowledge for the customer"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/CustomerDashboardPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/TicketCard.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Lists recent tickets and published KB articles (own private + platform shared via type_slugs query)" notable_decisions="dashboard is a useful overview, not a decorative widget board; New Ticket navigates to /tickets with state.newTicket to open the inline create form"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useTickets } from '../../hooks/useTickets'
 import { TicketCard } from '../../components/TicketCard'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -16,7 +8,6 @@ import { Badge } from '@core/components/ui/badge'
 import { Plus, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/CustomerDashboardPage.tsx:module_header:module_header"]
 
 export default function CustomerDashboardPage() {
   const appPath = useAppPath()

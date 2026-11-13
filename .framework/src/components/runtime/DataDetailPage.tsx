@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/runtime/DataDetailPage.tsx"]
 /**
  * @module   DataDetailPage
  * @audience both
@@ -34,7 +33,6 @@ import { SchemaDetailForm } from './SchemaDetailForm'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
 import { Skeleton } from '../ui/skeleton'
-// CIL[END stable_id="~/.framework/src/components/runtime/DataDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -52,7 +50,6 @@ import { Skeleton } from '../ui/skeleton'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataDetailPage.tsx:DataDetailPage:component" type="component" identity="DataDetailPage" parent="~/.framework/src/components/runtime/DataDetailPage.tsx"]
 /**
  * The DataDetailPage component manages the display and editing of detailed records for various entities in the application. It handles navigation, data fetching, and form state management based on the entity type and record ID.
  *
@@ -217,7 +214,6 @@ export function DataDetailPage() {
         entity={config.entity}
         icon={config.icon}
         title={isCreating ? `New ${config.entity.slice(0, -1)}` : recordTitle}
-// CIL[END stable_id="~/.framework/src/components/runtime/DataDetailPage.tsx:DataDetailPage:component"]
 
         isEditing={isEditing}
         isCreating={isCreating}

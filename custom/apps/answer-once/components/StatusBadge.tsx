@@ -1,13 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/StatusBadge.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Status badge for ticket and article statuses"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map status strings to badge variants and human labels"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/StatusBadge.tsx" layer="custom_app" related_files=".framework/src/components/ui/badge.tsx"]
-// CIL[DOC-CONTRACT inputs="status: string" outputs="JSX Badge" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Lookup maps for variant and label; defaults to secondary" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { Badge } from '@core/components/ui/badge'
-// CIL[END stable_id="~/custom/apps/answer-once/components/StatusBadge.tsx:module_header:module_header"]
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 

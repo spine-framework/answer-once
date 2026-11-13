@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Schema-driven knowledge-article editor — loads a record's design_schema and renders view/edit/new modes"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load type schema + article record, render main fields (title/content/description) plus a metadata sidebar, and handle save/publish/delete"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=".framework/src/components/ui/RichTextEditor.tsx, .framework/src/components/shared/SchemaFields.tsx, .framework/functions/_shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="KBArticleEditorProps (typeSlug, mode, articleId, onPublish?, sidebarFieldNames?, ...)" outputs="React editor view" errors="inline banner" side_effects="admin-data get/create/update/remove, optional custom onPublish or /api/kb publish"]
-// CIL[DOC-MICRO logic_summary="Fields split into main (title, content) and sidebar (everything else, optionally allowlisted via sidebarFieldNames); handleSave always saves first, then publishes via onPublish or /api/kb?action=publish; header wraps and truncates gracefully so long titles/dates never clip or overlap the action buttons" notable_decisions="custom onPublish callers save at current status — the backend decides publication after validation so a hard-failing draft never becomes published"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
+// custom onPublish callers save at current status — the backend decides publication after validation so a hard-failing draft never becomes published
 
 
 
@@ -29,7 +21,6 @@ import { RichTextEditor } from '../ui/RichTextEditor'
 import { SchemaFields } from '../shared/SchemaFields'
 import { LoadingSpinner } from '../ui/LoadingSpinner'
 import { ArrowLeft, Save, Send, Trash, X, Edit } from 'lucide-react'
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:module_header:module_header"]
 
 
 
@@ -56,14 +47,6 @@ import { ArrowLeft, Save, Send, Trash, X, Edit } from 'lucide-react'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBArticleEditorProps:interface" type="interface" identity="KBArticleEditorProps" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Props interface for KBArticleEditor"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare mode, record id, permission flags, callbacks, publish overrides, and the sidebar field allowlist"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="onPublish replaces the default /api/kb publish call; sidebarFieldNames filters the metadata sidebar (empty array hides it entirely while still seeding formData)" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export interface KBArticleEditorProps {
   typeSlug: string
   typeName?: string
@@ -95,7 +78,6 @@ export interface KBArticleEditorProps {
    */
   sidebarFieldNames?: string[]
 }
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBArticleEditorProps:interface"]
 
 
 
@@ -123,14 +105,6 @@ export interface KBArticleEditorProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBRecord:interface" type="interface" identity="KBRecord" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Minimal runtime-record shape the editor consumes"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the article record's id/title/status/created_at plus an open data bag"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Loose shape — extra record fields pass through the index signature" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface KBRecord {
   id: string
   title: string
@@ -139,7 +113,6 @@ interface KBRecord {
   data: Record<string, any>
   [key: string]: any
 }
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBRecord:interface"]
 
 
 
@@ -167,14 +140,6 @@ interface KBRecord {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:getFieldDefault:function" type="function" identity="getFieldDefault" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Default value for a schema field when no record value exists"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map data_type to a sensible empty value: [] for multiselect/array, false for booleans, null for numbers/dates, first option for selects, '' otherwise"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=""]
-// CIL[DOC-CONTRACT inputs="def: schema field definition" outputs="default value" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Branch on data_type; select/radio take the first option's value" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function getFieldDefault(def: any): any {
   if (def.data_type === 'multiselect' || (def.data_type === 'array' && def.options)) return []
   if (def.data_type === 'boolean' || def.data_type === 'checkbox' || def.data_type === 'switch') return false
@@ -189,7 +154,6 @@ function getFieldDefault(def: any): any {
   if (def.data_type === 'datetime' || def.data_type === 'date') return null
   return ''
 }
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:getFieldDefault:function"]
 
 
 
@@ -217,14 +181,6 @@ function getFieldDefault(def: any): any {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:initialFormData:function" type="function" identity="initialFormData" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Seed the form's initial values from schema + existing record"]
-// CIL[DOC-RESPONSIBILITY responsibility="Hydrate every schema field from the record (system fields top-level, data fields under record.data) or fall back to field defaults"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=""]
-// CIL[DOC-CONTRACT inputs="schema, record|null" outputs="formData object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="New records additionally get status='draft' and empty title/content/description" notable_decisions="system:true fields read record[field] directly; others read record.data[field]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function initialFormData(schema: any, record: KBRecord | null): Record<string, any> {
   const values: Record<string, any> = {}
   Object.entries(schema?.fields || {}).forEach(([fieldName, fieldDef]: [string, any]) => {
@@ -244,7 +200,6 @@ function initialFormData(schema: any, record: KBRecord | null): Record<string, a
   }
   return values
 }
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:initialFormData:function"]
 
 
 
@@ -272,14 +227,6 @@ function initialFormData(schema: any, record: KBRecord | null): Record<string, a
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBArticleEditor:component" type="component" identity="KBArticleEditor" parent="~/.framework/src/components/kb/KBArticleEditor.tsx"]
-// CIL[DOC-MACRO purpose="Render and operate the schema-driven article editor"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load schema+record, hydrate formData, render the wrapping header, main fields, and metadata sidebar, and run save/publish/delete flows"]
-// CIL[DOC-CONTEXT module=".framework/src/components/kb/KBArticleEditor.tsx" layer="framework_ui" related_files=".framework/src/components/ui/RichTextEditor.tsx, .framework/src/components/shared/SchemaFields.tsx"]
-// CIL[DOC-CONTRACT inputs="KBArticleEditorProps" outputs="editor JSX" errors="save/publish/delete failures in an inline banner" side_effects="admin-data CRUD, kb publish or custom onPublish callback"]
-// CIL[DOC-MICRO logic_summary="Header uses flex-wrap + min-w-0/truncate so title, badge and date wrap instead of clipping behind the buttons; onFormChange fires only for post-init edits via a ref flag; publish saves first then delegates to onPublish or /api/kb?action=publish" notable_decisions="DOMPurify sanitizes stored rich text in view mode (stored-XSS defense)"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function KBArticleEditor({
   typeSlug,
   typeName,
@@ -650,7 +597,6 @@ export function KBArticleEditor({
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleEditor.tsx:KBArticleEditor:component"]
 
 
 

@@ -1,23 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:doc_block:comment" type="comment" identity="doc_block" parent="none"]
-// CIL[DOC-MACRO purpose="Answer Once sidebar with role-aware navigation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render customer or company navigation based on the user's roles"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/AnswerOnceSidebar.tsx" layer="custom_app" related_files=".framework/src/components/ui/sidebar.tsx, .framework/src/hooks/useAppPath.ts, .framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX sidebar" errors="none" side_effects="navigation via react-router"]
-// CIL[DOC-MICRO logic_summary="Shows customer nav for member/member_admin; shows company nav for support/support_admin/system_admin" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
-// CIL[END stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:doc_block:comment"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Import dependencies for the AnswerOnceSidebar component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load React, router, auth context, app path helper, and UI primitives"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/components/AnswerOnceSidebar.tsx" layer="custom_app" related_files=".framework/src/components/ui/sidebar.tsx, .framework/src/components/ui/button.tsx, .framework/src/hooks/useAppPath.ts, .framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module imports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static imports of React, lucide icons, useAppPath, useNavigate, useAuth, and Sidebar UI primitives" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developer"]
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { useAppPath } from "@core/hooks/useAppPath"
@@ -66,16 +47,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react"
-// CIL[END stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:AnswerOnceSidebar:component" type="component" identity="AnswerOnceSidebar" parent="none"]
-// CIL[DOC-MACRO purpose="Render the Answer Once sidebar with role-based navigation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Choose customer or company nav items based on user roles and render the sidebar"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX element" errors="settings save errors surfaced in dialog" side_effects="renders DOM, navigation, PATCH /api/admin-data?entity=people, supabase signOut"]
-// CIL[DOC-MICRO logic_summary="Reads user roles from useAuth; if support/support_admin/system_admin is present, company nav is rendered; otherwise customer nav. Header shows the Answer Once brand logo (bundled SVG from ../public). Footer shows the signed-in email with a kebab menu: user-settings dialog (edit full_name via admin-data, then refreshUser) and sign-out" notable_decisions="same sidebar component switches nav set by role — routes stay under /answer-once either way; logo is imported so Vite bundles it with the app; logout navigates to /login after clearing the session"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const appPath = useAppPath()
   const navigate = useNavigate()
@@ -234,4 +206,3 @@ export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Side
     </Sidebar>
   )
 }
-// CIL[END stable_id="~/custom/apps/answer-once/components/AnswerOnceSidebar.tsx:AnswerOnceSidebar:component"]

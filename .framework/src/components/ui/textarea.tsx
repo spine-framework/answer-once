@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/textarea.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/ui/textarea.tsx"]
 /**
  * @module   textarea
  * @audience both
@@ -23,7 +22,6 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-// CIL[END stable_id="~/.framework/src/components/ui/textarea.tsx:module_header:module_header"]
 
 
 
@@ -40,7 +38,6 @@ import { cn } from "@/lib/utils"
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/textarea.tsx:Textarea:constant" type="constant" identity="Textarea" parent="~/.framework/src/components/ui/textarea.tsx"]
 /**
  * Textarea is a React component that renders a styled HTML textarea element, providing a flexible and customizable input area for user text input within a form.
  *
@@ -61,7 +58,6 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"tex
       {...props}
     />
   )
-// CIL[END stable_id="~/.framework/src/components/ui/textarea.tsx:Textarea:constant"]
 )
 Textarea.displayName = "Textarea"
 

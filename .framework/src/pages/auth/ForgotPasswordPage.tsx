@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/ForgotPasswordPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/auth/ForgotPasswordPage.tsx"]
-// CIL[DOC-MACRO purpose="Provides imports and entry-point metadata for the ForgotPasswordPage component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare module dependencies and export the ForgotPasswordPage component."]
-// CIL[DOC-CONTEXT module="auth" layer="presentation" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, routing, Supabase client, and a loading spinner; contains no runtime logic." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers,ui-maintainers"]
 
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -15,21 +6,6 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { TurnstileWidget, turnstileEnabled } from '../../components/auth/TurnstileWidget'
 import { useBranding } from '../../hooks/useBranding'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Provides imports and entry-point metadata for the ForgotPasswordPage component.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/ForgotPasswordPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/ForgotPasswordPage.tsx:ForgotPasswordPage:component" type="component" identity="ForgotPasswordPage" parent="~/.framework/src/pages/auth/ForgotPasswordPage.tsx"]
-// CIL[DOC-MACRO purpose="Render a password-reset request page and submit the email to Supabase."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a UI for users to enter their email and trigger a password reset email."]
-// CIL[DOC-CONTEXT module="auth" layer="presentation" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/ForgotPasswordPage.tsx"]
-// CIL[DOC-CONTRACT inputs="email (string from user input)" outputs="Rendered JSX form or success confirmation; local state updates for loading/submitted/error." errors="Supabase resetPasswordForEmail errors surfaced to the UI." side_effects="Calls supabase.auth.resetPasswordForEmail with a redirectTo URL; updates component state."]
-// CIL[DOC-MICRO logic_summary="Manages email, loading, submitted and error state. On submit it prevents default, clears errors, sets loading, calls Supabase reset, and on success shows a confirmation with a back-to-login link." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -156,10 +132,3 @@ export function ForgotPasswordPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a password-reset request page and submit the email to Supabase.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/ForgotPasswordPage.tsx:ForgotPasswordPage:component"]

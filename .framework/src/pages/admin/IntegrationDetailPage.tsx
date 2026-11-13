@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/IntegrationDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin integration detail page module. Provides a React page to view, create, edit, and delete third-party integrations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Export the IntegrationDetailPage component, Integration interface, and INTEGRATION_TYPES constant for the admin SPA."]
-// CIL[DOC-CONTEXT module="admin" layer="pages" related_files=".framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="React hooks and UI components" outputs="Rendered integration detail UI" errors="Network or validation errors surfaced as alerts" side_effects="Navigates and calls /api/integrations endpoints"]
-// CIL[DOC-MICRO logic_summary="Composes form state, fetch, save, delete, and type-specific setup instructions." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="maintainers"]
 
 
 
@@ -28,24 +19,9 @@ import { Modal } from '../../components/ui/Modal'
 import { Badge } from '../../components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../components/ui/collapsible'
 import { ArrowLeft, Pencil, Trash2, CheckCircle, XCircle, AlertTriangle, AlertCircle, ChevronDown } from 'lucide-react'
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:module_header:module_header"]
 
 
-// CIL[DOC-VECTOR type="context" content="purpose='Admin integration detail page module. Provides a React page to view, create, edit, and delete third-party integrations.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="TypeScript interface describing an integration record and its fields."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the shape of integration data used by the page."]
-// CIL[DOC-CONTEXT module="admin" layer="types" related_files=".framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/IntegrationDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Integration type definition" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares required and optional fields for integrations including config and credentials maps." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:Integration:interface" type="interface" identity="Integration" parent="~/.framework/src/pages/admin/IntegrationDetailPage.tsx"]
 interface Integration {
   id: string
   name: string
@@ -62,26 +38,11 @@ interface Integration {
   updated_at: string
   account_id: string | null
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:Integration:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing an integration record and its fields.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
 
 
-// CIL[DOC-MACRO purpose="Selectable options for integration types."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide labels for the integration type select control."]
-// CIL[DOC-CONTEXT module="admin" layer="constants" related_files=".framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/IntegrationDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Array of value/label pairs" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static array mapping integration type slugs to human-readable labels." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:INTEGRATION_TYPES:constant" type="constant" identity="INTEGRATION_TYPES" parent="~/.framework/src/pages/admin/IntegrationDetailPage.tsx"]
 const INTEGRATION_TYPES = [
   { value: 'webhook', label: 'Webhook' },
   { value: 'api', label: 'API' },
@@ -89,24 +50,9 @@ const INTEGRATION_TYPES = [
   { value: 'file', label: 'File' },
   { value: 'custom', label: 'Custom' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:INTEGRATION_TYPES:constant"]
-// CIL[DOC-VECTOR type="context" content="purpose='Selectable options for integration types.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
-// CIL[DOC-MACRO purpose="React component for creating, viewing, editing, and deleting integrations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the integration detail UI, manage form state, fetch and persist integration records, and handle deletion."]
-// CIL[DOC-CONTEXT module="admin" layer="pages" related_files=".framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/lib/api.ts,.framework/src/pages/admin/IntegrationDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="URL id param from React Router" outputs="JSX page with forms, instructions, and delete modal" errors="Validation, fetch, save, delete errors set to local error state" side_effects="Calls /api/integrations endpoints, navigates on success or cancel"]
-// CIL[DOC-MICRO logic_summary="Loads integration by id, manages editing state and form fields, parses JSON config/credentials, saves via create or update, confirms deletion, and displays type instructions." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:IntegrationDetailPage:component" type="component" identity="IntegrationDetailPage" parent="~/.framework/src/pages/admin/IntegrationDetailPage.tsx"]
 export function IntegrationDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -347,11 +293,4 @@ export function IntegrationDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegrationDetailPage.tsx:IntegrationDetailPage:component"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='React component for creating, viewing, editing, and deleting integrations.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

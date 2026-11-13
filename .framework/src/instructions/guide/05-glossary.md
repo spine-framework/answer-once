@@ -177,7 +177,6 @@ project. Checksummed in `.spine-manifest.json`; overwritten by
 `npx spine-framework upgrade`. See
 [02-project-map.md](./02-project-map.md).
 
-**CIL** — the Code Intelligence Layer: Spine's code-intelligence subsystem
+**CIL (retired)** — the former Code Intelligence Layer (`cil_*` functions, markers, embeddings); deactivated non-destructively by migration 079. Preserved rows remain in the database but are invisible to retrieval.
 (ingested code chunks, embeddings, and a searchable project graph) surfaced
-under the admin `cil` pages (`.framework/src/pages/admin/cil/`). Optional;
 your apps do not depend on it.

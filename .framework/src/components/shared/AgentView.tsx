@@ -1,33 +1,9 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/AgentView.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="React component for rendering agent/developer API call examples and live response data for Spine endpoints"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the module header, imports, and default export for the AgentView shared component"]
-// CIL[DOC-CONTEXT module="shared" layer="presentation" related_files=".framework/src/components/shared/AgentView.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, hooks, and lucide-react icons; no active logic at module level" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 
 
 import React, { useState, useEffect } from 'react'
 import { Code, Terminal, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react'
 
-// CIL[DOC-VECTOR type="context" content="purpose='React component for rendering agent/developer API call examples and live response data for Spine endpoints'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/AgentView.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/AgentView.tsx:agentviewprops:interface" type="interface" identity="agentviewprops" parent="~/.framework/src/components/shared/AgentView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Type definition for the AgentView component props"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the shape of data, endpoint, method, query, body, and title props"]
-// CIL[DOC-CONTEXT module="shared" layer="presentation" related_files=".framework/src/components/shared/AgentView.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AgentViewProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Optional method, query, body, and title fields extend required data and endpoint fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface AgentViewProps {
   data: any
   endpoint: string
@@ -36,22 +12,7 @@ interface AgentViewProps {
   body?: any
   title?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Type definition for the AgentView component props'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/AgentView.tsx:agentviewprops:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/AgentView.tsx:agentview:function" type="function" identity="agentview" parent="~/.framework/src/components/shared/AgentView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render an expandable panel with cURL, fetch, Spine CLI examples and the JSON response"]
-// CIL[DOC-RESPONSIBILITY responsibility="Build command strings from props and present copyable code blocks"]
-// CIL[DOC-CONTEXT module="shared" layer="presentation" related_files=".framework/src/components/shared/AgentView.tsx"]
-// CIL[DOC-CONTRACT inputs="data, endpoint, method, query, body, title" outputs="JSX collapsible AgentView panel" errors="none" side_effects="writes to navigator.clipboard and sets a 2s copied timer"]
-// CIL[DOC-MICRO logic_summary="Computes base URL, full URL, curl/fetch/cli snippets; toggles open state and copy feedback" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function AgentView({
   data,
   endpoint,
@@ -201,27 +162,5 @@ export function AgentView({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render an expandable panel with cURL, fetch, Spine CLI examples and the JSON response'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/AgentView.tsx:agentview:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/AgentView.tsx:default:function" type="function" identity="default" parent="~/.framework/src/components/shared/AgentView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Default export of the AgentView component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Export AgentView as the module default for convenient imports"]
-// CIL[DOC-CONTEXT module="shared" layer="presentation" related_files=".framework/src/components/shared/AgentView.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AgentView default export" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Re-exports AgentView as the module default" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export default AgentView
-// CIL[DOC-VECTOR type="context" content="purpose='Default export of the AgentView component'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/AgentView.tsx:default:function"]

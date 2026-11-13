@@ -1,34 +1,10 @@
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="MCP tool registration module for observability logs and metrics"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports dependencies and exports the register function that wires observability MCP tools to an McpServer"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts"]
-// CIL[DOC-CONTRACT inputs="McpServer instance via register" outputs="MCP tool handlers for volume, error rate, latency, pipeline, top actors, AI support, and logs" errors="Throws from adminDb RPC or query errors via throwDbError" side_effects="None at module load"]
-// CIL[DOC-MICRO logic_summary="Sets up zod schemas and adminDb RPC calls for observability data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="framework-maintainers"]
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { adminDb } from '../shared/db.js'
 import { resolveTypeId } from '../shared/db.js'
-// CIL[DOC-VECTOR type="context" content="purpose='MCP tool registration module for observability logs and metrics'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:module_header:module_header"]
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:mapLogRow:function" type="function" identity="mapLogRow" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Map a raw log database row to a normalized client-facing log object"]
-// CIL[DOC-RESPONSIBILITY responsibility="Transform database column names to the expected client log field names"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="row: any database log row" outputs="normalized log object" errors="None" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Returns an object mapping row columns to the names expected by consumers" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mapLogRow(row: any) {
   return {
     id: row.id,
@@ -51,23 +27,8 @@ function mapLogRow(row: any) {
     created_at: row.created_at,
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Map a raw log database row to a normalized client-facing log object'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:mapLogRow:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:textResponse:function" type="function" identity="textResponse" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Wrap any value in an MCP text content response"]
-// CIL[DOC-RESPONSIBILITY responsibility="Format JSON-serialized payloads for MCP text tool responses"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="obj: any" outputs="MCP content array with type text" errors="May throw if JSON.stringify receives circular input" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Stringify object and return an MCP text content wrapper" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function textResponse(obj: any) {
   return {
     content: [{
@@ -76,93 +37,34 @@ function textResponse(obj: any) {
     }],
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Wrap any value in an MCP text content response'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:textResponse:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:throwDbError:function" type="function" identity="throwDbError" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Convert an unknown error into a JavaScript Error with a readable message"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide uniform database error handling for tool handlers"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="error: any" outputs="Throws Error" errors="Throws Error for any error input" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Coerce error to string and throw" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function throwDbError(error: any) {
   const msg = error && typeof error === 'object'
     ? (error.message || JSON.stringify(error))
     : String(error)
   throw new Error(msg)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Convert an unknown error into a JavaScript Error with a readable message'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:throwDbError:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:defaultRange:function" type="function" identity="defaultRange" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Return a default 24-hour ISO date range ending at now"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide fallback from/to timestamps for time-bucketed metric queries"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="None" outputs="{ from: ISO string, to: ISO string }" errors="None" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Compute yesterday by subtracting 24 hours from now" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function defaultRange() {
   const now = new Date()
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
   return { from: yesterday, to: now.toISOString() }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Return a default 24-hour ISO date range ending at now'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:defaultRange:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:bucketToGranularity:constant" type="constant" identity="bucketToGranularity" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Map friendly bucket names to SQL interval strings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Translate hour/day/week inputs to PostgreSQL granularity literals"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="bucket string key" outputs="PostgreSQL interval string" errors="None" side_effects="None"]
-// CIL[DOC-MICRO logic_summary="Lookup Record<string,string> with default 1 hour" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const bucketToGranularity: Record<string, string> = {
   hour: '1 hour',
   day: '1 day',
   week: '1 week',
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Map friendly bucket names to SQL interval strings'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:bucketToGranularity:constant"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/observability.ts:register:function" type="function" identity="register" parent="~/.framework/mcp/tools/observability.ts"]
-// CIL[DOC-MACRO purpose="Register all observability MCP tools on a server instance"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose metrics, logs, and AI support query tools to MCP clients"]
-// CIL[DOC-CONTEXT module="observability" layer="mcp-tools" related_files=".framework/mcp/shared/db.ts,.framework/mcp/tools/observability.ts"]
-// CIL[DOC-CONTRACT inputs="server: McpServer" outputs="Registered tool handlers with zod input schemas" errors="Throws on database RPC or query errors" side_effects="Adds ten tool handlers to the McpServer"]
-// CIL[DOC-MICRO logic_summary="Defines ten tools using zod and adminDb RPC or queries: event volume, error rate, latency percentiles, pipeline stats, top actors, AI support metrics, log search, log list, log for target, log stats" notable_decisions="['latency_percentiles returns avg_handler_duration because percentile RPCs are not yet available']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
+// ['latency_percentiles returns avg_handler_duration because percentile RPCs are not yet available']
 export function register(server: McpServer) {
   server.registerTool(
     'spine_observability_event_volume',
@@ -501,10 +403,3 @@ export function register(server: McpServer) {
     }
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Register all observability MCP tools on a server instance'; No verified external callers; imports: .framework/mcp/shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/observability.ts:register:function"]

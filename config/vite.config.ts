@@ -2,14 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// CIL[BEGIN stable_id="~/config/vite.config.ts:module:config" type="config" identity="vite-config" parent="~/config/vite.config.ts"]
-// CIL[DOC-MACRO purpose="Vite build/dev config for Spine: assembled src root, /api proxy to Netlify dev, manual vendor chunks, @/ @core @custom @shared aliases."]
-// CIL[DOC-RESPONSIBILITY responsibility="Point Vite at .assembled/src, wire SPA fallback middleware, public dir, PostCSS (config/postcss.config.cjs), and dev-server fs/proxy settings."]
-// CIL[DOC-CONTEXT module="build-config" layer="build" related_files="scripts/assemble-frontend.sh,config/postcss.config.cjs,netlify.toml"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="gotcha" content="css.postcss must reference postcss.config.cjs — the .js filename does not exist on disk."]
-// CIL[END stable_id="~/config/vite.config.ts:module:config"]
+// css.postcss must reference postcss.config.cjs — the .js filename does not exist on disk.
 
 // Vite config for Spine - assembled src as working root
 export default defineConfig({

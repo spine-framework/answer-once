@@ -1,12 +1,5 @@
 #!/usr/bin/env tsx
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Export a self-contained standalone repository for one custom app — frozen framework snapshot, app-owned copy allowlist, generated configs, and per-file digests"]
-// CIL[DOC-RESPONSIBILITY responsibility="Read the app's manifest + standalone.config.json profile, copy the declared allowlist with permissions and safe symlinks, generate standalone package.json/package-lock.json/spine.config.json/netlify.toml, write .spine-export-manifest.json, and regenerate a frozen .spine-manifest.json over the output tree"]
-// CIL[DOC-CONTEXT module="export" layer="tooling" related_files="scripts/checksum-manifest.mts,scripts/verify-manifest.mts,custom/apps/demo/standalone.config.json,netlify.toml,package.json"]
-// CIL[DOC-CONTRACT inputs="--app <slug> --output <dir>; source monorepo tree" outputs="populated standalone directory + export manifest on stdout summary" errors="exit 1 on missing profile/manifest, unsafe symlink, non-empty destination, missing declared file" side_effects="writes <output> tree only; no network, npm, or DB access"]
-// CIL[DOC-MICRO logic_summary="Nothing is hardcoded to demo: every path decision comes from the app's standalone.config.json copy allowlist. Symlinks are preserved only when their resolved target lands inside the output tree — anything escaping fails the export rather than silently dereferencing into monorepo code. Generated spine.config.json never maps system_admin to the app" notable_decisions="package-lock is copied verbatim with only the root name rewritten — dependency pruning by guesswork is prohibited; netlify.toml strips custom_* scheduled-function blocks then appends the exported app's profile-declared schedules; export manifest records git HEAD plus dirty state so a dirty tree is never labeled identical to HEAD"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// package-lock is copied verbatim with only the root name rewritten — dependency pruning by guesswork is prohibited; netlify.toml strips custom_* scheduled-function blocks then appends the exported app's profile-declared schedules; export manifest records git HEAD plus dirty state so a dirty tree is never labeled identical to HEAD
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -17,10 +10,7 @@ import {
   hashEntry,
   computeTreeDigest,
 } from './checksum-manifest.mts'
-// CIL[END stable_id="~/scripts/export-standalone.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:types:block" type="block" identity="types" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Profile and collected-file shapes"]
 interface CopyProfile {
   framework_dirs: string[]
   framework_files: string[]
@@ -77,10 +67,7 @@ interface CopiedFile {
   sha256: string
   symlink: boolean
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:types:block"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:helpers:block" type="block" identity="helpers" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Small pure helpers — fail, JSON loading, glob matching, hashing"]
 function fail(msg: string): never {
   console.error(`\n❌ export-standalone: ${msg}`)
   process.exit(1)
@@ -119,11 +106,7 @@ function sha256File(abs: string): string {
 function sha256Text(text: string): string {
   return `sha256:${createHash('sha256').update(text, 'utf8').digest('hex')}`
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:helpers:block"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:walk:function" type="function" identity="walkDir" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Recursively enumerate files under a directory, honoring exclude globs"]
-// CIL[DOC-CONTRACT inputs="dirAbs, rootAbs (for rel computation), exclude regexes" outputs="array of {rel, abs, symlink}" errors="throws on unreadable dir" side_effects="reads filesystem"]
 function walkDir(
   dirAbs: string,
   rootAbs: string,
@@ -140,11 +123,7 @@ function walkDir(
   }
   return out
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:walk:function"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:collect:function" type="function" identity="collectCopyList" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Resolve the profile copy allowlist into a concrete file list"]
-// CIL[DOC-CONTRACT inputs="srcRoot, profile (incl. optional copy.file_map dest→source renames)" outputs="deduped sorted file list keyed by destination rel path" errors="fails on missing declared path, missing file_map source, or unsafe file_map destination" side_effects="reads filesystem"]
 function collectCopyList(srcRoot: string, profile: StandaloneProfile) {
   const excludes = profile.exclude_globs.map(globToRegex)
   const seen = new Map<string, { rel: string; abs: string; symlink: boolean }>()
@@ -200,12 +179,8 @@ function collectCopyList(srcRoot: string, profile: StandaloneProfile) {
 
   return [...seen.values()].sort((a, b) => Buffer.compare(Buffer.from(a.rel), Buffer.from(b.rel)))
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:collect:function"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:netlify:function" type="function" identity="generateNetlifyToml" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="Generate standalone netlify.toml — framework blocks plus the selected app's declared schedules, no sibling-app cron"]
-// CIL[DOC-CONTRACT inputs="root netlify.toml text, profile-declared scheduled functions" outputs="toml text" errors="none — names/schedules are pre-validated by validateScheduledFunctions" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Drops [functions.\"custom_*\"] sections (app-scheduled functions) and their immediately preceding comment block; keeps framework timeouts, dev block, redirects; appends the exported app's declared [functions.\"<name>\"] schedule sections" notable_decisions="text-level section stripping — no TOML dep; schedules come from the app profile, not inferred from the monorepo config, so sibling apps' schedules never leak"]
+// text-level section stripping — no TOML dep; schedules come from the app profile, not inferred from the monorepo config, so sibling apps' schedules never leak
 export function generateNetlifyToml(srcToml: string, scheduled: ScheduledFunctionDecl[] = []): string {
   const lines = srcToml.split('\n')
   const out: string[] = []
@@ -239,9 +214,7 @@ export function generateNetlifyToml(srcToml: string, scheduled: ScheduledFunctio
   return toml
 }
 
-// CIL[DOC-MACRO purpose="Validate profile-declared scheduled functions against the export allowlist and generated TOML"]
-// CIL[DOC-CONTRACT inputs="srcRoot, profile, generated toml text" outputs="deduped schedule list" errors="fails on duplicate names, unsafe section names, names that shadow framework function sections, or names with no exported app function file" side_effects="reads filesystem"]
-// CIL[DOC-MICRO logic_summary="A schedule is only valid when <name>.ts exists inside an exported app_dir's functions/ directory — the flat Netlify function name equals the file basename" notable_decisions="charset is restricted to [a-zA-Z0-9_-] so a name can never break out of the quoted TOML key or forge a section"]
+// charset is restricted to [a-zA-Z0-9_-] so a name can never break out of the quoted TOML key or forge a section
 const SCHEDULE_NAME_RE = /^[a-zA-Z0-9_-]+$/
 
 function validateScheduledFunctions(
@@ -281,11 +254,7 @@ function validateScheduledFunctions(
   }
   return declared
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:netlify:function"]
 
-// CIL[BEGIN stable_id="~/scripts/export-standalone.ts:main:function" type="function" identity="main" parent="~/scripts/export-standalone.ts"]
-// CIL[DOC-MACRO purpose="CLI entry — orchestrate copy, config generation, and manifest writing"]
-// CIL[DOC-CONTRACT inputs="argv --app <slug> --output <dir>" outputs="exit 0 standalone tree written" errors="exit 1 usage/missing/unsafe" side_effects="writes output dir"]
 function main(): void {
   const args = process.argv.slice(2)
   const appIdx = args.indexOf('--app')
@@ -484,7 +453,6 @@ function main(): void {
   console.log(`  ✓ .spine-export-manifest.json`)
   console.log(`\n✅ Export complete: ${copied.length} files, ${(totalBytes / 1024 / 1024).toFixed(1)} MB → ${outRoot}`)
 }
-// CIL[END stable_id="~/scripts/export-standalone.ts:main:function"]
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   main()

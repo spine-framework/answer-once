@@ -171,12 +171,9 @@ describe('admin-signals', () => {
 })
 
 describe('cil operator gate', () => {
-  it.each(['cil-project', 'cil-context', 'cil-callmap', 'cil-ingest', 'cil-pipeline',
-           'cil-config', 'cil-agent-ingest', 'cil-doc', 'cil-graph', 'cil-validate',
-           'cil-embeddings', 'cil-agent'])('%s denies tenant callers', async (file) => {
-    const mod = await import(`../../functions/${file}.ts`)
-    const handler = mod.handler
-    const ctx = { ...humanCtx(), query: { action: 'list' } }
-    await expect(handler(ctx, {})).rejects.toThrow()
+  it('cil-* functions are retired — the operator-gate surface is gone', () => {
+    // The cil-* Netlify functions this suite exercised were deleted in the CIL
+    // retirement (migration 079 + runtime removal). There is no longer a
+    // tenant-deny surface to gate.
   })
 })

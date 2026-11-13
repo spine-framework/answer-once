@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * @module   logging
  * @audience both
@@ -27,7 +26,6 @@
 import { CoreContext } from './middleware'
 import { adminDb } from './db'
 import { formatPrincipalForAudit } from './principal'
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:module_header:module_header"]
 
 
 
@@ -45,7 +43,6 @@ import { formatPrincipalForAudit } from './principal'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LogLevel:type" type="type" identity="LogLevel" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * LogLevel defines a set of string constants representing different logging levels to standardize logging behavior across the application.
  *
@@ -54,7 +51,6 @@ import { formatPrincipalForAudit } from './principal'
  * @cil-generated
  */
 export type LogLevel = 'off' | 'timing' | 'warnings' | 'errors' | 'all'
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LogLevel:type"]
 
 
 
@@ -72,7 +68,6 @@ export type LogLevel = 'off' | 'timing' | 'warnings' | 'errors' | 'all'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LogContext:interface" type="interface" identity="LogContext" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The LogContext interface defines the structure for logging context information within the application, allowing for optional properties that provide additional context for log entries. This enhances the clarity and usefulness of logs by including details like application ID and log level.
  *
@@ -85,7 +80,6 @@ export interface LogContext extends CoreContext {
   source?: string
   logLevel?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LogContext:interface"]
 
 
 
@@ -103,7 +97,6 @@ export interface LogContext extends CoreContext {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:AdminDataLogPayload:interface" type="interface" identity="AdminDataLogPayload" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The AdminDataLogPayload interface defines the structure for logging administrative actions within the application. It captures essential details about the entity being acted upon, the action taken, and any relevant metadata.
  *
@@ -123,7 +116,6 @@ export interface AdminDataLogPayload {
   error?: any
   warning?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:AdminDataLogPayload:interface"]
 
 
 
@@ -143,7 +135,6 @@ export interface AdminDataLogPayload {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:VALID_LEVELS:constant" type="constant" identity="VALID_LEVELS" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * VALID_LEVELS defines the acceptable logging levels for the application to provide a standardized set of log levels used throughout the logging system.
  *
@@ -152,7 +143,6 @@ export interface AdminDataLogPayload {
  * @cil-generated
  */
 const VALID_LEVELS: LogLevel[] = ['off', 'timing', 'warnings', 'errors', 'all']
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:VALID_LEVELS:constant"]
 
 // Module-level cache of the `system_settings` rows for key='logging'. The
 // per-ctx cache in resolveLogLevels only dedupes within one request; polling
@@ -160,7 +150,6 @@ const VALID_LEVELS: LogLevel[] = ['off', 'timing', 'warnings', 'errors', 'all']
 
 let loggingSettingsCache: { rows: any[]; expiresAt: number } | null = null
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:LOGGING_SETTINGS_TTL_MS:constant" type="constant" identity="LOGGING_SETTINGS_TTL_MS" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * LOGGING_SETTINGS_TTL_MS defines the time-to-live for logging settings in milliseconds to ensure that module-level caches persist for a specified duration between test cases.
  *
@@ -169,10 +158,8 @@ let loggingSettingsCache: { rows: any[]; expiresAt: number } | null = null
  * @cil-generated
  */
 const LOGGING_SETTINGS_TTL_MS = 60_000
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:LOGGING_SETTINGS_TTL_MS:constant"]
 
 // Test hook — module-level caches survive between cases in one process.
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:__resetLoggingSettingsCache:component" type="component" identity="__resetLoggingSettingsCache" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * __resetLoggingSettingsCache resets the logging settings cache to null to clear any cached logging settings, ensuring that fresh settings are retrieved when needed.
  *
@@ -184,7 +171,6 @@ const LOGGING_SETTINGS_TTL_MS = 60_000
 export function __resetLoggingSettingsCache() {
   loggingSettingsCache = null
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:__resetLoggingSettingsCache:component"]
 
 
 
@@ -203,7 +189,6 @@ export function __resetLoggingSettingsCache() {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:parseLogLevelHeader:function" type="function" identity="parseLogLevelHeader" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Parses a log level header string into an array of valid log levels, ensuring only recognized levels are returned. This function handles both single and multiple log levels.
  *
@@ -226,7 +211,6 @@ function parseLogLevelHeader(value: string | undefined): LogLevel[] {
   const levels = parts.filter(p => VALID_LEVELS.includes(p as LogLevel)) as LogLevel[]
   return levels
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:parseLogLevelHeader:function"]
 
 
 
@@ -244,7 +228,6 @@ function parseLogLevelHeader(value: string | undefined): LogLevel[] {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:getCache:function" type="function" identity="getCache" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Retrieves the logging cache from the provided log context if it exists. This function is useful for accessing cached logging data associated with a specific context.
  *
@@ -258,7 +241,6 @@ function parseLogLevelHeader(value: string | undefined): LogLevel[] {
 function getCache(ctx: LogContext): Map<string, any> | undefined {
   return (ctx as any).__loggingCache
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:getCache:function"]
 
 
 
@@ -276,7 +258,6 @@ function getCache(ctx: LogContext): Map<string, any> | undefined {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:getOrCreateCache:function" type="function" identity="getOrCreateCache" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * This function retrieves an existing logging cache from the provided context or creates a new one if it doesn't exist. It ensures that logging operations can efficiently store and retrieve log-related data.
  *
@@ -293,7 +274,6 @@ function getOrCreateCache(ctx: LogContext): Map<string, any> {
   }
   return (ctx as any).__loggingCache
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:getOrCreateCache:function"]
 
 
 
@@ -311,7 +291,6 @@ function getOrCreateCache(ctx: LogContext): Map<string, any> {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:findSetting:function" type="function" identity="findSetting" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Retrieves logging levels associated with a specific scope and optional scope ID from a list of rows. This function is used to configure logging settings based on the provided parameters.
  *
@@ -334,7 +313,6 @@ function findSetting(
   )
   return row?.value?.levels as LogLevel[] | undefined
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:findSetting:function"]
 
 
 
@@ -352,7 +330,6 @@ function findSetting(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:resolveLogLevels:function" type="function" identity="resolveLogLevels" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Resolves logging levels based on the provided context and options, caching results for efficiency. It retrieves settings from a database if not already cached.
  *
@@ -433,7 +410,6 @@ export async function resolveLogLevels(
   cache.set(cacheKey, levels)
   return levels
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:resolveLogLevels:function"]
 
 
 
@@ -450,7 +426,6 @@ export async function resolveLogLevels(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:APP_UUID_TTL_MS:constant" type="constant" identity="APP_UUID_TTL_MS" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * APP_UUID_TTL_MS defines the time-to-live duration for application UUIDs in milliseconds. This constant helps manage the lifecycle of UUIDs within the application.
  *
@@ -459,8 +434,6 @@ export async function resolveLogLevels(
  * @cil-generated
  */
 const APP_UUID_TTL_MS = 5 * 60_000
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:APP_UUID_TTL_MS:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:appUuidCache:constant" type="constant" identity="appUuidCache" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The appUuidCache stores mappings of application UUIDs to their corresponding metadata, allowing for efficient retrieval of this information. It exists to optimize the management of UUIDs and their associated data within the application.
  *
@@ -469,8 +442,6 @@ const APP_UUID_TTL_MS = 5 * 60_000
  * @cil-generated
  */
 const appUuidCache = new Map<string, { id: string | null; at: number }>()
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:appUuidCache:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:UUID_PATTERN:constant" type="constant" identity="UUID_PATTERN" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * UUID_PATTERN is a regular expression that validates the format of UUIDs to ensure consistency and correctness in logging. It is essential for maintaining the integrity of UUIDs used within the application.
  *
@@ -479,7 +450,6 @@ const appUuidCache = new Map<string, { id: string | null; at: number }>()
  * @cil-generated
  */
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:UUID_PATTERN:constant"]
 
 
 
@@ -496,7 +466,6 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:resolveAppUuid:function" type="function" identity="resolveAppUuid" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Resolves the application UUID based on a given reference string by checking a cache and querying a database if necessary. This function is essential for retrieving application identifiers in a consistent manner.
  *
@@ -530,7 +499,6 @@ export async function resolveAppUuid(ref: string | null | undefined): Promise<st
     return null
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:resolveAppUuid:function"]
 
 
 
@@ -547,7 +515,6 @@ export async function resolveAppUuid(ref: string | null | undefined): Promise<st
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildMessage:function" type="function" identity="buildMessage" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Builds a log message string based on the provided payload containing administrative data log details. This function is used for generating consistent log messages for various administrative actions.
  *
@@ -570,7 +537,6 @@ function buildMessage(payload: AdminDataLogPayload): string {
   if (error) msg += ` failed: ${error.message || String(error)}`
   return msg
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildMessage:function"]
 
 
 
@@ -588,7 +554,6 @@ function buildMessage(payload: AdminDataLogPayload): string {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildContext:function" type="function" identity="buildContext" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The buildContext function constructs a context object from the provided AdminDataLogPayload, extracting relevant properties for logging purposes. It ensures that only defined and relevant fields are included in the resulting context.
  *
@@ -612,7 +577,6 @@ function buildContext(payload: AdminDataLogPayload): Record<string, any> {
   if (payload.error) ctx.error_message = payload.error.message || String(payload.error)
   return ctx
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildContext:function"]
 
 
 
@@ -630,7 +594,6 @@ function buildContext(payload: AdminDataLogPayload): Record<string, any> {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:traceLogFields:function" type="function" identity="traceLogFields" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The function extracts trace-related fields from a logging context if available, providing structured trace information for logging purposes. This enhances the logging capabilities by including relevant trace data.
  *
@@ -653,7 +616,6 @@ function traceLogFields(ctx: LogContext): Record<string, any> {
     sampled: trace.sampled
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:traceLogFields:function"]
 
 
 
@@ -671,7 +633,6 @@ function traceLogFields(ctx: LogContext): Record<string, any> {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:buildMetadata:function" type="function" identity="buildMetadata" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The buildMetadata function constructs a metadata object for logging purposes, aggregating information from the log context and payload. It facilitates the logging of administrative actions with relevant details.
  *
@@ -704,7 +665,6 @@ function buildMetadata(
   }
   return meta
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:buildMetadata:function"]
 
 
 
@@ -722,7 +682,6 @@ function buildMetadata(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:extractLogResult:function" type="function" identity="extractLogResult" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Extracts relevant log result information from a given input object, returning either a record ID or row count. This function helps standardize the output format for logging purposes.
  *
@@ -762,7 +721,6 @@ function extractLogResult(result: any): { recordId?: string; rowCount?: number }
 
   return {}
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:extractLogResult:function"]
 
 
 
@@ -780,7 +738,6 @@ function extractLogResult(result: any): { recordId?: string; rowCount?: number }
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:logAdminDataOperation:function" type="function" identity="logAdminDataOperation" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * Logs administrative data operations to a database, ensuring that only relevant log entries are recorded based on the provided payload and context. This function filters logs based on log levels and error/warning status.
  *
@@ -849,7 +806,6 @@ export async function logAdminDataOperation(
     console.error('Failed to write admin-data log:', err)
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:logAdminDataOperation:function"]
 
 
 
@@ -867,7 +823,6 @@ export async function logAdminDataOperation(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/logging.ts:withAdminLogging:function" type="function" identity="withAdminLogging" parent="~/.framework/functions/_shared/logging.ts"]
 /**
  * The withAdminLogging function wraps an asynchronous operation with logging capabilities for admin data operations. It captures execution time, potential errors, and relevant result metadata for logging purposes.
  *
@@ -914,7 +869,6 @@ export async function withAdminLogging<T>(
     }).catch(console.error)
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/logging.ts:withAdminLogging:function"]
 
 
 

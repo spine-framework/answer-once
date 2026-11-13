@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/NewContactPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company new-contact form — add a person to a customer account"]
-// CIL[DOC-RESPONSIBILITY responsibility="Collect full name/email/phone for a new contact on the account passed via ?account_id, POST a people record via admin-data, and return to the account page"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/NewContactPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/pages/company/AccountPage.tsx, custom/apps/answer-once/pages/company/ContactPage.tsx"]
-// CIL[DOC-CONTRACT inputs="search param account_id" outputs="JSX page" errors="missing account and create errors render inline" side_effects="POST /api/admin-data?entity=people"]
-// CIL[DOC-MICRO logic_summary="Creates a person record scoped to the target account with status=active; role_id and auth_uid are left unset — this is a directory contact, not a login invite (invites own credential provisioning)" notable_decisions="no role picker — contacts get role assignment when/if they authenticate through the claim flow"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -14,7 +5,6 @@ import { apiFetch } from '@core/lib/api'
 import { Button } from '@core/components/ui/button'
 import { Input } from '@core/components/ui/input'
 import { ArrowLeft, Check } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/NewContactPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

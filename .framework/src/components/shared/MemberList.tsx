@@ -1,53 +1,14 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="MemberList shared component module"]
-// CIL[DOC-RESPONSIBILITY responsibility="Imports React hooks and the shared apiFetch client for the MemberList component."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Sets up the MemberList module by importing React hooks and the shared apiFetch utility." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="shared-ui"]
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { apiFetch } from '../../lib/api'
 
-// CIL[DOC-VECTOR type="context" content="purpose='MemberList shared component module'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:allowedrole:interface" type="interface" identity="allowedrole" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="AllowedRole interface definition"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the shape of a selectable role for members."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/components/shared/MemberList.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="AllowedRole object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares slug and name properties for an allowed role." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export interface AllowedRole {
   slug: string
   name: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='AllowedRole interface definition'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:allowedrole:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:member:interface" type="interface" identity="member" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="Member interface definition"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the shape of a member row returned by the invites API."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/components/shared/MemberList.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Member object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares id, full_name, email, status, nested role, and is_active fields for a member." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface Member {
   id: string
   full_name: string | null
@@ -56,23 +17,8 @@ interface Member {
   role: { id: string; slug: string; name: string } | null
   is_active: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Member interface definition'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:member:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:callinvitesapi:function" type="function" identity="callinvitesapi" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="Call invites API helper"]
-// CIL[DOC-RESPONSIBILITY responsibility="Sends GET or POST requests to the Netlify invites function endpoint."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/components/shared/MemberList.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="action: string, params: Record<string, any>, method: 'GET' | 'POST'" outputs="JSON response" errors="throws on network or invalid response" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Builds a query string for GET requests and a JSON body for POST requests, then fetches via apiFetch." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function callInvitesApi(action: string, params: Record<string, any> = {}, method: 'GET' | 'POST' = 'GET') {
   const base = '/.netlify/functions/invites'
   if (method === 'GET') {
@@ -87,44 +33,14 @@ async function callInvitesApi(action: string, params: Record<string, any> = {}, 
   })
   return res.json()
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Call invites API helper'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:callinvitesapi:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:memberlistprops:interface" type="interface" identity="memberlistprops" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="MemberListProps interface definition"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the props accepted by the MemberList component."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/components/shared/MemberList.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="MemberListProps object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares optional accountId and required allowedRoles props for MemberList." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export interface MemberListProps {
   accountId?: string
   allowedRoles: AllowedRole[]
 }
-// CIL[DOC-VECTOR type="context" content="purpose='MemberListProps interface definition'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:memberlistprops:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/shared/MemberList.tsx:memberlist:function" type="function" identity="memberlist" parent="~/.framework/src/components/shared/MemberList.tsx"]
-// CIL[DOC-MACRO purpose="MemberList React component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders a searchable, role-editable table of active account members."]
-// CIL[DOC-CONTEXT module="shared" layer="ui" related_files=".framework/src/components/shared/MemberList.tsx,.framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="accountId: string | undefined, allowedRoles: AllowedRole[]" outputs="JSX table of active members" errors="displays API errors inline" side_effects="calls invites API on load and role/deactivate actions"]
-// CIL[DOC-MICRO logic_summary="Loads active members, filters by search string, renders role selects and action buttons, and supports updating or deactivating members." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function MemberList({ accountId, allowedRoles }: MemberListProps) {
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
@@ -270,10 +186,3 @@ export function MemberList({ accountId, allowedRoles }: MemberListProps) {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='MemberList React component'; No verified external callers; imports: .framework/src/lib/api.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/shared/MemberList.tsx:memberlist:function"]

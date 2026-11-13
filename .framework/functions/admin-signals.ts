@@ -1,31 +1,7 @@
-// CIL[BEGIN stable_id="~/.framework/functions/admin-signals.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/admin-signals.ts"]
-// CIL[DOC-MACRO purpose="Declares the admin-signals function module and its imports"]
-// CIL[DOC-RESPONSIBILITY responsibility="Set up module context and shared dependencies"]
-// CIL[DOC-CONTEXT module=".framework/functions/admin-signals.ts" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module scope" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Module header that imports shared middleware and database client for admin signal handlers." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="system-admin, developer"]
 
 
 import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
-// CIL[DOC-VECTOR type="context" content="purpose='Declares the admin-signals function module and its imports'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/admin-signals.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/functions/admin-signals.ts:metrics:constant" type="constant" identity="metrics" parent="~/.framework/functions/admin-signals.ts"]
-// CIL[DOC-MACRO purpose="Aggregate funnel signal metrics for the admin dashboard"]
-// CIL[DOC-RESPONSIBILITY responsibility="Compute and return totals, daily and weekly counts, conversion rate, top sources, and recent signals"]
-// CIL[DOC-CONTEXT module=".framework/functions/admin-signals.ts" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/admin-signals.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body" outputs="JSON metrics object" errors="none — missing signal types degrade to zeroed metrics" side_effects="Queries adminDb"]
-// CIL[DOC-MICRO logic_summary="Resolves funnel_signal item type, runs count and select queries over items, aggregates source distribution over the past week, computes conversion rate, and formats the most recent signals." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const metrics = createHandler(async (ctx, body) => {
   requireSystemContextWithAudit(ctx)
   const now = new Date()
@@ -130,21 +106,6 @@ export const metrics = createHandler(async (ctx, body) => {
     recent_signals: formattedSignals || []
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Aggregate funnel signal metrics for the admin dashboard'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/admin-signals.ts:metrics:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/admin-signals.ts:audit:constant" type="constant" identity="audit" parent="~/.framework/functions/admin-signals.ts"]
-// CIL[DOC-MACRO purpose="List and optionally export funnel signal audit records"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch paginated signal records, apply query filters, and support CSV-like export"]
-// CIL[DOC-CONTEXT module=".framework/functions/admin-signals.ts" layer="functions" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/admin-signals.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body and ctx.query filter parameters" outputs="Object with signals array, total, page, limit or formatted array for export" errors="query failure throws; missing signal type degrades to an empty page" side_effects="Queries adminDb"]
-// CIL[DOC-MICRO logic_summary="Resolves funnel_signal item type, builds a filtered query over items including related accounts and people, optionally paginates, returns full data for export, and formats each row." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const audit = createHandler(async (ctx, body) => {
   requireSystemContextWithAudit(ctx)
   const {
@@ -270,10 +231,3 @@ export const audit = createHandler(async (ctx, body) => {
     limit: parseInt(limit)
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List and optionally export funnel signal audit records'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/admin-signals.ts:audit:constant"]

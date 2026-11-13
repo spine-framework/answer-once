@@ -1,24 +1,6 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Hook for the external customer thread on an ao_support_ticket"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load the external ao_ticket_thread and its ao_ticket_message records for a given ticket id"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/hooks/useTicketThread.ts" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/seed/types.json"]
-// CIL[DOC-CONTRACT inputs="ticketId: string | null" outputs="{ thread, messages, loading, error, sendMessage, refetch }" errors="network errors surfaced" side_effects="GET/POST /api/admin-data"]
-// CIL[DOC-MICRO logic_summary="Finds external thread by target_id + type_slug + visibility != internal; loads messages ordered ascending; sendMessage appends inbound message" notable_decisions="only external threads are visible to customers"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect, useCallback } from 'react'
 import { apiFetch } from '@core/lib/api'
-// CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:message:interface" type="interface" identity="TicketMessage" parent="~/custom/apps/answer-once/hooks/useTicketThread.ts"]
-// CIL[DOC-MACRO purpose="Message shape for ao_ticket_message records"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type for thread messages returned by admin-data"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/hooks/useTicketThread.ts" layer="custom_app" related_files="custom/apps/answer-once/seed/types.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Minimal shape for rendering conversation" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 export interface TicketMessage {
   id: string
   content: string
@@ -29,16 +11,7 @@ export interface TicketMessage {
   created_at: string
   data?: Record<string, any>
 }
-// CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:message:interface"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:thread:interface" type="interface" identity="TicketThread" parent="~/custom/apps/answer-once/hooks/useTicketThread.ts"]
-// CIL[DOC-MACRO purpose="Thread shape for ao_ticket_thread records"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type for thread records returned by admin-data"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/hooks/useTicketThread.ts" layer="custom_app" related_files="custom/apps/answer-once/seed/types.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Minimal shape for thread metadata" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 export interface TicketThread {
   id: string
   target_type: string
@@ -48,16 +21,7 @@ export interface TicketThread {
   visibility?: 'external' | 'internal' | 'public'
   data?: Record<string, any>
 }
-// CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:thread:interface"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:fetchjson:function" type="function" identity="fetchJSON" parent="~/custom/apps/answer-once/hooks/useTicketThread.ts"]
-// CIL[DOC-MACRO purpose="Fetch and validate JSON from an API endpoint"]
-// CIL[DOC-RESPONSIBILITY responsibility="Wrap apiFetch with JSON parsing and error extraction"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/hooks/useTicketThread.ts" layer="custom_app" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="path: string, options?: RequestInit" outputs="Promise<any>" errors="Error on non-OK or json.error" side_effects="HTTP request"]
-// CIL[DOC-MICRO logic_summary="Parses response text as JSON, throws on error" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {
     ...options,
@@ -71,16 +35,7 @@ async function fetchJSON(path: string, options?: RequestInit) {
   if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`)
   return json.data
 }
-// CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:fetchjson:function"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:useticketthread:function" type="function" identity="useTicketThread" parent="~/custom/apps/answer-once/hooks/useTicketThread.ts"]
-// CIL[DOC-MACRO purpose="Load external thread and messages for a ticket"]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch ao_ticket_thread with visibility external for the ticket, then its ao_ticket_message records"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/hooks/useTicketThread.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/customer/TicketPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ticketId: string | null" outputs="{ thread, messages, loading, error, sendMessage, refetch }" errors="network errors surfaced" side_effects="GET/POST /api/admin-data"]
-// CIL[DOC-MICRO logic_summary="Loads threads filtered to external visibility; sendMessage appends inbound ao_ticket_message" notable_decisions="customers only see external threads; internal threads are for support"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 export function useTicketThread(ticketId: string | null) {
   const [thread, setThread] = useState<TicketThread | null>(null)
   const [messages, setMessages] = useState<TicketMessage[]>([])
@@ -146,4 +101,3 @@ export function useTicketThread(ticketId: string | null) {
 
   return { thread, messages, loading, loaded, error, sendMessage, refetch: load }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/hooks/useTicketThread.ts:useticketthread:function"]

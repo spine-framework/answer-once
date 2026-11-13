@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Module header for the ExtendedShadcnTestPage, collecting React and shadcn UI component imports."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the top-level dependencies required by the admin test page."]
-// CIL[DOC-CONTEXT module="pages/admin" layer="ui" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React useState and seven shadcn UI primitives; contains no runtime logic." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 
 
@@ -27,21 +18,6 @@ import {
 } from '../../components/ui/select'
 import { Checkbox } from '../../components/ui/checkbox'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Module header for the ExtendedShadcnTestPage, collecting React and shadcn UI component imports.'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx:ExtendedShadcnTestPage:component" type="component" identity="ExtendedShadcnTestPage" parent="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Render an extended admin test page demonstrating interactive shadcn UI components."]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage local form state and display Card, Button, Badge, Input, Label, Select, and Checkbox components."]
-// CIL[DOC-CONTEXT module="pages/admin" layer="ui" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/pages/admin/ExtendedShadcnTestPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX UI" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Maintains count, text, selected option, and checkbox state and renders a responsive grid of shadcn form controls." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ExtendedShadcnTestPage() {
   const [count, setCount] = useState(0)
   const [text, setText] = useState('')
@@ -194,10 +170,3 @@ export function ExtendedShadcnTestPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render an extended admin test page demonstrating interactive shadcn UI components.'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ExtendedShadcnTestPage.tsx:ExtendedShadcnTestPage:component"]

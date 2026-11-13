@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * @module   index
  * @audience both
@@ -39,7 +38,6 @@ import { AppShell } from '../../components/layout/AppShell'
 import { AdminSidebar } from '../../components/admin/AdminSidebar'
 import { PageInstructions } from '../../components/admin/PageInstructions'
 import { TooltipProvider } from '../../components/ui/tooltip'
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:module_header:module_header"]
 
 
 
@@ -55,7 +53,6 @@ import { TooltipProvider } from '../../components/ui/tooltip'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TypesPage:constant" type="constant" identity="TypesPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TypesPage is a lazily-loaded component that optimizes the loading performance of the application by deferring its import until needed. This approach enhances user experience by reducing initial load times.
  *
@@ -65,7 +62,6 @@ import { TooltipProvider } from '../../components/ui/tooltip'
  * @cil-generated
  */
 const TypesPage = lazy(() => import('../../pages/admin/TypesPage').then(m => ({ default: m.TypesPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TypesPage:constant"]
 
 
 
@@ -81,7 +77,6 @@ const TypesPage = lazy(() => import('../../pages/admin/TypesPage').then(m => ({ 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AppsPage:constant" type="constant" identity="AppsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AppsPage is a lazily-loaded component that imports the AppsPage module from the admin pages directory to optimize performance by loading the component only when needed.
  *
@@ -91,7 +86,6 @@ const TypesPage = lazy(() => import('../../pages/admin/TypesPage').then(m => ({ 
  * @cil-generated
  */
 const AppsPage = lazy(() => import('../../pages/admin/AppsPage').then(m => ({ default: m.AppsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AppsPage:constant"]
 
 
 
@@ -107,7 +101,6 @@ const AppsPage = lazy(() => import('../../pages/admin/AppsPage').then(m => ({ de
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TypeDetailPage:constant" type="constant" identity="TypeDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TypeDetailPage is a lazily-loaded component that optimizes the loading performance of the application by splitting the code into smaller chunks. It imports the TypeDetailPage from the admin pages directory.
  *
@@ -116,7 +109,6 @@ const AppsPage = lazy(() => import('../../pages/admin/AppsPage').then(m => ({ de
  * @cil-generated
  */
 const TypeDetailPage = lazy(() => import('../../pages/admin/TypeDetailPage').then(m => ({ default: m.TypeDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TypeDetailPage:constant"]
 
 
 
@@ -132,7 +124,6 @@ const TypeDetailPage = lazy(() => import('../../pages/admin/TypeDetailPage').the
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:PipelinesPage:constant" type="constant" identity="PipelinesPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * PipelinesPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the PipelinesPage module from the admin pages directory.
  *
@@ -142,7 +133,6 @@ const TypeDetailPage = lazy(() => import('../../pages/admin/TypeDetailPage').the
  * @cil-generated
  */
 const PipelinesPage = lazy(() => import('../../pages/admin/PipelinesPage').then(m => ({ default: m.PipelinesPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:PipelinesPage:constant"]
 
 
 
@@ -158,7 +148,6 @@ const PipelinesPage = lazy(() => import('../../pages/admin/PipelinesPage').then(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TriggersPage:constant" type="constant" identity="TriggersPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TriggersPage is a lazily loaded component that optimizes the loading performance of the admin application by deferring its loading until needed. It imports the TriggersPage module from the admin pages.
  *
@@ -167,7 +156,6 @@ const PipelinesPage = lazy(() => import('../../pages/admin/PipelinesPage').then(
  * @cil-generated
  */
 const TriggersPage = lazy(() => import('../../pages/admin/TriggersPage').then(m => ({ default: m.TriggersPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TriggersPage:constant"]
 
 
 
@@ -183,7 +171,6 @@ const TriggersPage = lazy(() => import('../../pages/admin/TriggersPage').then(m 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AIAgentsPage:constant" type="constant" identity="AIAgentsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AIAgentsPage is a lazily loaded component that optimizes the initial loading time of the application by deferring the loading of the AIAgentsPage module until it is needed.
  *
@@ -193,7 +180,6 @@ const TriggersPage = lazy(() => import('../../pages/admin/TriggersPage').then(m 
  * @cil-generated
  */
 const AIAgentsPage = lazy(() => import('../../pages/admin/AIAgentsPage').then(m => ({ default: m.AIAgentsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AIAgentsPage:constant"]
 
 
 
@@ -209,7 +195,6 @@ const AIAgentsPage = lazy(() => import('../../pages/admin/AIAgentsPage').then(m 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:EmbeddingsPage:constant" type="constant" identity="EmbeddingsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * EmbeddingsPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the EmbeddingsPage module from the admin pages.
  *
@@ -218,7 +203,6 @@ const AIAgentsPage = lazy(() => import('../../pages/admin/AIAgentsPage').then(m 
  * @cil-generated
  */
 const EmbeddingsPage = lazy(() => import('../../pages/admin/EmbeddingsPage').then(m => ({ default: m.EmbeddingsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:EmbeddingsPage:constant"]
 
 
 
@@ -234,7 +218,6 @@ const EmbeddingsPage = lazy(() => import('../../pages/admin/EmbeddingsPage').the
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TimersPage:constant" type="constant" identity="TimersPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TimersPage is a lazily loaded component that optimizes the initial load time of the application by deferring its loading until needed. It imports the TimersPage from the admin pages.
  *
@@ -243,7 +226,6 @@ const EmbeddingsPage = lazy(() => import('../../pages/admin/EmbeddingsPage').the
  * @cil-generated
  */
 const TimersPage = lazy(() => import('../../pages/admin/TimersPage').then(m => ({ default: m.TimersPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TimersPage:constant"]
 
 
 
@@ -259,7 +241,6 @@ const TimersPage = lazy(() => import('../../pages/admin/TimersPage').then(m => (
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:IntegrationsPage:constant" type="constant" identity="IntegrationsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * IntegrationsPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the IntegrationsPage from the admin pages directory.
  *
@@ -268,7 +249,6 @@ const TimersPage = lazy(() => import('../../pages/admin/TimersPage').then(m => (
  * @cil-generated
  */
 const IntegrationsPage = lazy(() => import('../../pages/admin/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:IntegrationsPage:constant"]
 
 
 
@@ -284,7 +264,6 @@ const IntegrationsPage = lazy(() => import('../../pages/admin/IntegrationsPage')
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AppDetailPage:constant" type="constant" identity="AppDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AppDetailPage is a lazily-loaded component that optimizes the loading performance of the application by deferring its loading until needed. It imports the AppDetailPage from the admin pages.
  *
@@ -294,7 +273,6 @@ const IntegrationsPage = lazy(() => import('../../pages/admin/IntegrationsPage')
  * @cil-generated
  */
 const AppDetailPage = lazy(() => import('../../pages/admin/AppDetailPage').then(m => ({ default: m.AppDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AppDetailPage:constant"]
 
 
 
@@ -310,7 +288,6 @@ const AppDetailPage = lazy(() => import('../../pages/admin/AppDetailPage').then(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:PipelineDetailPage:constant" type="constant" identity="PipelineDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * PipelineDetailPage is a lazily loaded component that displays the details of a specific pipeline in the admin interface. It exists to optimize performance by loading the component only when needed.
  *
@@ -320,7 +297,6 @@ const AppDetailPage = lazy(() => import('../../pages/admin/AppDetailPage').then(
  * @cil-generated
  */
 const PipelineDetailPage = lazy(() => import('../../pages/admin/PipelineDetailPage').then(m => ({ default: m.PipelineDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:PipelineDetailPage:constant"]
 
 
 
@@ -336,7 +312,6 @@ const PipelineDetailPage = lazy(() => import('../../pages/admin/PipelineDetailPa
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TriggerDetailPage:constant" type="constant" identity="TriggerDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TriggerDetailPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the TriggerDetailPage from the admin pages.
  *
@@ -346,7 +321,6 @@ const PipelineDetailPage = lazy(() => import('../../pages/admin/PipelineDetailPa
  * @cil-generated
  */
 const TriggerDetailPage = lazy(() => import('../../pages/admin/TriggerDetailPage').then(m => ({ default: m.TriggerDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TriggerDetailPage:constant"]
 
 
 
@@ -362,7 +336,6 @@ const TriggerDetailPage = lazy(() => import('../../pages/admin/TriggerDetailPage
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AIAgentDetailPage:constant" type="constant" identity="AIAgentDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AIAgentDetailPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the AIAgentDetailPage from the admin pages directory.
  *
@@ -372,7 +345,6 @@ const TriggerDetailPage = lazy(() => import('../../pages/admin/TriggerDetailPage
  * @cil-generated
  */
 const AIAgentDetailPage = lazy(() => import('../../pages/admin/AIAgentDetailPage').then(m => ({ default: m.AIAgentDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AIAgentDetailPage:constant"]
 
 
 
@@ -388,7 +360,6 @@ const AIAgentDetailPage = lazy(() => import('../../pages/admin/AIAgentDetailPage
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:EmbeddingDetailPage:constant" type="constant" identity="EmbeddingDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * EmbeddingDetailPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the EmbeddingDetailPage from the admin pages directory.
  *
@@ -397,7 +368,6 @@ const AIAgentDetailPage = lazy(() => import('../../pages/admin/AIAgentDetailPage
  * @cil-generated
  */
 const EmbeddingDetailPage = lazy(() => import('../../pages/admin/EmbeddingDetailPage').then(m => ({ default: m.EmbeddingDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:EmbeddingDetailPage:constant"]
 
 
 
@@ -413,7 +383,6 @@ const EmbeddingDetailPage = lazy(() => import('../../pages/admin/EmbeddingDetail
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TimerDetailPage:constant" type="constant" identity="TimerDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TimerDetailPage is a lazily loaded component that optimizes the loading performance of the application by deferring its import until needed. This approach enhances user experience by reducing initial load times.
  *
@@ -422,7 +391,6 @@ const EmbeddingDetailPage = lazy(() => import('../../pages/admin/EmbeddingDetail
  * @cil-generated
  */
 const TimerDetailPage = lazy(() => import('../../pages/admin/TimerDetailPage').then(m => ({ default: m.TimerDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TimerDetailPage:constant"]
 
 
 
@@ -438,7 +406,6 @@ const TimerDetailPage = lazy(() => import('../../pages/admin/TimerDetailPage').t
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:IntegrationDetailPage:constant" type="constant" identity="IntegrationDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * IntegrationDetailPage is a lazily loaded component that optimizes application load time by splitting code into smaller chunks. It imports the IntegrationDetailPage from the admin pages.
  *
@@ -447,7 +414,6 @@ const TimerDetailPage = lazy(() => import('../../pages/admin/TimerDetailPage').t
  * @cil-generated
  */
 const IntegrationDetailPage = lazy(() => import('../../pages/admin/IntegrationDetailPage').then(m => ({ default: m.IntegrationDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:IntegrationDetailPage:constant"]
 
 
 
@@ -463,7 +429,6 @@ const IntegrationDetailPage = lazy(() => import('../../pages/admin/IntegrationDe
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:RolesPage:constant" type="constant" identity="RolesPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * RolesPage is a lazily loaded component that optimizes the initial loading time of the application by deferring the loading of the RolesPage module until it is needed.
  *
@@ -473,7 +438,6 @@ const IntegrationDetailPage = lazy(() => import('../../pages/admin/IntegrationDe
  * @cil-generated
  */
 const RolesPage = lazy(() => import('../../pages/admin/RolesPage').then(m => ({ default: m.RolesPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:RolesPage:constant"]
 
 
 
@@ -489,7 +453,6 @@ const RolesPage = lazy(() => import('../../pages/admin/RolesPage').then(m => ({ 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:RoleDetailPage:constant" type="constant" identity="RoleDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * RoleDetailPage is a lazily loaded component that optimizes the loading performance of the application by deferring its import until needed. This approach helps improve the initial load time of the application.
  *
@@ -498,7 +461,6 @@ const RolesPage = lazy(() => import('../../pages/admin/RolesPage').then(m => ({ 
  * @cil-generated
  */
 const RoleDetailPage = lazy(() => import('../../pages/admin/RoleDetailPage').then(m => ({ default: m.RoleDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:RoleDetailPage:constant"]
 
 
 
@@ -514,7 +476,6 @@ const RoleDetailPage = lazy(() => import('../../pages/admin/RoleDetailPage').the
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:PromptConfigsPage:constant" type="constant" identity="PromptConfigsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * PromptConfigsPage is a lazily loaded component that optimizes the loading performance of the application by deferring its import until needed. This approach helps improve the initial load time of the application.
  *
@@ -523,7 +484,6 @@ const RoleDetailPage = lazy(() => import('../../pages/admin/RoleDetailPage').the
  * @cil-generated
  */
 const PromptConfigsPage = lazy(() => import('../../pages/admin/PromptConfigsPage').then(m => ({ default: m.PromptConfigsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:PromptConfigsPage:constant"]
 
 
 
@@ -539,7 +499,6 @@ const PromptConfigsPage = lazy(() => import('../../pages/admin/PromptConfigsPage
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:PromptConfigDetailPage:constant" type="constant" identity="PromptConfigDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * PromptConfigDetailPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the PromptConfigDetailPage from the admin pages.
  *
@@ -549,7 +508,6 @@ const PromptConfigsPage = lazy(() => import('../../pages/admin/PromptConfigsPage
  * @cil-generated
  */
 const PromptConfigDetailPage = lazy(() => import('../../pages/admin/PromptConfigDetailPage').then(m => ({ default: m.PromptConfigDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:PromptConfigDetailPage:constant"]
 
 
 
@@ -565,7 +523,6 @@ const PromptConfigDetailPage = lazy(() => import('../../pages/admin/PromptConfig
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:APIKeysPage:constant" type="constant" identity="APIKeysPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * APIKeysPage is a lazily loaded component that optimizes the initial loading performance of the application by deferring its loading until needed. It imports the APIKeysPage from the admin pages directory.
  *
@@ -574,7 +531,6 @@ const PromptConfigDetailPage = lazy(() => import('../../pages/admin/PromptConfig
  * @cil-generated
  */
 const APIKeysPage = lazy(() => import('../../pages/admin/APIKeysPage').then(m => ({ default: m.APIKeysPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:APIKeysPage:constant"]
 
 
 
@@ -590,7 +546,6 @@ const APIKeysPage = lazy(() => import('../../pages/admin/APIKeysPage').then(m =>
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:APIKeyDetailPage:constant" type="constant" identity="APIKeyDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * APIKeyDetailPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the APIKeyDetailPage from the admin pages.
  *
@@ -599,7 +554,6 @@ const APIKeysPage = lazy(() => import('../../pages/admin/APIKeysPage').then(m =>
  * @cil-generated
  */
 const APIKeyDetailPage = lazy(() => import('../../pages/admin/APIKeyDetailPage').then(m => ({ default: m.APIKeyDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:APIKeyDetailPage:constant"]
 
 
 
@@ -615,7 +569,6 @@ const APIKeyDetailPage = lazy(() => import('../../pages/admin/APIKeyDetailPage')
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:DeliveriesPage:constant" type="constant" identity="DeliveriesPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * DeliveriesPage is a lazily loaded component that optimizes the initial load time of the application by deferring the loading of the DeliveriesPage module until it is needed.
  *
@@ -625,7 +578,6 @@ const APIKeyDetailPage = lazy(() => import('../../pages/admin/APIKeyDetailPage')
  * @cil-generated
  */
 const DeliveriesPage = lazy(() => import('../../pages/admin/DeliveriesPage').then(m => ({ default: m.DeliveriesPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:DeliveriesPage:constant"]
 
 
 
@@ -641,7 +593,6 @@ const DeliveriesPage = lazy(() => import('../../pages/admin/DeliveriesPage').the
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:InvitesPage:constant" type="constant" identity="InvitesPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * InvitesPage is a lazily loaded component that optimizes the initial loading time of the application by deferring the loading of the InvitesPage module until it is needed.
  *
@@ -651,7 +602,6 @@ const DeliveriesPage = lazy(() => import('../../pages/admin/DeliveriesPage').the
  * @cil-generated
  */
 const InvitesPage = lazy(() => import('../../pages/admin/InvitesPage').then(m => ({ default: m.InvitesPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:InvitesPage:constant"]
 
 
 
@@ -659,7 +609,6 @@ const InvitesPage = lazy(() => import('../../pages/admin/InvitesPage').then(m =>
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:SecurityPage:constant" type="constant" identity="SecurityPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * SecurityPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the SecurityPage module from the admin pages.
  *
@@ -668,7 +617,6 @@ const InvitesPage = lazy(() => import('../../pages/admin/InvitesPage').then(m =>
  * @cil-generated
  */
 const SecurityPage = lazy(() => import('../../pages/admin/SecurityPage').then(m => ({ default: m.SecurityPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:SecurityPage:constant"]
 
 
 
@@ -684,7 +632,6 @@ const SecurityPage = lazy(() => import('../../pages/admin/SecurityPage').then(m 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:ObservabilityDashboard:constant" type="constant" identity="ObservabilityDashboard" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * ObservabilityDashboard is a lazily loaded component that optimizes the initial loading time of the application by deferring the loading of the ObservabilityDashboard page until it is needed.
  *
@@ -694,7 +641,6 @@ const SecurityPage = lazy(() => import('../../pages/admin/SecurityPage').then(m 
  * @cil-generated
  */
 const ObservabilityDashboard = lazy(() => import('../../pages/admin/ObservabilityDashboard').then(m => ({ default: m.ObservabilityDashboard })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:ObservabilityDashboard:constant"]
 
 
 
@@ -710,7 +656,6 @@ const ObservabilityDashboard = lazy(() => import('../../pages/admin/Observabilit
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:PipelineExecutionsPage:constant" type="constant" identity="PipelineExecutionsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * PipelineExecutionsPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the PipelineExecutionsPage from the admin pages directory.
  *
@@ -720,7 +665,6 @@ const ObservabilityDashboard = lazy(() => import('../../pages/admin/Observabilit
  * @cil-generated
  */
 const PipelineExecutionsPage = lazy(() => import('../../pages/admin/PipelineExecutionsPage').then(m => ({ default: m.PipelineExecutionsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:PipelineExecutionsPage:constant"]
 
 
 
@@ -736,7 +680,6 @@ const PipelineExecutionsPage = lazy(() => import('../../pages/admin/PipelineExec
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:LogsPage:constant" type="constant" identity="LogsPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * LogsPage is a lazily loaded component that optimizes performance by loading the LogsPage module only when needed. This approach helps reduce the initial load time of the application.
  *
@@ -746,7 +689,6 @@ const PipelineExecutionsPage = lazy(() => import('../../pages/admin/PipelineExec
  * @cil-generated
  */
 const LogsPage = lazy(() => import('../../pages/admin/LogsPage').then(m => ({ default: m.LogsPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:LogsPage:constant"]
 
 
 
@@ -762,7 +704,6 @@ const LogsPage = lazy(() => import('../../pages/admin/LogsPage').then(m => ({ de
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AlertsConfigPage:constant" type="constant" identity="AlertsConfigPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AlertsConfigPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the AlertsConfigPage from the admin pages.
  *
@@ -771,7 +712,6 @@ const LogsPage = lazy(() => import('../../pages/admin/LogsPage').then(m => ({ de
  * @cil-generated
  */
 const AlertsConfigPage = lazy(() => import('../../pages/admin/AlertsConfigPage').then(m => ({ default: m.AlertsConfigPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AlertsConfigPage:constant"]
 
 
 
@@ -787,7 +727,6 @@ const AlertsConfigPage = lazy(() => import('../../pages/admin/AlertsConfigPage')
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:DataListPage:constant" type="constant" identity="DataListPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * DataListPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the DataListPage from the runtime components.
  *
@@ -797,7 +736,6 @@ const AlertsConfigPage = lazy(() => import('../../pages/admin/AlertsConfigPage')
  * @cil-generated
  */
 const DataListPage = lazy(() => import('../../components/runtime/DataListPage').then(m => ({ default: m.DataListPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:DataListPage:constant"]
 
 
 
@@ -813,7 +751,6 @@ const DataListPage = lazy(() => import('../../components/runtime/DataListPage').
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:DataDetailPage:constant" type="constant" identity="DataDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * DataDetailPage is a lazily loaded component that renders detailed information about data entries to optimize performance by loading the component only when needed.
  *
@@ -823,7 +760,6 @@ const DataListPage = lazy(() => import('../../components/runtime/DataListPage').
  * @cil-generated
  */
 const DataDetailPage = lazy(() => import('../../components/runtime/DataDetailPage').then(m => ({ default: m.DataDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:DataDetailPage:constant"]
 
 
 
@@ -839,7 +775,6 @@ const DataDetailPage = lazy(() => import('../../components/runtime/DataDetailPag
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TestingDashboard:constant" type="constant" identity="TestingDashboard" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TestingDashboard is a lazily loaded component that imports the TestingDashboard page for the admin section. It exists to optimize the initial loading time of the application by deferring the loading of this component until it is needed.
  *
@@ -849,7 +784,6 @@ const DataDetailPage = lazy(() => import('../../components/runtime/DataDetailPag
  * @cil-generated
  */
 const TestingDashboard = lazy(() => import('../../pages/admin/TestingDashboard'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TestingDashboard:constant"]
 
 
 
@@ -865,7 +799,6 @@ const TestingDashboard = lazy(() => import('../../pages/admin/TestingDashboard')
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:TestRunDetailPage:constant" type="constant" identity="TestRunDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * TestRunDetailPage is a lazily loaded component that displays detailed information about a test run. It exists to optimize performance by loading the component only when needed.
  *
@@ -875,7 +808,6 @@ const TestingDashboard = lazy(() => import('../../pages/admin/TestingDashboard')
  * @cil-generated
  */
 const TestRunDetailPage = lazy(() => import('../../pages/admin/TestRunDetailPage').then(m => ({ default: m.TestRunDetailPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:TestRunDetailPage:constant"]
 
 
 
@@ -891,33 +823,6 @@ const TestRunDetailPage = lazy(() => import('../../pages/admin/TestRunDetailPage
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILProjectsPage:constant" type="constant" identity="CILProjectsPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILProjectsPage is a lazily loaded component that renders the CIL Projects page in the admin section of the application. It exists to optimize the initial load time by deferring the loading of this component until it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @calls       import
- * @cil-generated
- */
-const CILProjectsPage = lazy(() => import('../../pages/admin/cil/CILProjectsPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILProjectsPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:KBAdminPage:constant" type="constant" identity="KBAdminPage" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * KBAdminPage is a lazily loaded component that optimizes the initial loading time of the application by deferring its loading until needed. It imports the KBAdminPage from the admin pages module.
  *
@@ -927,7 +832,6 @@ const CILProjectsPage = lazy(() => import('../../pages/admin/cil/CILProjectsPage
  * @cil-generated
  */
 const KBAdminPage = lazy(() => import('../../pages/admin/kb/KBAdminPage').then(m => ({ default: m.KBAdminPage })))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:KBAdminPage:constant"]
 
 
 
@@ -943,262 +847,6 @@ const KBAdminPage = lazy(() => import('../../pages/admin/kb/KBAdminPage').then(m
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILDashboardPage:constant" type="constant" identity="CILDashboardPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILDashboardPage is a lazily loaded component that renders the CIL Dashboard for the admin interface. It exists to optimize performance by loading the component only when it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @calls       import
- * @cil-generated
- */
-const CILDashboardPage = lazy(() => import('../../pages/admin/cil/CILDashboardPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILDashboardPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILSearchPage:constant" type="constant" identity="CILSearchPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILSearchPage is a lazily loaded component that renders the CIL search page for the admin interface. It exists to optimize performance by loading the component only when needed.
- *
- * @sideEffects none
- * @stability   internal
- * @calls       import
- * @cil-generated
- */
-const CILSearchPage = lazy(() => import('../../pages/admin/cil/CILSearchPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILSearchPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILVersionsPage:constant" type="constant" identity="CILVersionsPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILVersionsPage is a lazily loaded component that renders the CIL Versions page in the admin section of the application. It exists to optimize the initial loading time by deferring the loading of this component until it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const CILVersionsPage = lazy(() => import('../../pages/admin/cil/CILVersionsPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILVersionsPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILSuggestionsPage:constant" type="constant" identity="CILSuggestionsPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILSuggestionsPage is a lazily loaded component that optimizes the loading performance of the application by deferring its import until needed. This approach enhances user experience by reducing initial load times.
- *
- * @sideEffects none
- * @stability   internal
- * @calls       import
- * @cil-generated
- */
-const CILSuggestionsPage = lazy(() => import('../../pages/admin/cil/CILSuggestionsPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILSuggestionsPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILAgentPage:constant" type="constant" identity="CILAgentPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILAgentPage is a lazily loaded component that optimizes application loading performance by deferring its import until needed. This approach enhances user experience by reducing initial load times.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const CILAgentPage = lazy(() => import('../../pages/admin/cil/CILAgentPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILAgentPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILFileListPage:constant" type="constant" identity="CILFileListPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILFileListPage is a lazily loaded React component that renders the CIL file list for the admin interface. It exists to optimize the loading performance of the application by splitting the code into smaller chunks.
- *
- * @sideEffects none
- * @stability   internal
- * @calls       import
- * @cil-generated
- */
-const CILFileListPage = lazy(() => import('../../pages/admin/cil/CILFileListPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILFileListPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILFileSelectPage:constant" type="constant" identity="CILFileSelectPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILFileSelectPage is a lazily loaded component that optimizes the initial loading time of the admin application by deferring the loading of the CILFileSelectPage module until it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const CILFileSelectPage = lazy(() => import('../../pages/admin/cil/CILFileSelectPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILFileSelectPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILGraphPage:constant" type="constant" identity="CILGraphPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILGraphPage is a lazily loaded component that renders the CIL Graph page in the admin section of the application. It exists to optimize the initial loading time by deferring the loading of this component until it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const CILGraphPage = lazy(() => import('../../pages/admin/cil/CILGraphPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILGraphPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CILChunkDetailPage:constant" type="constant" identity="CILChunkDetailPage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * CILChunkDetailPage is a lazily loaded component that renders the CILChunkDetailPage from the admin section of the application. It exists to optimize performance by reducing the initial load time of the application.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const CILChunkDetailPage = lazy(() => import('../../pages/admin/cil/CILChunkDetailPage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CILChunkDetailPage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:FlexiblePipelinePage:constant" type="constant" identity="FlexiblePipelinePage" parent="~/.framework/src/apps/admin/index.tsx"]
-/**
- * FlexiblePipelinePage is a lazily loaded component that renders the Flexible Pipeline page in the admin section of the application. It exists to optimize the initial loading time by deferring the loading of this component until it is needed.
- *
- * @sideEffects none
- * @stability   internal
- * @cil-generated
- */
-const FlexiblePipelinePage = lazy(() => import('../../pages/admin/cil/FlexiblePipelinePage'))
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:FlexiblePipelinePage:constant"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CONFIG_INSTRUCTION_KEYS:constant" type="constant" identity="CONFIG_INSTRUCTION_KEYS" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AdminRoutes manages the routing and breadcrumb navigation for the admin section of the application. It dynamically generates breadcrumbs based on the current URL path and defines routes for various admin functionalities.
  *
@@ -1214,22 +862,10 @@ const CONFIG_INSTRUCTION_KEYS = new Set([
   'types', 'apps', 'pipelines', 'triggers', 'ai-agents', 'timers',
   'integrations', 'roles', 'prompts', 'api-keys', 'deliveries',
 ])
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CONFIG_INSTRUCTION_KEYS:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:OBSERVABILITY_INSTRUCTION_KEYS:constant" type="constant" identity="OBSERVABILITY_INSTRUCTION_KEYS" parent="~/.framework/src/apps/admin/index.tsx"]
 const OBSERVABILITY_INSTRUCTION_KEYS: Record<string, string> = {
   logs: 'logs', alerts: 'alerts', executions: 'pipeline-executions',
 }
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:OBSERVABILITY_INSTRUCTION_KEYS:constant"]
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:CIL_INSTRUCTION_KEYS:constant" type="constant" identity="CIL_INSTRUCTION_KEYS" parent="~/.framework/src/apps/admin/index.tsx"]
-const CIL_INSTRUCTION_KEYS: Record<string, string> = {
-  search: 'cil-search', projects: 'cil-projects', files: 'cil-files',
-  'file-select': 'cil-files', graph: 'cil-graph', ingestion: 'cil-ingestion',
-  versions: 'cil-versions', suggestions: 'cil-suggestions', agent: 'cil-agent',
-  chunks: 'cil-chunks', pipeline: 'cil-pipeline',
-}
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:CIL_INSTRUCTION_KEYS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:instructionKeyFor:function" type="function" identity="instructionKeyFor" parent="~/.framework/src/apps/admin/index.tsx"]
 function instructionKeyFor(segments: string[]): string | null {
   const section = segments[2]
   const entity = segments[3]
@@ -1240,14 +876,11 @@ function instructionKeyFor(segments: string[]): string | null {
     case 'access': return entity === 'invites' ? 'invites' : null
     case 'testing': return 'testing'
     case 'kb': return 'kb'
-    case 'cil': return CIL_INSTRUCTION_KEYS[entity] ?? 'cil'
     case 'runtime': return segments.length > 4 ? 'runtime-detail' : 'runtime-list'
     default: return null
   }
 }
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:instructionKeyFor:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AdminRoutes:component" type="component" identity="AdminRoutes" parent="~/.framework/src/apps/admin/index.tsx"]
 function AdminRoutes() {
   const location = useLocation()
 
@@ -1328,20 +961,6 @@ function AdminRoutes() {
           <Route path="runtime/:entity/new" element={<DataDetailPage />} />
           <Route path="runtime/:entity/:id" element={<DataDetailPage />} />
 
-          <Route path="cil" element={<CILProjectsPage />} />
-          <Route path="cil/search" element={<CILSearchPage />} />
-          <Route path="cil/versions" element={<CILVersionsPage />} />
-          <Route path="cil/suggestions" element={<CILSuggestionsPage />} />
-          <Route path="cil/agent" element={<CILAgentPage />} />
-          <Route path="cil/:id" element={<CILDashboardPage />} />
-          <Route path="cil/:id/dashboard" element={<CILDashboardPage />} />
-          <Route path="cil/:id/files" element={<CILFileListPage />} />
-          <Route path="cil/:id/select" element={<CILFileSelectPage />} />
-          <Route path="cil/:id/graph" element={<CILGraphPage />} />
-          <Route path="cil/:id/agent" element={<CILAgentPage />} />
-          <Route path="cil/:id/ingest" element={<FlexiblePipelinePage />} />
-          <Route path="cil/:id/chunks/:chunkId" element={<CILChunkDetailPage />} />
-          <Route path="cil/chunks/:chunkId" element={<CILChunkDetailPage />} />
 
           <Route path="kb/embeddings/:id" element={<EmbeddingDetailPage />} />
           <Route path="kb/embeddings" element={<EmbeddingsPage />} />
@@ -1361,7 +980,6 @@ function AdminRoutes() {
     </AppShell>
   )
 }
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AdminRoutes:component"]
 
 
 
@@ -1378,7 +996,6 @@ function AdminRoutes() {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/apps/admin/index.tsx:AdminApp:component" type="component" identity="AdminApp" parent="~/.framework/src/apps/admin/index.tsx"]
 /**
  * AdminApp is a component that restricts access to admin routes for system administrators only, redirecting non-admin users to the dashboard. This ensures that only authorized personnel can access sensitive administrative functionalities.
  *
@@ -1403,7 +1020,6 @@ export default function AdminApp() {
     </TooltipProvider>
   )
 }
-// CIL[END stable_id="~/.framework/src/apps/admin/index.tsx:AdminApp:component"]
 
 
 

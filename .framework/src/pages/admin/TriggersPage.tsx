@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
 /**
  * @module   TriggersPage
  * @audience internal
@@ -37,7 +36,6 @@ import { Badge } from '../../components/ui/badge'
 import { formatDateTime } from '../../lib/utils'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:module_header:module_header"]
 
 
 
@@ -55,7 +53,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:Trigger:interface" type="interface" identity="Trigger" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
 /**
  * The Trigger interface defines the structure for trigger objects used in the admin panel, encapsulating properties related to the trigger's identity, configuration, and state. It serves as a blueprint for managing triggers within the application.
  *
@@ -79,7 +76,6 @@ interface Trigger {
   trigger_count?: number
   last_triggered?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:Trigger:interface"]
 
 
 
@@ -98,7 +94,6 @@ interface Trigger {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggerExecution:interface" type="interface" identity="TriggerExecution" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
 /**
  * The TriggerExecution interface defines the structure for tracking the execution status of triggers within the system. It captures essential details such as the trigger's ID, execution status, timestamps, and any associated data or errors.
  *
@@ -116,7 +111,6 @@ interface TriggerExecution {
   result?: Record<string, any>
   error?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggerExecution:interface"]
 
 
 
@@ -135,7 +129,6 @@ interface TriggerExecution {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggersPage:component" type="component" identity="TriggersPage" parent="~/.framework/src/pages/admin/TriggersPage.tsx"]
 /**
  * The TriggersPage component manages the display and filtering of trigger events in the admin interface. It allows users to search, sort, and filter triggers based on type and status.
  *
@@ -441,7 +434,6 @@ export function TriggersPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggersPage.tsx:TriggersPage:component"]
 
 
 

@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
 /**
  * @module   APIKeysPage
  * @audience internal
@@ -40,7 +39,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:module_header:module_header"]
 
 
 
@@ -56,7 +54,6 @@ import { apiFetch } from '../../lib/api'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKey:interface" type="interface" identity="APIKey" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
 /**
  * The APIKey interface defines the structure of an API key object used for managing access to services. It includes properties for identification, status, usage metrics, and associated integration details.
  *
@@ -85,7 +82,6 @@ interface APIKey {
   }
   created_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKey:interface"]
 
 
 
@@ -102,7 +98,6 @@ interface APIKey {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKeysPage:component" type="component" identity="APIKeysPage" parent="~/.framework/src/pages/admin/APIKeysPage.tsx"]
 /**
  * The APIKeysPage component manages the display and interaction with API keys, allowing users to filter, sort, and navigate to detailed views of individual keys. It fetches API keys from a server and provides statistics on their status and types.
  *
@@ -373,7 +368,6 @@ export function APIKeysPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeysPage.tsx:APIKeysPage:component"]
 
 
 

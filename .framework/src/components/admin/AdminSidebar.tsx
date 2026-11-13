@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
 /**
  * @module   AdminSidebar
  * @audience both
@@ -30,7 +29,6 @@
 import * as React from "react"
 import { Link, useLocation } from "react-router-dom"
 import { 
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:module_header:module_header"]
     Settings, 
   Type, 
   Layout, 
@@ -45,8 +43,6 @@ import {
   Puzzle,
   Shield,
   MessageSquare,
-  GitBranch,
-  Lightbulb,
   Key,
   Truck,
   UserPlus,
@@ -89,7 +85,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/colla
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationSections:constant" type="constant" identity="navigationSections" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
 /**
  * The 'navigationSections' constant defines the structure of the sidebar navigation for the admin interface, organizing various sections for configuration, access, security, observability, testing, knowledge base, and CIL functionalities. This organization provides a clear and consistent navigation experience for users managing admin functionalities.
  *
@@ -147,19 +142,8 @@ const navigationSections = [
       { title: "Knowledge Base", url: "/spine-framework/admin/kb/kb-spine-public", icon: BookOpen },
       { title: "Embeddings", url: "/spine-framework/admin/kb/embeddings", icon: Cpu },
     ]
-  },
-  {
-    title: "CIL",
-    items: [
-      { title: "Projects", url: "/spine-framework/admin/cil", icon: Brain },
-      { title: "Search", url: "/spine-framework/admin/cil/search", icon: FileSearch },
-      { title: "Versions", url: "/spine-framework/admin/cil/versions", icon: GitBranch },
-      { title: "Suggestions", url: "/spine-framework/admin/cil/suggestions", icon: Lightbulb },
-      { title: "Agent", url: "/spine-framework/admin/cil/agent", icon: MessageSquare },
-    ]
   }
 ]
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:navigationSections:constant"]
 
 
 
@@ -176,7 +160,6 @@ const navigationSections = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:AdminSidebar:component" type="component" identity="AdminSidebar" parent="~/.framework/src/components/admin/AdminSidebar.tsx"]
 /**
  * The AdminSidebar component provides a navigational sidebar for admin functionalities, integrating branding and dynamic navigation sections. It enhances user experience by visually indicating active routes.
  *
@@ -297,7 +280,6 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
     </Sidebar>
   )
 }
-// CIL[END stable_id="~/.framework/src/components/admin/AdminSidebar.tsx:AdminSidebar:component"]
 
 
 

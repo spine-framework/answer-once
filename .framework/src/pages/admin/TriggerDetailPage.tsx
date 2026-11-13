@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TriggerDetailPage.tsx"]
 /**
  * @module   TriggerDetailPage
  * @audience internal
@@ -43,7 +42,6 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Badge } from '../../components/ui/badge'
 import { ArrowLeft, Zap, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -62,7 +60,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:Trigger:interface" type="interface" identity="Trigger" parent="~/.framework/src/pages/admin/TriggerDetailPage.tsx"]
 /**
  * The Trigger interface defines the structure for a trigger object used in the application, encapsulating essential properties related to the trigger's identity, configuration, and state. It serves to standardize the representation of triggers across the application.
  *
@@ -83,7 +80,6 @@ interface Trigger {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:Trigger:interface"]
 
 
 
@@ -103,7 +99,6 @@ interface Trigger {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:TriggerDetailPage:component" type="component" identity="TriggerDetailPage" parent="~/.framework/src/pages/admin/TriggerDetailPage.tsx"]
 /**
  * The TriggerDetailPage component manages the creation and editing of trigger configurations in an admin interface. It handles fetching existing trigger data or initializing a new trigger form based on the provided ID.
  *
@@ -239,7 +234,6 @@ export function TriggerDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TriggerDetailPage.tsx:TriggerDetailPage:component"]
 
 
 

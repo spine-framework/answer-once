@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // migrate --preflight — read-only reference simulation for pending migrations.
 //
 // For every pending migration in apply order, each UPDATE slug/name
@@ -18,9 +17,7 @@ import {
   extractRefs, extractInserts, extractAnnotations, statementBounds,
   type RefColumn,
 } from './migration-refs.ts'
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:preflightcheck:interface" type="interface" identity="PreflightCheck" parent="none"]
 export interface PreflightCheck {
   file: string
   line: number
@@ -33,24 +30,18 @@ export interface PreflightCheck {
   /** migration that provides the value, when status is 'pending' */
   pendingFrom?: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:preflightcheck:interface"]
 
 /** Injectable DB probe — the migrate command binds a real pg client. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:dbprobe:interface" type="interface" identity="DbProbe" parent="none"]
 export interface DbProbe {
   hasRow(table: string, column: RefColumn, value: string): Promise<boolean>
 }
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:dbprobe:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:preflightoutcome:interface" type="interface" identity="PreflightOutcome" parent="none"]
 export interface PreflightOutcome {
   checks: PreflightCheck[]
   blocked: PreflightCheck[]
   warnings: PreflightCheck[]
 }
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:preflightoutcome:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:runpreflight:function" type="function" identity="runPreflight" parent="none"]
 export async function runPreflight(opts: {
   /** Pending migrations only, in apply order. */
   migrations: { name: string; sql: string }[]
@@ -129,10 +120,7 @@ export async function runPreflight(opts: {
     warnings: checks.filter(c => c.status === 'optional-missing'),
   }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:runpreflight:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migrate-preflight.ts:reffields:function" type="function" identity="refFields" parent="none"]
 function refFields(ref: { file: string; line: number; table: string; column: RefColumn; value: string }) {
   return { file: ref.file, line: ref.line, table: ref.table, column: ref.column, value: ref.value }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migrate-preflight.ts:reffields:function"]

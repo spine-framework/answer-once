@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PipelinesPage.tsx"]
 /**
  * @module   PipelinesPage
  * @audience both
@@ -40,7 +39,6 @@ import { Badge } from '../../components/ui/badge'
 import { formatDateTime } from '../../lib/utils'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:module_header:module_header"]
 
 
 
@@ -57,7 +55,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:Pipeline:interface" type="interface" identity="Pipeline" parent="~/.framework/src/pages/admin/PipelinesPage.tsx"]
 /**
  * The Pipeline interface defines the structure of a data pipeline, including its configuration, stages, and metadata. It is used to manage and execute data processing workflows within the application.
  *
@@ -87,7 +84,6 @@ interface Pipeline {
   last_execution?: string
   next_execution?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:Pipeline:interface"]
 
 
 
@@ -104,7 +100,6 @@ interface Pipeline {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:PipelineExecution:interface" type="interface" identity="PipelineExecution" parent="~/.framework/src/pages/admin/PipelinesPage.tsx"]
 /**
  * The PipelineExecution interface defines the structure for tracking the execution state of a pipeline, including its status and timestamps. It is essential for managing and monitoring the lifecycle of pipeline executions within the application.
  *
@@ -123,7 +118,6 @@ interface PipelineExecution {
   result?: Record<string, any>
   error?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:PipelineExecution:interface"]
 
 
 
@@ -140,7 +134,6 @@ interface PipelineExecution {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:PipelinesPage:component" type="component" identity="PipelinesPage" parent="~/.framework/src/pages/admin/PipelinesPage.tsx"]
 /**
  * The PipelinesPage component manages the display and interaction with pipeline data in the admin interface. It fetches pipelines, executions, and related statistics from the API and allows users to filter and sort this data.
  *
@@ -479,7 +472,6 @@ export function PipelinesPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelinesPage.tsx:PipelinesPage:component"]
 
 
 

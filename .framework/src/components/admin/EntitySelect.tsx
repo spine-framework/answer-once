@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * @module   EntitySelect
  * @audience both
@@ -17,11 +16,9 @@
 import React, { useEffect, useState } from 'react'
 import { NativeSelect } from '../ui/native-select'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:module_header:module_header"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:Option:interface" type="interface" identity="Option" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * The Option interface defines the structure for an option item used in selection components. It provides a standardized way to represent selectable items with a value and a label.
  *
@@ -33,11 +30,9 @@ interface Option {
   value: string
   label: string
 }
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:Option:interface"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:EntitySelectProps:interface" type="interface" identity="EntitySelectProps" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * EntitySelectProps defines the properties required for the EntitySelect component, facilitating the selection of entities from a specified endpoint. It allows for customization of the selection behavior and appearance.
  *
@@ -53,11 +48,9 @@ interface EntitySelectProps {
   mapOption?: (row: any) => Option
   className?: string
 }
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:EntitySelectProps:interface"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:defaultMap:function" type="function" identity="defaultMap" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * The defaultMap function transforms a row object into an Option object, providing a standard way to represent entities with a value and label. This is useful for creating dropdowns or selection lists in the admin interface.
  *
@@ -72,11 +65,9 @@ const defaultMap = (row: any): Option => ({
   value: row.id,
   label: row.name || row.title || row.slug || row.id,
 })
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:defaultMap:function"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:EntitySelect:component" type="component" identity="EntitySelect" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * EntitySelect is a component that allows users to select an entity from a dynamically fetched list of options. It handles API data retrieval and state management to provide a user-friendly interface for entity selection.
  *
@@ -122,7 +113,6 @@ export function EntitySelect({
   return (
     <NativeSelect
       value={value || ''}
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:EntitySelect:component"]
 
       onChange={e => onChange(e.target.value)}
       className={className}
@@ -139,7 +129,6 @@ export function EntitySelect({
 }
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:AppSelect:component" type="component" identity="AppSelect" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * AppSelect is a specialized component for selecting applications in the admin interface, providing a predefined endpoint and placeholder to streamline the selection process.
  *
@@ -156,11 +145,9 @@ export function EntitySelect({
 export function AppSelect(props: Omit<EntitySelectProps, 'endpoint' | 'placeholder'>) {
   return <EntitySelect endpoint="/api/apps?action=list" placeholder="No app (global)" {...props} />
 }
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:AppSelect:component"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/EntitySelect.tsx:PipelineSelect:component" type="component" identity="PipelineSelect" parent="~/.framework/src/components/admin/EntitySelect.tsx"]
 /**
  * PipelineSelect is a component that provides a dropdown for selecting a pipeline from a predefined list. It simplifies the usage of the EntitySelect component by pre-configuring the endpoint and placeholder specific to pipelines.
  *
@@ -177,5 +164,4 @@ export function AppSelect(props: Omit<EntitySelectProps, 'endpoint' | 'placehold
 export function PipelineSelect(props: Omit<EntitySelectProps, 'endpoint' | 'placeholder'>) {
   return <EntitySelect endpoint="/api/pipelines?action=list" placeholder="Select a pipeline…" {...props} />
 }
-// CIL[END stable_id="~/.framework/src/components/admin/EntitySelect.tsx:PipelineSelect:component"]
 

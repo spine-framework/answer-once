@@ -1,33 +1,9 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/pipelines.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/pipelines.ts"]
-// CIL[DOC-AUDIENCE audience="cli developers"]
-// CIL[DOC-MACRO purpose="CLI command module for pipeline management"]
-// CIL[DOC-RESPONSIBILITY responsibility="Registers and exports pipeline subcommands for the Spine CLI"]
-// CIL[DOC-CONTEXT module=".framework/cli/commands/pipelines.ts" layer="cli" related_files=".framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports dependencies and provides module-level hooks for pipeline CLI commands." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 
 
 import type { Command } from 'commander'
 import { buildCliContext, printResult, handleError } from '../context.ts'
 import { runPipeline, adminDb } from '../../functions/_shared/index.ts'
-// CIL[DOC-VECTOR type="context" content="purpose='CLI command module for pipeline management'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/pipelines.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/pipelines.ts:registerPipelineCommands:function" type="function" identity="registerPipelineCommands" parent="~/.framework/cli/commands/pipelines.ts"]
-// CIL[DOC-MACRO purpose="Register pipeline subcommands on a commander program"]
-// CIL[DOC-RESPONSIBILITY responsibility="Attach list, get, run, and executions subcommands to the 'pipelines' command"]
-// CIL[DOC-CONTEXT module=".framework/cli/commands/pipelines.ts" layer="cli" related_files=".framework/cli/commands/pipelines.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command (commander program)" outputs="none; registers subcommands on program" errors="throws via handleError on execution" side_effects="console output; queries adminDb; runs pipeline"]
-// CIL[DOC-MICRO logic_summary="Creates 'pipelines' command and subcommands for listing, getting, running, and listing executions." notable_decisions="list queries active pipelines with optional account filter; get fetches by id; run parses JSON trigger data and invokes runPipeline; executions loads recent executions."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 export function registerPipelineCommands(program: Command) {
   const pipelines = program
     .command('pipelines')
@@ -151,10 +127,3 @@ export function registerPipelineCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Register pipeline subcommands on a commander program'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/pipelines.ts:registerPipelineCommands:function"]

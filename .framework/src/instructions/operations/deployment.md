@@ -33,7 +33,7 @@ The root `netlify.toml` is partly framework-owned (regenerated on
 | `[build.environment]` | `SECRETS_SCAN_OMIT_KEYS` whitelists the intentionally-public vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `APP_BASE_URL`, `SITE_URL`, …) so Netlify's secrets scanner does not flag them; `SECRETS_SCAN_OMIT_PATHS` covers `.framework/.xenv*` |
 | `[functions]` | `directory = ".assembled/netlify/functions"`, `included_files` for `_shared/**`, `node_bundler = "esbuild"`, `external_node_modules = ["typescript"]` (the esbuild printer panic workaround — typescript.js ships unbundled) |
 | `[dev]` | `netlify dev` runs `scripts/netlify-dev-wrapper.sh`, site on `8888`, Vite `targetPort` `3001`, `startTimeout 300` |
-| `[functions."<name>"]` | per-function config: `trigger-scheduler` gets `schedule = "* * * * *"`; `cil-ingest`, `cil-embeddings`, `cil-callmap`, `cil-agent`, `ai-agents`, `kb` get `timeout` overrides |
+| `[functions."<name>"]` | per-function config: `trigger-scheduler` gets `schedule = "* * * * *"`; `ai-agents`, `kb` get `timeout` overrides |
 | `[[redirects]]` | `/* → /index.html` with status `200` (SPA fallback) |
 | `[[headers]]` | `X-Frame-Options DENY`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy`, and a CSP that allows `*.supabase.co` (https+wss) and `challenges.cloudflare.com` (Turnstile) |
 

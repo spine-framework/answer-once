@@ -164,6 +164,9 @@ choices) in git:
 **Before editing** related code, read the records whose `applies_to` covers
 the files you're touching — especially records with `status: accepted` or
 `superseded` (a superseded record names the replacement to follow instead).
+A `status: proposed` record is an unreviewed proposal — read it as context
+and never as the reason a design is correct. Only `accepted` records (and
+`superseded` ones, as history) carry authority.
 
 **When you make a consequential choice** — pick between alternatives,
 reject a design, discover an invariant, add a workaround — record it with

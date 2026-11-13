@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
 /**
  * @module   AdminListPage
  * @audience internal
@@ -34,7 +33,6 @@ import { LucideIcon } from 'lucide-react'
 import { AdminStatsCard } from './AdminStatsCard'
 
 import { cn } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:module_header:module_header"]
 
 
 
@@ -52,7 +50,6 @@ import { cn } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPageProps:interface" type="interface" identity="AdminListPageProps" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
 /**
  * AdminListPageProps defines the properties required for rendering the Admin List Page component, facilitating the configuration of various UI elements and behaviors within the admin interface.
  *
@@ -88,7 +85,6 @@ interface AdminListPageProps {
   emptyMessage?: string
   emptyIcon?: LucideIcon
 }
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPageProps:interface"]
 
 
 
@@ -109,7 +105,6 @@ interface AdminListPageProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPage:component" type="component" identity="AdminListPage" parent="~/.framework/src/components/admin/AdminListPage.tsx"]
 export function AdminListPage({
   title,
   description,
@@ -218,7 +213,6 @@ export function AdminListPage({
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/components/admin/AdminListPage.tsx:AdminListPage:component"]
 
 
 

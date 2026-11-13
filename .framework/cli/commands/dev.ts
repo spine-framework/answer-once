@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/dev.ts"]
-// CIL[DOC-MACRO purpose="Provides the 'dev' CLI command: assemble the project, optionally verify integrity, then run the real dev server flow."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose dev command utilities for developers to streamline application development workflow."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts,scripts/assemble.sh,scripts/dev-netlify.sh,config/vite.config.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Runs scripts/assemble.sh, optional scripts/verify-integrity.sh, then spawns Vite (config/vite.config.ts) or scripts/dev-netlify.sh; watches custom/ for changes with debounced reassembly." notable_decisions="Commands should only be executed in a valid development environment."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
 
 
 
@@ -16,58 +7,13 @@ import { spawn } from 'child_process'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { watch, existsSync } from 'fs'
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:module_header:module_header"]
-
-// CIL[DOC-VECTOR type="context" content="purpose='Provides CLI commands for the development environment, facilitating process spawning and file watching.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Resolves the current module's file URL to a filesystem path."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a stable __filename reference for the module."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="string" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Call fileURLToPath(import.meta.url) and assign to const __filename." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:__filename:constant" type="constant" identity="__filename" parent="~/.framework/cli/commands/dev.ts"]
+
 const __filename = fileURLToPath(import.meta.url)
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:__filename:constant"]
-// CIL[DOC-VECTOR type="context" content="purpose='Resolves the current module's file URL to a filesystem path.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Provides the directory name of the current module for relative path resolution."]
-// CIL[DOC-RESPONSIBILITY responsibility="Derive the current module's directory from __filename."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="string" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Call dirname(__filename) and assign to const __dirname." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:__dirname:constant" type="constant" identity="__dirname" parent="~/.framework/cli/commands/dev.ts"]
 const __dirname = dirname(__filename)
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:__dirname:constant"]
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the directory name of the current module for relative path resolution.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Defines the project root directory for relative path resolution."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a resolved project root path for file operations."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="string" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Resolve __dirname joined with '../../../' to produce PROJECT_ROOT." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:PROJECT_ROOT:constant" type="constant" identity="PROJECT_ROOT" parent="~/.framework/cli/commands/dev.ts"]
 /**
  * PROJECT_ROOT defines the root directory of the project, allowing for relative path resolution. It exists to facilitate file operations within the project structure.
  *
@@ -77,22 +23,7 @@ const __dirname = dirname(__filename)
  * @cil-generated
  */
 const PROJECT_ROOT = resolve(__dirname, '../../../')
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:PROJECT_ROOT:constant"]
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the project root directory for relative path resolution.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Registers the 'dev' command for starting the Spine development server with options."]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure and launch the dev server with assembly, integrity verification, and file watching."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts,scripts/assemble.sh,scripts/dev-netlify.sh,config/vite.config.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="Promise<void>" errors="Process exits on failure" side_effects="Executes shell commands, spawns a child process, and watches for file changes."]
-// CIL[DOC-MICRO logic_summary="Run scripts/assemble.sh, verify integrity unless skipped, then spawn Vite with config/vite.config.ts (npm run dev equivalent) or scripts/dev-netlify.sh with --netlify (npm run dev:netlify equivalent); watch custom/ for changes with debounced reassembly." notable_decisions="Honors --netlify, --no-verify, --port, --host, --no-watch, and --watch-delay options; ignores changes in node_modules and dotfiles; sets SPINE_DEV=true for the spawned process. --port/--host only apply to the Vite path — netlify dev pins 8888/3001 via netlify.toml."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:registerDevCommands:function" type="function" identity="registerDevCommands" parent="~/.framework/cli/commands/dev.ts"]
 /**
  * Registers development commands for starting the Spine development server with various options. It facilitates the assembly and verification of core components before launching the server.
  *
@@ -281,22 +212,7 @@ export function registerDevCommands(program: Command) {
       }
     })
 }
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:registerDevCommands:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Registers the 'dev' command for starting the Spine development server with options.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Executes a shell command in a given working directory and returns its exit code."]
-// CIL[DOC-RESPONSIBILITY responsibility="Run a command as a child process and report its exit code."]
-// CIL[DOC-CONTEXT module="dev" layer="app-specific" related_files=".framework/cli/commands/dev.ts"]
-// CIL[DOC-CONTRACT inputs="command: string, args: string[], cwd: string" outputs="Promise<number>" errors="Rejects on process error" side_effects="Spawns a child process with inherited stdio."]
-// CIL[DOC-MICRO logic_summary="Spawn the command with inherited stdio and environment, resolve with the exit code, reject on spawn error." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/dev.ts:runCommand:function" type="function" identity="runCommand" parent="~/.framework/cli/commands/dev.ts"]
 /**
  * Executes a command in a specified directory and returns the exit code. This function is useful for running shell commands programmatically within the application.
  *
@@ -329,10 +245,3 @@ function runCommand(command: string, args: string[], cwd: string): Promise<numbe
     })
   })
 }
-// CIL[END stable_id="~/.framework/cli/commands/dev.ts:runCommand:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Executes a shell command in a given working directory and returns its exit code.'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

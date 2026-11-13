@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/LoginPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-MACRO purpose="Module header for the LoginPage component: imports, dependencies, and module-level context."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare module-level imports and setup for the authentication login page."]
-// CIL[DOC-CONTEXT module="auth" layer="presentation" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, routing, auth context, and the LoadingSpinner UI component." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -16,21 +7,6 @@ import { TurnstileWidget, turnstileEnabled } from '../../components/auth/Turnsti
 import { resolvePostAuthPath } from '../../lib/app-mount'
 import { useBranding } from '../../hooks/useBranding'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Module header for the LoginPage component: imports, dependencies, and module-level context.'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/LoginPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/LoginPage.tsx:LoginPage:component" type="component" identity="LoginPage" parent="~/.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the login form and handle user authentication."]
-// CIL[DOC-RESPONSIBILITY responsibility="Collect email and password, call auth login, and navigate to the appropriate post-login route."]
-// CIL[DOC-CONTEXT module="auth" layer="presentation" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (reads from local form state and AuthContext)" outputs="JSX login page" errors="displays authentication error message" side_effects="calls login API and navigates with react-router"]
-// CIL[DOC-MICRO logic_summary="Manages email/password/isLoading state; on submit prevents default, calls login, fetches spine.config.json, resolves default app by role, and navigates." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -176,10 +152,3 @@ export function LoginPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the login form and handle user authentication.'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/LoginPage.tsx:LoginPage:component"]

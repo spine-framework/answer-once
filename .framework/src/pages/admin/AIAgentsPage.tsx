@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
 /**
  * @module   AIAgentsPage
  * @audience both
@@ -42,7 +41,6 @@ import { apiFetch } from '../../lib/api'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { Badge } from '../../components/ui/badge'
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:module_header:module_header"]
 
 
 
@@ -59,7 +57,6 @@ import { Badge } from '../../components/ui/badge'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgent:interface" type="interface" identity="AIAgent" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
 /**
  * The AIAgent interface defines the structure for AI agents used in the application, encapsulating their properties and configurations. It standardizes how AI agents are represented and managed within the system.
  *
@@ -89,7 +86,6 @@ interface AIAgent {
   app_id?: string
   metadata?: Record<string, any>
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgent:interface"]
 
 
 
@@ -106,7 +102,6 @@ interface AIAgent {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgentsPage:component" type="component" identity="AIAgentsPage" parent="~/.framework/src/pages/admin/AIAgentsPage.tsx"]
 /**
  * The AIAgentsPage component provides a user interface for managing AI agents, allowing users to filter, sort, and view agent details. It fetches agent data from an external API and applies various filters based on user input.
  *
@@ -384,5 +379,4 @@ export function AIAgentsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentsPage.tsx:AIAgentsPage:component"]
 

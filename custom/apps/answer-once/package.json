@@ -1,6 +1,6 @@
 {
   "name": "@spine-framework/answer-once",
-  "version": "0.2.10",
+  "version": "0.3.0",
   "private": false,
   "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
   "type": "module",
@@ -20,7 +20,7 @@
     "node": ">=22"
   },
   "peerDependencies": {
-    "spine-framework": ">=0.4.0 <0.6.0"
+    "spine-framework": ">=0.6.0 <0.7.0"
   },
   "dependencies": {},
   "files": [
@@ -35,8 +35,8 @@
     "functions/",
     "public/",
     "docs/",
-    "agent/",
     "decisions/",
+    "agent/",
     "installer/",
     "README.md",
     "LICENSE.md"

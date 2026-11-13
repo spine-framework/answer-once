@@ -1,15 +1,6 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/TeamPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer team page — people in the account"]
-// CIL[DOC-RESPONSIBILITY responsibility="List people associated with the customer's account"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/TeamPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Placeholder — lists people via admin-data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useState, useEffect } from 'react'
 import { apiFetch } from '@core/lib/api'
 import { Skeleton } from '@core/components/ui/skeleton'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/TeamPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

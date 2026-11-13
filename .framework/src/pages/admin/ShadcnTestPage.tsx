@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ShadcnTestPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/ShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines dependencies and module context for the admin shadcn/ui test page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import and assemble shadcn/ui component library dependencies for the admin visual test page"]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/avatar.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/breadcrumb.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/popover.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/radio-group.tsx,.framework/src/components/ui/scroll-area.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/slider.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="React component exports and side-effect-free UI page" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Top-level imports for all shadcn/ui primitives used by the test page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 
 
@@ -114,21 +105,6 @@ import {
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Defines dependencies and module context for the admin shadcn/ui test page'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ShadcnTestPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ShadcnTestPage.tsx:ShadcnTestPage:component" type="component" identity="ShadcnTestPage" parent="~/.framework/src/pages/admin/ShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Renders a comprehensive visual test page demonstrating all installed shadcn/ui components in the admin panel"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display b1a0RuGWG-preset-themed shadcn/ui components and verify installation"]
-// CIL[DOC-CONTEXT module="admin" layer="component" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/avatar.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/breadcrumb.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/popover.tsx,.framework/src/components/ui/progress.tsx,.framework/src/components/ui/radio-group.tsx,.framework/src/components/ui/scroll-area.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/slider.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/table.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/components/ui/tooltip.tsx,.framework/src/lib/utils.ts,.framework/src/pages/admin/ShadcnTestPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (self-contained component)" outputs="Rendered JSX for the admin UI test page" errors="none" side_effects="Local component state for progress, slider value, and selected date"]
-// CIL[DOC-MICRO logic_summary="Combines shadcn/ui primitives (card, form, table, tabs, dialog, accordion, avatar, skeleton, scroll area, radio group) into a responsive admin test layout with interactive progress and slider controls" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ShadcnTestPage() {
   const [date, setDate] = useState<Date>()
   const [progress, setProgress] = useState(68)
@@ -608,12 +584,5 @@ export function ShadcnTestPage() {
     </TooltipProvider>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a comprehensive visual test page demonstrating all installed shadcn/ui components in the admin panel'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ShadcnTestPage.tsx:ShadcnTestPage:component"]
 
 

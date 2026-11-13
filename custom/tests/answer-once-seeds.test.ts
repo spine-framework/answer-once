@@ -1,45 +1,24 @@
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/tests/answer-once-seeds.test.ts"]
 // Unit tests for the Answer Once seed + manifest consistency contract.
 // These checks validate what `seed-app answer-once` must materialize on a
 // virgin database — they read only files, never a database.
 import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:APP:constant" type="constant" identity="APP" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const APP = join(__dirname, '../apps/answer-once')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:APP:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:SEED:constant" type="constant" identity="SEED" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const SEED = join(APP, 'seed')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:SEED:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:load:function" type="function" identity="load" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const load = (file: string) => JSON.parse(readFileSync(join(SEED, file), 'utf8'))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:load:function"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:manifest:constant" type="constant" identity="manifest" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const manifest = JSON.parse(readFileSync(join(APP, 'manifest.json'), 'utf8'))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:manifest:constant"]
 
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:roles:constant" type="constant" identity="roles" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const roles = load('roles.json')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:roles:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:types:constant" type="constant" identity="types" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const types = load('types.json')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:types:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:linkTypes:constant" type="constant" identity="linkTypes" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const linkTypes = load('link-types.json')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:linkTypes:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:agents:constant" type="constant" identity="agents" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const agents = load('ai-agents.json')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:agents:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:prompts:constant" type="constant" identity="prompts" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const prompts = load('prompt-configs.json')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:prompts:constant"]
 
 // Unique constraints the seed upserts rely on (fresh-install schema):
 //   roles(slug), types(kind,slug), link_types(app_id,slug),
 //   ai_agents(app_id,slug), prompt_configs(app_id,slug)
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:EXPECTED_CONFLICTS:constant" type="constant" identity="EXPECTED_CONFLICTS" parent="~/custom/tests/answer-once-seeds.test.ts"]
 const EXPECTED_CONFLICTS: Record<string, string> = {
   'seed/roles.json': 'slug',
   'seed/types.json': 'kind,slug',
@@ -47,13 +26,10 @@ const EXPECTED_CONFLICTS: Record<string, string> = {
   'seed/ai-agents.json': 'app_id,slug',
   'seed/prompt-configs.json': 'app_id,slug',
 }
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:EXPECTED_CONFLICTS:constant"]
 
 describe('answer-once manifest seed contract', () => {
   it('declares every existing seed file', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:declared:constant" type="constant" identity="declared" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const declared = new Set(manifest.seed.map((s: any) => s.file))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:declared:constant"]
     for (const f of ['seed/roles.json', 'seed/types.json', 'seed/link-types.json', 'seed/ai-agents.json', 'seed/prompt-configs.json']) {
       expect(declared.has(f), `manifest.seed missing ${f}`).toBe(true)
     }
@@ -61,9 +37,7 @@ describe('answer-once manifest seed contract', () => {
 
   it('uses conflict specs that match real unique constraints', () => {
     for (const entry of manifest.seed) {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:expected:constant" type="constant" identity="expected" parent="~/custom/tests/answer-once-seeds.test.ts"]
       const expected = EXPECTED_CONFLICTS[entry.file]
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:expected:constant"]
       if (!expected) continue
       expect(entry.conflict, `${entry.file} conflict`).toBe(expected)
     }
@@ -106,9 +80,7 @@ describe('answer-once seed identity fields', () => {
 
 describe('answer-once seeded roles', () => {
   it('seeds the four app roles', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant" type="constant" identity="slugs" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const slugs = new Set(roles.map((r: any) => r.slug))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant"]
     for (const s of ['member', 'member_admin', 'support', 'support_admin']) {
       expect(slugs.has(s), `role seed missing ${s}`).toBe(true)
     }
@@ -121,9 +93,7 @@ describe('answer-once seeded roles', () => {
 
 describe('answer-once type design_schemas', () => {
   it('seeds the five ao_* types', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant" type="constant" identity="slugs" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const slugs = new Set(types.map((t: any) => t.slug))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant"]
     for (const s of ['ao_support_ticket', 'ao_kb_article', 'ao_kb_shared', 'ao_ticket_thread', 'ao_ticket_message']) {
       expect(slugs.has(s), `types seed missing ${s}`).toBe(true)
     }
@@ -131,9 +101,7 @@ describe('answer-once type design_schemas', () => {
 
   it('every type has design_schema with fields + record_permissions', () => {
     for (const t of types) {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:ds:constant" type="constant" identity="ds" parent="~/custom/tests/answer-once-seeds.test.ts"]
       const ds = t.design_schema
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:ds:constant"]
       expect(ds && typeof ds === 'object', `${t.slug} design_schema`).toBeTruthy()
       expect(ds.fields && typeof ds.fields === 'object', `${t.slug} fields`).toBeTruthy()
       expect(ds.record_permissions && typeof ds.record_permissions === 'object',
@@ -142,9 +110,7 @@ describe('answer-once type design_schemas', () => {
   })
 
   it('thread type declares its reply message binding', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:thread:constant" type="constant" identity="thread" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const thread = types.find((t: any) => t.slug === 'ao_ticket_thread')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:thread:constant"]
     expect(thread?.design_schema?.functionality?.thread?.reply_type_slug).toBe('ao_ticket_message')
   })
 
@@ -156,9 +122,7 @@ describe('answer-once type design_schemas', () => {
     // driver's merge then clobbers agent_id/prompt_config_id and the episode
     // dies with "Could not resolve agent configuration". Demo declares all of
     // these on demo_support_thread; this assertion keeps AO at parity.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:fields:constant" type="constant" identity="fields" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const fields = (types.find((t: any) => t.slug === 'ao_ticket_thread')?.design_schema?.fields) || {}
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:fields:constant"]
     for (const key of ['agent_id', 'prompt_config_id', 'research_state', 'thread_purpose']) {
       expect(fields[key], `ao_ticket_thread missing data.${key}`).toBeTruthy()
     }
@@ -166,12 +130,8 @@ describe('answer-once type design_schemas', () => {
 
   it('kb item types declare vector_fields + security_level', () => {
     for (const slug of ['ao_kb_article', 'ao_kb_shared']) {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:t:constant" type="constant" identity="t" parent="~/custom/tests/answer-once-seeds.test.ts"]
       const t = types.find((r: any) => r.slug === slug)
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:t:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:kb:constant" type="constant" identity="kb" parent="~/custom/tests/answer-once-seeds.test.ts"]
       const kb = t?.design_schema?.functionality?.kb
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:kb:constant"]
       expect(Array.isArray(kb?.vector_fields) && kb.vector_fields.length > 0,
         `${slug} kb.vector_fields`).toBe(true)
       expect(typeof kb?.security_level === 'string', `${slug} kb.security_level`).toBe(true)
@@ -182,9 +142,7 @@ describe('answer-once type design_schemas', () => {
     // The permission engine exact-matches record_permissions[roleSlug]; a key
     // like "system-admin" (hyphen) never matches the seeded "system_admin" slug
     // and silently denies that role — this is a proven install-time defect.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:validKeys:constant" type="constant" identity="validKeys" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const validKeys = new Set([...roles.map((r: any) => r.slug), 'system_admin', 'all'])
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:validKeys:constant"]
     for (const t of types) {
       for (const k of Object.keys(t.design_schema.record_permissions)) {
         expect(validKeys.has(k), `${t.slug} record_permissions has unseeded role key "${k}"`).toBe(true)
@@ -193,22 +151,15 @@ describe('answer-once type design_schemas', () => {
   })
 
   it('record_permissions grant the five product personas', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:ticket:constant" type="constant" identity="ticket" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const ticket = types.find((t: any) => t.slug === 'ao_support_ticket')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:ticket:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant" type="constant" identity="perms" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const perms = Object.keys(ticket.design_schema.record_permissions)
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant"]
     for (const r of ['system_admin', 'support', 'support_admin', 'member_admin', 'member']) {
       expect(perms, `ao_support_ticket missing role ${r}`).toContain(r)
     }
   })
 
   it('every type uses the canonical five-role grant map', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:CRU:constant" type="constant" identity="CRU" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const CRU = ['create', 'read', 'update']
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:CRU:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:want:constant" type="constant" identity="want" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const want = {
       member: CRU,
       member_admin: CRU,
@@ -216,7 +167,6 @@ describe('answer-once type design_schemas', () => {
       support: CRU,
       support_admin: CRU,
     }
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:want:constant"]
     for (const t of types) {
       if (t.slug === 'ao_triage_directive') continue // restricted by design — see below
       if (t.slug === 'ao_directive_subscription') continue // restricted by design — see below
@@ -228,13 +178,9 @@ describe('answer-once type design_schemas', () => {
     // Directives become trusted prompt context + executable actions. If a
     // customer-facing role could write one, an inbound message could escalate
     // into admin-tier instructions. The type boundary is the injection fix.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:directive:constant" type="constant" identity="directive" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const directive = types.find((t: any) => t.slug === 'ao_triage_directive')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:directive:constant"]
     expect(directive).toBeTruthy()
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant" type="constant" identity="perms" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const perms = directive.design_schema.record_permissions
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant"]
     expect(perms.member).toBeUndefined()
     expect(perms.member_admin).toBeUndefined()
     expect(perms.system_admin).toEqual(['create', 'read', 'update', 'delete'])
@@ -246,13 +192,9 @@ describe('answer-once type design_schemas', () => {
     // A subscription authorizes gated platform-directive actions in the
     // account. Tenant admins (member_admin) and company ops (support_admin)
     // may manage them; a plain member must never escalate their own account.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:subscription:constant" type="constant" identity="subscription" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const subscription = types.find((t: any) => t.slug === 'ao_directive_subscription')
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:subscription:constant"]
     expect(subscription).toBeTruthy()
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant" type="constant" identity="perms" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const perms = subscription.design_schema.record_permissions
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:perms:constant"]
     expect(perms.member).toEqual(['read'])
     expect(perms.member_admin).toEqual(['create', 'read', 'update'])
     expect(perms.support).toEqual(['read'])
@@ -272,13 +214,9 @@ describe('answer-once type design_schemas', () => {
 
 describe('answer-once agent/prompt wiring', () => {
   it('agent default_prompt_config_slug resolves to a seeded prompt', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:promptSlugs:constant" type="constant" identity="promptSlugs" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const promptSlugs = new Set(prompts.map((p: any) => p.slug))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:promptSlugs:constant"]
     for (const a of agents) {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:ref:constant" type="constant" identity="ref" parent="~/custom/tests/answer-once-seeds.test.ts"]
       const ref = a.metadata?.default_prompt_config_slug
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:ref:constant"]
       if (ref) {
         expect(promptSlugs.has(ref), `agent "${a.name}" references unseeded prompt ${ref}`).toBe(true)
       }
@@ -288,17 +226,13 @@ describe('answer-once agent/prompt wiring', () => {
   it('agents used by the journey function exist by name', () => {
     // resolveIds() in custom_answeronce-journey.ts resolves agents by name —
     // these exact strings are the contract.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:names:constant" type="constant" identity="names" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const names = new Set(agents.map((a: any) => a.name))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:names:constant"]
     expect(names.has('AO Triage Agent')).toBe(true)
     expect(names.has('AO Case Resolution Analysis Agent')).toBe(true)
   })
 
   it('prompts used by the journey function exist by slug', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant" type="constant" identity="slugs" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const slugs = new Set(prompts.map((p: any) => p.slug))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:slugs:constant"]
     expect(slugs.has('ao_triage')).toBe(true)
     expect(slugs.has('ao_case_analysis')).toBe(true)
   })
@@ -308,27 +242,19 @@ describe('answer-once manifest consistency', () => {
   it('required_roles are exact seeded/system role slugs — no hyphen aliases', () => {
     // get_account_apps compares required_roles verbatim (= ANY(user_role_slugs));
     // nothing normalizes hyphens, so only real slugs are valid.
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:seeded:constant" type="constant" identity="seeded" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const seeded = new Set([...roles.map((r: any) => r.slug), 'system_admin'])
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:seeded:constant"]
     for (const rr of manifest.required_roles) {
       expect(seeded.has(rr), `required_role ${rr} has no seeded/system role`).toBe(true)
     }
   })
 
   it('knowledge envelope references only seeded ao_* types', () => {
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:platformSources:constant" type="constant" identity="platformSources" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const platformSources: string[] = manifest.config?.knowledge?.platform?.sources ?? []
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:platformSources:constant"]
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:typeSlugs:constant" type="constant" identity="typeSlugs" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const typeSlugs = new Set(types.map((t: any) => t.slug))
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:typeSlugs:constant"]
     for (const s of platformSources) {
       expect(typeSlugs.has(s), `platform source ${s} is not a seeded type`).toBe(true)
     }
-// CIL[BEGIN stable_id="~/custom/tests/answer-once-seeds.test.ts:accountPatterns:constant" type="constant" identity="accountPatterns" parent="~/custom/tests/answer-once-seeds.test.ts"]
     const accountPatterns: string[] = manifest.config?.knowledge?.account?.item_types ?? []
-// CIL[END stable_id="~/custom/tests/answer-once-seeds.test.ts:accountPatterns:constant"]
     for (const p of accountPatterns) {
       expect(p.startsWith('ao_'), `account item_types pattern ${p} outside ao_ namespace`).toBe(true)
     }

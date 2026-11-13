@@ -1,14 +1,6 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-mount.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/app-mount.test.ts"]
-// CIL[DOC-MACRO purpose="Unit tests for resolveAppMount — host-keyed mount overrides on apps records"]
-// CIL[DOC-CONTRACT inputs="resolveAppMount calls with injected hostname/environment" outputs="vitest assertions" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { describe, it, expect } from 'vitest'
 import { resolveAppMount } from '../../src/lib/app-mount.ts'
-// CIL[END stable_id="~/.framework/tests/unit/app-mount.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-mount.test.ts:fixtures:block" type="block" identity="fixtures" parent="none"]
-// CIL[DOC-MACRO purpose="Shared app record fixture and default opts (localhost, prod env)"]
 
 const base = {
   route_prefix: '/demo' as string | null,
@@ -19,10 +11,7 @@ const base = {
 }
 
 const opts = { hostname: 'localhost', environment: 'prod' }
-// CIL[END stable_id="~/.framework/tests/unit/app-mount.test.ts:fixtures:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-mount.test.ts:resolveappmount_suite:block" type="block" identity="resolveappmount_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Cover default mount, host-matched override, non-matching fallback, legacy domain lock, preview env fields, URL/port domains, and idempotence"]
 describe('resolveAppMount', () => {
   it('returns the default mount when no domain is configured', () => {
     expect(resolveAppMount({ ...base }, opts))
@@ -118,4 +107,3 @@ describe('resolveAppMount', () => {
     expect(twice).toEqual(once)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/app-mount.test.ts:resolveappmount_suite:block"]

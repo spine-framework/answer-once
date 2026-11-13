@@ -1,53 +1,14 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Layout.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/layout/Layout.tsx"]
-// CIL[DOC-MACRO purpose="Module imports and top-level declarations for the Layout component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare dependencies and types used by the Layout component."]
-// CIL[DOC-CONTEXT module="components/layout" layer="ui" related_files=".framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="N/A" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="Imports React, useState, Sidebar/SidebarContent, useAuth and useLocation." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="ai, developers"]
 
 import React, { useState } from 'react'
 import { Sidebar, SidebarContent } from './Sidebar'
 import { useAuth } from '../../contexts/AuthContext'
 import { useBranding } from '../../hooks/useBranding'
 import { useLocation } from 'react-router-dom'
-// CIL[DOC-VECTOR type="context" content="purpose='Module imports and top-level declarations for the Layout component.'; No verified external callers; imports: .framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Layout.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Layout.tsx:layoutprops:interface" type="interface" identity="LayoutProps" parent="~/.framework/src/components/layout/Layout.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Define the props contract for the Layout component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the children prop for the Layout component."]
-// CIL[DOC-CONTEXT module="components/layout" layer="ui" related_files=".framework/src/components/layout/Layout.tsx,.framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="LayoutProps interface" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="Declares a single children prop of type React.ReactNode." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface LayoutProps {
   children: React.ReactNode
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the props contract for the Layout component.'; No verified external callers; imports: .framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Layout.tsx:layoutprops:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Layout.tsx:layout:function" type="function" identity="Layout" parent="~/.framework/src/components/layout/Layout.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render the responsive application shell with sidebar and main content."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the application layout wrapper, manage sidebar visibility, and render responsive navigation and main content."]
-// CIL[DOC-CONTEXT module="components/layout" layer="ui" related_files=".framework/src/components/layout/Layout.tsx,.framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="children: React.ReactNode" outputs="JSX layout structure" errors="None" side_effects="Updates local sidebarOpen state; consumes useAuth and useLocation hooks."]
-// CIL[DOC-MICRO logic_summary="Computes active route, conditionally renders mobile overlay and sidebar, and renders a responsive main content area." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { user, logout } = useAuth()
@@ -104,10 +65,3 @@ export function Layout({ children }: LayoutProps) {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the responsive application shell with sidebar and main content.'; No verified external callers; imports: .framework/src/components/layout/Sidebar.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/layout/Layout.tsx:layout:function"]

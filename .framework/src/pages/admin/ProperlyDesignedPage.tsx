@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx"]
-// CIL[DOC-MACRO purpose="Declares and re-exports UI component imports for the admin ProperlyDesignedPage module"]
-// CIL[DOC-RESPONSIBILITY responsibility="Dependency import block for admin dashboard page components and icons"]
-// CIL[DOC-CONTEXT module=".framework/src/pages/admin/ProperlyDesignedPage.tsx" layer="pages" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imported React, UI components, and icon symbols" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, local UI primitives, Radix UI components, and Lucide icons required by the dashboard page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="maintainers"]
 
 
 
@@ -82,21 +73,6 @@ import {
   Activity
 } from 'lucide-react'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Declares and re-exports UI component imports for the admin ProperlyDesignedPage module'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx:ProperlyDesignedPage:component" type="component" identity="ProperlyDesignedPage" parent="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx"]
-// CIL[DOC-MACRO purpose="Renders the admin dashboard overview page with tabs, stats, search, and settings UI"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display dashboard metrics, recent activity, reports, analytics placeholder, and user preferences"]
-// CIL[DOC-CONTEXT module=".framework/src/pages/admin/ProperlyDesignedPage.tsx" layer="pages" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/pages/admin/ProperlyDesignedPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX.Element dashboard page" errors="none" side_effects="sets local React state for tab, search, notifications, and auto-save"]
-// CIL[DOC-MICRO logic_summary="Implements a stateful React component with tabbed navigation, stat cards, search/filter bar, recent activity list, reports list, analytics placeholder, and settings toggles/forms" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ProperlyDesignedPage() {
   const [selectedTab, setSelectedTab] = useState('overview')
   const [searchQuery, setSearchQuery] = useState('')
@@ -451,10 +427,3 @@ export function ProperlyDesignedPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the admin dashboard overview page with tabs, stats, search, and settings UI'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/ProperlyDesignedPage.tsx:ProperlyDesignedPage:component"]

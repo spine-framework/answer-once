@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
 /**
  * @module   TypesPage
  * @audience both
@@ -32,7 +31,6 @@ import { useNavigate } from 'react-router-dom'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { 
-// CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:module_header:module_header"]
   Plus,
   Box,
   FileText,
@@ -61,7 +59,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:Type:interface" type="interface" identity="Type" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
 /**
  * The Type interface defines the structure for a type object used in the admin panel, encapsulating various attributes related to types. It serves to standardize the representation of types within the application.
  *
@@ -92,7 +89,6 @@ interface Type {
   app_id?: string | null
   app?: any
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:Type:interface"]
 
 
 
@@ -109,7 +105,6 @@ interface Type {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypesPage.tsx:TypesPage:component" type="component" identity="TypesPage" parent="~/.framework/src/pages/admin/TypesPage.tsx"]
 /**
  * The TypesPage component manages the display and filtering of various types in an admin interface. It allows users to search, sort, and categorize types based on specific criteria.
  *
@@ -359,7 +354,6 @@ export function TypesPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TypesPage.tsx:TypesPage:component"]
 
 
 

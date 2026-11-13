@@ -45,3 +45,10 @@ Markdown files with YAML frontmatter. They complement this book: the book is
   still resolve in the tree.
 - `enforced_by: []` is an explicit "this rule is review-enforced only" flag,
   not an omission.
+- `status: proposed` means *unreviewed proposal* — context, not an approved
+  constraint. Only `accepted` (and `superseded`, as history) carries
+  authority; never cite a proposed record as the reason a design is right.
+- Releases ship strict: a proposed record fails the release gate unless a
+  `exceptions.yaml` entry in the same dir approves it for exactly that
+  release (`record`, `release`, `approved_by`, `reason`). Exceptions expire
+  automatically — a stale release or an adjudicated record fails validation.

@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Provide imports, mocks, and test helpers for the admin-data logger unit test"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load dependencies, mock shared modules, and expose functions used by the test suite"]
-// CIL[DOC-CONTEXT module="admin-data-logger" layer="unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imported modules and vi mocks" errors="none" side_effects="mocks db and principal helpers"]
-// CIL[DOC-MICRO logic_summary="Imports vitest utilities, mocks the shared db and principal modules, and pulls in the logging functions under test" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
@@ -26,22 +17,7 @@ vi.mock('../../functions/_shared/principal.ts', () => ({
 
 import { resolveLogLevels, withAdminLogging, logAdminDataOperation, __resetLoggingSettingsCache } from '../../functions/_shared/logging'
 import { adminDb } from '../../functions/_shared/db'
-// CIL[DOC-VECTOR type="context" content="purpose='Provide imports, mocks, and test helpers for the admin-data logger unit test'; No verified external callers; imports: .framework/functions/_shared/logging.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:makeprincipal:function" type="function" identity="makePrincipal" parent="none"]
-// CIL[DOC-MACRO purpose="Create a test principal object with sensible defaults and optional overrides"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a reusable principal fixture for unit tests"]
-// CIL[DOC-CONTEXT module="admin-data-logger" layer="unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/tests/unit/admin-data-logger.test.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: any" outputs="Principal object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns a default principal and spreads any overrides" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function makePrincipal(overrides: any = {}) {
   return {
@@ -56,22 +32,7 @@ function makePrincipal(overrides: any = {}) {
     ...overrides
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Create a test principal object with sensible defaults and optional overrides'; No verified external callers; imports: .framework/functions/_shared/logging.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:makeprincipal:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:makectx:function" type="function" identity="makeCtx" parent="none"]
-// CIL[DOC-MACRO purpose="Build a test request context using a default principal and optional overrides"]
-// CIL[DOC-RESPONSIBILITY responsibility="Supply a standard RequestContext fixture for unit tests"]
-// CIL[DOC-CONTEXT module="admin-data-logger" layer="unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/tests/unit/admin-data-logger.test.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: any" outputs="RequestContext object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Constructs a context with request id, principal, account, db, and app id then applies overrides" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function makeCtx(overrides: any = {}) {
   return {
@@ -83,22 +44,7 @@ function makeCtx(overrides: any = {}) {
     ...overrides
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Build a test request context using a default principal and optional overrides'; No verified external callers; imports: .framework/functions/_shared/logging.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:makectx:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:mockdb:function" type="function" identity="mockDb" parent="none"]
-// CIL[DOC-MACRO purpose="Mock Supabase client methods to simulate logging settings and log inserts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure vi.fn mocks for adminDb.from so tests can control select and insert behavior"]
-// CIL[DOC-CONTEXT module="admin-data-logger" layer="unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/tests/unit/admin-data-logger.test.ts"]
-// CIL[DOC-CONTRACT inputs="settings: any[]" outputs="insertMock spy" errors="none" side_effects="mutates adminDb.from implementation"]
-// CIL[DOC-MICRO logic_summary="Sets up mock implementations for system_settings and logs tables and returns the insert spy" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function mockDb(settings: any[] = []) {
   const insertMock = vi.fn(() => Promise.resolve({ data: { id: 'log-1' }, error: null }))
@@ -127,22 +73,7 @@ function mockDb(settings: any[] = []) {
 
   return { insertMock }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mock Supabase client methods to simulate logging settings and log inserts'; No verified external callers; imports: .framework/functions/_shared/logging.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:mockdb:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:admin_data_logger_tests:function" type="function" identity="admin_data_logger_tests" parent="none"]
-// CIL[DOC-MACRO purpose="Unit test suite for admin-data logging utilities"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify resolveLogLevels, logAdminDataOperation, and withAdminLogging under mocked database conditions"]
-// CIL[DOC-CONTEXT module="admin-data-logger" layer="unit" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/logging.ts,.framework/tests/unit/admin-data-logger.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="vitest assertions and mock expectations" errors="assertion failures" side_effects="reads and writes to mocked adminDb"]
-// CIL[DOC-MICRO logic_summary="Groups tests for log level resolution, conditional inserts, timing and error logging, and wrapper behavior" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 describe('admin-data logger', () => {
   beforeEach(() => {
@@ -301,10 +232,3 @@ describe('admin-data logger', () => {
     })
   })
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Unit test suite for admin-data logging utilities'; No verified external callers; imports: .framework/functions/_shared/logging.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/admin-data-logger.test.ts:admin_data_logger_tests:function"]

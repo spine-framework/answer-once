@@ -1,13 +1,5 @@
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Framework-owned project fileset — collect files to vend, render netlify.toml/.gitignore, merge package.json, and write the frozen .spine-manifest.json"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the shared primitives for `init` (scaffold a new project) and `upgrade` (sync an installed project to a newer spine-framework) — always app-agnostic, driven by .framework/templates/project.json"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=".framework/templates/project.json,.framework/cli/commands/init.ts,.framework/cli/commands/upgrade.ts,scripts/checksum-manifest.mts"]
-// CIL[DOC-CONTRACT inputs="pkgRoot (spine-framework package/monorepo root), projectRoot" outputs="file lists, rendered config text, frozen manifest" errors="throws on missing declared framework files" side_effects="writeFrozenManifest writes .spine-manifest.json; all other exports are pure"]
-// CIL[DOC-MICRO logic_summary="collectFrameworkFiles mirrors export-standalone's collectCopyList semantics: excludes apply to walked dirs only, explicitly listed files bypass them. renderNetlifyToml treats [functions.\"custom_*\"] sections as app-owned: strip them from the framework source, re-append the project's existing custom_* sections verbatim" notable_decisions="framework never writes custom/, spine.config.json, .env, or netlify.toml custom_* sections — those belong to apps and the customer"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-NOTE type="design" content="Kept dependency-free of export-standalone.ts on purpose: the packager profile lives in .framework/templates/project.json so the framework never learns app specifics"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// framework never writes custom/, spine.config.json, .env, or netlify.toml custom_* sections — those belong to apps and the customer
+// Kept dependency-free of export-standalone.ts on purpose: the packager profile lives in .framework/templates/project.json so the framework never learns app specifics
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -17,16 +9,7 @@ import {
   hashEntry,
   computeTreeDigest,
 } from '../../../scripts/checksum-manifest.mts'
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:types:block" type="block" identity="types" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Project profile + collected-file shapes shared by init and upgrade"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=".framework/templates/project.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="ProjectProfile, CollectedFile interfaces" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="ProjectProfile mirrors templates/project.json keys; CollectedFile is the {rel, abs} copy unit" notable_decisions="one profile shape drives both scaffold and upgrade"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.95" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 export interface ProjectProfile {
   framework_dirs: string[]
   framework_files: string[]
@@ -63,16 +46,8 @@ export interface CollectedFile {
   abs: string
   symlink: boolean
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:types:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:globs_and_hashes:block" type="block" identity="globs_and_hashes" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Minimal `**`/`*`/`?` glob→regex matcher (export-standalone semantics) and sha256 file/text helpers"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=".framework/templates/project.json,scripts/checksum-manifest.mts"]
-// CIL[DOC-CONTRACT inputs="glob: string; abs: string; text: string" outputs="RegExp; sha256 hex" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="globToRegex escapes literals then expands `**`→.* `*`→[^/]* `?`→[^/]; sha256 helpers feed both the frozen manifest and upgrade integrity checks" notable_decisions="no external glob dep — the exclude vocabulary is deliberately small"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// no external glob dep — the exclude vocabulary is deliberately small
 
 /** Minimal glob matcher supporting `**`, `*`, and `?` — same semantics as export-standalone. */
 export function globToRegex(glob: string): RegExp {
@@ -92,16 +67,8 @@ export function sha256File(abs: string): string {
 export function sha256Text(text: string): string {
   return `sha256:${createHash('sha256').update(text, 'utf8').digest('hex')}`
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:globs_and_hashes:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:collect:block" type="block" identity="collect" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Profile load + framework file collection — walked dirs honor excludes, listed files bypass them"]
-// CIL[DOC-CONTRACT inputs="dirAbs: string, rootAbs: string, excludes: RegExp[], out: CollectedFile[], pkgRoot: string, profile: ProjectProfile" outputs="sorted CollectedFile[]" errors="throws listing missing required framework_dirs/framework_files/root_scripts" side_effects="none (read-only)"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=".framework/templates/project.json"]
-// CIL[DOC-MICRO logic_summary="loadProjectProfile reads templates/project.json; collectFrameworkFiles walks declared dirs (honoring excludes) and appends declared files/locks verbatim, deduping by rel" notable_decisions="walked entries honor excludes; explicitly listed files bypass them — export-standalone parity"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// walked entries honor excludes; explicitly listed files bypass them — export-standalone parity
 function walkDir(
   dirAbs: string,
   rootAbs: string,
@@ -167,17 +134,9 @@ export function collectFrameworkFiles(pkgRoot: string, profile: ProjectProfile):
   }
   return [...seen.values()].sort((a, b) => Buffer.compare(Buffer.from(a.rel), Buffer.from(b.rel)))
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:collect:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:toml:block" type="block" identity="toml" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="netlify.toml split/render — framework blocks owned upstream, [functions.\"custom_*\"] sections app-owned and preserved verbatim; .gitignore render"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files="netlify.toml,.gitignore"]
-// CIL[DOC-CONTRACT inputs="toml: string; frameworkToml: string; existingToml?: string; template: string" outputs="{ base, customSections } | rendered TOML | rendered gitignore" errors="none" side_effects="none (pure)"]
-// CIL[DOC-MICRO logic_summary="splitNetlifyToml removes app-owned custom_* scheduled sections, comments attached, from framework source and returns them verbatim; renderNetlifyToml re-appends the project's own sections; renderGitignore ensures .env ignore lines" notable_decisions="custom_* ownership boundary is the core of app-independence — identical rendered output must not create a .bak upstream"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="invariant" content="splitNetlifyToml must stay idempotent — extracted sections attach preceding comments but never leading blank lines, or every upgrade writes a phantom diff"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// custom_* ownership boundary is the core of app-independence — identical rendered output must not create a .bak upstream
+// splitNetlifyToml must stay idempotent — extracted sections attach preceding comments but never leading blank lines, or every upgrade writes a phantom diff
 const CUSTOM_SECTION_RE = /^\[functions\."custom_/
 
 /**
@@ -255,16 +214,8 @@ export function renderGitignore(template: string): string {
     .filter((l) => l.trim() !== '.env.example')
     .join('\n')
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:toml:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:package_merge:block" type="block" identity="package_merge" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Merge framework-owned scripts/deps/pin into a project package.json — removes only deps the previous framework version owned"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files="package.json,.spine-manifest.json"]
-// CIL[DOC-CONTRACT inputs="opts: { existing, name, description, scripts, newDependencies, newDevDependencies, spineVersion, oldFrameworkDeps }" outputs="{ text, frameworkDeps }" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Removes deps recorded in the old manifest's framework_dependencies, installs the new set, applies profile scripts, pins spine-framework exactly" notable_decisions="dep removal is scoped to previously framework-owned deps — customer-added deps/scripts always survive"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// dep removal is scoped to previously framework-owned deps — customer-added deps/scripts always survive
 export interface MergedPackageJson {
   text: string
   frameworkDeps: string[]
@@ -332,16 +283,7 @@ export function mergePackageJson(opts: {
 
   return { text: JSON.stringify(pkg, null, 2) + '\n', frameworkDeps }
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:package_merge:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:manifest:block" type="block" identity="manifest" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Write the frozen .spine-manifest.json — per-file hashes over the protected trees plus framework_version + framework_dependencies"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=".spine-manifest.json,scripts/checksum-manifest.mts"]
-// CIL[DOC-CONTRACT inputs="opts: { projectRoot, frameworkVersion, frameworkDeps }" outputs=".spine-manifest.json written; {fileCount, treeDigest}" errors="none" side_effects="writes projectRoot/.spine-manifest.json"]
-// CIL[DOC-MICRO logic_summary="Hashes every protected file and records framework_version + framework_dependencies so upgrade can detect local mods and owned deps" notable_decisions="manifest is the integrity contract — same hash inputs as scripts/checksum-manifest.mts verify"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 /** Write the frozen .spine-manifest.json for a project at the given framework version. */
 export function writeFrozenManifest(opts: {
   projectRoot: string
@@ -374,7 +316,6 @@ export function writeFrozenManifest(opts: {
   )
   return { fileCount: pairs.length, treeDigest: manifest.tree_digest }
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:manifest:block"]
 
 /*
  * Agent asset sync — AGENTS.md framework block + .devin/skills/spine-*.
@@ -587,14 +528,6 @@ export function collectAgentFileHashes(
   return hashes
 }
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/project-files.ts:file_io:block" type="block" identity="file_io" parent="~/.framework/cli/lib/project-files.ts"]
-// CIL[DOC-MACRO purpose="Copy collected files (mode-preserving, symlink safety-checked), sanitize dir names to npm package names, compare semvers"]
-// CIL[DOC-CONTEXT module="cli" layer="lib" related_files=""]
-// CIL[DOC-CONTRACT inputs="files: CollectedFile[], projectRoot: string, name: string, a: string, b: string" outputs="copied tree; sanitized name; -1|0|1" errors="throws when a source symlink resolves outside pkgRoot" side_effects="copyCollectedFiles writes + chmods files under projectRoot"]
-// CIL[DOC-MICRO logic_summary="copyCollectedFiles resolves symlinks (rejecting escapes), preserves executable bits, creates parent dirs; sanitizePackageName lowercases and strips invalid chars; cmpSemver compares numeric triples" notable_decisions="symlink escape guard keeps packaged payload inside the project"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 /** Copy a collected file list into the project, preserving modes and safe symlinks. */
 export function copyCollectedFiles(files: CollectedFile[], projectRoot: string): void {
   for (const f of files) {
@@ -641,4 +574,3 @@ export function cmpSemver(a: string, b: string): number {
   if (pb.pre === null) return -1
   return pa.pre < pb.pre ? -1 : 1
 }
-// CIL[END stable_id="~/.framework/cli/lib/project-files.ts:file_io:block"]

@@ -1,11 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TeamPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company team page — support staff"]
-// CIL[DOC-RESPONSIBILITY responsibility="List spine-system account people holding support-capable roles (support, support_admin, system_admin)"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/TeamPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Fetches accounts + people via admin-data and roles via direct supabase read, filters to the platform account and support-capable role slugs; members link to /company/team/:id detail and admins get an Add support member button to /company/team/new" notable_decisions="spine-system membership alone is not enough — test/demo people share the account, so the role filter is the discriminator; roles table read directly because /api/roles strips slug for non-system-admins (roles_read RLS is public)"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// spine-system membership alone is not enough — test/demo people share the account, so the role filter is the discriminator; roles table read directly because /api/roles strips slug for non-system-admins (roles_read RLS is public)
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -15,7 +8,6 @@ import { supabase } from '@core/lib/supabase'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Button } from '@core/components/ui/button'
 import { Plus } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TeamPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, { ...options, headers: { 'Content-Type': 'application/json', ...(options?.headers || {}) } })

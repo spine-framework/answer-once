@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/architect.ts:architect:file" type="file" identity="architect" parent="~/.framework/mcp/tools/architect.ts"]
-// CIL[DOC-MACRO purpose="Register architect MCP tools for Spine Way evaluation, design schema validation, and app manifest lookups."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose MCP tools that evaluate proposals against Spine fundamentals, validate design schemas, and query installed app manifests."]
-// CIL[DOC-CONTEXT module="mcp" layer="framework" related_files=".framework/mcp/shared/app-manifest.ts,.framework/mcp/shared/db.ts,.framework/mcp/tools/architect.ts"]
-// CIL[DOC-CONTRACT inputs="server: McpServer; tool-specific parameters for proposal, primitive, fundamental, design_schema, app slug/id" outputs="JSON content with assessment, placement, validation errors, or app record" errors="Unknown fundamental; invalid design schema; missing app; Supabase query failures" side_effects="Reads public.apps via adminDb; no writes"]
-// CIL[DOC-MICRO logic_summary="Registers six tools on the MCP server: evaluate proposals, core-vs-custom placement, get a fundamental, validate a design schema, list apps, and get an app merged with its manifest." notable_decisions="FUNDAMENTALS, DATA_TYPES, and DISPLAY_TYPES are hard-coded local maps; app queries use adminDb with manifest helper functions."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
@@ -422,10 +414,3 @@ export function register(server: McpServer) {
   )
 }
 
-// CIL[DOC-VECTOR type="context" content="purpose='Register architect MCP tools for Spine Way evaluation, design schema validation, and app manifest lookups.'; No verified external callers; imports: .framework/mcp/shared/db.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/architect.ts:architect:file"]

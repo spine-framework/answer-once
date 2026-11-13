@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/NewMemberPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company new-team-member form — support_admin provisions support staff on spine-system"]
-// CIL[DOC-RESPONSIBILITY responsibility="Collect full name/email/phone and a support role, POST a people record scoped to the platform account with role_id, and land on the member detail page"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/NewMemberPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/pages/company/TeamPage.tsx, custom/apps/answer-once/pages/company/MemberPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="create errors render inline" side_effects="POST /api/admin-data?entity=people; supabase roles read"]
-// CIL[DOC-MICRO logic_summary="Role picker is limited to support/support_admin — a support_admin must not provision system_admin; roles read directly from supabase because /api/roles strips slugs for non-system-admins" notable_decisions="auth_uid left unset — this is a directory record; the claim/invite flow owns credential provisioning"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
+// auth_uid left unset — this is a directory record; the claim/invite flow owns credential provisioning
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -16,7 +8,6 @@ import { Button } from '@core/components/ui/button'
 import { Input } from '@core/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@core/components/ui/select'
 import { ArrowLeft, Check } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/NewMemberPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

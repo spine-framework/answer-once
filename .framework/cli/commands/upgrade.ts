@@ -1,13 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/upgrade.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-MACRO purpose="Sync an installed project's framework-owned files to the spine-framework version in node_modules"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify the current tree against the frozen .spine-manifest.json, then overwrite .framework/config/scripts/bin from the installed package, merge framework deps+scripts into package.json, re-render netlify.toml preserving app-owned custom_* sections, and regenerate the manifest at the new framework_version"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".framework/cli/lib/project-files.ts,.framework/templates/project.json,.framework/cli/commands/init.ts"]
-// CIL[DOC-CONTRACT inputs="[--dry-run] [--force]; runs in the project root; new version comes from node_modules/spine-framework" outputs="synced tree + regenerated manifest + change report" errors="exit 1 when no manifest, package absent/older, or protected files were locally modified (without --force)" side_effects="writes framework-owned paths only; --dry-run writes nothing"]
-// CIL[DOC-MICRO logic_summary="The executing command is always the NEW package's copy — npx spine-framework upgrade resolves node_modules. Deletions are limited to .framework/ entries tracked in the old manifest but absent upstream; config/scripts files dropped upstream are warned, not deleted. custom/, spine.config.json, .env, .spine/, and netlify.toml custom_* sections are never touched" notable_decisions="integrity abort is the safety rail — a sealed .framework/ tree means overwrite-on-upgrade loses nothing the user owned"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-NOTE type="design" content="Upgrade is file-sync, not git-aware; rollback = git. Migrations are reported, never run — `npx spine-framework migrate` applies them"]
-// CIL[DOC-AUDIENCE audience="developer"]
+// Upgrade is file-sync, not git-aware; rollback = git. Migrations are reported, never run — `npx spine-framework migrate` applies them
 
 import type { Command } from 'commander'
 import { existsSync, readFileSync, writeFileSync, rmSync, lstatSync } from 'fs'
@@ -25,16 +16,7 @@ import {
   syncAgentFiles,
   collectAgentFileHashes,
 } from '../lib/project-files.ts'
-// CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/upgrade.ts:paths:block" type="block" identity="paths" parent="~/.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-MACRO purpose="Path constants — PACKAGE_ROOT is the new version's source of truth; PROJECT_ROOT is the installed project being upgraded"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files="package.json,.spine-manifest.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="resolved path constants" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="PACKAGE_ROOT resolves inside node_modules/spine-framework — the executing command is always the NEW package's copy; PROJECT_ROOT is process.cwd()" notable_decisions="new code upgrades old files, never the reverse"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.95" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
@@ -42,16 +24,7 @@ const PACKAGE_ROOT = resolve(__dirname, '../../../')
 const PROJECT_ROOT = process.cwd()
 
 const MANIFEST_PATH = join(PROJECT_ROOT, '.spine-manifest.json')
-// CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:paths:block"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/upgrade.ts:registerUpgradeCommands:function" type="function" identity="registerUpgradeCommands" parent="~/.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-MACRO purpose="Register `upgrade [--dry-run] [--force]` — delegates to runUpgrade with a fatal-error wrapper"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".framework/cli/index.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="void" errors="catches runUpgrade errors → exit 1 (stack behind SPINE_CLI_DEBUG)" side_effects="mutates Commander program; may write project files via runUpgrade"]
-// CIL[DOC-MICRO logic_summary="Thin Commander wiring — all logic lives in runUpgrade" notable_decisions="error wrapper prints message + exits; stack only under SPINE_CLI_DEBUG"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.95" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 export function registerUpgradeCommands(program: Command) {
   program
     .command('upgrade')
@@ -68,16 +41,7 @@ export function registerUpgradeCommands(program: Command) {
       }
     })
 }
-// CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:registerUpgradeCommands:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/upgrade.ts:runUpgrade:function" type="function" identity="runUpgrade" parent="~/.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-MACRO purpose="Sync installed project's framework-owned files to the package version — integrity check, file sync, package.json merge, netlify.toml render, manifest regen"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files=".spine-manifest.json,.framework/cli/lib/project-files.ts"]
-// CIL[DOC-CONTRACT inputs="abs: string, opts: { dryRun: boolean; force: boolean }" outputs="change report to stdout; synced tree on disk" errors="exit 1 on missing manifest, missing/older package, or locally modified protected files without --force" side_effects="writes framework-owned paths only; --dry-run writes nothing; netlify.toml custom_* sections preserved verbatim"]
-// CIL[DOC-MICRO logic_summary="Three-way compare (disk vs old manifest vs package payload): integrity abort on local mods → copy added/changed files → delete only .framework entries dropped upstream → merge package.json deps/scripts/pin → re-render netlify.toml → regenerate frozen manifest → list new migrations without running them" notable_decisions="non-.framework files dropped upstream are warned and retained; identical rendered TOML writes no .bak"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developer"]
 function diskHash(abs: string): string {
   const lst = lstatSync(abs)
   return hashEntry({ rel: '', abs, symlink: lst.isSymbolicLink() })
@@ -271,16 +235,7 @@ function runUpgrade(opts: { dryRun: boolean; force: boolean }): void {
   console.log('  3. npx spine-framework migrate   # apply new migrations (if any)')
   console.log('  4. commit + deploy\n')
 }
-// CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:runUpgrade:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/upgrade.ts:helpers:block" type="block" identity="helpers" parent="~/.framework/cli/commands/upgrade.ts"]
-// CIL[DOC-MACRO purpose="safeJson + getPackageVersion helpers — package version read is tolerant of missing/malformed JSON"]
-// CIL[DOC-CONTEXT module="cli" layer="framework" related_files="package.json"]
-// CIL[DOC-CONTRACT inputs="file: string" outputs="parsed JSON | null; version string" errors="safeJson returns null on missing/malformed input" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Tolerant reads — a missing or corrupt JSON file degrades to null rather than throwing" notable_decisions="absence is data for upgrade decisions, not an exception"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 function safeJson(file: string): Record<string, any> | null {
   try {
     return JSON.parse(readFileSync(file, 'utf8'))
@@ -292,4 +247,3 @@ function safeJson(file: string): Record<string, any> | null {
 function getPackageVersion(): string {
   return safeJson(join(PACKAGE_ROOT, 'package.json'))?.version ?? '0.0.0'
 }
-// CIL[END stable_id="~/.framework/cli/commands/upgrade.ts:helpers:block"]

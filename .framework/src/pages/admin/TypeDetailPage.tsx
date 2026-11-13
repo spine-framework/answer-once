@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
 /**
  * @module   TypeDetailPage
  * @audience internal
@@ -48,7 +47,6 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { DataTable } from '../../components/ui/DataTable'
 import { ArrowLeft, Pencil, Trash2, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -65,7 +63,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:Type:interface" type="interface" identity="Type" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
 /**
  * The Type interface defines the structure of a type object used in the admin panel, encapsulating various attributes related to types. It serves to standardize the representation of types across the application.
  *
@@ -93,7 +90,6 @@ interface Type {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:Type:interface"]
 
 
 
@@ -110,7 +106,6 @@ interface Type {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeItem:interface" type="interface" identity="TypeItem" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
 /**
  * The TypeItem interface defines the structure of a type item used in the admin module, encapsulating essential attributes for managing type data. It serves as a blueprint for creating and manipulating type items within the application.
  *
@@ -128,7 +123,6 @@ interface TypeItem {
   created_by: string
   account_id: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeItem:interface"]
 
 
 
@@ -145,7 +139,6 @@ interface TypeItem {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeDetailPage:component" type="component" identity="TypeDetailPage" parent="~/.framework/src/pages/admin/TypeDetailPage.tsx"]
 /**
  * The TypeDetailPage component manages the creation and editing of type entities within the admin interface. It handles fetching available applications and type details based on the provided parameters.
  *
@@ -857,7 +850,6 @@ export function TypeDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TypeDetailPage.tsx:TypeDetailPage:component"]
 
 
 

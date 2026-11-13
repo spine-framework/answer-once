@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/hooks/useListSchema.ts"]
 /**
  * @module   useListSchema
  * @audience both
@@ -26,7 +25,6 @@
 import { useState, useEffect } from 'react'
 import { apiFetch } from '../lib/api'
 import { DesignSchema, View } from '../types/types'
-// CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:module_header:module_header"]
 
 
 
@@ -46,7 +44,6 @@ import { DesignSchema, View } from '../types/types'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaOptions:interface" type="interface" identity="UseListSchemaOptions" parent="~/.framework/src/hooks/useListSchema.ts"]
 /**
  * The UseListSchemaOptions interface defines the options for using a list schema in the framework, allowing for the specification of an entity and an optional view slug for enhanced flexibility in list management.
  *
@@ -58,7 +55,6 @@ interface UseListSchemaOptions {
   entity: string
   viewSlug?: string
 }
-// CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaOptions:interface"]
 
 
 
@@ -75,7 +71,6 @@ interface UseListSchemaOptions {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaResult:interface" type="interface" identity="UseListSchemaResult" parent="~/.framework/src/hooks/useListSchema.ts"]
 /**
  * The UseListSchemaResult interface defines the structure of the result returned by the useListSchema hook, which is used to manage and retrieve schema data in a React application. It provides information about the loading state, any errors, and a method to refetch the data.
  *
@@ -90,7 +85,6 @@ interface UseListSchemaResult {
   error: string | null
   refetch: () => void
 }
-// CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:UseListSchemaResult:interface"]
 
 
 
@@ -107,7 +101,6 @@ interface UseListSchemaResult {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/hooks/useListSchema.ts:useListSchema:hook" type="hook" identity="useListSchema" parent="~/.framework/src/hooks/useListSchema.ts"]
 /**
  * The useListSchema hook fetches and manages the schema and view for a specified entity in a list format, handling loading states and errors while providing a fallback schema if no data is available.
  *
@@ -293,7 +286,6 @@ export function useListSchema(options: UseListSchemaOptions): UseListSchemaResul
     refetch: fetchSchema
   }
 }
-// CIL[END stable_id="~/.framework/src/hooks/useListSchema.ts:useListSchema:hook"]
 
 
 

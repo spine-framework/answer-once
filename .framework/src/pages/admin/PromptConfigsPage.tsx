@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PromptConfigsPage.tsx"]
 /**
  * @module   PromptConfigsPage
  * @audience both
@@ -40,7 +39,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:module_header:module_header"]
 
 
 
@@ -58,7 +56,6 @@ import { apiFetch } from '../../lib/api'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:PromptConfig:interface" type="interface" identity="PromptConfig" parent="~/.framework/src/pages/admin/PromptConfigsPage.tsx"]
 /**
  * The PromptConfig interface defines the structure for configuration objects related to prompts in the application. It encapsulates various properties that dictate the behavior and metadata of prompts.
  *
@@ -84,7 +81,6 @@ interface PromptConfig {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:PromptConfig:interface"]
 
 
 
@@ -102,7 +98,6 @@ interface PromptConfig {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:PromptConfigsPage:component" type="component" identity="PromptConfigsPage" parent="~/.framework/src/pages/admin/PromptConfigsPage.tsx"]
 /**
  * The PromptConfigsPage component manages the display and filtering of prompt configuration settings in the admin interface. It allows users to search, sort, and navigate to detailed views of prompt configurations.
  *
@@ -364,7 +359,6 @@ export function PromptConfigsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigsPage.tsx:PromptConfigsPage:component"]
 
 
 

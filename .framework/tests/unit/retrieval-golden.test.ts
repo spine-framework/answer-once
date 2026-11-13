@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/retrieval-golden.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Golden retrieval contract — pins retrieveKnowledge's observable result set (order, ids, similarity, lexical flags, scope filtering) so latency optimizations can never silently alter ranking or eligibility"]
-// CIL[DOC-RESPONSIBILITY responsibility="Snapshot the exact doc lists, mean similarity computation, RRF fusion ordering, security/item-type/source filtering, and denied paths for a fixed mock corpus"]
-// CIL[DOC-CONTEXT module="tests/unit/retrieval-golden" layer="test-unit" related_files=".framework/functions/_shared/agent-runner.ts,.framework/functions/_shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="assertions on retrieveKnowledge return shape" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Synchronous mock harness (no deferreds) — apps/envelope, embeddings lexical rows, match_embeddings per vector type, items hydration; asserts exact document_id ordering and similarity/meanSimilarity values so perf refactors must produce byte-equivalent result sets"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="framework maintainers"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { CoreContext } from '../../functions/_shared/middleware.ts'
 

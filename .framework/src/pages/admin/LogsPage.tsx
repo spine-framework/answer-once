@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
 /**
  * @module   LogsPage
  * @audience both
@@ -39,7 +38,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:module_header:module_header"]
 
 
 
@@ -58,7 +56,6 @@ import { apiFetch } from '../../lib/api'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogEntry:interface" type="interface" identity="LogEntry" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
 /**
  * The LogEntry interface defines the structure of log entries used in the admin logs page, capturing various details about events in the system. It exists to standardize the representation of log data for better management and analysis.
  *
@@ -91,7 +88,6 @@ interface LogEntry {
     email: string
   }
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogEntry:interface"]
 
 
 
@@ -112,7 +108,6 @@ interface LogEntry {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsResponse:interface" type="interface" identity="LogsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
 /**
  * LogsResponse defines the structure of the response for log entries in the admin logs page, ensuring a consistent format for handling log data and its total count.
  *
@@ -124,7 +119,6 @@ interface LogsResponse {
   data: LogEntry[]
   total: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsResponse:interface"]
 
 
 
@@ -145,7 +139,6 @@ interface LogsResponse {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:StatsResponse:interface" type="interface" identity="StatsResponse" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
 /**
  * StatsResponse defines the structure of the response containing various statistics related to user actions and events. It provides a comprehensive overview of the logged data in the admin logs page.
  *
@@ -162,7 +155,6 @@ interface StatsResponse {
   sources: string[]
   source_types: string[]
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:StatsResponse:interface"]
 
 
 
@@ -182,7 +174,6 @@ interface StatsResponse {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsPage:component" type="component" identity="LogsPage" parent="~/.framework/src/pages/admin/LogsPage.tsx"]
 /**
  * LogsPage is a component that displays system logs and allows users to filter and search through them based on various criteria. It handles fetching logs and statistics from an API and updating the displayed data based on user input.
  *
@@ -639,7 +630,6 @@ export function LogsPage({ title = 'System Logs' }: { title?: string }) {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/LogsPage.tsx:LogsPage:component"]
 
 
 

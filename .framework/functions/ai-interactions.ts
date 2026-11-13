@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Defines the ai-interactions Netlify function handlers for AI feedback and CIL learning proposals."]
-// CIL[DOC-RESPONSIBILITY responsibility="Initialize the module, register handler exports, and provide shared imports for the AI interaction function."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/funnel.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports shared middleware, database, ID resolution, admin-data helpers, audit logging, and typed signal emission." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
 
 
 
@@ -18,21 +9,6 @@ import { resolveTypeId } from './_shared/resolve-ids'
 import { create, update } from './admin-data'
 import { emitLog } from './_shared/audit'
 import { emitSignal } from './_shared/funnel'
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the ai-interactions Netlify function handlers for AI feedback and CIL learning proposals.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:submitFeedback:constant" type="constant" identity="submitFeedback" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Record customer thumbs-up/thumbs-down feedback for an AI message and escalate to human if needed."]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate inputs, persist feedback on the message row, update the ticket status on thumbs-down, attach feedback to the ai_interaction record, and emit an audit log."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="message_id, ticket_id, feedback, reason, msgData" outputs="{message_id, ticket_id, feedback, escalated}" errors="missing fields, invalid feedback value" side_effects="updates messages.data, items status/data, and emits an audit log"]
-// CIL[DOC-MICRO logic_summary="Validate required fields, update the message with feedback, on not_helpful assign the ticket to human (reopening resolved tickets via reopened_at/reopen_reason), on helpful resolve a pending_resolution ticket as ai_confirmed, find the linked ai_interaction and record customer_feedback, then emit a structured log." notable_decisions="thumbs are lifecycle accelerators — thumbs-up confirms a pending AI answer, thumbs-down escalates; resolved_via stamps make the outcome auditable"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 // Classify why a thumbs-down happened from the message's own evidence trail.
 // Retrieval failure (no usable sources), reasoning failure (sources existed
 // but weren't cited or were ignored), or missing knowledge (nothing to
@@ -156,28 +132,13 @@ export const submitFeedback = createHandler(async (ctx, body) => {
 
   return { message_id, ticket_id, feedback, escalated: feedback === 'not_helpful' }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Record customer thumbs-up/thumbs-down feedback for an AI message and escalate to human if needed.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:submitFeedback:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:createInteraction:constant" type="constant" identity="createInteraction" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Create a new interaction-feedback item (default ai_feedback_record, overridable via type_slug) that captures per-message interaction metadata."]
-// CIL[DOC-RESPONSIBILITY responsibility="Resolve the caller-declared type_slug (default ai_feedback_record), validate required identifiers, and insert a typed record."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="thread_id or ai_message_id plus optional metadata and optional type_slug" outputs="record or skipped object" errors="none thrown; returns skipped if type not found" side_effects="creates a row in items"]
-// CIL[DOC-MICRO logic_summary="Require thread_id or ai_message_id, resolve body.type_slug (default ai_feedback_record) via resolveTypeId, call create with default/null fields, and return the record." notable_decisions="type_slug lets app-specific demos record interactions under their own item type without forking this function"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const createInteraction = createHandler(async (ctx, body) => {
   const {
     thread_id, ai_message_id, retrieved_sources = [],
     per_source_feedback = [],
     ai_confidence, retrieval_confidence, kb_candidate,
     answer_quality, assistance_outcome,
-    eval_case_id, cil_learning_proposal_id,
+    eval_case_id,
     review_notes, reviewed_by, reviewed_at,
     type_slug
   } = body || {}
@@ -215,7 +176,6 @@ export const createInteraction = createHandler(async (ctx, body) => {
       kb_candidate:               kb_candidate ?? null,
       kb_article_id:              null,
       eval_case_id:               eval_case_id ?? null,
-      cil_learning_proposal_id:   cil_learning_proposal_id ?? null,
       review_notes:               review_notes ?? null,
       reviewed_by:                reviewed_by ?? null,
       reviewed_at:                reviewed_at ?? null,
@@ -225,21 +185,6 @@ export const createInteraction = createHandler(async (ctx, body) => {
 
   return record
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Create a new interaction-feedback item under a caller-declared type_slug (default ai_feedback_record).'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:createInteraction:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:updateInteraction:constant" type="constant" identity="updateInteraction" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Update an existing ai_interaction record with allowed fields."]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate id and allowed field list, merge patch into existing data, and delegate to the generic update helper."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="id and one or more allowed fields" outputs="update result" errors="missing id, no updatable fields, record not found" side_effects="updates items.data"]
-// CIL[DOC-MICRO logic_summary="Validate id, build a patch from the allow-list, fetch existing record data, and call update with merged data." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const updateInteraction = createHandler(async (ctx, body) => {
   const { id, ...fields } = body || {}
   if (!id) throw new Error('id is required')
@@ -247,7 +192,7 @@ export const updateInteraction = createHandler(async (ctx, body) => {
   const allowed = ['kb_article_id', 'human_message_id', 'human_edits_made',
                    'customer_feedback', 'kb_candidate', 'reuse_count',
                    'per_source_feedback', 'answer_quality', 'assistance_outcome',
-                   'eval_case_id', 'cil_learning_proposal_id',
+                   'eval_case_id',
                    'review_notes', 'reviewed_by', 'reviewed_at']
   const patch: Record<string, any> = {}
   for (const key of allowed) {
@@ -265,76 +210,6 @@ export const updateInteraction = createHandler(async (ctx, body) => {
     { data: { ...(existing.data || {}), ...patch } }
   )
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Update an existing ai_interaction record with allowed fields.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:updateInteraction:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:createCilLearningProposal:constant" type="constant" identity="createCilLearningProposal" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Create a draft CIL learning proposal from ticket context and source references."]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate ticket_id and proposed_summary, resolve the cil_learning_proposal type, and insert a draft record."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="ticket_id, proposed_summary, optional thread/message/tags" outputs="record or skipped object" errors="missing ticket_id or summary; returns skipped if type not found" side_effects="creates a draft proposal row in items"]
-// CIL[DOC-MICRO logic_summary="Validate required inputs, resolve the proposal type, build data payload with source references, and create the record." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-export const createCilLearningProposal = createHandler(async (ctx, body) => {
-  const {
-    ticket_id, thread_id, ai_message_id, proposed_summary,
-    source_message_ids = [], source_chunk_ids = [],
-    proposed_tags = []
-  } = body || {}
-
-  if (!ticket_id) throw new Error('ticket_id is required')
-  if (!proposed_summary) throw new Error('proposed_summary is required')
-
-  let typeId: string | null = null
-  try {
-    typeId = await resolveTypeId('item', 'cil_learning_proposal')
-  } catch {
-    return { skipped: true, reason: 'cil_learning_proposal type not found' }
-  }
-  if (!typeId) return { skipped: true, reason: 'cil_learning_proposal type not found' }
-
-  const record = await create(ctx, {
-    entity: 'items',
-    type_id: typeId,
-    title: `CIL Proposal — ${proposed_summary.slice(0, 80)}`,
-    status: 'draft',
-    data: {
-      ticket_id:          ticket_id || null,
-      thread_id:          thread_id || null,
-      ai_message_id:      ai_message_id || null,
-      proposed_summary:   proposed_summary,
-      source_message_ids: source_message_ids,
-      source_chunk_ids:   source_chunk_ids,
-      proposed_tags:      proposed_tags,
-      status:             'draft',
-      submitted_at:       null,
-      reviewed_by:        null,
-      review_notes:       null,
-    },
-  })
-
-  return record
-})
-// CIL[DOC-VECTOR type="context" content="purpose='Create a draft CIL learning proposal from ticket context and source references.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:createCilLearningProposal:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="List AI interaction records filtered by feedback and kb_candidate."]
-// CIL[DOC-RESPONSIBILITY responsibility="Build a paged query scoped to the account, apply optional filters, and return matching rows."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query { feedback?, kb_candidate?, limit?, offset? }" outputs="array of records" errors="throws query error" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Parse query parameters, select from items with account filter and optional data filters, then return data." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const list = createHandler(async (ctx, _body) => {
   const { feedback, kb_candidate, limit = '50', offset = '0' } = ctx.query || {}
 
@@ -356,21 +231,6 @@ export const list = createHandler(async (ctx, _body) => {
   if (error) throw error
   return data || []
 })
-// CIL[DOC-VECTOR type="context" content="purpose='List AI interaction records filtered by feedback and kb_candidate.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:list:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/ai-interactions.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/ai-interactions.ts"]
-// CIL[DOC-MACRO purpose="Main request router for the ai-interactions Netlify function."]
-// CIL[DOC-RESPONSIBILITY responsibility="Dispatch incoming requests to the correct action handler based on action and HTTP method."]
-// CIL[DOC-CONTEXT module="ai-interactions" layer="functions" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/resolve-ids.ts,.framework/functions/admin-data.ts,.framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="ctx.query { action, method } and body" outputs="handler result" errors="invalid action or method" side_effects="delegates to other handlers"]
-// CIL[DOC-MICRO logic_summary="Switch on action and method, call the appropriate sub-handler, and throw an error for unsupported combinations." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export const handler = createHandler(async (ctx, body) => {
   const { action } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
@@ -385,9 +245,6 @@ export const handler = createHandler(async (ctx, body) => {
     case 'update_interaction':
       if (method === 'PATCH' || method === 'POST') return await updateInteraction(ctx, body)
       break
-    case 'create_cil_proposal':
-      if (method === 'POST') return await createCilLearningProposal(ctx, body)
-      break
     case 'list':
     default:
       if (method === 'GET') return await list(ctx, body)
@@ -395,10 +252,3 @@ export const handler = createHandler(async (ctx, body) => {
 
   throw new Error('Invalid action or method')
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Main request router for the ai-interactions Netlify function.'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/resolve-ids.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/ai-interactions.ts:handler:constant"]

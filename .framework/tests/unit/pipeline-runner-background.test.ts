@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/pipeline-runner-background.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for the pipeline-runner-background dispatch function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify auth gating, payload validation, and correct runPipeline invocation"]
-// CIL[DOC-CONTEXT module="tests/unit/pipeline-runner-background" layer="test-unit" related_files=".framework/functions/pipeline-runner-background.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Mocks pipeline-runner and db modules"]
-// CIL[DOC-MICRO logic_summary="Stubs INTERNAL_INVOKE_SECRET, mocks runPipeline and sweepStaleExecutions, exercises the raw handler function" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../functions/_shared/db.ts', () => ({
@@ -25,7 +17,6 @@ vi.mock('../../functions/_shared/audit.ts', () => ({
 
 import { handler } from '../../functions/pipeline-runner-background.ts'
 import { runPipeline } from '../../functions/_shared/pipeline-runner.ts'
-// CIL[END stable_id="~/.framework/tests/unit/pipeline-runner-background.test.ts:module_header:module_header"]
 
 function makeEvent(body: any, secret = 'test-secret'): any {
   return {

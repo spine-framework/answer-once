@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migration-refs.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 import { describe, it, expect } from 'vitest'
 import { readdirSync, readFileSync, existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
@@ -10,16 +9,10 @@ import {
   buildSeedIndex,
   lintRefs,
 } from '../../cli/lib/migration-refs.ts'
-// CIL[END stable_id="~/.framework/tests/unit/migration-refs.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migration-refs.test.ts:repo:constant" type="constant" identity="REPO" parent="none"]
 const REPO = resolve(__dirname, '../../..')
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migration-refs.test.ts:framework_migrations:constant" type="constant" identity="FRAMEWORK_MIGRATIONS" parent="none"]
-// CIL[END stable_id="~/.framework/tests/unit/migration-refs.test.ts:repo:constant"]
 const FRAMEWORK_MIGRATIONS = join(REPO, '.framework/migrations')
-// CIL[END stable_id="~/.framework/tests/unit/migration-refs.test.ts:framework_migrations:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migration-refs.test.ts:migrationfiles:function" type="function" identity="migrationFiles" parent="none"]
 function migrationFiles(dir: string): { name: string; path: string; sql: string }[] {
   if (!existsSync(dir)) return []
   return readdirSync(dir)
@@ -27,7 +20,6 @@ function migrationFiles(dir: string): { name: string; path: string; sql: string 
     .sort()
     .map(f => ({ name: f, path: join(dir, f), sql: readFileSync(join(dir, f), 'utf8') }))
 }
-// CIL[END stable_id="~/.framework/tests/unit/migration-refs.test.ts:migrationfiles:function"]
 
 describe('migration-refs extraction', () => {
   it('extracts WHERE slug = refs on tracked tables', () => {
@@ -85,6 +77,23 @@ describe('migration-refs extraction', () => {
     const flat = provided.map(({ table, column, value }) => ({ table, column, value }))
     expect(flat).toContainEqual({ table: 'types', column: 'slug', value: 'ao_thing' })
     expect(flat).toContainEqual({ table: 'types', column: 'slug', value: 'ao_other' })
+    expect(flat).toContainEqual({ table: 'types', column: 'name', value: 'AO Thing' })
+  })
+
+  it('extracts slug/name values provided by INSERT … SELECT … WHERE NOT EXISTS', () => {
+    const provided = extractInserts(
+      `INSERT INTO public.types
+        (app_id, kind, slug, name, design_schema)
+       SELECT
+        (SELECT id FROM public.apps WHERE slug = 'answer-once'),
+        'item', 'ao_thing', 'AO Thing', '{"a": 1, "b": 2}'::jsonb
+       WHERE NOT EXISTS (
+        SELECT 1 FROM public.types WHERE slug = 'ao_thing' AND kind = 'item'
+       );`,
+      't.sql'
+    )
+    const flat = provided.map(({ table, column, value }) => ({ table, column, value }))
+    expect(flat).toContainEqual({ table: 'types', column: 'slug', value: 'ao_thing' })
     expect(flat).toContainEqual({ table: 'types', column: 'name', value: 'AO Thing' })
   })
 

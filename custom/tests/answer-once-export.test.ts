@@ -19,8 +19,8 @@ const SAMPLE_TOML = `[build]
 [functions."custom_demo-nightly"]
   schedule = "0 0 * * *"
 
-[functions."cil-ingest"]
-  timeout = 300
+[functions."ai-agents"]
+  timeout = 120
 
 [[redirects]]
   from = "/*"
@@ -86,7 +86,7 @@ describe('generateNetlifyToml', () => {
     const out = generateNetlifyToml(SAMPLE_TOML)
     expect(out).not.toContain('custom_demo-nightly')
     expect(out).toContain('[functions."trigger-scheduler"]')
-    expect(out).toContain('[functions."cil-ingest"]')
+    expect(out).toContain('[functions."ai-agents"]')
     expect(out).toContain('[[redirects]]')
   })
 

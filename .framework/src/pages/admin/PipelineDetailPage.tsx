@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
 /**
  * @module   PipelineDetailPage
  * @audience internal
@@ -40,7 +39,6 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Badge } from '../../components/ui/badge'
 import { ArrowLeft, Play, Pause, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -57,7 +55,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:Pipeline:interface" type="interface" identity="Pipeline" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
 /**
  * The Pipeline interface defines the structure for a pipeline object, which represents a sequence of processing stages in a data workflow. It includes properties for identification, configuration, and metadata related to the pipeline's execution.
  *
@@ -79,7 +76,6 @@ interface Pipeline {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:Pipeline:interface"]
 
 
 
@@ -96,7 +92,6 @@ interface Pipeline {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:STATUSES:constant" type="constant" identity="STATUSES" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
 /**
  * STATUSES is a constant array that defines the various states a pipeline can be in within the admin interface. It provides a structured way to reference these states throughout the application.
  *
@@ -110,7 +105,6 @@ const STATUSES = [
   { value: 'paused', label: 'Paused' },
   { value: 'archived', label: 'Archived' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:STATUSES:constant"]
 
 
 
@@ -127,7 +121,6 @@ const STATUSES = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:TRIGGER_TYPES:constant" type="constant" identity="TRIGGER_TYPES" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
 /**
  * TRIGGER_TYPES defines a set of available trigger types for a pipeline, providing a structured way to categorize different triggering mechanisms. This constant is used to facilitate the selection of trigger types in the admin interface.
  *
@@ -141,7 +134,6 @@ const TRIGGER_TYPES = [
   { value: 'webhook', label: 'Webhook' },
   { value: 'event', label: 'Event' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:TRIGGER_TYPES:constant"]
 
 
 
@@ -158,7 +150,6 @@ const TRIGGER_TYPES = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:PipelineDetailPage:component" type="component" identity="PipelineDetailPage" parent="~/.framework/src/pages/admin/PipelineDetailPage.tsx"]
 /**
  * The PipelineDetailPage component manages the creation and editing of pipeline configurations in an admin interface. It fetches existing pipeline data or initializes a new pipeline form based on the provided ID.
  *
@@ -339,7 +330,6 @@ export function PipelineDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineDetailPage.tsx:PipelineDetailPage:component"]
 
 
 

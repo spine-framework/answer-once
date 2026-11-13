@@ -1,58 +1,19 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataStats.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/runtime/DataStats.tsx"]
-// CIL[DOC-MACRO purpose="Module header for the DataStats runtime component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare imports and dependencies for the DataStats component"]
-// CIL[DOC-CONTEXT module="DataStats" layer="runtime" related_files=".framework/src/components/ui/card.tsx,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports types, UI card, and icon utilities used by the DataStats component." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="engineer"]
 
 
 
 import { EntityStat } from '../../types/types'
 import { Card, CardContent } from '../ui/card'
 import * as Icons from 'lucide-react'
-// CIL[END stable_id="~/.framework/src/components/runtime/DataStats.tsx:module_header:module_header"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='Module header for the DataStats runtime component'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/card.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="DataStats component prop type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the shape of props accepted by DataStats"]
-// CIL[DOC-CONTEXT module="DataStats" layer="runtime" related_files=".framework/src/components/runtime/DataStats.tsx,.framework/src/components/ui/card.tsx,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="EntityStat[] stats, any[] data, optional boolean loading" outputs="DataStatsProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Type-only interface for DataStats props." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataStats.tsx:DataStatsProps:interface" type="interface" identity="DataStatsProps" parent="~/.framework/src/components/runtime/DataStats.tsx"]
 interface DataStatsProps {
   stats: EntityStat[]
   data: any[]
   loading?: boolean
 }
-// CIL[END stable_id="~/.framework/src/components/runtime/DataStats.tsx:DataStatsProps:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='DataStats component prop type'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/card.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
 
-// CIL[DOC-MACRO purpose="Color style mapping for stat cards"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide Tailwind CSS class combinations for color themes"]
-// CIL[DOC-CONTEXT module="DataStats" layer="runtime" related_files=".framework/src/components/runtime/DataStats.tsx,.framework/src/components/ui/card.tsx,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="color key" outputs="Tailwind class string" errors="unknown key falls back to gray" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Record mapping semantic color names to background/text utility classes." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataStats.tsx:colorMap:constant" type="constant" identity="colorMap" parent="~/.framework/src/components/runtime/DataStats.tsx"]
 const colorMap: Record<string, string> = {
   blue: 'bg-blue-500/10 text-blue-500',
   green: 'bg-green-500/10 text-green-500',
@@ -61,24 +22,9 @@ const colorMap: Record<string, string> = {
   purple: 'bg-purple-500/10 text-purple-500',
   gray: 'bg-muted text-muted-foreground'
 }
-// CIL[END stable_id="~/.framework/src/components/runtime/DataStats.tsx:colorMap:constant"]
-// CIL[DOC-VECTOR type="context" content="purpose='Color style mapping for stat cards'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/card.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
 
-// CIL[DOC-MACRO purpose="Render data statistics cards"]
-// CIL[DOC-RESPONSIBILITY responsibility="Calculate and display entity statistics as a responsive grid of cards"]
-// CIL[DOC-CONTEXT module="DataStats" layer="runtime" related_files=".framework/src/components/runtime/DataStats.tsx,.framework/src/components/ui/card.tsx,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="stats, data, loading" outputs="JSX grid of cards" errors="none" side_effects="renders React UI"]
-// CIL[DOC-MICRO logic_summary="Maps stats to calculated values; uses colorMap and dynamic icon for each card." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/components/runtime/DataStats.tsx:DataStats:component" type="component" identity="DataStats" parent="~/.framework/src/components/runtime/DataStats.tsx"]
 export function DataStats({ stats, data, loading }: DataStatsProps) {
   const calculateStat = (stat: EntityStat): number => {
     if (!data) return 0
@@ -130,10 +76,3 @@ export function DataStats({ stats, data, loading }: DataStatsProps) {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/components/runtime/DataStats.tsx:DataStats:component"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render data statistics cards'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/card.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/index.ts:reexports:module" type="module" identity="reexports" parent="~/.framework/functions/_shared/index.ts"]
-// CIL[DOC-MACRO purpose="Re-exports shared utilities and types for Spine functions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Public barrel file that centralizes named exports from the _shared function library"]
-// CIL[DOC-CONTEXT module="functions/_shared" layer="shared" related_files=".framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="re-exports of shared types and functions" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Collects and re-exports shared types and helpers from middleware, principal, db, pipeline-runner, trigger-engine, agent-runner, permissions, schema-utils, resolve-ids, audit, webhook, app-manifest and testing modules" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export type { CoreContext } from './middleware'
 export type { RequestContext, HandlerFunction, HandlerResult } from './middleware'
@@ -60,10 +52,3 @@ export {
   expectErrorResponse
 } from './testing'
 export type { TestContext, TestPrincipal, TestLogger } from './testing'
-// CIL[DOC-VECTOR type="context" content="purpose='Re-exports shared utilities and types for Spine functions'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/_shared/index.ts:reexports:module"]

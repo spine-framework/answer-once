@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Provides CLI commands for the doctor (system health) functionality, integrating with CLI context and shared database functions."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose health-check CLI commands and report system installation status."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Defines the doctor module and its intent, invariant, and related utilities." notable_decisions="Commands must be executed within a valid CLI context."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
+// Commands must be executed within a valid CLI context.
 
 import type { Command } from 'commander'
 import { buildCliContext, handleError } from '../context.ts'
@@ -18,56 +10,11 @@ import { fileURLToPath } from 'url'
 import { findAgentsBlock, agentsBlockVersion } from '../lib/project-files.ts'
 import { hashEntry } from '../../../scripts/checksum-manifest.mts'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Provides CLI commands for the doctor (system health) functionality, integrating with CLI context and shared database functions.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:__filename:constant" type="constant" identity="__filename" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Resolves the current module's file URL to a filesystem path."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a stable __filename reference for the module."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="string" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Call fileURLToPath(import.meta.url) and assign to const __filename." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 const __filename = fileURLToPath(import.meta.url)
-// CIL[DOC-VECTOR type="context" content="purpose='Resolves the current module's file URL to a filesystem path.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:__filename:constant"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:__dirname:constant" type="constant" identity="__dirname" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Provides the directory name of the current module for relative path resolution."]
-// CIL[DOC-RESPONSIBILITY responsibility="Derive the current module's directory from __filename."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="string" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Call dirname(__filename) and assign to const __dirname." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 const __dirname = dirname(__filename)
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the directory name of the current module for relative path resolution.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:__dirname:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:CheckResult:interface" type="interface" identity="CheckResult" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Defines the structure for health check results."]
-// CIL[DOC-RESPONSIBILITY responsibility="Standardize status reporting across health checks."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Declare an interface with name, status, message, optional details, and fixability." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 interface CheckResult {
   name: string
@@ -76,22 +23,7 @@ interface CheckResult {
   details?: Record<string, any>
   fixable?: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the structure for health check results.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:CheckResult:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:DoctorReport:interface" type="interface" identity="DoctorReport" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Defines the structure for aggregated doctor health reports."]
-// CIL[DOC-RESPONSIBILITY responsibility="Summarize overall health and counts from a collection of CheckResult objects."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="[]" errors="[]" side_effects="[]"]
-// CIL[DOC-MICRO logic_summary="Declare an interface with overall status, checks array, and summary counts." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 interface DoctorReport {
   overall: 'healthy' | 'degraded' | 'unhealthy'
@@ -103,22 +35,7 @@ interface DoctorReport {
     fixable: number
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the structure for aggregated doctor health reports.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:DoctorReport:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkEnvironment:function" type="function" identity="checkEnvironment" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Validates required environment variables and optional .xenv file presence."]
-// CIL[DOC-RESPONSIBILITY responsibility="Determine whether the runtime environment is configured for Spine."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Filter required env vars against process.env, then check for .xenv file at the project root, returning a CheckResult." notable_decisions="Returns fail when required variables are missing; reports .xenv presence on success."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function checkEnvironment(): Promise<CheckResult> {
   const required = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']
@@ -166,22 +83,7 @@ async function checkEnvironment(): Promise<CheckResult> {
   }
 }
 
-// CIL[DOC-VECTOR type="context" content="purpose='Validates required environment variables and optional .xenv file presence.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkEnvironment:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkDatabase:function" type="function" identity="checkDatabase" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Tests database connectivity and measures query latency."]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify that the Supabase database is reachable."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Queries the accounts table."]
-// CIL[DOC-MICRO logic_summary="Select a single account row, compute elapsed latency, and return pass or fail based on the query result." notable_decisions="Catches and returns structured failure for exceptions; reports latency on success."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function checkDatabase(): Promise<CheckResult> {
   const start = Date.now()
@@ -214,22 +116,7 @@ async function checkDatabase(): Promise<CheckResult> {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Tests database connectivity and measures query latency.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkDatabase:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkMigrations:function" type="function" identity="checkMigrations" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Compares local migration files against applied database migrations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Identify pending or missing database migrations."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Collects local migration files and queries _spine_migrations."]
-// CIL[DOC-MICRO logic_summary="List local SQL files via collectMigrations (framework + custom), query applied filenames from _spine_migrations, and report any local files not yet applied." notable_decisions="Returns warn for pending migrations — including when the tracking table does not exist yet — and fail only on unexpected query errors."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function checkMigrations(): Promise<CheckResult> {
   const migrationFiles = collectMigrations(false)
@@ -293,22 +180,7 @@ async function checkMigrations(): Promise<CheckResult> {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Compares local migration files against applied database migrations.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkMigrations:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkIntegrity:function" type="function" identity="checkIntegrity" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Validates the presence and integrity hash of the Spine manifest."]
-// CIL[DOC-RESPONSIBILITY responsibility="Confirm that the installation manifest exists and contains an integrity reference."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Reads the manifest file from disk."]
-// CIL[DOC-MICRO logic_summary="Check for .spine-manifest.json, parse it, and verify that manifest.integrity.src is present." notable_decisions="Warns if manifest is missing or lacks integrity hash; returns pass when valid."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function checkIntegrity(): Promise<CheckResult> {
   const manifestPath = resolve(__dirname, '../../.spine-manifest.json')
@@ -352,13 +224,6 @@ async function checkIntegrity(): Promise<CheckResult> {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validates the presence and integrity hash of the Spine manifest.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkIntegrity:function"]
 
 /**
  * Verify the agent assets init/upgrade install: AGENTS.md carries a
@@ -437,14 +302,6 @@ async function checkAgentFiles(): Promise<CheckResult> {
   }
 }
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkTestRuns:function" type="function" identity="checkTestRuns" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Fetches the latest test run from the database."]
-// CIL[DOC-RESPONSIBILITY responsibility="Report the status of the most recent test suite execution."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Queries the test_runs table."]
-// CIL[DOC-MICRO logic_summary="Select the newest test run, translate its status to pass or warn, and return details." notable_decisions="Warns on query errors or when no test runs exist; maps status 'passed' to pass."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function checkTestRuns(): Promise<CheckResult> {
   try {
@@ -490,20 +347,8 @@ async function checkTestRuns(): Promise<CheckResult> {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Fetches the latest test run from the database.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkTestRuns:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:checkRuntimeWiring:function" type="function" identity="checkRuntimeWiring" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Verify declared runtime wiring resolves — generic referential integrity over triggers, pipelines, and actions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Confirm every active trigger's declared type slugs and pipeline references resolve to existing, active rows, and every active pipeline's stages reference existing actions"]
-// CIL[DOC-CONTRACT inputs="[]" outputs="Promise<CheckResult>" errors="[]" side_effects="Queries triggers, types, pipelines, actions"]
-// CIL[DOC-MICRO logic_summary="Load all active triggers, all types, all pipelines, and all active actions; report each dangling config.type_slug / config.filters.type_slug / config.pipeline_slug / pipeline_id / stage_type reference as a problem line, and flag active pipelines whose stages array is missing or empty (they complete without doing anything)" notable_decisions="App-agnostic — checks only that declared references resolve, never that a particular app's workflow exists; entity/kind on trigger config scopes the type check when declared"]
-// CIL[DOC-STABILITY stability="stable"]
+// App-agnostic — checks only that declared references resolve, never that a particular app's workflow exists; entity/kind on trigger config scopes the type check when declared
 export async function checkRuntimeWiring(): Promise<CheckResult> {
   const problems: string[] = []
   try {
@@ -587,16 +432,7 @@ export async function checkRuntimeWiring(): Promise<CheckResult> {
     return { name: 'runtime_wiring', status: 'fail', message: `Wiring check error: ${err.message}`, fixable: false }
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:checkRuntimeWiring:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:tryFix:function" type="function" identity="tryFix" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Provides automated fix instructions for failed or warned checks."]
-// CIL[DOC-RESPONSIBILITY responsibility="Map a CheckResult name to a human-readable remediation hint."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="check: CheckResult" outputs="Promise<string>" errors="[]" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Use a switch on check.name to return a context-specific remediation message." notable_decisions="Returns 'No automatic fix available' for unrecognized check names."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 async function tryFix(check: CheckResult): Promise<string> {
   switch (check.name) {
@@ -622,22 +458,7 @@ async function tryFix(check: CheckResult): Promise<string> {
       return 'No automatic fix available'
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Provides automated fix instructions for failed or warned checks.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:tryFix:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/doctor.ts:registerDoctorCommands:function" type="function" identity="registerDoctorCommands" parent="~/.framework/cli/commands/doctor.ts"]
-// CIL[DOC-MACRO purpose="Registers the 'doctor' CLI command and runs the health check sequence."]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose a CLI entrypoint that executes health checks and renders the report."]
-// CIL[DOC-CONTEXT module="doctor" layer="app-specific" related_files=".framework/cli/commands/doctor.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="Promise<void>" errors="[]" side_effects="Writes health report to stdout and exits the process."]
-// CIL[DOC-MICRO logic_summary="Chain conditional checks (environment, database, migrations, test runs, runtime wiring, integrity), build a DoctorReport, and render it as JSON or formatted console output." notable_decisions="Skips database-dependent checks when prior checks fail; exits with code 1 for unhealthy, 2 for degraded, 0 for healthy."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export function registerDoctorCommands(program: Command) {
   program
@@ -821,10 +642,3 @@ export function registerDoctorCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Registers the 'doctor' CLI command and runs the health check sequence.'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/doctor.ts:registerDoctorCommands:function"]

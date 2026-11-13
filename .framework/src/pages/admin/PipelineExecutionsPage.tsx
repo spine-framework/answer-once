@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
 /**
  * @module   PipelineExecutionsPage
  * @audience both
@@ -38,7 +37,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:module_header:module_header"]
 
 
 
@@ -55,7 +53,6 @@ import { apiFetch } from '../../lib/api'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecution:interface" type="interface" identity="PipelineExecution" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
 /**
  * The PipelineExecution interface defines the structure of a pipeline execution record, capturing its status, metadata, and associated entities. It facilitates the management and tracking of pipeline executions within the application.
  *
@@ -86,7 +83,6 @@ interface PipelineExecution {
   }
   created_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecution:interface"]
 
 
 
@@ -103,7 +99,6 @@ interface PipelineExecution {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecutionsPage:component" type="component" identity="PipelineExecutionsPage" parent="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx"]
 /**
  * The PipelineExecutionsPage component manages the display and interaction with pipeline execution data, allowing users to filter, sort, and navigate to detailed execution views. It fetches execution data and statistics from an API and provides a user-friendly interface for managing this information.
  *
@@ -366,7 +361,6 @@ export function PipelineExecutionsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PipelineExecutionsPage.tsx:PipelineExecutionsPage:component"]
 
 
 

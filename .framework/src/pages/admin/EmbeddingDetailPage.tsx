@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Admin page for viewing a single embedding record and its vector."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides React imports, type definitions, and the EmbeddingDetailPage component for the admin knowledge base."]
-// CIL[DOC-CONTEXT module="admin/kb/embeddings" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="EmbeddingDetailPage component and EmbeddingRecord interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Module header imports dependencies for the embedding detail page." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -19,24 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../components/ui/collapsible'
 import { ArrowLeft, AlertCircle, ChevronDown } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:module_header:module_header"]
 
 
-// CIL[DOC-VECTOR type="context" content="purpose='Admin page for viewing a single embedding record and its vector.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="TypeScript interface describing a single embedding row."]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the shape of public.embeddings records consumed by the detail page."]
-// CIL[DOC-CONTEXT module="admin/kb/embeddings" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/EmbeddingDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="database embedding row fields" outputs="EmbeddingRecord interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="EmbeddingRecord fields: id, account_id, model_id, document_id, chunk_index, content, embedding array, metadata, lifecycle timestamps, content hash, created/updated." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:EmbeddingRecord:interface" type="interface" identity="EmbeddingRecord" parent="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx"]
 interface EmbeddingRecord {
   id: string
   account_id: string
@@ -52,24 +28,9 @@ interface EmbeddingRecord {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:EmbeddingRecord:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='TypeScript interface describing a single embedding row.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
-// CIL[DOC-MACRO purpose="Render a read-only admin detail page for a single embedding record."]
-// CIL[DOC-RESPONSIBILITY responsibility="Fetch embedding by id, display metadata, status, content, metadata JSON, and the stored vector, with loading, error, and missing-id states."]
-// CIL[DOC-CONTEXT module="admin/kb/embeddings" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/collapsible.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/EmbeddingDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="React Router id parameter" outputs="JSX detail page" errors="Fetch errors, missing or invalid id" side_effects="navigates on user actions; triggers embedding fetch via useApi"]
-// CIL[DOC-MICRO logic_summary="Conditionally renders not-found, loading, error, and record views; computes status from revoked_at/approved_at; exposes a collapsible vector section." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:EmbeddingDetailPage:component" type="component" identity="EmbeddingDetailPage" parent="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx"]
 export function EmbeddingDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -295,11 +256,4 @@ export function EmbeddingDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/EmbeddingDetailPage.tsx:EmbeddingDetailPage:component"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render a read-only admin detail page for a single embedding record.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 

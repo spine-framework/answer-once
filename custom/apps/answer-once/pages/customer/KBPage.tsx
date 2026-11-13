@@ -1,11 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/KBPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer knowledgebase — private published articles plus platform shared articles"]
-// CIL[DOC-RESPONSIBILITY responsibility="List published knowledge: the customer's own private learnings (account-scope ao_kb_article) and shared learnings (platform-scope ao_kb_shared readable via platform RLS)"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/KBPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/SearchFilterBar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="One admin-data query over type_slugs ao_kb_article,ao_kb_shared with status=published; source candidates stamped learning_scope=shared are filtered out so members see the shared artifact, not the draft" notable_decisions="internal articles cannot appear — they live in spine-system with account scope, so RLS never returns them to a member"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// internal articles cannot appear — they live in spine-system with account scope, so RLS never returns them to a member
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -13,7 +6,6 @@ import { apiFetch } from '@core/lib/api'
 import { SearchFilterBar } from '../../components/SearchFilterBar'
 import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/KBPage.tsx:module_header:module_header"]
 
 interface Article {
   id: string

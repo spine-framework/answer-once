@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Declares the minimal shadcn test page module imports"]
-// CIL[DOC-RESPONSIBILITY responsibility="Aggregates React and shadcn component imports for the test page"]
-// CIL[DOC-CONTEXT module=".framework/src/pages/admin/MinimalShadcnTestPage.tsx" layer="presentation" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains module-level import declarations only" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 
 
@@ -17,21 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Button } from '../../components/ui/button'
 import { Badge } from '../../components/ui/badge'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Declares the minimal shadcn test page module imports'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx:MinimalShadcnTestPage:component" type="component" identity="MinimalShadcnTestPage" parent="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Renders a minimal UI to validate shadcn Card, Button, and Badge components"]
-// CIL[DOC-RESPONSIBILITY responsibility="Displays interactive buttons and badge variants driven by local state"]
-// CIL[DOC-CONTEXT module=".framework/src/pages/admin/MinimalShadcnTestPage.tsx" layer="presentation" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/pages/admin/MinimalShadcnTestPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX UI" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Manages a count state and renders cards, buttons, and badges" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function MinimalShadcnTestPage() {
   const [count, setCount] = useState(0)
 
@@ -103,10 +79,3 @@ export function MinimalShadcnTestPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a minimal UI to validate shadcn Card, Button, and Badge components'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/MinimalShadcnTestPage.tsx:MinimalShadcnTestPage:component"]

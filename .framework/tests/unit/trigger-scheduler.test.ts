@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-scheduler.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Tests for trigger-scheduler's Netlify Clockwork detection and context fabrication"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify scheduled invocations bypass middleware auth via fabricated system ctx while HTTP requests take the normal path"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-scheduler" layer="test-unit" related_files=".framework/functions/trigger-scheduler.ts,.framework/functions/system-cron.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Mocks system-cron handler and db"]
-// CIL[DOC-MICRO logic_summary="Mocks the cron handler export, invokes trigger-scheduler with scheduled and non-scheduled event shapes, asserts the fabricated ctx carries SYSTEM_PRINCIPAL" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const { cronHandler } = vi.hoisted(() => ({
@@ -96,4 +88,3 @@ describe('trigger-scheduler', () => {
     expect(cronHandler.mock.calls[0][0]).toBe(event)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/trigger-scheduler.test.ts:module_header:module_header"]

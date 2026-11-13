@@ -7,48 +7,14 @@
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:use_client:constant" type="constant" identity="use_client" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Next.js use client directive"]
-// CIL[DOC-MICRO logic_summary="Marks this module as a client component"]
-// CIL[DOC-CONTRACT inputs="none" outputs="client rendering directive" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 "use client"
-// CIL[DOC-VECTOR type="context" content="purpose='Next.js use client directive'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:use_client:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-MACRO purpose="shadcn/ui Tabs component module built on Radix UI"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-AUDIENCE audience="frontend"]
-// CIL[DOC-STABILITY stability="stable"]
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Tabs as TabsPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
-// CIL[DOC-VECTOR type="context" content="purpose='shadcn/ui Tabs component module built on Radix UI'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:Tabs:component" type="component" identity="Tabs" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Renders a styled Radix Tabs root wrapper"]
-// CIL[DOC-MICRO logic_summary="Spreads props onto TabsPrimitive.Root with default horizontal orientation and cn styling"]
-// CIL[DOC-CONTRACT inputs="className: string, orientation: 'horizontal'|'vertical', ...props: TabsPrimitive.Root props" outputs="JSX.Element" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 function Tabs({
   className,
   orientation = "horizontal",
@@ -66,23 +32,9 @@ function Tabs({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a styled Radix Tabs root wrapper'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:Tabs:component"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:tabsListVariants:constant" type="constant" identity="tabsListVariants" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="CVA style variants for the tabs list container"]
-// CIL[DOC-MICRO logic_summary="Defines default and line variants with rounded styling"]
-// CIL[DOC-CONTRACT inputs="variant: 'default'|'line'" outputs="merged className string" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 const tabsListVariants = cva(
   "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-[orientation=horizontal]/tabs:h-8 group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col data-[variant=line]:rounded-none",
   {
@@ -97,22 +49,8 @@ const tabsListVariants = cva(
     },
   }
 )
-// CIL[DOC-VECTOR type="context" content="purpose='CVA style variants for the tabs list container'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:tabsListVariants:constant"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:TabsList:component" type="component" identity="TabsList" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Renders the list of tab triggers"]
-// CIL[DOC-MICRO logic_summary="Composes the radix list with the tabsListVariants CVA output and optional className"]
-// CIL[DOC-CONTRACT inputs="className: string, variant: 'default'|'line', VariantProps, ...props" outputs="JSX.Element" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 function TabsList({
   className,
   variant = "default",
@@ -128,23 +66,9 @@ function TabsList({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the list of tab triggers'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:TabsList:component"]
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:TabsTrigger:component" type="component" identity="TabsTrigger" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Renders an individual tab trigger button"]
-// CIL[DOC-MICRO logic_summary="Applies focus, hover, active and disabled styles to a radix trigger"]
-// CIL[DOC-CONTRACT inputs="className: string, ...props: TabsPrimitive.Trigger props" outputs="JSX.Element" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 function TabsTrigger({
   className,
   ...props
@@ -163,21 +87,8 @@ function TabsTrigger({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders an individual tab trigger button'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:TabsTrigger:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:TabsContent:component" type="component" identity="TabsContent" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Renders the panel shown for the active tab"]
-// CIL[DOC-MICRO logic_summary="Wraps TabsPrimitive.Content with a flexible outline style; data-[state=inactive]:hidden guarantees inactive panels are display:none even when callers add display utilities — the Radix `hidden` attribute alone loses specificity to classes like `flex`" notable_decisions="hide-by-data-state rather than relying on the hidden attribute so display utilities on panel content never leak inactive tabs"]
-// CIL[DOC-CONTRACT inputs="className: string, ...props: TabsPrimitive.Content props" outputs="JSX.Element" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
+// hide-by-data-state rather than relying on the hidden attribute so display utilities on panel content never leak inactive tabs
 function TabsContent({
   className,
   ...props
@@ -190,25 +101,4 @@ function TabsContent({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the panel shown for the active tab'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:TabsContent:component"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/tabs.tsx:exports:variable" type="variable" identity="exports" parent="~/.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTEXT module="components/ui/tabs" layer="ui" related_files=".framework/src/components/ui/tabs.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-MACRO purpose="Public exports of the tabs UI primitives"]
-// CIL[DOC-MICRO logic_summary="Re-exports Tabs, TabsList, TabsTrigger, TabsContent and tabsListVariants"]
-// CIL[DOC-CONTRACT inputs="none" outputs="named exports" side_effects="none" errors=""]
-// CIL[DOC-STABILITY stability="stable"]
 export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
-// CIL[DOC-VECTOR type="context" content="purpose='Public exports of the tabs UI primitives'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/tabs.tsx:exports:variable"]

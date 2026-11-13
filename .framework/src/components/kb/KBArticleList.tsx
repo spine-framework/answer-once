@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Defines imports and dependencies for the KB article list UI."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide React, utility, and UI component imports for KBArticleList."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Import block for hooks, API, utilities, and UI primitives." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { apiFetch } from '../../lib/api'
@@ -19,23 +10,8 @@ import { Skeleton } from '../ui/skeleton'
 import { Plus, Search, Edit, BookOpen, GripVertical, X } from 'lucide-react'
 
 
-// CIL[DOC-VECTOR type="context" content="purpose='Defines imports and dependencies for the KB article list UI.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:module_header:module_header"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBArticleListProps:interface"]
-// CIL[DOC-MACRO purpose="Defines the props accepted by the KBArticleList component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Contract between parent and KBArticleList."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="KBArticleListProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Lists optional and required props for the component." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export interface KBArticleListProps {
   typeSlugs: string[]
   typeName?: string
@@ -43,23 +19,8 @@ export interface KBArticleListProps {
   onNew?: () => void
   onEdit?: (record: KBRecord) => void
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the props accepted by the KBArticleList component.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBArticleListProps:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBRecord:interface"]
-// CIL[DOC-MACRO purpose="Defines the shape of a knowledge base record."]
-// CIL[DOC-RESPONSIBILITY responsibility="Data model for KB articles."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="KBRecord interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines KBRecord fields including id, title, status, and data." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface KBRecord {
   id: string
   title: string
@@ -71,127 +32,32 @@ interface KBRecord {
   data: Record<string, any>
   [key: string]: any
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the shape of a knowledge base record.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBRecord:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:TreeNode:interface"]
-// CIL[DOC-MACRO purpose="Defines a tree node that extends KBRecord with children."]
-// CIL[DOC-RESPONSIBILITY responsibility="Recursive tree structure contract."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TreeNode interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Extends KBRecord with a children array." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface TreeNode extends KBRecord {
   children: TreeNode[]
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Defines a tree node that extends KBRecord with children.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:TreeNode:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:isNullId:function"]
-// CIL[DOC-MACRO purpose="Tests whether a value is a null, undefined, or empty id."]
-// CIL[DOC-RESPONSIBILITY responsibility="Predicate for missing id values."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="a: string | null | undefined" outputs="boolean (type predicate a is null | undefined)" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns true for null, undefined, or empty string." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function isNullId(a: string | null | undefined): a is null | undefined {
   return a === null || a === undefined || a === ''
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Tests whether a value is a null, undefined, or empty id.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:isNullId:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sameId:function"]
-// CIL[DOC-MACRO purpose="Compares two id values for equality, treating nullish as equal."]
-// CIL[DOC-RESPONSIBILITY responsibility="Determine id equality for parent and record comparisons."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="a, b: string | null | undefined" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns true if values are equal or both nullish." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function sameId(a: string | null | undefined, b: string | null | undefined): boolean {
   return a === b || (isNullId(a) && isNullId(b))
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Compares two id values for equality, treating nullish as equal.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sameId:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sameParent:function"]
-// CIL[DOC-MACRO purpose="Checks whether a record's parent_id matches the given parent."]
-// CIL[DOC-RESPONSIBILITY responsibility="Parent equality predicate for tree grouping."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="record: KBRecord, parentId: string | undefined" outputs="boolean" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Compares record.data.parent_id to parentId using sameId." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function sameParent(record: KBRecord, parentId: string | undefined): boolean {
   return sameId(record.data?.parent_id as string | undefined, parentId)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Checks whether a record's parent_id matches the given parent.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sameParent:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sortByOrder:function"]
-// CIL[DOC-MACRO purpose="Sorts two KB records by their data.order value."]
-// CIL[DOC-RESPONSIBILITY responsibility="Order comparison for tree siblings."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="a: KBRecord, b: KBRecord" outputs="number" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Subtracts b order from a order, defaulting to MAX_SAFE_INTEGER." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function sortByOrder(a: KBRecord, b: KBRecord): number {
   return (a.data?.order ?? Number.MAX_SAFE_INTEGER) - (b.data?.order ?? Number.MAX_SAFE_INTEGER)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Sorts two KB records by their data.order value.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:sortByOrder:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBArticleList:component"]
-// CIL[DOC-MACRO purpose="Renders a searchable, filterable, drag-and-drop knowledge base article list."]
-// CIL[DOC-RESPONSIBILITY responsibility="Display KB articles as a tree or flat list, support search, status/type filters, and reordering via drag-and-drop."]
-// CIL[DOC-CONTEXT module="kb" layer="components" related_files=".framework/src/components/kb/KBArticleList.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="typeSlugs: string[], typeName?: string, onSelect?: (record: KBRecord) => void, onNew?: () => void, onEdit?: (record: KBRecord) => void" outputs="JSX" errors="Network or permission errors" side_effects="Fetches data from API, updates state, PATCHes records on drop."]
-// CIL[DOC-MICRO logic_summary="Loads record types, fetches article trees, handles search, builds filtered tree, renders list, and applies drag-and-drop reordering." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="param" content="typeSlugs: string[] - allowed knowledge base type slugs"]
-// CIL[DOC-NOTE type="param" content="typeName?: string - display name for the knowledge base"]
-// CIL[DOC-NOTE type="param" content="onSelect?: (record: KBRecord) => void - callback when an article is selected"]
-// CIL[DOC-NOTE type="param" content="onNew?: () => void - callback to create a new article"]
-// CIL[DOC-NOTE type="param" content="onEdit?: (record: KBRecord) => void - callback to edit an article"
 export function KBArticleList({ typeSlugs, typeName, onSelect, onNew, onEdit }: KBArticleListProps) {
   const [typeRecords, setTypeRecords] = useState<any[]>([])
   const [articles, setArticles] = useState<KBRecord[]>([])
@@ -788,11 +654,4 @@ export function KBArticleList({ typeSlugs, typeName, onSelect, onNew, onEdit }: 
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders a searchable, filterable, drag-and-drop knowledge base article list.'; No verified external callers; imports: .framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/kb/KBArticleList.tsx:KBArticleList:component"]
 

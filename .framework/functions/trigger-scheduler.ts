@@ -1,11 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/functions/trigger-scheduler.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/trigger-scheduler.ts"]
-// CIL[DOC-MACRO purpose="Scheduled entry point that invokes the shared system-cron runner so Netlify's every-minute trigger dispatches due scheduled actions."]
-// CIL[DOC-RESPONSIBILITY responsibility="Detect Netlify Clockwork scheduled invocations (which carry no credentials) and run system-cron under the system principal; forward everything else to system-cron's normal middleware auth."]
-// CIL[DOC-CONTEXT module="trigger-scheduler" layer="functions" related_files=".framework/functions/system-cron.ts, .framework/functions/_shared/principal.ts, .framework/functions/_shared/db.ts, netlify.toml"]
-// CIL[DOC-CONTRACT inputs="Netlify scheduled invocation (x-nf-event/x-netlify-event: schedule OR Netlify Clockwork UA, + {\"next_run\"} body) or authenticated HTTP request" outputs="system-cron sweep result" errors="401 for unauthenticated HTTP requests" side_effects="runs due schedule actions across accounts"]
-// CIL[DOC-MICRO logic_summary="Netlify's scheduler invokes this function directly. The header name differs between environments: CLI emulation sends X-NF-Event; production sends x-netlify-event (canonical constant in @netlify/serverless-functions-api). Both are accepted, as is the Netlify Clockwork user-agent, so detection is robust across all invocation paths. The body must contain next_run as a string for both headers. For that path a RequestContext is fabricated with SYSTEM_PRINCIPAL and passed straight into system-cron's handler. Non-scheduled requests fall through to system-cron's createHandler." notable_decisions="x-netlify-event is the production canonical header (NFEvent in @netlify/serverless-functions-api); x-nf-event is the CLI emulation header. Both must be accepted or every scheduled tick 401s in production. Netlify Clockwork UA is a third indicator used only when neither header is present."]
-// CIL[DOC-STABILITY stable]
-// CIL[DOC-AUDIENCE audience="framework maintainers"]
+// x-netlify-event is the production canonical header (NFEvent in @netlify/serverless-functions-api); x-nf-event is the CLI emulation header. Both must be accepted or every scheduled tick 401s in production. Netlify Clockwork UA is a third indicator used only when neither header is present.
 import { handler as cronHandler } from './system-cron'
 import { SYSTEM_PRINCIPAL } from './_shared/principal'
 import { adminDb } from './_shared/db'
@@ -80,4 +73,3 @@ export const handler = async (event: any, context: any) => {
   }
   return cronHandler(ctx, context)
 }
-// CIL[END stable_id="~/.framework/functions/trigger-scheduler.ts:module_header:module_header"]

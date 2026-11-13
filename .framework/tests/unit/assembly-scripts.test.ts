@@ -1,12 +1,4 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/assembly-scripts.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/assembly-scripts.test.ts"]
-// CIL[DOC-MACRO purpose="Fixture-based invariants for the assemble scripts: per-app layout, public-asset collision detection, duplicate-handler detection, dev-alias symlink handling."]
-// CIL[DOC-RESPONSIBILITY responsibility="Run scripts/assemble-frontend.sh and scripts/assemble-functions.sh against fixture project roots and assert layout + collision semantics."]
-// CIL[DOC-CONTEXT module="assembly-scripts.test" layer="test" related_files="scripts/assemble-frontend.sh,scripts/assemble-functions.sh"]
-// CIL[DOC-CONTRACT inputs="fixture roots under os.tmpdir() via SPINE_PROJECT_ROOT" outputs="exit-code + file-existence assertions" errors="none" side_effects="creates+removes temp dirs"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="harness" content="Both scripts honour SPINE_PROJECT_ROOT so tests never touch the real .assembled tree. NB: .framework/scripts/ holds stale packaged copies — tests must point at /scripts."]
-// CIL[END stable_id="~/.framework/tests/unit/assembly-scripts.test.ts:module_header:module_header"]
+// Both scripts honour SPINE_PROJECT_ROOT so tests never touch the real .assembled tree. NB: .framework/scripts/ holds stale packaged copies — tests must point at /scripts.
 import { describe, it, expect, afterEach } from 'vitest'
 import {
   mkdtempSync, mkdirSync, writeFileSync, symlinkSync,

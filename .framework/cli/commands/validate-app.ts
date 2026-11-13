@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Provide module-level imports for the validate-app CLI command"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load required modules for CLI execution, filesystem inspection, path resolution and URL helpers"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports Command from commander, fs utilities, path helpers and url helpers" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 
 
 
@@ -23,59 +14,11 @@ import { readFileSync, existsSync, readdirSync, statSync, realpathSync } from 'f
 import { createHash } from 'crypto'
 import { join, dirname, resolve, isAbsolute, sep } from 'path'
 import { fileURLToPath } from 'url'
-// CIL[DOC-VECTOR type="context" content="purpose='Provide module-level imports for the validate-app CLI command'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:__filename:constant" type="constant" identity="__filename" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Expose the current module filename for path resolution"]
-// CIL[DOC-RESPONSIBILITY responsibility="Derive __filename from import.meta.url"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Use fileURLToPath to convert import.meta.url to an absolute file path" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 const __filename = fileURLToPath(import.meta.url)
-// CIL[DOC-VECTOR type="context" content="purpose='Expose the current module filename for path resolution'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:__filename:constant"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:__dirname:constant" type="constant" identity="__dirname" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Expose the current module directory for path resolution"]
-// CIL[DOC-RESPONSIBILITY responsibility="Derive __dirname from __filename"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Use dirname to get the directory portion of __filename" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 const __dirname = dirname(__filename)
-// CIL[DOC-VECTOR type="context" content="purpose='Expose the current module directory for path resolution'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:__dirname:constant"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:SeedEntry:interface" type="interface" identity="SeedEntry" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Define the shape of a manifest seed entry"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeScript interface for a single seed configuration used by validate-app"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares file, table, conflict and optional inject_app_id/permissions_patch fields" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 interface SeedEntry {
   file: string
   table: string
@@ -83,24 +26,8 @@ interface SeedEntry {
   inject_app_id?: boolean
   permissions_patch?: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the shape of a manifest seed entry'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:SeedEntry:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:Manifest:interface" type="interface" identity="Manifest" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Define the shape of an app manifest"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeScript interface for the manifest.json structure used by validate-app"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares app metadata, type, entry points, seed, owned_types, registration and routing fields" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 interface Manifest {
   name: string
   slug: string
@@ -138,24 +65,8 @@ interface Manifest {
     skill_prefix?: string
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the shape of an app manifest'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:Manifest:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:PackageJson:interface" type="interface" identity="PackageJson" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Define the shape of a package.json with spine configuration"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the TypeScript interface for package.json consumed by validate-app"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares name, version, files and the optional spine block fields" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 interface PackageJson {
   name: string
   version: string
@@ -170,47 +81,15 @@ interface PackageJson {
     manifest?: string
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the shape of a package.json with spine configuration'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:PackageJson:interface"]
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:ValidationError:class" type="class" identity="ValidationError" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Custom error type for app validation failures"]
-// CIL[DOC-RESPONSIBILITY responsibility="Instantiate typed validation errors that identify validation problems"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="message: string" outputs="ValidationError instance" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Extends Error and sets the name property to ValidationError" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 class ValidationError extends Error {
   constructor(message: string) {
     super(message)
     this.name = 'ValidationError'
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Custom error type for app validation failures'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:ValidationError:class"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateManifest:function" type="function" identity="validateManifest" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the presence and content of an app manifest.json"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check that manifest.json exists, is valid JSON, has required fields and a valid app_type"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string" outputs="Manifest" errors="ValidationError on missing file, invalid JSON or invalid fields" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Resolve manifest path, read and parse, reject non-object roots, enforce required fields and allowed app_type values" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateManifest(appPath: string): Manifest {
   const manifestPath = join(appPath, 'manifest.json')
   
@@ -251,23 +130,7 @@ function validateManifest(appPath: string): Manifest {
   
   return manifest
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the presence and content of an app manifest.json'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateManifest:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validatePackageJson:function" type="function" identity="validatePackageJson" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the presence and version of an app package.json"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check that package.json exists, is valid JSON and its version matches the manifest"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="PackageJson" errors="ValidationError on missing file, invalid JSON or version mismatch" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Resolve package path, read and parse, compare package version to manifest version" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validatePackageJson(appPath: string, manifest: Manifest): PackageJson {
   const packagePath = join(appPath, 'package.json')
   
@@ -288,23 +151,7 @@ function validatePackageJson(appPath: string, manifest: Manifest): PackageJson {
   
   return packageJson
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the presence and version of an app package.json'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validatePackageJson:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateRequiredFiles:function" type="function" identity="validateRequiredFiles" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the presence of files and directories required by the app type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check for index.tsx, pages/ and functions/ depending on app_type"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on missing required files or directories" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Switch on app_type and assert existence of index.tsx, pages/ and/or functions/" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateRequiredFiles(appPath: string, manifest: Manifest): void {
   const { app_type } = manifest
   
@@ -326,29 +173,13 @@ function validateRequiredFiles(appPath: string, manifest: Manifest): void {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the presence of files and directories required by the app type'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateRequiredFiles:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateAllowedDirectories:function" type="function" identity="validateAllowedDirectories" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate that the app root contains only allowed directories"]
-// CIL[DOC-RESPONSIBILITY responsibility="Scan top-level directories and reject any not in the allow list"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string" outputs="void" errors="ValidationError on disallowed directories" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Read app root directories and compare against an allow list of generic app features including optional .devin" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateAllowedDirectories(appPath: string): void {
   const allowedDirs = [
     'pages', 'components', 'hooks', 'utils', 'functions',
     'seed', 'public', 'lib', 'views', 'docs', 'mcp',
     'migrations', 'migrations-archive', 'tests', 'installer',
-    'agent', 'src', 'emails'
+    'agent', 'src', 'emails', 'decisions'
   ]
   
   const entries = readdirSync(appPath, { withFileTypes: true })
@@ -361,23 +192,7 @@ function validateAllowedDirectories(appPath: string): void {
     throw new ValidationError(`❌ Unknown directories found: ${unknownDirs.join(', ')}. Allowed directories: ${allowedDirs.join(', ')} (plus optional .devin/)`)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate that the app root contains only allowed directories'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateAllowedDirectories:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateDevinDirectory:function" type="function" identity="validateDevinDirectory" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the optional .devin/ directory structure"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check that .devin/ contains AGENTS.md and that every skill has SKILL.md"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string" outputs="void" errors="ValidationError on missing AGENTS.md or missing SKILL.md" side_effects="logs to stdout"]
-// CIL[DOC-MICRO logic_summary="If .devin exists, verify AGENTS.md and each skill subdirectory has SKILL.md" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateDevinDirectory(appPath: string): void {
   const devinPath = join(appPath, '.devin')
   
@@ -407,23 +222,7 @@ function validateDevinDirectory(appPath: string): void {
     console.log(`✅ .devin/ directory not present (optional)`)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the optional .devin/ directory structure'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateDevinDirectory:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateRoutes:function" type="function" identity="validateRoutes" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate route and nav_item paths in the manifest"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check that routes are root-relative and do not repeat the route_prefix"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on route prefix duplication or missing leading slash" side_effects="logs warnings to stdout"]
-// CIL[DOC-MICRO logic_summary="If route_prefix is set, ensure routes and nav_items do not include it and start with /" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateRoutes(appPath: string, manifest: Manifest): void {
   // Host-keyed mount overrides: an override prefix only makes sense with its
   // domain trigger, and both must be root-relative.
@@ -487,23 +286,7 @@ function validateRoutes(appPath: string, manifest: Manifest): void {
     for (const item of (manifest as any).nav_items) checkNavItem(item)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate route and nav_item paths in the manifest'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateRoutes:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:canonicalfilewithin:function" type="function" identity="canonicalFileWithin" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Resolve a root-contained file path for manifest-referenced files"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return the canonical path of an existing regular file inside the app root, or null"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, relPath: string" outputs="string canonical path or null" errors="none" side_effects="reads filesystem metadata via realpathSync and statSync"]
-// CIL[DOC-MICRO logic_summary="Rejects absolute paths, lexical escapes, symlink escapes, and non-file targets by canonicalizing app root and target with realpathSync" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function canonicalFileWithin(appPath: string, relPath: string): string | null {
   try {
     if (isAbsolute(relPath)) return null
@@ -518,23 +301,7 @@ function canonicalFileWithin(appPath: string, relPath: string): string | null {
     return null
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve a root-contained file path for manifest-referenced files'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:canonicalfilewithin:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateManifestComponents:function" type="function" identity="validateManifestComponents" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate manifest references to component files and registration constraints"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check entry_point, sidebar_component and account strategy fields"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on missing referenced files or inconsistent registration" side_effects="reads filesystem metadata for root-contained files via canonicalFileWithin"]
-// CIL[DOC-MICRO logic_summary="Verify referenced files exist as root-contained regular files via canonicalFileWithin and that existing account strategy has target_account" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateManifestComponents(appPath: string, manifest: Manifest): void {
   if (manifest.entry_point) {
     const ep = manifest.entry_point.replace(/^\.\//, '')
@@ -554,23 +321,7 @@ function validateManifestComponents(appPath: string, manifest: Manifest): void {
     throw new ValidationError(`❌ manifest.json registration.account_strategy is "existing" but target_account is not set`)
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate manifest references to component files and registration constraints'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateManifestComponents:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateSeedBlock:function" type="function" identity="validateSeedBlock" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the seed block in the manifest"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check that seed entries are well-formed and reference root-contained .json files containing an array of object records"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on malformed seed entries, missing seed files, path escapes, or non-object rows" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Assert seed is an array of objects; each entry needs nonempty-trimmed file/table/conflict strings; entry.file is relative to the app root, must resolve to a root-contained regular .json file via canonicalFileWithin, and must parse to a JSON array of non-null objects" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 function validateSeedBlock(appPath: string, manifest: Manifest): void {
   if (!manifest.seed) return
 
@@ -617,23 +368,7 @@ function validateSeedBlock(appPath: string, manifest: Manifest): void {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the seed block in the manifest'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateSeedBlock:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateownedtypes:function" type="function" identity="validateOwnedTypes" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the optional owned_types manifest declaration"]
-// CIL[DOC-RESPONSIBILITY responsibility="Require owned_types to be an array of non-empty strings where each slug resolves to a record in the app's types seed (seed/types.json)"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on a malformed owned_types array or a slug absent from the types seed" side_effects="reads types seed files"]
-// CIL[DOC-MICRO logic_summary="Return early when owned_types is absent; shape-check the array, then collect slugs from every declared non-patch types seed entry plus the conventional seed/types.json default and reject undeclared slugs" notable_decisions="absent owned_types is a valid optional field; install-app --reconcile-owned-types trusts the same resolution set"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function validateOwnedTypes(appPath: string, manifest: Manifest): void {
   const owned = manifest.owned_types
   if (owned === undefined) return
@@ -672,21 +407,6 @@ function validateOwnedTypes(appPath: string, manifest: Manifest): void {
     }
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Validate the optional owned_types manifest declaration'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateownedtypes:function"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateknowledgeenvelope:function" type="function" identity="validateKnowledgeEnvelope" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-MACRO purpose="Validate the manifest knowledge envelope and seed prompt-config picks"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check config.knowledge shape and verify seeded prompt_configs' retrieval_policy picks stay inside the envelope — an agent may narrow the app envelope but never widen it"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/functions/_shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on malformed envelope or out-of-envelope picks" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Shape-check account/platform/cil blocks, then intersect each seeded prompt config's item_types and cil project_ids against the envelope; warns when agents would get no access (deny-by-default)" notable_decisions="trailing-* prefix patterns supported in item_types/sources"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 function validateKnowledgeEnvelope(appPath: string, manifest: Manifest): void {
   const envelope = manifest.config?.knowledge
   if (envelope === undefined) {
@@ -749,44 +469,24 @@ function validateKnowledgeEnvelope(appPath: string, manifest: Manifest): void {
   const platformPatterns = envelope.platform && envelope.platform !== true ? (envelope.platform.sources ?? null) : (envelope.platform ? null : [])
   const matchAny = (patterns: string[] | null, t: string) =>
     patterns == null ? true : patterns.some((p) => p === '*' || (p.endsWith('*') ? t.startsWith(p.slice(0, -1)) : p === t))
-  const envCilIds = envelope.cil && envelope.cil !== true ? (envelope.cil.project_ids ?? null) : null
-
   for (const cfg of configs) {
     const pick = cfg?.metadata?.retrieval_policy?.item_types || []
     const label = cfg.slug || cfg.name || '(unnamed)'
     const outside = pick.filter((t: string) =>
-      !(t === 'cil_chunk' && !!envelope.cil) && !matchAny(accountPatterns, t) && !matchAny(platformPatterns, t)
+      !matchAny(accountPatterns, t) && !matchAny(platformPatterns, t)
     )
     if (outside.length) {
       throw new ValidationError(
         `❌ seed/prompt-configs.json "${label}" picks item_types outside the knowledge envelope: ${outside.join(', ')}`
       )
     }
-    const pickCil = cfg?.metadata?.cil_config?.project_ids || []
-    if (pickCil.length) {
-      if (!envelope.cil) {
-        throw new ValidationError(`❌ prompt config "${label}" sets cil_config.project_ids but config.knowledge.cil is not enabled`)
-      }
-      if (envCilIds) {
-        const bad = pickCil.filter((id: string) => !envCilIds.includes(id))
-        if (bad.length) {
-          throw new ValidationError(`❌ prompt config "${label}" cil project_ids outside envelope: ${bad.join(', ')}`)
-        }
-      }
+    // The CIL corpus is retired — no envelope can enable it anymore.
+    if ((cfg?.metadata?.cil_config?.project_ids || []).length) {
+      throw new ValidationError(`❌ prompt config "${label}" sets cil_config.project_ids — the CIL corpus was retired (migration 079); remove the pick`)
     }
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateknowledgeenvelope:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateagentdirectory:function" type="function" identity="validateAgentDirectory" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Validate the app's staged agent/ directory (skills and instructions)"]
-// CIL[DOC-RESPONSIBILITY responsibility="Enforce skill prefix naming and SKILL.md name/dir equality, markdown-only instructions, and warn when staged assets drift from their live copies"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/install-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string, manifest: Manifest" outputs="void" errors="ValidationError on missing skill_prefix, prefix mismatch, missing SKILL.md, or non-markdown instructions" side_effects="logs warnings to stdout on staged-vs-live drift"]
-// CIL[DOC-MICRO logic_summary="agent/skills requires manifest.agent.skill_prefix; every staged dir must start <prefix>_ and its SKILL.md name must equal the dir name; agent/instructions may only contain .md; sha1 snapshots of staged trees are compared to live custom/.devin/skills and src/instructions" notable_decisions="['drift_is_a_warning_not_an_error','skill_prefix_fail_closed']"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function validateAgentDirectory(appPath: string, manifest: Manifest): void {
   const agentPath = join(appPath, 'agent')
   if (!existsSync(agentPath)) return
@@ -873,17 +573,7 @@ function validateAgentDirectory(appPath: string, manifest: Manifest): void {
     console.log(`✅ agent/ staged assets valid`)
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateagentdirectory:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:validateAppStructure:function" type="function" identity="validateAppStructure" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Run the full app structure validation pipeline"]
-// CIL[DOC-RESPONSIBILITY responsibility="Orchestrate manifest, package, required files, directories, devin, routes, components, seed and owned_types checks"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="appPath: string" outputs="void" errors="ValidationError from any sub-validator" side_effects="logs validation result to stdout"]
-// CIL[DOC-MICRO logic_summary="Call each validator in sequence — including validateOwnedTypes after validateSeedBlock so declared seed files are already proven well-formed — and log success" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 export function validateAppStructure(appPath: string): void {
   const manifest = validateManifest(appPath)
   validatePackageJson(appPath, manifest)
@@ -898,23 +588,7 @@ export function validateAppStructure(appPath: string): void {
   validateKnowledgeEnvelope(appPath, manifest)
   console.log(`✅ App structure is valid`)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Run the full app structure validation pipeline'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:validateAppStructure:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/validate-app.ts:registerValidateAppCommands:function" type="function" identity="registerValidateAppCommands" parent="~/.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-AUDIENCE audience="CLI engineers and framework maintainers"]
-// CIL[DOC-MACRO purpose="Register the validate-app CLI subcommand and run validation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Add a validate-app command to a Commander program that validates a local app directory"]
-// CIL[DOC-CONTEXT module="validate-app" layer="cli" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="none" errors="process.exit(1) on validation or unexpected errors" side_effects="logs to stdout and stderr, may exit process"]
-// CIL[DOC-MICRO logic_summary="Define the validate-app command, resolve the app path, call validateAppStructure and handle errors" notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 export function registerValidateAppCommands(program: Command) {
   program
     .command('validate-app [path]')
@@ -937,10 +611,3 @@ export function registerValidateAppCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Register the validate-app CLI subcommand and run validation'; No verified external callers; imports: none"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/validate-app.ts:registerValidateAppCommands:function"]

@@ -1,130 +1,41 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/app-manifest.test.ts"]
-// CIL[DOC-MACRO purpose="Import Vitest, filesystem fixture utilities, and both manifest implementations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import Vitest, filesystem fixture utilities, and both manifest implementations."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Import Vitest, filesystem fixture utilities, and both manifest implementations." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, relative } from 'node:path'
 import * as runtimeMod from '../../functions/_shared/app-manifest.ts'
 import * as mcpMod from '../../../.framework/mcp/shared/app-manifest.ts'
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:modules:constant" type="constant" identity="modules" parent="none"]
-// CIL[DOC-MACRO purpose="Pair runtime and MCP manifest implementations for identical behavior tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Pair runtime and MCP manifest implementations for identical behavior tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="Imported runtimeMod and mcpMod modules" outputs="Readonly module-label pairs" errors="Assertion or fixture failures propagate to Vitest" side_effects="Initializes a module-local constant"]
-// CIL[DOC-MICRO logic_summary="Pair runtime and MCP manifest implementations for identical behavior tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const modules = [
   ['runtime .framework/functions/_shared/app-manifest.ts', runtimeMod],
   ['mcp .framework/mcp/shared/app-manifest.ts', mcpMod],
 ] as const
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:modules:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:root:variable" type="variable" identity="root" parent="none"]
-// CIL[DOC-MACRO purpose="Declare the temporary repository root used by fixture hooks."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the temporary repository root used by fixture hooks."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable root path" errors="Assertion or fixture failures propagate to Vitest" side_effects="Declares module-local fixture state"]
-// CIL[DOC-MICRO logic_summary="Declare the temporary repository root used by fixture hooks." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let root: string
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:root:variable"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:savedrepopath:variable" type="variable" identity="savedRepoPath" parent="none"]
-// CIL[DOC-MACRO purpose="Declare the saved REPO_PATH value restored after each fixture."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the saved REPO_PATH value restored after each fixture."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Optional saved environment value" errors="Assertion or fixture failures propagate to Vitest" side_effects="Declares module-local fixture state"]
-// CIL[DOC-MICRO logic_summary="Declare the saved REPO_PATH value restored after each fixture." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let savedRepoPath: string | undefined
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:savedrepopath:variable"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:fixture_setup:block" type="block" identity="fixture_setup" parent="none"]
-// CIL[DOC-MACRO purpose="Register a beforeEach hook that creates a temporary repo and saves REPO_PATH."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a beforeEach hook that creates a temporary repo and saves REPO_PATH."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="Vitest beforeEach lifecycle" outputs="Temporary root and saved environment state" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a fixture hook; the hook creates a temporary directory"]
-// CIL[DOC-MICRO logic_summary="Register a beforeEach hook that creates a temporary repo and saves REPO_PATH." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'spine-app-manifest-'))
   savedRepoPath = process.env.REPO_PATH
 })
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:fixture_setup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:fixture_cleanup:block" type="block" identity="fixture_cleanup" parent="none"]
-// CIL[DOC-MACRO purpose="Register an afterEach hook that removes the fixture repo and restores REPO_PATH."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register an afterEach hook that removes the fixture repo and restores REPO_PATH."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture root and savedRepoPath" outputs="Cleaned fixture and restored environment" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a hook that removes only the created directory and restores an environment variable"]
-// CIL[DOC-MICRO logic_summary="Register an afterEach hook that removes the fixture repo and restores REPO_PATH." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 afterEach(() => {
   rmSync(root, { recursive: true, force: true })
   if (savedRepoPath === undefined) delete process.env.REPO_PATH
   else process.env.REPO_PATH = savedRepoPath
 })
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:fixture_cleanup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:writejson:function" type="function" identity="writeJson" parent="none"]
-// CIL[DOC-MACRO purpose="Create a fixture directory and write supplied JSON or raw text to its named file."]
-// CIL[DOC-RESPONSIBILITY responsibility="Create a fixture directory and write supplied JSON or raw text to its named file."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="dir: string, data: unknown, file: string default manifest.json" outputs="void" errors="Assertion or fixture failures propagate to Vitest" side_effects="Creates fixture directories and writes a fixture file"]
-// CIL[DOC-MICRO logic_summary="Create a fixture directory and write supplied JSON or raw text to its named file." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function writeJson(dir: string, data: unknown, file = 'manifest.json'): void {
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, file), typeof data === 'string' ? data : JSON.stringify(data))
 }
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:writejson:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:valid:constant" type="constant" identity="VALID" parent="none"]
-// CIL[DOC-MACRO purpose="Define minimal valid app manifest data for isolated tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define minimal valid app manifest data for isolated tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Fixture manifest with name, slug, routes, and nav_items" errors="Assertion or fixture failures propagate to Vitest" side_effects="Initializes a module-local constant"]
-// CIL[DOC-MICRO logic_summary="Define minimal valid app manifest data for isolated tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const VALID = {
   name: 'Test App',
   slug: 'test-app',
   routes: ['/x'],
   nav_items: [],
 }
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:valid:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:manifest_behavior_suites:block" type="block" identity="manifest_behavior_suites" parent="none"]
-// CIL[DOC-MACRO purpose="Register the same loader and merger assertions for runtime and MCP implementations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register the same loader and merger assertions for runtime and MCP implementations."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="modules, fixture state, VALID, writeJson" outputs="Vitest loader and merger test cases" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers test cases that read and write temporary files and temporarily select REPO_PATH"]
-// CIL[DOC-MICRO logic_summary="Register the same loader and merger assertions for runtime and MCP implementations." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 for (const [label, mod] of modules) {
   describe(`loadManifest (${label})`, () => {
     beforeEach(() => mod.clearManifestCache())
@@ -301,17 +212,7 @@ for (const [label, mod] of modules) {
     })
   })
 }
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:manifest_behavior_suites:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/app-manifest.test.ts:discovery_suite:block" type="block" identity="discovery_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register discovery tests for sorted arbitrary apps, absent workspaces, slug mismatch, and safe symlinks."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register discovery tests for sorted arbitrary apps, absent workspaces, slug mismatch, and safe symlinks."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/functions/_shared/app-manifest.ts,.framework/mcp/shared/app-manifest.ts"]
-// CIL[DOC-CONTRACT inputs="runtimeMod and temporary fixture state" outputs="Vitest discovery test cases" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers tests using temporary directories and symlinks"]
-// CIL[DOC-MICRO logic_summary="Register discovery tests for sorted arbitrary apps, absent workspaces, slug mismatch, and safe symlinks." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('discoverManifests (runtime)', () => {
   beforeEach(() => runtimeMod.clearManifestCache())
 
@@ -356,4 +257,3 @@ describe('discoverManifests (runtime)', () => {
     }
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/app-manifest.test.ts:discovery_suite:block"]

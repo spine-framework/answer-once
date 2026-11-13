@@ -73,7 +73,7 @@ re-ingested.
 |---|---|---|
 | `query` | — | Required. |
 | `type_slugs` | `[]` | The caller's pick — intersected with the app envelope; picks outside it deny the call. |
-| `sources` | `['kb']` | `'kb'` for knowledge items, `'code'` for code-chunk vectors (the `cil_*` item-type namespace). |
+| `sources` | `['kb']` | `'kb'` for knowledge items, `'code'` for legacy `cil_chunk` vectors — the CIL corpus is retired (079) but preserved rows remain readable. |
 | `app_id` | `null` | Post-filter on `metadata.app_id`. |
 | `vector_fields` | `[]` | Restrict to specific `metadata.vector_type` values. |
 | `limit` / `offset` | `10` / `0` | Page over best-match documents. |

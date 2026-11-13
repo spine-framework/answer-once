@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/middleware.ts"]
 /**
  * @module   middleware
  * @audience internal
@@ -14,16 +13,7 @@
  *
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="This module provides middleware functions that handle authentication and authorization for API requests, ensuring that only authorized users can access certain resources."]
-// CIL[DOC-RESPONSIBILITY responsibility="This module provides middleware functions that handle authentication and authorization for API requests, ensuring that only authorized users can access certain resources. It integrates with tracing and auditing systems to monitor and log activities. INVARIANT: All requests must be validated against user roles before proceeding to the next step."]
-// CIL[DOC-CONTEXT module="middleware" layer="shared-core" related_files="principal (provides user identity management).,db (handles database interactions for user roles).,auditing (logs actions for compliance and monitoring).,tracing (manages request tracing for performance analysis)."]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="This module provides middleware functions that handle authentication and authorization for API requests, ensuring that only authorized users can access certain resources. It integrates with tracing and auditing systems to monitor and log activities. INVARIANT: All requests must be validated against user roles before proceeding to the next step." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="internal"]
 import { 
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:module_header:module_header"]
   Principal, 
   resolvePrincipal, 
   isSystemAdmin, 
@@ -46,21 +36,8 @@ import {
   isSampled,
   traceDb
 } from './tracing'
-// CIL[DOC-VECTOR type="context" content="purpose='This module provides middleware functions that handle authentication and authorization for API requests, ensuring that only authorized users can access certain resources.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
-// CIL[DOC-MACRO purpose="CoreContext provides a structured context for handling requests within the application, encapsulating essential information such as the principal, account ID, and request details."]
-// CIL[DOC-RESPONSIBILITY responsibility="CoreContext provides a structured context for handling requests within the application, encapsulating essential information such as the principal, account ID, and request details. It exists to facilitate consistent access to contextual data throughout the middleware layer."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="CoreContext provides a structured context for handling requests within the application, encapsulating essential information such as the principal, account ID, and request details. It exists to facilitate consistent access to contextual data throughout the middleware layer." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * CoreContext provides a structured context for handling requests within the application, encapsulating essential information such as the principal, account ID, and request details. It exists to facilitate consistent access to contextual data throughout the middleware layer.
  *
@@ -68,14 +45,6 @@ import {
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="CoreContext interface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the CoreContext interface."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the CoreContext interface." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:CoreContext:interface" type="interface" identity="CoreContext" parent="~/.framework/functions/_shared/middleware.ts"]
 export interface CoreContext {
   principal: Principal
   accountId: string | null
@@ -85,21 +54,7 @@ export interface CoreContext {
   logLevel?: string
   trace?: TraceContext
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:CoreContext:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='CoreContext provides a structured context for handling requests within the application, encapsulating essential information such as the principal, account ID, and request details.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="The RequestContext interface defines the structure for context information related to an incoming request, including application ID, query parameters, request path, and headers."]
-// CIL[DOC-RESPONSIBILITY responsibility="The RequestContext interface defines the structure for context information related to an incoming request, including application ID, query parameters, request path, and headers. It is used to facilitate middleware operations by providing essential request-related data."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="The RequestContext interface defines the structure for context information related to an incoming request, including application ID, query parameters, request path, and headers. It is used to facilitate middleware operations by providing essential request-related data." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The RequestContext interface defines the structure for context information related to an incoming request, including application ID, query parameters, request path, and headers. It is used to facilitate middleware operations by providing essential request-related data.
  *
@@ -107,14 +62,6 @@ export interface CoreContext {
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="RequestContext interface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the RequestContext interface."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the RequestContext interface." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:RequestContext:interface" type="interface" identity="RequestContext" parent="~/.framework/functions/_shared/middleware.ts"]
 export interface RequestContext extends CoreContext {
   appId: string | null
   query: Record<string, string>
@@ -122,21 +69,7 @@ export interface RequestContext extends CoreContext {
   /** Lowercased request headers — used by geo/rate-limit helpers. */
   headers?: Record<string, string>
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:RequestContext:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='The RequestContext interface defines the structure for context information related to an incoming request, including application ID, query parameters, request path, and headers.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="HandlerFunction is a type that defines a function signature for handling requests in a middleware context."]
-// CIL[DOC-RESPONSIBILITY responsibility="HandlerFunction is a type that defines a function signature for handling requests in a middleware context. It facilitates the processing of a request context and an optional body, returning a promise for asynchronous operations."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="HandlerFunction is a type that defines a function signature for handling requests in a middleware context. It facilitates the processing of a request context and an optional body, returning a promise for asynchronous operations." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * HandlerFunction is a type that defines a function signature for handling requests in a middleware context. It facilitates the processing of a request context and an optional body, returning a promise for asynchronous operations.
  *
@@ -144,37 +77,8 @@ export interface RequestContext extends CoreContext {
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="HandlerFunction type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the HandlerFunction type."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the HandlerFunction type." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:HandlerFunction:type" type="type" identity="HandlerFunction" parent="~/.framework/functions/_shared/middleware.ts"]
 export type HandlerFunction = (ctx: RequestContext, body?: any) => Promise<any>
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:HandlerFunction:type"]
-// CIL[DOC-MACRO purpose="HandlerFunction type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the HandlerFunction type."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the HandlerFunction type." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-VECTOR type="context" content="purpose='HandlerFunction is a type that defines a function signature for handling requests in a middleware context.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="HandlerResult is an interface that encapsulates the result of a handler operation, allowing for the inclusion of data, error messages, and metadata."]
-// CIL[DOC-RESPONSIBILITY responsibility="HandlerResult is an interface that encapsulates the result of a handler operation, allowing for the inclusion of data, error messages, and metadata. It exists to standardize the response structure across various handler implementations."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="HandlerResult is an interface that encapsulates the result of a handler operation, allowing for the inclusion of data, error messages, and metadata. It exists to standardize the response structure across various handler implementations." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * HandlerResult is an interface that encapsulates the result of a handler operation, allowing for the inclusion of data, error messages, and metadata. It exists to standardize the response structure across various handler implementations.
  *
@@ -182,34 +86,12 @@ export type HandlerFunction = (ctx: RequestContext, body?: any) => Promise<any>
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="HandlerResult interface"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the HandlerResult interface."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the HandlerResult interface." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:HandlerResult:interface" type="interface" identity="HandlerResult" parent="~/.framework/functions/_shared/middleware.ts"]
 export interface HandlerResult {
   data?: any
   error?: string
   meta?: any
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:HandlerResult:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='HandlerResult is an interface that encapsulates the result of a handler operation, allowing for the inclusion of data, error messages, and metadata.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Validates whether a given value is a properly formatted UUID string."]
-// CIL[DOC-RESPONSIBILITY responsibility="Validates whether a given value is a properly formatted UUID string. This function exists to ensure that UUIDs conform to the expected format before further processing."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- value: any (required) — the value to be validated as a UUID." outputs="value is string — returns true if the value is a valid UUID string, otherwise false." errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Validates whether a given value is a properly formatted UUID string. This function exists to ensure that UUIDs conform to the expected format before further processing." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Validates whether a given value is a properly formatted UUID string. This function exists to ensure that UUIDs conform to the expected format before further processing.
  *
@@ -220,34 +102,12 @@ export interface HandlerResult {
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="isValidUuid function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the isValidUuid function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the isValidUuid function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:isValidUuid:function" type="function" identity="isValidUuid" parent="~/.framework/functions/_shared/middleware.ts"]
 function isValidUuid(value: any): value is string {
   if (typeof value !== 'string') return false
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-9a-f][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
   return uuidRegex.test(value)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:isValidUuid:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Validates whether a given value is a properly formatted UUID string.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Trace context builder for distributed tracing."]
-// CIL[DOC-RESPONSIBILITY responsibility="Builds a TraceContext object based on incoming event headers or a provided request ID. This function is essential for tracing requests in distributed systems."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- event: any (required) — the incoming event containing headers for tracing.\\n- requestId: string (required) — a unique identifier for the request." outputs="TraceContext — an object containing traceId, spanId, parentSpanId, traceFlags, traceState, and sampled status." errors="none" side_effects="none dependencies="parseTraceParent, parseTraceState, generateSpanId, formatTraceState, isSampled"]
-// CIL[DOC-MICRO logic_summary="Parses trace headers in a specific order and generates a TraceContext based on the parsed values or defaults to the request ID." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Builds a TraceContext object based on incoming event headers or a provided request ID. This function is essential for tracing requests in distributed systems.
  *
@@ -262,14 +122,6 @@ function isValidUuid(value: any): value is string {
  * @calls       parseTraceParent, parseTraceState, generateSpanId, formatTraceState, isSampled
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="buildTraceContext function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the buildTraceContext function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the buildTraceContext function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:buildTraceContext:function" type="function" identity="buildTraceContext" parent="~/.framework/functions/_shared/middleware.ts"]
 function buildTraceContext(event: any, requestId: string): TraceContext {
   const traceparentHeader =
     event.headers?.['traceparent'] ||
@@ -300,21 +152,7 @@ function buildTraceContext(event: any, requestId: string): TraceContext {
     sampled: true
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:buildTraceContext:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Builds a TraceContext object based on incoming event headers or a provided request ID.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Generates a set of response headers for tracing purposes, including a request ID and trace information if provided."]
-// CIL[DOC-RESPONSIBILITY responsibility="Generates a set of response headers for tracing purposes, including a request ID and trace information if provided. This function is useful for tracking requests in distributed systems."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="trace: TraceContext (optional) — context for tracing, including traceId, spanId, and traceFlags.\\nrequestId: string (optional) — unique identifier for the request." outputs="Record<string, string> — an object containing the generated headers." errors="none" side_effects="none dependencies="formatTraceParent"]
-// CIL[DOC-MICRO logic_summary="Generates a set of response headers for tracing purposes, including a request ID and trace information if provided. This function is useful for tracking requests in distributed systems." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Generates a set of response headers for tracing purposes, including a request ID and trace information if provided. This function is useful for tracking requests in distributed systems.
  *
@@ -327,14 +165,6 @@ function buildTraceContext(event: any, requestId: string): TraceContext {
  * @calls       formatTraceParent
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="traceResponseHeaders function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the traceResponseHeaders function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the traceResponseHeaders function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:traceResponseHeaders:function" type="function" identity="traceResponseHeaders" parent="~/.framework/functions/_shared/middleware.ts"]
 function traceResponseHeaders(trace?: TraceContext, requestId?: string): Record<string, string> {
   const headers: Record<string, string> = {}
   if (requestId) headers['X-Request-ID'] = requestId
@@ -342,21 +172,7 @@ function traceResponseHeaders(trace?: TraceContext, requestId?: string): Record<
   if (trace?.traceState) headers['tracestate'] = trace.traceState
   return headers
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:traceResponseHeaders:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Generates a set of response headers for tracing purposes, including a request ID and trace information if provided.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Merges two sets of headers, combining the base headers with any additional headers provided."]
-// CIL[DOC-RESPONSIBILITY responsibility="Merges two sets of headers, combining the base headers with any additional headers provided. This function exists to facilitate the construction of a complete set of headers for HTTP requests or responses."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="base: Record<string, string> (required) — the base headers to merge.\\nextra: Record<string, string> (optional) — additional headers to merge with the base headers." outputs="Record<string, string> — a new object containing the merged headers." errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Merges two sets of headers, combining the base headers with any additional headers provided. This function exists to facilitate the construction of a complete set of headers for HTTP requests or responses." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Merges two sets of headers, combining the base headers with any additional headers provided. This function exists to facilitate the construction of a complete set of headers for HTTP requests or responses.
  *
@@ -368,31 +184,9 @@ function traceResponseHeaders(trace?: TraceContext, requestId?: string): Record<
  * @stability   stable
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="mergeHeaders function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the mergeHeaders function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the mergeHeaders function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:mergeHeaders:function" type="function" identity="mergeHeaders" parent="~/.framework/functions/_shared/middleware.ts"]
 function mergeHeaders(base: Record<string, string>, extra?: Record<string, string>): Record<string, string> {
   return { ...base, ...extra }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:mergeHeaders:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Merges two sets of headers, combining the base headers with any additional headers provided.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Middleware function for handling requests with authentication and context management."]
-// CIL[DOC-RESPONSIBILITY responsibility="Creates a middleware handler that processes incoming events and manages authentication and context for the request. It ensures that valid principals are resolved and handles errors related to authentication and request parsing."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- handler: HandlerFunction (required) — the function to handle the event once validated." outputs="Promise<any> — returns the result of the handler or an error response." errors="none" side_effects="DB writes for logging and tracing, external calls for principal resolution. dependencies="isValidUuid, crypto.randomUUID, buildTraceContext, startSpan, resolvePrincipal, getPrincipalDb, traceDb, emitSpan, error"]
-// CIL[DOC-MICRO logic_summary="Validates headers and query parameters to construct a request context, while managing spans for tracing." notable_decisions="returns an error response with a status code for authentication failures and JSON parsing errors."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Creates a middleware handler that processes incoming events and manages authentication and context for the request. It ensures that valid principals are resolved and handles errors related to authentication and request parsing.
  *
@@ -407,14 +201,6 @@ function mergeHeaders(base: Record<string, string>, extra?: Record<string, strin
  * @errorHandling returns an error response with a status code for authentication failures and JSON parsing errors.
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="createHandler function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the createHandler function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the createHandler function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:createHandler:function" type="function" identity="createHandler" parent="~/.framework/functions/_shared/middleware.ts"]
 export function createHandler(handler: HandlerFunction) {
   return async (event: any, context: any) => {
     if (event && event.requestId && event.principal) {
@@ -561,20 +347,6 @@ export function createHandler(handler: HandlerFunction) {
     }
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:createHandler:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Creates a middleware handler that processes incoming events and manages authentication and context for the request.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Middleware function that wraps a handler for public access."]
-// CIL[DOC-RESPONSIBILITY responsibility="Creates a public handler that processes incoming events and delegates to a specified handler function. It ensures that requests are properly traced and validated before invoking the handler."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="handler: HandlerFunction (required) — the function to handle the event." outputs="Promise<any> — resolves with a JSON response containing data and metadata." errors="none" side_effects="none dependencies="isValidUuid, crypto.randomUUID, buildTraceContext, startSpan, resolvePrincipal, getPrincipalDb, traceDb, emitSpan, json"]
-// CIL[DOC-MICRO logic_summary="Validates request headers and constructs a context object before calling the handler." notable_decisions="returns an error response for invalid JSON in the request body."]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Creates a public handler that processes incoming events and delegates to a specified handler function. It ensures that requests are properly traced and validated before invoking the handler.
  *
@@ -589,14 +361,6 @@ export function createHandler(handler: HandlerFunction) {
  * @errorHandling returns an error response for invalid JSON in the request body.
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="createPublicHandler function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the createPublicHandler function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the createPublicHandler function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:createPublicHandler:function" type="function" identity="createPublicHandler" parent="~/.framework/functions/_shared/middleware.ts"]
 export function createPublicHandler(handler: HandlerFunction) {
   return async (event: any, context: any) => {
     if (event && event.requestId && event.principal) {
@@ -720,20 +484,6 @@ export function createPublicHandler(handler: HandlerFunction) {
     }
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:createPublicHandler:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Creates a public handler that processes incoming events and delegates to a specified handler function.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Response formatter for JSON API responses."]
-// CIL[DOC-RESPONSIBILITY responsibility="The json function formats a given data object into a JSON response with specified HTTP status and optional tracing information. It is designed to standardize the response structure for API endpoints."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- data: any (required) — the data to be serialized into JSON.\\n- status: number (optional) — the HTTP status code to return, defaults to 200.\\n- requestId: string (optional|nullable) — an optional request identifier for tracing.\\n- trace: TraceContext (optional|nullable) — optional tracing context containing trace information." outputs="{ statusCode: number, headers: Record<string, string>, body: string }" errors="none" side_effects="none dependencies="formatTraceParent"]
-// CIL[DOC-MICRO logic_summary="Constructs a response object with headers for CORS and tracing based on input parameters." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The json function formats a given data object into a JSON response with specified HTTP status and optional tracing information. It is designed to standardize the response structure for API endpoints.
  *
@@ -750,14 +500,6 @@ export function createPublicHandler(handler: HandlerFunction) {
  * @calls       formatTraceParent
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="json function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the json function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the json function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:json:function" type="function" identity="json" parent="~/.framework/functions/_shared/middleware.ts"]
 export function json(data: any, status: number = 200, requestId?: string, trace?: TraceContext) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -782,20 +524,6 @@ export function json(data: any, status: number = 200, requestId?: string, trace?
     body: JSON.stringify(data)
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:json:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='The json function formats a given data object into a JSON response with specified HTTP status and optional tracing information.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="The error function generates a standardized JSON response for error handling in the application."]
-// CIL[DOC-RESPONSIBILITY responsibility="The error function generates a standardized JSON response for error handling in the application. It provides a consistent structure for error messages along with an optional HTTP status code and request tracing information."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="message: string (required) — the error message to be returned.\\nstatus: number (optional) — the HTTP status code, defaulting to 400.\\nrequestId: string (optional|nullable) — an optional identifier for the request.\\ntrace: TraceContext (optional|nullable) — optional tracing context for debugging." outputs="Promise<any> — returns a JSON response containing the error message." errors="none" side_effects="none dependencies="json"]
-// CIL[DOC-MICRO logic_summary="The error function generates a standardized JSON response for error handling in the application. It provides a consistent structure for error messages along with an optional HTTP status code and request tracing information." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The error function generates a standardized JSON response for error handling in the application. It provides a consistent structure for error messages along with an optional HTTP status code and request tracing information.
  *
@@ -810,37 +538,15 @@ export function json(data: any, status: number = 200, requestId?: string, trace?
  * @calls       json
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="error function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the error function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the error function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:error:function" type="function" identity="error" parent="~/.framework/functions/_shared/middleware.ts"]
 export function error(message: string, status: number = 400, requestId?: string, trace?: TraceContext) {
   return json({
     data: null,
     error: message
   }, status, requestId, trace)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:error:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='The error function generates a standardized JSON response for error handling in the application.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 // Error responses carry whitelisted structured fields (e.g. rate-limit
 // action/limit/retry_after) so clients can render recovery UX.
-// CIL[DOC-MACRO purpose="The structuredError function formats error responses for API calls, ensuring consistent structure and information."]
-// CIL[DOC-RESPONSIBILITY responsibility="The structuredError function formats error responses for API calls, ensuring consistent structure and information. It provides a way to include additional error details when available."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="err: any (required) — the error object containing details about the error.\\nstatus: number (required) — the HTTP status code to return.\\nrequestId: string (optional) — an optional identifier for the request.\\ntrace: TraceContext (optional) — optional tracing context for debugging." outputs="Promise<any> — a JSON response containing the error details and status code." errors="none" side_effects="none dependencies="json"]
-// CIL[DOC-MICRO logic_summary="The structuredError function formats error responses for API calls, ensuring consistent structure and information. It provides a way to include additional error details when available." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The structuredError function formats error responses for API calls, ensuring consistent structure and information. It provides a way to include additional error details when available.
  *
@@ -855,14 +561,6 @@ export function error(message: string, status: number = 400, requestId?: string,
  * @calls       json
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="structuredError function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the structuredError function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the structuredError function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:structuredError:function" type="function" identity="structuredError" parent="~/.framework/functions/_shared/middleware.ts"]
 function structuredError(err: any, status: number, requestId?: string, trace?: TraceContext) {
   const body: Record<string, any> = { data: null, error: err?.message || 'Internal server error' }
   for (const key of ['action', 'limit', 'retry_after']) {
@@ -871,20 +569,6 @@ function structuredError(err: any, status: number, requestId?: string, trace?: T
   if (err?.retryAfter !== undefined) body.retry_after = err.retryAfter
   return json(body, status, requestId, trace)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:structuredError:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='The structuredError function formats error responses for API calls, ensuring consistent structure and information.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Parses the body of an event to extract JSON data."]
-// CIL[DOC-RESPONSIBILITY responsibility="Parses the body of an event to extract JSON data. This function exists to handle incoming event data that may be in JSON format."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="event: any (required) — the event object containing the body to be parsed." outputs="any — the parsed JSON object or null if no body is present." errors="Error — Invalid JSON in request body" side_effects="none dependencies="JSON.parse"]
-// CIL[DOC-MICRO logic_summary="Parses the body of an event to extract JSON data. This function exists to handle incoming event data that may be in JSON format." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Parses the body of an event to extract JSON data. This function exists to handle incoming event data that may be in JSON format.
  *
@@ -897,14 +581,6 @@ function structuredError(err: any, status: number, requestId?: string, trace?: T
  * @calls       JSON.parse
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="parseBody function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the parseBody function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the parseBody function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:parseBody:function" type="function" identity="parseBody" parent="~/.framework/functions/_shared/middleware.ts"]
 export function parseBody(event: any): any {
   if (!event.body) return null
   
@@ -914,20 +590,6 @@ export function parseBody(event: any): any {
     throw new Error('Invalid JSON in request body')
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:parseBody:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Parses the body of an event to extract JSON data.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="The requireUserContext function ensures that a valid user context is present before executing a handler function or returning an error."]
-// CIL[DOC-RESPONSIBILITY responsibility="The requireUserContext function ensures that a valid user context is present before executing a handler function or returning an error. It is used to enforce user authentication and account association in middleware."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- arg: HandlerFunction | RequestContext (required) — a function to handle requests or a context object containing user information." outputs="HandlerFunction | HandlerResult | null — returns a handler function, an error result, or null based on user context validation." errors="Error — User context (person and account) required" side_effects="none dependencies="error"]
-// CIL[DOC-MICRO logic_summary="The requireUserContext function ensures that a valid user context is present before executing a handler function or returning an error. It is used to enforce user authentication and account association in middleware." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The requireUserContext function ensures that a valid user context is present before executing a handler function or returning an error. It is used to enforce user authentication and account association in middleware.
  *
@@ -940,40 +602,8 @@ export function parseBody(event: any): any {
  * @calls       error
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="requireUserContext function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireUserContext function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireUserContext function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function" type="function" identity="requireUserContext" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireUserContext(handler: HandlerFunction): HandlerFunction
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function"]
-// CIL[DOC-MACRO purpose="requireUserContext function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireUserContext function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireUserContext function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-VECTOR type="context" content="purpose='The requireUserContext function ensures that a valid user context is present before executing a handler function or returning an error.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function" type="function" identity="requireUserContext" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireUserContext(ctx: RequestContext): HandlerResult | null
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function"]
-// CIL[DOC-MACRO purpose="requireUserContext function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireUserContext function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireUserContext function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function" type="function" identity="requireUserContext" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireUserContext(arg: HandlerFunction | RequestContext): HandlerFunction | HandlerResult | null {
   if (typeof arg === 'function') {
     const handler = arg
@@ -991,14 +621,6 @@ export function requireUserContext(arg: HandlerFunction | RequestContext): Handl
   }
   return null
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireUserContext:function"]
-// CIL[DOC-MACRO purpose="Middleware function that enforces authentication and authorization for system-level operations."]
-// CIL[DOC-RESPONSIBILITY responsibility="This function ensures that the context provided is authenticated and has system administrator privileges, adding an audit trail by tracking who triggered the action. It is used to enforce security requirements in middleware operations. Error — System context required, if the principal is not a system administrator."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="- arg: HandlerFunction | RequestContext (required) — the handler function or request context to be processed.\\n- triggeredBy: string (optional) — the identifier of the user or process that triggered the action." outputs="HandlerFunction | HandlerResult | null — returns a handler function for further processing, an error result, or null if validation passes." errors="Error — Authentication required, if the principal is not authenticated." side_effects="none dependencies="isSystemAdmin, error"]
-// CIL[DOC-MICRO logic_summary="Validates the principal's identity and role before executing the provided handler function or returning an error." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * This function ensures that the context provided is authenticated and has system administrator privileges, adding an audit trail by tracking who triggered the action. It is used to enforce security requirements in middleware operations.
  *
@@ -1015,40 +637,8 @@ Error — System context required, if the principal is not a system administrato
  * @calls       isSystemAdmin, error
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="requireSystemContextWithAudit function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireSystemContextWithAudit function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireSystemContextWithAudit function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function" type="function" identity="requireSystemContextWithAudit" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireSystemContextWithAudit(handler: HandlerFunction): HandlerFunction
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function"]
-// CIL[DOC-MACRO purpose="requireSystemContextWithAudit function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireSystemContextWithAudit function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireSystemContextWithAudit function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-VECTOR type="context" content="purpose='This function ensures that the context provided is authenticated and has system administrator privileges, adding an audit trail by tracking who triggered the action.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function" type="function" identity="requireSystemContextWithAudit" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireSystemContextWithAudit(ctx: RequestContext, triggeredBy?: string): HandlerResult | null
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function"]
-// CIL[DOC-MACRO purpose="requireSystemContextWithAudit function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the requireSystemContextWithAudit function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the requireSystemContextWithAudit function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function" type="function" identity="requireSystemContextWithAudit" parent="~/.framework/functions/_shared/middleware.ts"]
 export function requireSystemContextWithAudit(
   arg: HandlerFunction | RequestContext,
   triggeredBy?: string,
@@ -1082,14 +672,6 @@ export function requireSystemContextWithAudit(
   ;(ctx as any).triggeredBy = triggeredBy || ctx.principal.id
   return null
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:requireSystemContextWithAudit:function"]
-// CIL[DOC-MACRO purpose="The cors function enables Cross-Origin Resource Sharing (CORS) for HTTP responses."]
-// CIL[DOC-RESPONSIBILITY responsibility="The cors function enables Cross-Origin Resource Sharing (CORS) for HTTP responses. It is used to allow web applications running at one origin to access resources from a different origin."]
-// CIL[DOC-CONTEXT module="middleware" layer="app-specific" related_files=".framework/functions/_shared/db,.framework/functions/_shared/audit"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Promise<{ message: string }> — returns a JSON object with a message indicating CORS is enabled." errors="none" side_effects="none dependencies="json"]
-// CIL[DOC-MICRO logic_summary="The cors function enables Cross-Origin Resource Sharing (CORS) for HTTP responses. It is used to allow web applications running at one origin to access resources from a different origin." notable_decisions="none"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * The cors function enables Cross-Origin Resource Sharing (CORS) for HTTP responses. It is used to allow web applications running at one origin to access resources from a different origin.
  *
@@ -1099,21 +681,6 @@ export function requireSystemContextWithAudit(
  * @calls       json
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="cors function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Implements the cors function."]
-// CIL[DOC-CONTEXT module=".framework/functions/_shared/middleware.ts" layer="app-specific" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Implements the cors function." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/middleware.ts:cors:function" type="function" identity="cors" parent="~/.framework/functions/_shared/middleware.ts"]
 export function cors() {
   return json({ message: 'CORS enabled' }, 200)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/middleware.ts:cors:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='The cors function enables Cross-Origin Resource Sharing (CORS) for HTTP responses.'; No verified external callers" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only" status="ready"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified" status="ready"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented" status="ready"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

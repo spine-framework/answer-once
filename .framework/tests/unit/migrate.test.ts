@@ -1,43 +1,14 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/migrate.test.ts"]
-// CIL[DOC-MACRO purpose="Import Vitest and filesystem fixture utilities for isolated CLI tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import Vitest and filesystem fixture utilities for isolated CLI tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Import Vitest and filesystem fixture utilities for isolated CLI tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:pgstate:constant" type="constant" identity="pgState" parent="none"]
-// CIL[DOC-MACRO purpose="Initialize hoisted state for isolated Postgres client mocks."]
-// CIL[DOC-RESPONSIBILITY responsibility="Initialize hoisted state for isolated Postgres client mocks."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mock client instances, handler, and connect error state" errors="none" side_effects="Initializes mock state"]
-// CIL[DOC-MICRO logic_summary="Initialize hoisted state for isolated Postgres client mocks." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const pgState = vi.hoisted(() => ({
   instances: [] as any[],
   handler: null as null | ((sql: string, params?: any[]) => any),
   connectError: null as null | Error,
 }))
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:pgstate:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:pg_mock:block" type="block" identity="pg_mock" parent="none"]
-// CIL[DOC-MACRO purpose="Register a fake Postgres client that records SQL and never connects to a database."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a fake Postgres client that records SQL and never connects to a database."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="pgState" outputs="Vitest module mock" errors="none" side_effects="Registers a mock"]
-// CIL[DOC-MICRO logic_summary="Register a fake Postgres client that records SQL and never connects to a database." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 vi.mock('pg', () => ({
   default: {
     Client: class {
@@ -62,124 +33,34 @@ vi.mock('pg', () => ({
     },
   },
 }))
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:pg_mock:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:orig_cwd:constant" type="constant" identity="ORIG_CWD" parent="none"]
-// CIL[DOC-MACRO purpose="Capture the original working directory for fixture restoration."]
-// CIL[DOC-RESPONSIBILITY responsibility="Capture the original working directory for fixture restoration."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Original cwd string" errors="none" side_effects="Reads process cwd"]
-// CIL[DOC-MICRO logic_summary="Capture the original working directory for fixture restoration." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const ORIG_CWD = process.cwd()
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:orig_cwd:constant"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:env_keys:constant" type="constant" identity="ENV_KEYS" parent="none"]
-// CIL[DOC-MACRO purpose="List environment variables saved and restored by migration tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="List environment variables saved and restored by migration tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Readonly environment-key list" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="List environment variables saved and restored by migration tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const ENV_KEYS = ['SUPABASE_URL', 'SUPABASE_DB_PASSWORD'] as const
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:env_keys:constant"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:savedenv:variable" type="variable" identity="savedEnv" parent="none"]
-// CIL[DOC-MACRO purpose="Hold saved environment values for fixture cleanup."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold saved environment values for fixture cleanup."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable saved environment map" errors="none" side_effects="Initializes local state"]
-// CIL[DOC-MICRO logic_summary="Hold saved environment values for fixture cleanup." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let savedEnv: Record<string, string | undefined> = {}
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:savedenv:variable"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:workdir:variable" type="variable" identity="workdir" parent="none"]
-// CIL[DOC-MACRO purpose="Hold the temporary project root for migration fixtures."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold the temporary project root for migration fixtures."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable fixture path" errors="none" side_effects="Initializes local state"]
-// CIL[DOC-MICRO logic_summary="Hold the temporary project root for migration fixtures." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let workdir = ''
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:workdir:variable"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:mig:function" type="function" identity="mig" parent="none"]
-// CIL[DOC-MACRO purpose="Write a framework SQL fixture inside the temporary project."]
-// CIL[DOC-RESPONSIBILITY responsibility="Write a framework SQL fixture inside the temporary project."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="name: string, sql: string" outputs="void" errors="none" side_effects="Creates fixture directories and writes a fixture"]
-// CIL[DOC-MICRO logic_summary="Write a framework SQL fixture inside the temporary project." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function mig(name: string, sql: string) {
   const dir = join(workdir, '.framework/migrations')
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, name), sql)
 }
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:mig:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:custommig:function" type="function" identity="customMig" parent="none"]
-// CIL[DOC-MACRO purpose="Write a custom SQL fixture inside the temporary project."]
-// CIL[DOC-RESPONSIBILITY responsibility="Write a custom SQL fixture inside the temporary project."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="name: string, sql: string" outputs="void" errors="none" side_effects="Creates fixture directories and writes a fixture"]
-// CIL[DOC-MICRO logic_summary="Write a custom SQL fixture inside the temporary project." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function customMig(name: string, sql: string) {
   const dir = join(workdir, 'custom/migrations')
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, name), sql)
 }
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:custommig:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:freshmodule:function" type="function" identity="freshModule" parent="none"]
-// CIL[DOC-MACRO purpose="Reset the module cache and import migration code against the current fixture cwd."]
-// CIL[DOC-RESPONSIBILITY responsibility="Reset the module cache and import migration code against the current fixture cwd."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Promise of the migration module" errors="none" side_effects="Resets Vitest module cache and imports source"]
-// CIL[DOC-MICRO logic_summary="Reset the module cache and import migration code against the current fixture cwd." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 async function freshModule() {
   vi.resetModules()
   return await import('../../cli/commands/migrate.ts')
 }
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:freshmodule:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:setenv:function" type="function" identity="setEnv" parent="none"]
-// CIL[DOC-MACRO purpose="Set fake hosted Supabase credentials for isolated migration execution tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Set fake hosted Supabase credentials for isolated migration execution tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="void" errors="none" side_effects="Sets fixture environment variables"]
-// CIL[DOC-MICRO logic_summary="Set fake hosted Supabase credentials for isolated migration execution tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function setEnv() {
   process.env.SUPABASE_URL = 'https://abc123.supabase.co'
   process.env.SUPABASE_DB_PASSWORD = 'p@ss:w/eird?chars'
 }
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:setenv:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:fixture_setup:block" type="block" identity="fixture_setup" parent="none"]
-// CIL[DOC-MACRO purpose="Register temporary-project setup with fake clients and muted console output."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register temporary-project setup with fake clients and muted console output."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="Vitest lifecycle and mock state" outputs="Fixture hook" errors="none" side_effects="Registers a hook that creates a temp directory, changes cwd, and installs spies"]
-// CIL[DOC-MICRO logic_summary="Register temporary-project setup with fake clients and muted console output." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 beforeEach(() => {
   savedEnv = {}
   for (const k of ENV_KEYS) savedEnv[k] = process.env[k]
@@ -193,17 +74,7 @@ beforeEach(() => {
   vi.spyOn(console, 'warn').mockImplementation(() => {})
   vi.spyOn(process.stdout, 'write').mockImplementation((() => true) as any)
 })
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:fixture_setup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:fixture_cleanup:block" type="block" identity="fixture_cleanup" parent="none"]
-// CIL[DOC-MACRO purpose="Register cleanup that restores cwd, environment, and spies and removes the created fixture."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register cleanup that restores cwd, environment, and spies and removes the created fixture."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture state" outputs="Cleanup hook" errors="none" side_effects="Registers fixture cleanup"]
-// CIL[DOC-MICRO logic_summary="Register cleanup that restores cwd, environment, and spies and removes the created fixture." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 afterEach(() => {
   process.chdir(ORIG_CWD)
   rmSync(workdir, { recursive: true, force: true })
@@ -213,17 +84,7 @@ afterEach(() => {
   }
   vi.restoreAllMocks()
 })
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:fixture_cleanup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:collection_suite:block" type="block" identity="collection_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register framework-before-custom ordering, framework-only, and file-filter tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register framework-before-custom ordering, framework-only, and file-filter tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and imported migration module" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fixture tests"]
-// CIL[DOC-MICRO logic_summary="Register framework-before-custom ordering, framework-only, and file-filter tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('collectMigrations', () => {
   it('returns framework then custom migrations sorted lexically', async () => {
     const { collectMigrations } = await freshModule()
@@ -251,17 +112,7 @@ describe('collectMigrations', () => {
     expect(files.map(f => f.name)).toEqual(['001_a.sql'])
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:collection_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:sql_parser_suite:block" type="block" identity="sql_parser_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register quoted-literal, comment, dollar-quote, and trailing-statement SQL parser tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register quoted-literal, comment, dollar-quote, and trailing-statement SQL parser tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="Imported splitSqlStatements" outputs="Vitest assertions" errors="none" side_effects="Registers parser tests"]
-// CIL[DOC-MICRO logic_summary="Register quoted-literal, comment, dollar-quote, and trailing-statement SQL parser tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('splitSqlStatements', () => {
   it('keeps semicolons inside single-quoted literals in one statement', async () => {
     const { splitSqlStatements } = await freshModule()
@@ -290,17 +141,7 @@ describe('splitSqlStatements', () => {
     expect(splitSqlStatements('SELECT 1')).toEqual(['SELECT 1;'])
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:sql_parser_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/migrate.test.ts:execution_suite:block" type="block" identity="execution_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register mocked migration execution tests for credentials, URL validation, tracking, transactions, abort, and cleanup."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register mocked migration execution tests for credentials, URL validation, tracking, transactions, abort, and cleanup."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/migrate.ts"]
-// CIL[DOC-CONTRACT inputs="Mock client and fixture helpers" outputs="Vitest assertions" errors="none" side_effects="Registers fake-database execution tests"]
-// CIL[DOC-MICRO logic_summary="Register mocked migration execution tests for credentials, URL validation, tracking, transactions, abort, and cleanup." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('runMigrations', () => {
   it('returns null when credentials are missing', async () => {
     const { runMigrations } = await freshModule()
@@ -506,4 +347,3 @@ describe('runMigrations', () => {
     expect(pgState.instances[0].ended).toBe(true)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/migrate.test.ts:execution_suite:block"]

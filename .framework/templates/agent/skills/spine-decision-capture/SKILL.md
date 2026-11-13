@@ -64,6 +64,11 @@ Context · Decision · Alternatives rejected · Consequences
   claims on explicit `Unverified:` lines.
 - `supersedes` never targets a package-owned record.
 - Never append correction notes — supersede the record instead.
+- A `proposed` record is context, not authority — never cite it as the
+  reason a design is correct.
+- A `proposed` record fails the release gate unless the same dir's
+  `exceptions.yaml` approves it for exactly that release. Exceptions are
+  human-approved only and expire on version bump.
 
 ## Challenging a record
 

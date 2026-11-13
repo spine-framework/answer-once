@@ -53,3 +53,6 @@ templates/project/
 custom/apps/answer-once/installer/migrations/
 custom/npm/create-answer-once/LICENSE.md
 # --- monorepo-only: end ---
+
+# Stage 2 db-fixtures scratch (docker supabase stack, baseline archives)
+.fixtures/

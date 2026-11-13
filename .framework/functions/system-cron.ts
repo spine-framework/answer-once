@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/system-cron.ts"]
 /**
  * @module   system-cron
  * @audience both
@@ -28,7 +27,6 @@ import { adminDb } from './_shared/db'
 import { emitAudit } from './_shared/audit'
 import { runPipeline, sweepStaleExecutions } from './_shared/pipeline-runner'
 import { retryPendingDeliveries } from './_shared/retry-deliveries'
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:module_header:module_header"]
 
 
 
@@ -46,7 +44,6 @@ import { retryPendingDeliveries } from './_shared/retry-deliveries'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:SCHEDULER_API_KEY:constant" type="constant" identity="SCHEDULER_API_KEY" parent="~/.framework/functions/system-cron.ts"]
 /**
  * SCHEDULER_API_KEY retrieves the API key for the scheduler from the environment variables to ensure that the application can access the necessary credentials for scheduling tasks.
  *
@@ -55,7 +52,6 @@ import { retryPendingDeliveries } from './_shared/retry-deliveries'
  * @cil-generated
  */
 const SCHEDULER_API_KEY: string | undefined = (globalThis as any).process?.env?.SCHEDULER_API_KEY || (globalThis as any).Deno?.env?.get?.('SCHEDULER_API_KEY')
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:SCHEDULER_API_KEY:constant"]
 
 
 
@@ -78,7 +74,6 @@ const SCHEDULER_API_KEY: string | undefined = (globalThis as any).process?.env?.
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/system-cron.ts"]
 /**
  * The handler processes scheduled tasks by validating their execution conditions and executing them if due. It ensures proper authentication and logs unauthorized access attempts.
  *
@@ -422,7 +417,6 @@ export const handler = createHandler(async (ctx: RequestContext) => {
     }
   }
 })
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:handler:constant"]
 
 
 
@@ -451,7 +445,6 @@ export const handler = createHandler(async (ctx: RequestContext) => {
  * @outputSpec  Promise<any> — resolves to the result of the executed action handler.
  * @throws      Error — Custom handlers not yet implemented: <handlerName>
 Error — Unknown handler module: <handlerModule>
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeAction:function" type="function" identity="executeAction" parent="~/.framework/functions/system-cron.ts"]
  * @sideEffects none
  * @stability   internal
  * @calls       executeFunctionHandler, executeIntegrationHandler
@@ -484,7 +477,6 @@ async function executeAction(
       throw new Error(`Unknown handler module: ${handlerModule}`)
   }
 }
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:executeAction:function"]
 
 
 
@@ -501,7 +493,6 @@ async function executeAction(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeFunctionHandler:function" type="function" identity="executeFunctionHandler" parent="~/.framework/functions/system-cron.ts"]
 /**
  * Executes a specified function handler based on the provided handler name and configuration. This module facilitates various operations such as sending emails, generating reports, notifying watchers, and running pipelines.
  *
@@ -564,7 +555,6 @@ async function executeFunctionHandler(
   
   return await handler(ctx, config)
 }
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:executeFunctionHandler:function"]
 
 
 
@@ -581,7 +571,6 @@ async function executeFunctionHandler(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:executeIntegrationHandler:function" type="function" identity="executeIntegrationHandler" parent="~/.framework/functions/system-cron.ts"]
 /**
  * Executes an integration handler based on the provided handler name and configuration. This function facilitates the execution of various integration tasks within the system.
  *
@@ -602,7 +591,6 @@ async function executeIntegrationHandler(
   console.log(`[${ctx.requestId}] Integration handler: ${handlerName}`, config)
   return { executed: true, handler: handlerName }
 }
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:executeIntegrationHandler:function"]
 
 
 
@@ -619,7 +607,6 @@ async function executeIntegrationHandler(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:evaluateThresholds:function" type="function" identity="evaluateThresholds" parent="~/.framework/functions/system-cron.ts"]
 /**
  * Evaluates active thresholds for various metrics to determine if they have been breached, potentially triggering associated pipelines. This function is essential for monitoring system performance and alerting based on predefined criteria.
  *
@@ -759,7 +746,6 @@ async function evaluateThresholds(ctx: RequestContext): Promise<Array<{threshold
     return results
   }
 }
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:evaluateThresholds:function"]
 
 
 
@@ -776,7 +762,6 @@ async function evaluateThresholds(ctx: RequestContext): Promise<Array<{threshold
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/system-cron.ts:cleanupOldLogs:function" type="function" identity="cleanupOldLogs" parent="~/.framework/functions/system-cron.ts"]
 /**
  * Cleans up old log records that are older than a specified retention period to maintain the database by removing unnecessary log entries.
  *
@@ -808,7 +793,6 @@ async function cleanupOldLogs(): Promise<number> {
     return 0
   }
 }
-// CIL[END stable_id="~/.framework/functions/system-cron.ts:cleanupOldLogs:function"]
 
 
 

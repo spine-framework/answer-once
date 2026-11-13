@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Module imports and exports for the item list view UI components"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides the component library entry point, declaring dependencies and exporting ItemListView, ItemListPage, and their prop interfaces"]
-// CIL[DOC-CONTEXT module=".framework/src/components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="module imports and named exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, type definitions, DataTable, ItemCard, Badge, Button, icons, and date formatting utilities" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="ui developers"]
 
 
 
@@ -28,21 +19,6 @@ import { Button } from './button'
 import { Squares2X2Icon, List, Plus } from 'lucide-react';
 import { formatDateTime } from '../../lib/utils'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Module imports and exports for the item list view UI components'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListViewProps:interface" type="interface" identity="ItemListViewProps" parent="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Props contract for the ItemListView component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the shape of input properties accepted by ItemListView including items, callbacks, and display options"]
-// CIL[DOC-CONTEXT module=".framework/src/components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/ItemListView.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="ItemListViewProps TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Type-only interface describing props for item list view rendering" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface ItemListViewProps {
   items: (Item & { item_type: ItemType })[]
   loading?: boolean
@@ -56,22 +32,7 @@ interface ItemListViewProps {
   showCreateButton?: boolean
   createButtonText?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Props contract for the ItemListView component'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListViewProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListView:component" type="component" identity="ItemListView" parent="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render an interactive item list with grid/table toggle and actions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Displays items in a grid or data table, computes unique item type filters, formats dates, and wires edit/view/create handlers"]
-// CIL[DOC-CONTEXT module=".framework/src/components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/ItemListView.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="ItemListViewProps: items, loading, onEdit, onDelete, onView, onCreate, searchable, filterable, emptyMessage, showCreateButton, createButtonText" outputs="JSX element with header, view toggle, create button, and conditional grid/table content" errors="none" side_effects="setViewMode updates local React state"]
-// CIL[DOC-MICRO logic_summary="Builds a type map from item_type values for filtering, derives a primary text/textarea display field with a name fallback, renders view mode buttons, and chooses ItemGrid or DataTable" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ItemListView({
   items,
   loading = false,
@@ -244,22 +205,7 @@ export function ItemListView({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render an interactive item list with grid/table toggle and actions'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListView:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListPageProps:interface" type="interface" identity="ItemListPageProps" parent="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Props contract for the ItemListPage page-level wrapper"]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines page wrapper props that extend ItemListViewProps with a title and description"]
-// CIL[DOC-CONTEXT module=".framework/src/components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/ItemListView.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="ItemListPageProps TypeScript interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Type-only interface extending ItemListViewProps with title and description fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface ItemListPageProps {
   items: (Item & { item_type: ItemType })[]
   loading?: boolean
@@ -275,22 +221,7 @@ interface ItemListPageProps {
   title?: string
   description?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Props contract for the ItemListPage page-level wrapper'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListPageProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListPage:component" type="component" identity="ItemListPage" parent="~/.framework/src/components/ui/ItemListView.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Page-level wrapper that renders a titled item list page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provides a page header with title and description and delegates the list rendering to ItemListView"]
-// CIL[DOC-CONTEXT module=".framework/src/components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx,.framework/src/components/ui/ItemListView.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/lib/utils.ts,.framework/src/types/types.ts"]
-// CIL[DOC-CONTRACT inputs="ItemListPageProps: all ItemListViewProps plus title and description" outputs="JSX page layout containing a header and an ItemListView" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders a page header and passes all props through to ItemListView" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function ItemListPage({
   items,
   loading = false,
@@ -331,10 +262,3 @@ export function ItemListPage({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Page-level wrapper that renders a titled item list page'; No verified external callers; imports: .framework/src/types/types.ts,.framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/ItemCard.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/ItemListView.tsx:ItemListPage:component"]

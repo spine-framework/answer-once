@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
 /**
  * @module   RolesPage
  * @audience both
@@ -39,7 +38,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 import { formatDateTime } from '../../lib/utils'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
-// CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:module_header:module_header"]
 
 
 
@@ -57,7 +55,6 @@ import { apiFetch } from '../../lib/api'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:Role:interface" type="interface" identity="Role" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
 /**
  * The Role interface defines the structure of a role object used in the admin panel for managing user roles and permissions. It encapsulates essential attributes such as identification, status, and metadata related to roles within the application.
  *
@@ -78,7 +75,6 @@ interface Role {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:Role:interface"]
 
 
 
@@ -95,7 +91,6 @@ interface Role {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/RolesPage.tsx:RolesPage:component" type="component" identity="RolesPage" parent="~/.framework/src/pages/admin/RolesPage.tsx"]
 /**
  * The RolesPage component manages the display and filtering of user roles in the admin interface. It provides functionality for searching, sorting, and navigating to role details.
  *
@@ -362,7 +357,6 @@ export function RolesPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/RolesPage.tsx:RolesPage:component"]
 
 
 

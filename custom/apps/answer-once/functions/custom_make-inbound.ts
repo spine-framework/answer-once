@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:adapt:function" type="function" identity="adapt" parent="~/custom/apps/answer-once/functions/custom_make-inbound.ts"]
 /**
  * @module   custom_make-inbound
  * @responsibility Inbound adapter for the 'make' integration — transforms a
@@ -41,7 +40,6 @@ interface InboundAdapterContext {
   logger: { info: (msg: string, meta?: any) => void; warn: (msg: string, meta?: any) => void; error: (msg: string, meta?: any) => void }
 }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:AdapterResult:interface" type="interface" identity="AdapterResult" parent="~/custom/apps/answer-once/functions/custom_make-inbound.ts"]
 interface AdapterResult {
   type_slug: string
   data: Record<string, any>
@@ -51,9 +49,7 @@ interface AdapterResult {
   error?: string
   retryable?: boolean
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:AdapterResult:interface"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:adapt:function" type="function" identity="adapt" parent="~/custom/apps/answer-once/functions/custom_make-inbound.ts"]
 export async function adapt(payload: any, ctx: InboundAdapterContext): Promise<AdapterResult> {
   const message =
     payload?.message ?? payload?.description ?? payload?.body ?? payload?.text ?? ''
@@ -244,5 +240,3 @@ export async function adapt(payload: any, ctx: InboundAdapterContext): Promise<A
     external_id: externalId,
   }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:adapt:function"]
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_make-inbound.ts:adapt:function"]

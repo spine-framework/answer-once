@@ -88,7 +88,10 @@ describe('kbSearch — sources filter and stable_id lookup', () => {
     expect(inCalls.find(([f]) => f === 'data->>stable_id')).toBeUndefined()
   })
 
-  it('uses the data->>stable_id lookup for cil_chunk matches when sources includes code', async () => {
+  it('keeps retired cil_chunk vectors invisible when sources includes code', async () => {
+    // CIL retirement (migration 079) preserves cil_chunk rows non-destructively,
+    // but no app can declare a `knowledge.cil` envelope anymore — so no scope
+    // grants them and they must not surface through the search API.
     vi.mocked(adminDb.rpc).mockResolvedValue({
       data: [
         { document_id: SID, similarity: 0.9, content: 'code chunk', metadata: { item_type: 'cil_chunk', vector_type: 'semantic', project_id: 'proj-x' }, account_id: 'sys-acct' },
@@ -107,13 +110,7 @@ describe('kbSearch — sources filter and stable_id lookup', () => {
 
     const res = await kbSearch(makeCtx(), { query: 'design schema', sources: ['code'] })
 
-    expect(inCalls).toContainEqual(['data->>stable_id', [SID]])
-    const idCalls = inCalls.filter(([f]) => f === 'id')
-    for (const [, vals] of idCalls) {
-      expect(vals).not.toContain(SID)
-    }
-    expect(res.results).toHaveLength(1)
-    expect(res.results[0].document_id).toBe(SID)
-    expect(res.results[0].source).toBe('code')
+    expect(res.results).toHaveLength(0)
+    expect(inCalls.find(([f]) => f === 'data->>stable_id')).toBeUndefined()
   })
 })

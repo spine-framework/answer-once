@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/observability.ts"]
 /**
  * @module   observability
  * @audience both
@@ -34,7 +33,6 @@ import { createHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { isSystemAdmin } from './_shared/principal'
 import { resolveTypeId } from './_shared/resolve-ids'
-// CIL[END stable_id="~/.framework/functions/observability.ts:module_header:module_header"]
 
 
 
@@ -50,7 +48,6 @@ import { resolveTypeId } from './_shared/resolve-ids'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:floorBucket:function" type="function" identity="floorBucket" parent="~/.framework/functions/observability.ts"]
 /**
  * The floorBucket function normalizes a given date to the start of a specified time bucket, such as an hour or day, facilitating data aggregation based on time intervals.
  *
@@ -70,7 +67,6 @@ function floorBucket(date: Date, bucket: string): Date {
   if (bucket === 'day') d.setHours(0)
   return d
 }
-// CIL[END stable_id="~/.framework/functions/observability.ts:floorBucket:function"]
 
 
 
@@ -87,7 +83,6 @@ function floorBucket(date: Date, bucket: string): Date {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getEventVolume:constant" type="constant" identity="getEventVolume" parent="~/.framework/functions/observability.ts"]
 /**
  * Retrieves the volume of events logged within a specified date range, grouped by time buckets. This function is essential for analyzing event frequency over time.
  *
@@ -133,7 +128,6 @@ export const getEventVolume = createHandler(async (ctx, body) => {
     .map(([bucket, count]) => ({ bucket, count }))
     .sort((a, b) => new Date(a.bucket).getTime() - new Date(b.bucket).getTime())
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getEventVolume:constant"]
 
 
 
@@ -149,7 +143,6 @@ export const getEventVolume = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getErrorRate:constant" type="constant" identity="getErrorRate" parent="~/.framework/functions/observability.ts"]
 /**
  * Calculates the error rate of logs within a specified date range, returning the total number of logs, the number of errors, and the error rate. This function is essential for monitoring and observability purposes.
  *
@@ -194,7 +187,6 @@ export const getErrorRate = createHandler(async (ctx, body) => {
     rate: total > 0 ? errors / total : 0,
   }
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getErrorRate:constant"]
 
 
 
@@ -210,7 +202,6 @@ export const getErrorRate = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:percentile:function" type="function" identity="percentile" parent="~/.framework/functions/observability.ts"]
 /**
  * Calculates the p-th percentile of a sorted array of numbers for statistical analysis and data observability. This function is essential for deriving insights from numerical datasets.
  *
@@ -230,7 +221,6 @@ function percentile(sorted: number[], p: number): number {
   const weight = idx - lower
   return sorted[lower] * (1 - weight) + sorted[upper] * weight
 }
-// CIL[END stable_id="~/.framework/functions/observability.ts:percentile:function"]
 
 
 
@@ -247,7 +237,6 @@ function percentile(sorted: number[], p: number): number {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getLatencyPercentiles:constant" type="constant" identity="getLatencyPercentiles" parent="~/.framework/functions/observability.ts"]
 /**
  * Calculates latency percentiles for logs within a specified date range while ensuring that only authorized users can access the data. It also handles errors related to missing parameters.
  *
@@ -297,7 +286,6 @@ export const getLatencyPercentiles = createHandler(async (ctx, body) => {
     p99: percentile(values, 99),
   }
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getLatencyPercentiles:constant"]
 
 
 
@@ -313,7 +301,6 @@ export const getLatencyPercentiles = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getPipelineStats:constant" type="constant" identity="getPipelineStats" parent="~/.framework/functions/observability.ts"]
 /**
  * Fetches pipeline execution statistics based on a date range and account context, aggregating success and failure counts along with average execution duration for each pipeline.
  *
@@ -372,7 +359,6 @@ export const getPipelineStats = createHandler(async (ctx, body) => {
     avg_duration_ms: s.duration_count > 0 ? Math.round(s.total_duration_ms / s.duration_count) : 0,
   }))
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getPipelineStats:constant"]
 
 
 
@@ -388,7 +374,6 @@ export const getPipelineStats = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getTopActors:constant" type="constant" identity="getTopActors" parent="~/.framework/functions/observability.ts"]
 /**
  * Retrieves the top actors based on event counts within a specified date range while ensuring the user has the necessary account context and permissions. This function is essential for monitoring user activity in the system.
  *
@@ -435,7 +420,6 @@ export const getTopActors = createHandler(async (ctx, body) => {
     .sort((a, b) => b.event_count - a.event_count)
     .slice(0, parseInt(limit.toString()) || 5)
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getTopActors:constant"]
 
 
 
@@ -451,7 +435,6 @@ export const getTopActors = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:cleanupOldLogs:constant" type="constant" identity="cleanupOldLogs" parent="~/.framework/functions/observability.ts"]
 /**
  * Cleans up old logs from the database based on a specified retention period. It ensures that only system administrators can perform this action.
  *
@@ -476,7 +459,6 @@ export const cleanupOldLogs = createHandler(async (ctx, body) => {
   if (err) throw err
   return { deleted_count: data?.[0]?.deleted_count || 0 }
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:cleanupOldLogs:constant"]
 
 
 
@@ -492,7 +474,6 @@ export const cleanupOldLogs = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:getAiSupportMetrics:constant" type="constant" identity="getAiSupportMetrics" parent="~/.framework/functions/observability.ts"]
 /**
  * Retrieves AI support metrics for a specific account over a defined time period, aggregating feedback and resolution data to provide insights into AI performance and user satisfaction.
  *
@@ -572,7 +553,6 @@ export const getAiSupportMetrics = createHandler(async (ctx, _body) => {
     knowledge_gaps:     knowledgeGaps,
   }
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:getAiSupportMetrics:constant"]
 
 
 
@@ -588,7 +568,6 @@ export const getAiSupportMetrics = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/observability.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/observability.ts"]
 /**
  * The handler processes incoming requests based on the specified action in the query parameters, executing the corresponding function for each action. It provides a centralized point for handling various observability metrics and actions.
  *
@@ -620,7 +599,6 @@ export const handler = createHandler(async (ctx, body) => {
       throw new Error(`Unknown action: ${action}. Valid actions: event_volume, error_rate, latency_percentiles, pipeline_stats, top_actors, ai_support_metrics, cleanup`)
   }
 })
-// CIL[END stable_id="~/.framework/functions/observability.ts:handler:constant"]
 
 
 

@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/notify.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for _shared/notify.ts resolveNotificationRecipients"]
-// CIL[DOC-RESPONSIBILITY responsibility="Assert role:<slug> entries resolve to account-scoped people ids, UUIDs pass through, and malformed/unknown entries warn and are skipped"]
-// CIL[DOC-CONTEXT module="tests/unit/notify" layer="test-unit" related_files=".framework/functions/_shared/notify.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts"]
-// CIL[DOC-CONTRACT inputs="mocked adminDb people queries" outputs="expect assertions on resolved id lists and console.warn" errors="none" side_effects="registers vi.mock factories"]
-// CIL[DOC-MICRO logic_summary="Mocks adminDb.from('people') with a thenable supabase-style chain so the awaited .eq('role.slug', ...) call resolves fixture rows" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test maintainers"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { CoreContext } from '../../functions/_shared/middleware.ts'
 
@@ -16,13 +7,7 @@ vi.mock('../../functions/_shared/db.ts', () => ({
 
 import { adminDb } from '../../functions/_shared/db.ts'
 import { resolveNotificationRecipients } from '../../functions/_shared/notify.ts'
-// CIL[END stable_id="~/.framework/tests/unit/notify.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/notify.test.ts:makeCtx:function" type="function" identity="makeCtx" parent="none"]
-// CIL[DOC-MACRO purpose="Create a test CoreContext scoped to acct-test"]
-// CIL[DOC-CONTRACT inputs="overrides: Partial<CoreContext>" outputs="CoreContext object" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function makeCtx(overrides: Partial<CoreContext> = {}): CoreContext {
   return {
     principal: {
@@ -35,14 +20,7 @@ function makeCtx(overrides: Partial<CoreContext> = {}): CoreContext {
     ...overrides
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/notify.test.ts:makeCtx:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/notify.test.ts:mockPeople:function" type="function" identity="mockPeople" parent="none"]
-// CIL[DOC-MACRO purpose="Mock adminDb.from('people') to resolve fixture rows from the awaited terminal .eq"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return a supabase-style thenable query builder for people role-join lookups"]
-// CIL[DOC-CONTRACT inputs="rows: any[] | null, error?: any" outputs="configured adminDb.from mock" errors="none" side_effects="Mocks adminDb.from"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const UUID_A = '11111111-1111-4111-8111-111111111111'
 const UUID_B = '22222222-2222-4222-8222-222222222222'
 
@@ -66,14 +44,7 @@ function mockPeople(result: { data: any[] | null; error?: any }) {
     } as any
   })
 }
-// CIL[END stable_id="~/.framework/tests/unit/notify.test.ts:mockPeople:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/notify.test.ts:describe_resolveNotificationRecipients:block" type="block" identity="describe_resolveNotificationRecipients" parent="none"]
-// CIL[DOC-MACRO purpose="resolveNotificationRecipients behavior suite"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify role slug joins, UUID passthrough, warn-and-skip semantics, and dedupe"]
-// CIL[DOC-CONTRACT inputs="recipient entry lists" outputs="resolved people.id lists" errors="none" side_effects="console.warn on skipped entries"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('resolveNotificationRecipients', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -133,4 +104,3 @@ describe('resolveNotificationRecipients', () => {
     expect(await resolveNotificationRecipients(makeCtx(), undefined as any)).toEqual([])
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/notify.test.ts:describe_resolveNotificationRecipients:block"]

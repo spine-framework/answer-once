@@ -49,3 +49,14 @@ verbatim.
   added to `actions` just to make it readable.
 - Tenant opt-in via `ao_directive_subscription` gates shared directives
   above the `annotate` tier.
+
+## Amendment (2026-11, CIL marker triage — added evidence, decision unchanged)
+
+The steady-state delivery path for shared actions is the
+`ao_article_directive` **link**: when `finalizeAnalysis` produces both a KB
+candidate and a directive candidate for one resolution, it links
+article→directive. A semantically-matched published article then carries
+its directive into agent context — this is how shared/platform articles
+gain tenant-executable actions. Standalone directives surface only via
+recall (`matched_directive_ids`). Source: `custom_answeronce-journey.ts`
+(finalizeAnalysis, ~L557), `agent-runner.ts` directive-surface path.

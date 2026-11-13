@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TimerDetailPage.tsx"]
 /**
  * @module   TimerDetailPage
  * @audience internal
@@ -44,7 +43,6 @@ import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { Badge } from '../../components/ui/badge'
 import { ArrowLeft, Clock, AlertCircle } from 'lucide-react'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -62,7 +60,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:Timer:interface" type="interface" identity="Timer" parent="~/.framework/src/pages/admin/TimerDetailPage.tsx"]
 /**
  * The Timer interface defines the structure for timer objects used in the application, encapsulating properties related to timer configuration, state, and metadata. It serves as a blueprint for managing timers effectively within the system.
  *
@@ -83,7 +80,6 @@ interface Timer {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:Timer:interface"]
 
 
 
@@ -105,7 +101,6 @@ interface Timer {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:TIMER_TYPES:constant" type="constant" identity="TIMER_TYPES" parent="~/.framework/src/pages/admin/TimerDetailPage.tsx"]
 /**
  * TIMER_TYPES defines a set of timer configurations available in the application, providing options for interval-based, cron-based, and one-time timers. This constant is used to facilitate the selection of timer types in the user interface.
  *
@@ -118,7 +113,6 @@ const TIMER_TYPES = [
   { value: 'cron', label: 'Cron Expression' },
   { value: 'once', label: 'One-time' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:TIMER_TYPES:constant"]
 
 
 
@@ -138,7 +132,6 @@ const TIMER_TYPES = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:TimerDetailPage:component" type="component" identity="TimerDetailPage" parent="~/.framework/src/pages/admin/TimerDetailPage.tsx"]
 /**
  * The TimerDetailPage component manages the creation and editing of timer configurations in an admin interface. It fetches existing timer data for editing or initializes a new timer for creation.
  *
@@ -278,7 +271,6 @@ export function TimerDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TimerDetailPage.tsx:TimerDetailPage:component"]
 
 
 

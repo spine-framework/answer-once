@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { execSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -9,25 +8,15 @@ import {
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { guardUpdateApp, diffTrees } from '../../cli/lib/update-app-guard.ts'
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:copy_entries:constant" type="constant" identity="COPY_ENTRIES" parent="none"]
 const COPY_ENTRIES = ['index.tsx', 'manifest.json', 'pages', 'docs', 'decisions', 'LICENSE.md'] as const
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:copy_entries:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:root:constant" type="constant" identity="root" parent="none"]
 let root: string
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:tarballpath:constant" type="constant" identity="tarballPath" parent="none"]
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:root:constant"]
 let tarballPath: string
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:logs:constant" type="constant" identity="logs" parent="none"]
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:tarballpath:constant"]
 let logs: string[]
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:logs:constant"]
 
 /** Build a temp project root containing a pristine package tarball whose
  *  contents mirror custom/apps/test-app, plus a package-lock.json entry. */
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:setupproject:function" type="function" identity="setupProject" parent="none"]
 function setupProject(opts: {
   lockEntry?: Record<string, unknown> | null
   modifyFile?: string
@@ -73,9 +62,7 @@ function setupProject(opts: {
   }))
   return appDest
 }
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:setupproject:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:makedeps:function" type="function" identity="makeDeps" parent="none"]
 function makeDeps(captured: string[]) {
   return {
     exec: (cmd: string, o: { cwd: string }) => {
@@ -93,9 +80,7 @@ function makeDeps(captured: string[]) {
     now: () => new Date('2026-01-01T00:00:00Z'),
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:makedeps:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/update-app-guard.test.ts:run:function" type="function" identity="run" parent="none"]
 function run(opts: { force?: boolean; captured: string[]; appDest: string }) {
   return guardUpdateApp({
     projectRoot: root,
@@ -107,7 +92,6 @@ function run(opts: { force?: boolean; captured: string[]; appDest: string }) {
     deps: makeDeps(opts.captured),
   })
 }
-// CIL[END stable_id="~/.framework/tests/unit/update-app-guard.test.ts:run:function"]
 
 beforeEach(() => { logs = [] })
 afterEach(() => { rmSync(root, { recursive: true, force: true }) })

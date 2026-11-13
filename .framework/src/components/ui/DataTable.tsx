@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/DataTable.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Provides a reusable DataTable UI component with sorting, searching, filtering, and pagination controls"]
-// CIL[DOC-RESPONSIBILITY responsibility="Export the DataTable component and supporting column/props interfaces for use across the UI layer"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DataTable component and TypeScript interfaces" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains default imports, type declarations, and the DataTable component implementation" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer|ai"]
 
 
 
@@ -32,64 +23,19 @@ import { Badge } from './badge'
 import { Button } from './button'
 import { Search, Filter } from 'lucide-react'
 import { cn } from '../../lib/utils'
-// CIL[DOC-VECTOR type="context" content="purpose='Provides a reusable DataTable UI component with sorting, searching, filtering, and pagination controls'; No verified external callers; imports: .framework/src/components/ui/table.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/DataTable.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/DataTable.tsx:TableColumn:interface" type="interface" identity="TableColumn" parent="none"]
-// CIL[DOC-MACRO purpose="Define the base column configuration contract for a generic DataTable"]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe a single table column with key, title, optional renderer and sort flag"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="TableColumn<T> type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Base generic interface for a table column" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface TableColumn<T> {
   key: keyof T | string
   title: string
   render?: (row: T) => React.ReactNode
   sortable?: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the base column configuration contract for a generic DataTable'; No verified external callers; imports: .framework/src/components/ui/table.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/DataTable.tsx:TableColumn:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTableColumn:interface" type="interface" identity="DataTableColumn" parent="none"]
-// CIL[DOC-MACRO purpose="Extend TableColumn with filter-specific properties for the DataTable"]
-// CIL[DOC-RESPONSIBILITY responsibility="Add filterable flag and filter options to a table column"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DataTableColumn<T> type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="DataTable column interface extending TableColumn with filtering support" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface DataTableColumn<T> extends TableColumn<T> {
   filterable?: boolean
   filterOptions?: Array<{ value: string; label: string }>
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Extend TableColumn with filter-specific properties for the DataTable'; No verified external callers; imports: .framework/src/components/ui/table.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTableColumn:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTableProps:interface" type="interface" identity="DataTableProps" parent="none"]
-// CIL[DOC-MACRO purpose="Define the prop contract for the DataTable component"]
-// CIL[DOC-RESPONSIBILITY responsibility="List all configurable props including data, columns, pagination, sort, search, filter, and callbacks"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DataTableProps<T> type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Props interface for the DataTable component" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface DataTableProps<T> {
   data: T[]
   columns: DataTableColumn<T>[]
@@ -114,22 +60,7 @@ interface DataTableProps<T> {
   emptyMessage?: string
   className?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the prop contract for the DataTable component'; No verified external callers; imports: .framework/src/components/ui/table.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTableProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTable:component" type="component" identity="DataTable" parent="none"]
-// CIL[DOC-MACRO purpose="Render a searchable, filterable, sortable data table with pagination"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display tabular data, manage search/filter UI state, and call provided handlers"]
-// CIL[DOC-CONTEXT module="components/ui" layer="ui" related_files=".framework/src/components/ui/DataTable.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/table.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="data: T[], columns: DataTableColumn<T>[], loading: boolean, searchable: boolean, filterable: boolean, pagination, sort/search/filter callbacks" outputs="Rendered table UI with search, filters, active filter badges and pagination controls" errors="none" side_effects="Calls onSearch, onFilter, onSort, onRowClick callbacks and updates local useState"]
-// CIL[DOC-MICRO logic_summary="Uses React state for search query, filter map and filter visibility; renders optional search input, filter dropdowns, active filter badges, table, and pagination" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function DataTable<T extends Record<string, any>>({
   data,
   columns,
@@ -375,11 +306,4 @@ export function DataTable<T extends Record<string, any>>({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a searchable, filterable, sortable data table with pagination'; No verified external callers; imports: .framework/src/components/ui/table.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/DataTable.tsx:DataTable:component"]
 

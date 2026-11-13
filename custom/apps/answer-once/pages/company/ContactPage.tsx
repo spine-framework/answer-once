@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/ContactPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company contact detail — view/edit a person record and their ticket history"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show a contact (person) with editable full_name/email/phone, their account link, role, status, and tickets they filed; support edits via admin-data PATCH on the people entity"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/ContactPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/pages/company/AccountPage.tsx, custom/apps/answer-once/hooks/useDirectory.ts"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="not-found and load errors render inline" side_effects="GET /api/admin-data (people, items); PATCH /api/admin-data?entity=people"]
-// CIL[DOC-MICRO logic_summary="Fetches the person by id plus their account and tickets (created_by filter); edit mode PATCHes full_name/email/phone/status — system fields declared on the person type" notable_decisions="tickets list uses the generic created_by column filter, matching how accounts list their tickets"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -16,7 +7,6 @@ import { Button } from '@core/components/ui/button'
 import { Input } from '@core/components/ui/input'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { ArrowLeft, Pencil, Check, X, Ticket, Building2 } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/ContactPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

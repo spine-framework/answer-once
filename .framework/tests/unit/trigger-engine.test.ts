@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Test setup and imports for trigger engine tests"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure test environment and mock dependencies"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="configured test mocks" errors="none" side_effects="Mocks database, audit, and pipeline runner"]
-// CIL[DOC-MICRO logic_summary="Imports vitest, mocks db/audit/pipeline, imports trigger engine" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { CoreContext } from '../../functions/_shared/middleware.ts'
 
@@ -32,22 +23,7 @@ const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: async
 vi.stubGlobal('fetch', mockFetch)
 vi.stubEnv('INTERNAL_INVOKE_SECRET', 'test-secret')
 vi.stubEnv('SITE_URL', 'http://test.local')
-// CIL[DOC-VECTOR type="context" content="purpose='Test setup and imports for trigger engine tests'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:makeCtx:function" type="function" identity="makeCtx" parent="none"]
-// CIL[DOC-MACRO purpose="Create test context with system principal"]
-// CIL[DOC-RESPONSIBILITY responsibility="Generate test context objects"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="CoreContext object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Creates context with system machine principal and test data" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function makeCtx(): CoreContext {
   return {
     principal: {
@@ -59,22 +35,7 @@ function makeCtx(): CoreContext {
     requestId: 'req-test'
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Create test context with system principal'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:makeCtx:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:makeTrigger:function" type="function" identity="makeTrigger" parent="none"]
-// CIL[DOC-MACRO purpose="Create test trigger with default values"]
-// CIL[DOC-RESPONSIBILITY responsibility="Generate test trigger objects"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: Record<string, any>" outputs="trigger object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Returns default trigger with overrides applied" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function makeTrigger(overrides: Record<string, any> = {}) {
   return {
     id: 'trigger-1',
@@ -86,22 +47,7 @@ function makeTrigger(overrides: Record<string, any> = {}) {
     ...overrides
   }
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Create test trigger with default values'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:makeTrigger:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:mockDbTriggers:function" type="function" identity="mockDbTriggers" parent="none"]
-// CIL[DOC-MACRO purpose="Mock database to return trigger list"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure database mock for trigger queries"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="triggers: any[]" outputs="mocked adminDb.from" errors="none" side_effects="Mocks adminDb.from"]
-// CIL[DOC-MICRO logic_summary="Sets up adminDb.from mock to return provided triggers" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mockDbTriggers(triggers: any[]) {
   const chain = {
     select: vi.fn().mockReturnThis(),
@@ -110,22 +56,7 @@ function mockDbTriggers(triggers: any[]) {
   }
   vi.mocked(adminDb.from).mockReturnValue(chain as any)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mock database to return trigger list'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:mockDbTriggers:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:mockDbTriggersWithUpdate:function" type="function" identity="mockDbTriggersWithUpdate" parent="none"]
-// CIL[DOC-MACRO purpose="Mock database with trigger query and stat updates"]
-// CIL[DOC-RESPONSIBILITY responsibility="Configure database mock for trigger operations"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="triggers: any[]" outputs="mocked adminDb.from and adminDb.rpc" errors="none" side_effects="Mocks adminDb.from and adminDb.rpc"]
-// CIL[DOC-MICRO logic_summary="Sets up mocks for trigger query and stat update operations" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function mockDbTriggersWithUpdate(triggers: any[], execId = 'exec-mock-id') {
   const updateChain = {
     update: vi.fn().mockReturnThis(),
@@ -151,22 +82,7 @@ function mockDbTriggersWithUpdate(triggers: any[], execId = 'exec-mock-id') {
   })
   vi.mocked(adminDb.rpc).mockResolvedValue({ data: 1, error: null } as any)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Mock database with trigger query and stat updates'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:mockDbTriggersWithUpdate:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_checkAndFireTriggers:block" type="block" identity="describe_checkAndFireTriggers" parent="none"]
-// CIL[DOC-MACRO purpose="Test checkAndFireTriggers core functionality"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify trigger execution and error handling"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests trigger-engine.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests trigger matching, pipeline execution, audit emission, and error recovery" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('checkAndFireTriggers', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -345,22 +261,7 @@ describe('checkAndFireTriggers', () => {
     expect(init.signal.aborted).toBe(false)
   })
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Test checkAndFireTriggers core functionality'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_checkAndFireTriggers:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_triggerConditionFiltering:block" type="block" identity="describe_triggerConditionFiltering" parent="none"]
-// CIL[DOC-MACRO purpose="Test trigger condition filtering logic"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify trigger condition evaluation"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests trigger-engine.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests entity_type, type_slug, and filter condition matching" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('trigger condition filtering', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -492,7 +393,7 @@ describe('trigger condition filtering', () => {
     expect(mockFetch).toHaveBeenCalledOnce()
   })
 
-  // CIL[DOC-NOTE type="behavior" content="The demo seed filter { data->>'ca_kb_candidate': { $eq: true } } relies on strict boolean equality — the jsonb value is a real boolean, so a string 'true' operand would never fire."]
+  // The demo seed filter { data->>'ca_kb_candidate': { $eq: true } } relies on strict boolean equality — the jsonb value is a real boolean, so a string 'true' operand would never fire.
   it('matches a boolean $eq against a Postgres-style data->> filter path', async () => {
     const trigger = makeTrigger({
       config: {
@@ -523,22 +424,7 @@ describe('trigger condition filtering', () => {
     expect(mockFetch).not.toHaveBeenCalled()
   })
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Test trigger condition filtering logic'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_triggerConditionFiltering:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_filterOperators:block" type="block" identity="describe_filterOperators" parent="none"]
-// CIL[DOC-MACRO purpose="Test filter operator evaluation logic"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify filter operator implementations"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/audit.ts,.framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/_shared/pipeline-runner.ts,.framework/functions/_shared/trigger-engine.ts,.framework/tests/unit/trigger-engine.test.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests trigger-engine.ts module"]
-// CIL[DOC-MICRO logic_summary="Tests all filter operators: $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $exists" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('filter operators', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -592,21 +478,6 @@ describe('filter operators', () => {
   it('$exists:false — fires when field is null', () => testOp({ $exists: false }, { score: null }, true))
   it('$exists:false — skips when field has value', () => testOp({ $exists: false }, { score: 1 }, false))
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Test filter operator evaluation logic'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/trigger-engine.ts,.framework/functions/_shared/pipeline-runner.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_filterOperators:block"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_fireOnTransition:block" type="block" identity="describe_fireOnTransition" parent="none"]
-// CIL[DOC-MACRO purpose="Test fire_on_transition trigger semantics"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify transition-only triggers fire once when a record enters the matching state and skip repeat updates"]
-// CIL[DOC-CONTEXT module="tests/unit/trigger-engine" layer="test-unit" related_files=".framework/functions/_shared/trigger-engine.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="test assertions" errors="none" side_effects="Tests trigger-engine.ts module"]
-// CIL[DOC-MICRO logic_summary="Covers transition-in firing, already-matching skip, missing-previous fallback, non-flagged repeat firing, and fireUpdateTriggers prev passthrough" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.8" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 describe('fire_on_transition triggers', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -697,4 +568,3 @@ describe('fire_on_transition triggers', () => {
     expect(mockFetch).not.toHaveBeenCalled()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/trigger-engine.test.ts:describe_fireOnTransition:block"]

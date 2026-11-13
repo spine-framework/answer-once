@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegratedDashboard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/IntegratedDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Provides the integrated admin dashboard page for monitoring system performance and key metrics."]
-// CIL[DOC-RESPONSIBILITY responsibility="Defines the admin dashboard UI and tabbed sections for overview, analytics, reports, and settings."]
-// CIL[DOC-CONTEXT module="admin" layer="ui" related_files=".framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Top-level admin dashboard page with metric cards, activity feed, quick actions, tabbed content, and settings." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 
 
 
@@ -63,21 +54,6 @@ import {
   Clock
 } from 'lucide-react'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Provides the integrated admin dashboard page for monitoring system performance and key metrics.'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegratedDashboard.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IntegratedDashboard.tsx:IntegratedDashboard:component" type="component" identity="IntegratedDashboard" parent="~/.framework/src/pages/admin/IntegratedDashboard.tsx"]
-// CIL[DOC-MACRO purpose="Renders the IntegratedDashboard component with metrics, tabs, search, and settings."]
-// CIL[DOC-RESPONSIBILITY responsibility="Displays the admin dashboard layout and stateful UI."]
-// CIL[DOC-CONTEXT module="admin" layer="ui" related_files=".framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/pages/admin/IntegratedDashboard.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX dashboard" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Component uses useState for tabs, search, and notifications; renders stat cards, activity list, reports, analytics placeholder, and settings." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export function IntegratedDashboard() {
   const [selectedTab, setSelectedTab] = useState('overview')
@@ -412,10 +388,3 @@ export function IntegratedDashboard() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Renders the IntegratedDashboard component with metrics, tabs, search, and settings.'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/IntegratedDashboard.tsx:IntegratedDashboard:component"]

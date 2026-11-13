@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * @module   Sidebar
  * @audience both
@@ -37,7 +36,6 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useBranding } from '../../hooks/useBranding'
 import { Popover, PopoverTrigger, PopoverContent } from '../ui/popover'
 import { 
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:module_header:module_header"]
   Home, 
   Box, 
   Users, 
@@ -79,7 +77,6 @@ import {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarProps:interface" type="interface" identity="SidebarProps" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * SidebarProps defines the properties required for the Sidebar component, managing its open state and close action. This interface ensures that the Sidebar can be controlled effectively by its parent component.
  *
@@ -91,7 +88,6 @@ interface SidebarProps {
   open: boolean
   onClose: () => void
 }
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarProps:interface"]
 
 
 
@@ -110,7 +106,6 @@ interface SidebarProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:navigation:constant" type="constant" identity="navigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The 'navigation' constant defines the structure of the sidebar navigation items for the application. It provides a consistent way to manage and render navigation links within the sidebar component.
  *
@@ -121,7 +116,6 @@ interface SidebarProps {
 const navigation = [
   { name: 'Dashboard', href: '/spine-framework/admin/configs/types', icon: Home },
 ]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:navigation:constant"]
 
 
 
@@ -142,7 +136,6 @@ const navigation = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsNavigation:constant" type="constant" identity="configsNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The 'configsNavigation' constant defines a structured navigation menu for the admin configuration section of the application. It organizes various configuration items into a list, including dividers for better visual separation.
  *
@@ -167,7 +160,6 @@ const configsNavigation = [
   { name: 'API Keys', href: '/spine-framework/admin/configs/api-keys', icon: Key },
   { name: 'Deliveries', href: '/spine-framework/admin/configs/deliveries', icon: Truck },
 ] as const
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:configsNavigation:constant"]
 
 
 
@@ -188,7 +180,6 @@ const configsNavigation = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilityNavigation:constant" type="constant" identity="observabilityNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The 'observabilityNavigation' constant defines a structured array of navigation items for the observability section of the application. It provides links to various observability features such as Dashboard, Alerts, Executions, and Logs.
  *
@@ -202,7 +193,6 @@ const observabilityNavigation = [
   { name: 'Executions', href: '/spine-framework/admin/observability/executions', icon: FlaskConical },
   { name: 'Logs', href: '/spine-framework/admin/observability/logs', icon: FileText },
 ]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:observabilityNavigation:constant"]
 
 
 
@@ -223,7 +213,6 @@ const observabilityNavigation = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeEntities:constant" type="constant" identity="runtimeEntities" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The constant 'runtimeEntities' defines a list of navigational items for the sidebar in the application. Each item includes a name, a link, and an associated icon for user interface representation.
  *
@@ -236,7 +225,6 @@ const runtimeEntities = [
   { name: 'Accounts', href: '/spine-framework/admin/runtime/accounts', icon: Building2 },
   { name: 'People', href: '/spine-framework/admin/runtime/people', icon: User },
 ]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:runtimeEntities:constant"]
 
 
 
@@ -257,7 +245,6 @@ const runtimeEntities = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbEngineNavigation:constant" type="constant" identity="kbEngineNavigation" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The constant 'kbEngineNavigation' defines a navigation structure for the Knowledge Base section of the application. It provides links to key resources within the admin interface.
  *
@@ -269,7 +256,6 @@ const kbEngineNavigation = [
   { name: 'Knowledge Base', href: '/spine-framework/admin/kb/kb-spine-public', icon: BookOpen },
   { name: 'Embeddings', href: '/spine-framework/admin/kb/embeddings', icon: Cpu },
 ]
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:kbEngineNavigation:constant"]
 
 
 
@@ -288,7 +274,6 @@ const kbEngineNavigation = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:classNames:function" type="function" identity="classNames" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The classNames function constructs a single string from an array of class names, filtering out any falsy values. This utility is useful for dynamically generating class attribute values in JSX components.
  *
@@ -304,7 +289,6 @@ const kbEngineNavigation = [
 function classNames(...classes: (string | false | undefined)[]) {
   return classes.filter(Boolean).join(' ')
 }
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:classNames:function"]
 
 
 
@@ -333,7 +317,6 @@ function classNames(...classes: (string | false | undefined)[]) {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:Sidebar:component" type="component" identity="Sidebar" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * The Sidebar component renders a collapsible sidebar interface that displays branding and navigation options. It provides users with a navigational aid that can be opened and closed as needed.
  *
@@ -353,7 +336,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   return (
     <>
       <div className={classNames(open && 'fixed inset-0 z-40 flex')}> 
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:Sidebar:component"]
         {open && (
           <div className="fixed inset-0 z-40 flex">
             <div 
@@ -401,7 +383,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContentProps:interface" type="interface" identity="SidebarContentProps" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * SidebarContentProps defines the properties for the sidebar content component, specifically handling navigation click events. It allows for optional navigation click functionality to be passed in as a prop.
  *
@@ -412,7 +393,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 interface SidebarContentProps {
   onNavClick?: () => void
 }
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContentProps:interface"]
 
 
 
@@ -430,7 +410,6 @@ interface SidebarContentProps {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContent:component" type="component" identity="SidebarContent" parent="~/.framework/src/components/layout/Sidebar.tsx"]
 /**
  * SidebarContent renders a navigation sidebar that allows users to navigate through different sections of the application and conditionally displays additional configuration options for system administrators.
  *
@@ -491,7 +470,6 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
             {item.name}
           </Link>
         ))}
-// CIL[END stable_id="~/.framework/src/components/layout/Sidebar.tsx:SidebarContent:component"]
       </div>
 
       {isSystemAdmin && (

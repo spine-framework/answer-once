@@ -1,6 +1,5 @@
-// CIL[BEGIN stable_id="~/.framework/functions/adapters/make-outbound.ts:buildrequest:function" type="function" identity="buildRequest" parent="~/.framework/functions/adapters/make-outbound.ts"]
-// CIL[DOC-LEARNING topic="configuration" content="Outbound requires a tenant-scoped integrations row for the calling account carrying config.scenarios.<scenario_key>.url + credentials.api_token (sent as x-make-apikey). If no tenant row exists for ctx.accountId, execute() falls back to the global 'make' integration whose scenarios={} ships empty — surfacing here as 'no scenarios.<key>' rather than a lookup failure. Check webhook_deliveries.integration_id to see which row was used."]
-// CIL[DOC-NOTE type="debugging" content="End-to-end trace for a failed outbound: webhook_deliveries row (status/last_error/integration_id/account_id) then logs events 'integration.outbound.started|succeeded|error|failed_http' keyed by delivery_id."]
+// Outbound requires a tenant-scoped integrations row for the calling account carrying config.scenarios.<scenario_key>.url + credentials.api_token (sent as x-make-apikey). If no tenant row exists for ctx.accountId, execute() falls back to the global 'make' integration whose scenarios={} ships empty — surfacing here as 'no scenarios.<key>' rather than a lookup failure. Check webhook_deliveries.integration_id to see which row was used.
+// End-to-end trace for a failed outbound: webhook_deliveries row (status/last_error/integration_id/account_id) then logs events 'integration.outbound.started|succeeded|error|failed_http' keyed by delivery_id.
 /**
  * @module   make-outbound
  * @responsibility Build the outbound request for the Make.com integration —
@@ -52,4 +51,3 @@ export function buildRequest(record: any, ctx: any) {
     body
   }
 }
-// CIL[END stable_id="~/.framework/functions/adapters/make-outbound.ts:buildrequest:function"]

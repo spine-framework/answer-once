@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/ui/navigation-menu.tsx"]
-// CIL[DOC-MACRO purpose="Declare dependencies and set up the NavigationMenu UI module"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import React, class-variance-authority, Radix primitives, utilities, and icons"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="loads module dependencies"]
-// CIL[DOC-MICRO logic_summary="Imports dependencies used by the NavigationMenu component set" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import * as React from "react"
 import { cva } from "class-variance-authority"
@@ -14,22 +5,7 @@ import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon } from "lucide-react"
-// CIL[DOC-VECTOR type="context" content="purpose='Declare dependencies and set up the NavigationMenu UI module'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenu:function" type="function" identity="navigationmenu" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a top-level navigation menu"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a Radix Root wrapper with an optional viewport"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, viewport, ...props" outputs="JSX navigation menu root" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders NavigationMenuPrimitive.Root, passes className and viewport flag, and conditionally renders the viewport" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenu({
   className,
@@ -54,22 +30,7 @@ function NavigationMenu({
     </NavigationMenuPrimitive.Root>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a top-level navigation menu'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenu:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenulist:function" type="function" identity="navigationmenulist" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a list of navigation menu items"]
-// CIL[DOC-RESPONSIBILITY responsibility="Wrap list items in a horizontally centered flex list"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX menu list" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders NavigationMenuPrimitive.List with flex, list-none, and gap utilities" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuList({
   className,
@@ -86,22 +47,7 @@ function NavigationMenuList({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a list of navigation menu items'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenulist:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuitem:function" type="function" identity="navigationmenuitem" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a single navigation menu item"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a relative-positioned Radix Item container"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX menu item" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders NavigationMenuPrimitive.Item with relative class and props" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuItem({
   className,
@@ -115,42 +61,12 @@ function NavigationMenuItem({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a single navigation menu item'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuitem:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenutriggerstyle:constant" type="constant" identity="navigationmenutriggerstyle" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Provide the shared trigger style variant"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define cva classes for the navigation menu trigger button"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="string class variant" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Calls cva with a long tailwind class string for trigger styling" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 const navigationMenuTriggerStyle = cva(
   "group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-xs/relaxed font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-muted/50 data-popup-open:hover:bg-muted data-open:bg-muted/50 data-open:hover:bg-muted data-open:focus:bg-muted"
 )
-// CIL[DOC-VECTOR type="context" content="purpose='Provide the shared trigger style variant'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenutriggerstyle:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenutrigger:function" type="function" identity="navigationmenutrigger" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a trigger button for a navigation menu item"]
-// CIL[DOC-RESPONSIBILITY responsibility="Combine the trigger style with a chevron icon"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, children, ...props" outputs="JSX trigger" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders Radix Trigger using navigationMenuTriggerStyle and a ChevronDownIcon" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuTrigger({
   className,
@@ -168,22 +84,7 @@ function NavigationMenuTrigger({
     </NavigationMenuPrimitive.Trigger>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a trigger button for a navigation menu item'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenutrigger:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenucontent:function" type="function" identity="navigationmenucontent" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render the dropdown content panel of a navigation menu"]
-// CIL[DOC-RESPONSIBILITY responsibility="Apply motion, position, and viewport-aware popover styles"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX content panel" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders Radix Content with complex data-state and viewport conditional classes" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuContent({
   className,
@@ -200,22 +101,7 @@ function NavigationMenuContent({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the dropdown content panel of a navigation menu'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenucontent:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuviewport:function" type="function" identity="navigationmenuviewport" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render the viewport that positions menu content"]
-// CIL[DOC-RESPONSIBILITY responsibility="Center and contain the Radix Viewport"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX viewport" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Wraps Radix Viewport in a positioned div to center and size content" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuViewport({
   className,
@@ -238,22 +124,7 @@ function NavigationMenuViewport({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the viewport that positions menu content'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuviewport:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenulink:function" type="function" identity="navigationmenulink" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a navigation menu link"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a styled anchor for menu links"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX link" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders Radix Link with muted hover, focus, and active state classes" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuLink({
   className,
@@ -270,22 +141,7 @@ function NavigationMenuLink({
     />
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a navigation menu link'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenulink:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuindicator:function" type="function" identity="navigationmenuindicator" parent="~/.framework/src/components/ui/navigation-menu.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a small triangle indicator under the active menu"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show a pointer indicator aligned with the selected item"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="className, ...props" outputs="JSX indicator" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Renders Radix Indicator with a small rotated square and state animations" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 function NavigationMenuIndicator({
   className,
@@ -304,22 +160,7 @@ function NavigationMenuIndicator({
     </NavigationMenuPrimitive.Indicator>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a small triangle indicator under the active menu'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:navigationmenuindicator:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/navigation-menu.tsx:module_exports:module_exports" type="module_exports" identity="module_exports" parent="~/.framework/src/components/ui/navigation-menu.tsx"]
-// CIL[DOC-MACRO purpose="Export all NavigationMenu subcomponents and styles"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose the public API of the module"]
-// CIL[DOC-CONTEXT module="NavigationMenu" layer="ui" related_files=".framework/src/components/ui/navigation-menu.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Named exports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Collects and re-exports all functions and the trigger style" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export {
   NavigationMenu,
@@ -332,10 +173,3 @@ export {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Export all NavigationMenu subcomponents and styles'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/navigation-menu.tsx:module_exports:module_exports"]

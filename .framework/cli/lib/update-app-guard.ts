@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // update-app guard — verifies the pristine baseline of an installed app
 // package before `update-app` overwrites custom/apps/<slug>/.
 //
@@ -21,26 +20,20 @@ import {
 } from 'node:fs'
 import { join, basename, resolve as resolvePath, isAbsolute } from 'node:path'
 import { execSync } from 'node:child_process'
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:guarddeps:interface" type="interface" identity="GuardDeps" parent="none"]
 export interface GuardDeps {
   /** Run a shell command — injectable for tests. Defaults to execSync. */
   exec?: (cmd: string, opts: { cwd: string }) => void
   log?: (msg: string) => void
   now?: () => Date
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:guarddeps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:treediff:interface" type="interface" identity="TreeDiff" parent="none"]
 export interface TreeDiff {
   path: string
   kind: 'modified' | 'added' | 'deleted'
   note?: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:treediff:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:guardoutcome:interface" type="interface" identity="GuardOutcome" parent="none"]
 export interface GuardOutcome {
   proceed: boolean
   /** `<pkg>@<ver> (integrity verified)` when verifiable, else the reason */
@@ -50,22 +43,16 @@ export interface GuardOutcome {
   orphanedDecisions: string[]
   backupPath?: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:guardoutcome:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:sha512integrity:function" type="function" identity="sha512Integrity" parent="none"]
 function sha512Integrity(file: string): string {
   return 'sha512-' + createHash('sha512').update(readFileSync(file)).digest('base64')
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:sha512integrity:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:sha256:function" type="function" identity="sha256" parent="none"]
 function sha256(file: string): string {
   return createHash('sha256').update(readFileSync(file)).digest('hex')
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:sha256:function"]
 
 /** Recursively list files (and symlinks) under dir, relative paths. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:listtree:function" type="function" identity="listTree" parent="none"]
 function listTree(dir: string, rel = ''): { rel: string; symlink: boolean }[] {
   const out: { rel: string; symlink: boolean }[] = []
   const abs = rel ? join(dir, rel) : dir
@@ -81,12 +68,10 @@ function listTree(dir: string, rel = ''): { rel: string; symlink: boolean }[] {
   }
   return out
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:listtree:function"]
 
 /** Compare local vs baseline trees. Local paths present but absent from the
  *  baseline are 'added'; baseline paths missing locally are 'deleted';
  *  differing contents or symlinks are 'modified'. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:difftrees:function" type="function" identity="diffTrees" parent="none"]
 export function diffTrees(localDir: string, baseDir: string, prefix = ''): TreeDiff[] {
   const diffs: TreeDiff[] = []
   const localFiles = new Map(listTree(localDir).map(f => [f.rel, f]))
@@ -111,22 +96,18 @@ export function diffTrees(localDir: string, baseDir: string, prefix = ''): TreeD
   }
   return diffs
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:difftrees:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:lockentry:interface" type="interface" identity="LockEntry" parent="none"]
 interface LockEntry {
   version?: string
   integrity?: string
   resolved?: string
   link?: boolean
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:lockentry:interface"]
 
 /**
  * Run the update guard. `pkgDirName` is the node_modules directory name
  * (e.g. `@spine-framework/answer-once`), resolved by the caller.
  */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/update-app-guard.ts:guardupdateapp:function" type="function" identity="guardUpdateApp" parent="none"]
 export function guardUpdateApp(opts: {
   projectRoot: string
   pkgDirName: string
@@ -310,4 +291,3 @@ export function guardUpdateApp(opts: {
 
   return { proceed: true, baseline, diffs, orphanedDecisions, backupPath: backup(version) }
 }
-// CIL[END stable_id="~/.framework/cli/lib/update-app-guard.ts:guardupdateapp:function"]

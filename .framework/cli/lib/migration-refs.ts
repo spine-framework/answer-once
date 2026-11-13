@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 // Shared migration-reference extraction for the migration-ref lint and
 // `migrate --preflight`.
 //
@@ -29,20 +28,14 @@
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:ref_tables:constant" type="constant" identity="REF_TABLES" parent="none"]
 export const REF_TABLES = new Set([
   'ai_agents', 'prompt_configs', 'types', 'pipelines',
   'triggers', 'actions', 'link_types',
 ])
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:ref_tables:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:refcolumn:type" type="type" identity="RefColumn" parent="none"]
 export type RefColumn = 'slug' | 'name'
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:refcolumn:type"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:migrationref:interface" type="interface" identity="MigrationRef" parent="none"]
 export interface MigrationRef {
   file: string
   table: string
@@ -55,18 +48,14 @@ export interface MigrationRef {
   /** index of the containing top-level statement in its file */
   statementIndex: number
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:migrationref:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:providedvalue:interface" type="interface" identity="ProvidedValue" parent="none"]
 export interface ProvidedValue {
   table: string
   column: RefColumn
   value: string
   statementIndex: number
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:providedvalue:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:annotation:interface" type="interface" identity="Annotation" parent="none"]
 export interface Annotation {
   line: number
   kind: 'ok' | 'optional'
@@ -74,15 +63,11 @@ export interface Annotation {
   /** true when the line contains only the annotation comment */
   standalone: boolean
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:annotation:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:seedindex:interface" type="interface" identity="SeedIndex" parent="none"]
 export interface SeedIndex {
   [table: string]: { slugs: Set<string>; names: Set<string> }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:seedindex:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:statement:interface" type="interface" identity="Statement" parent="none"]
 interface Statement {
   start: number
   end: number
@@ -90,23 +75,17 @@ interface Statement {
   endLine: number
   index: number
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:statement:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:scanmode:type" type="type" identity="ScanMode" parent="none"]
 type ScanMode = 'masked' | 'structural' | 'code'
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:scanmode:type"]
 
 /** A dollar-quoted body counts as code when tagged generically and carrying
  *  plpgsql markers — data payloads ($DS$, $F$, $P$ JSON) are always blanked. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:iscodedollarbody:function" type="function" identity="isCodeDollarBody" parent="none"]
 function isCodeDollarBody(tag: string, body: string): boolean {
   const t = tag.toLowerCase()
   if (t !== '$$' && t !== '$body$' && t !== '$function$' && t !== '$procedure$') return false
   return /\b(begin|declare)\b/i.test(body)
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:iscodedollarbody:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:scaninto:function" type="function" identity="scanInto" parent="none"]
 function scanInto(sql: string, buf: string[], mode: ScanMode, start: number, end: number): void {
   let i = start
   let inLine = false, inBlock = false, inSingle = false, inDouble = false
@@ -183,17 +162,13 @@ function scanInto(sql: string, buf: string[], mode: ScanMode, start: number, end
     i++
   }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:scaninto:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:blank:function" type="function" identity="blank" parent="none"]
 function blank(sql: string, mode: ScanMode): string {
   const buf = sql.split('')
   scanInto(sql, buf, mode, 0, sql.length)
   return buf.join('')
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:blank:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:lineindex:function" type="function" identity="lineIndex" parent="none"]
 function lineIndex(sql: string): (idx: number) => number {
   const starts: number[] = [0]
   for (let i = 0; i < sql.length; i++) if (sql[i] === '\n') starts.push(i + 1)
@@ -206,10 +181,8 @@ function lineIndex(sql: string): (idx: number) => number {
     return lo + 1
   }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:lineindex:function"]
 
 /** Split into top-level statements; boundaries come from the structural view. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:splitstatements:function" type="function" identity="splitStatements" parent="none"]
 function splitStatements(sql: string, structural: string): Statement[] {
   const stmts: Statement[] = []
   const atLine = lineIndex(sql)
@@ -226,10 +199,8 @@ function splitStatements(sql: string, structural: string): Statement[] {
   if (start >= 0) stmts.push({ start, end: sql.length, startLine: atLine(start), endLine: atLine(sql.length), index })
   return stmts
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:splitstatements:function"]
 
 /** Extract ref-ok / ref-optional annotations from the raw SQL text. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:extractannotations:function" type="function" identity="extractAnnotations" parent="none"]
 export function extractAnnotations(sql: string): Annotation[] {
   const anns: Annotation[] = []
   const lines = sql.split('\n')
@@ -242,10 +213,8 @@ export function extractAnnotations(sql: string): Annotation[] {
   }
   return anns
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:extractannotations:function"]
 
 /** Index just past the close paren matching the `(` at openIdx, or -1. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:matchparen:function" type="function" identity="matchParen" parent="none"]
 function matchParen(s: string, openIdx: number): number {
   let depth = 0
   for (let i = openIdx; i < s.length; i++) {
@@ -254,10 +223,8 @@ function matchParen(s: string, openIdx: number): number {
   }
   return -1
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:matchparen:function"]
 
 /** Index of the next occurrence of `keyword` (regex, anchored at i) at paren depth 0, or -1. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:keywordatdepth0:function" type="function" identity="keywordAtDepth0" parent="none"]
 function keywordAtDepth0(s: string, keyword: RegExp, from: number): number {
   for (let i = from, depth = 0; i < s.length; i++) {
     const ch = s[i]
@@ -273,10 +240,8 @@ function keywordAtDepth0(s: string, keyword: RegExp, from: number): number {
   }
   return -1
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:keywordatdepth0:function"]
 
 /** Spans of top-level parenthesised groups whose content begins with SELECT/WITH. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:subqueryspans:function" type="function" identity="subquerySpans" parent="none"]
 function subquerySpans(struct: string, from: number): [number, number][] {
   const spans: [number, number][] = []
   for (let i = from, depth = 0; i < struct.length; i++) {
@@ -294,10 +259,8 @@ function subquerySpans(struct: string, from: number): [number, number][] {
   }
   return spans
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:subqueryspans:function"]
 
 /** All single-quoted literals inside a masked-text span. */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:literalsin:function" type="function" identity="literalsIn" parent="none"]
 function literalsIn(s: string): { value: string; index: number }[] {
   const lits: { value: string; index: number }[] = []
   for (let i = 0; i < s.length; i++) {
@@ -315,7 +278,6 @@ function literalsIn(s: string): { value: string; index: number }[] {
   }
   return lits
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:literalsin:function"]
 
 /**
  * Extract UPDATE … WHERE (slug|name) (=|IN) references on REF_TABLES —
@@ -323,7 +285,6 @@ function literalsIn(s: string): { value: string; index: number }[] {
  * e.g. `app_id = (SELECT … WHERE slug='app')` is never attributed to the
  * outer table.
  */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:extractrefs:function" type="function" identity="extractRefs" parent="none"]
 export function extractRefs(sql: string, file: string): MigrationRef[] {
   const masked = blank(sql, 'masked')
   const structural = blank(sql, 'structural')
@@ -394,7 +355,6 @@ export function extractRefs(sql: string, file: string): MigrationRef[] {
   }
   return refs
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:extractrefs:function"]
 
 /**
  * Extract slug/name values INSERT statements provide for REF_TABLES —
@@ -402,7 +362,6 @@ export function extractRefs(sql: string, file: string): MigrationRef[] {
  * count; `INSERT … SELECT` and non-literal values are skipped (they cannot
  * satisfy a reference deterministically).
  */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:extractinserts:function" type="function" identity="extractInserts" parent="none"]
 export function extractInserts(sql: string, file: string): ProvidedValue[] {
   const masked = blank(sql, 'masked')
   const structural = blank(sql, 'structural')
@@ -432,8 +391,35 @@ export function extractInserts(sql: string, file: string): ProvidedValue[] {
       if (slugIdx < 0 && nameIdx < 0) continue
 
       // VALUES rows: balanced (...) groups after the top-level VALUES keyword.
+      // INSERT ... SELECT (the idempotent WHERE NOT EXISTS form) provides the
+      // same values positionally — the select list ends at the first top-level
+      // FROM or WHERE.
       const valuesRel = keywordAtDepth0(stmtCode, /^values\b/i, colEnd)
-      if (valuesRel < 0) continue
+      if (valuesRel < 0) {
+        const selectRel = keywordAtDepth0(stmtCode, /^select\b/i, colEnd)
+        if (selectRel < 0) continue
+        const fromRel = keywordAtDepth0(stmtCode, /^(from|where)\b/i, selectRel + 6)
+        const listEnd = fromRel > 0 ? fromRel : stmt.end
+        const vals: { start: number; end: number }[] = []
+        let depth = 0, vStart = selectRel + 6
+        for (let i = vStart; i < listEnd; i++) {
+          const ch = stmtCode[i]
+          if (ch === '(') depth++
+          else if (ch === ')') depth--
+          else if (ch === ',' && depth === 0) { vals.push({ start: vStart, end: i }); vStart = i + 1 }
+        }
+        vals.push({ start: vStart, end: listEnd })
+        for (const [idx, col] of [[slugIdx, 'slug'], [nameIdx, 'name']] as const) {
+          if (idx < 0 || idx >= vals.length) continue
+          const v = vals[idx]
+          const lits = literalsIn(stmtMasked.slice(v.start, v.end))
+          const trimmed = stmtMasked.slice(v.start, v.end).trim()
+          if (lits.length === 1 && trimmed.startsWith("'") && trimmed.endsWith("'")) {
+            provided.push({ table, column: col, value: lits[0].value, statementIndex: stmt.index })
+          }
+        }
+        continue
+      }
       let cursor = valuesRel + 6
       while (cursor < stmtCode.length) {
         const nextOpen = stmtCode.indexOf('(', cursor)
@@ -469,9 +455,7 @@ export function extractInserts(sql: string, file: string): ProvidedValue[] {
   }
   return provided
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:extractinserts:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:refproblem:interface" type="interface" identity="RefProblem" parent="none"]
 export interface RefProblem {
   file: string
   line: number
@@ -483,7 +467,6 @@ export interface RefProblem {
   /** what satisfied a resolved reference — only set on resolved refs when reported */
   resolvedBy?: string
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:refproblem:interface"]
 
 /** Statement boundaries for a migration file — shared by the lint and the
  *  migrate --preflight annotation scoping. */
@@ -498,7 +481,6 @@ export function statementBounds(sql: string): { index: number; startLine: number
  * was inserted by an earlier statement — an earlier migration, or an earlier
  * statement in the same migration.
  */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:lintrefs:function" type="function" identity="lintRefs" parent="none"]
 export function lintRefs(opts: {
   migrations: { name: string; path: string; sql: string }[]
   seedIndex: SeedIndex
@@ -564,18 +546,15 @@ export function lintRefs(opts: {
 
   return { problems }
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:lintrefs:function"]
 
 /** Default seed table mapping when an app manifest declares no `seed` array
  *  (mirrors the fallback in install-app's seedApp). */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:default_seed_entries:constant" type="constant" identity="DEFAULT_SEED_ENTRIES" parent="none"]
 const DEFAULT_SEED_ENTRIES = [
   { file: 'seed/roles.json', table: 'roles' },
   { file: 'seed/types.json', table: 'types' },
   { file: 'seed/link-types.json', table: 'link_types' },
   { file: 'seed/type_permissions.json', table: 'types' },
 ]
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:default_seed_entries:constant"]
 
 /**
  * Collect seed JSON files → target table.
@@ -583,7 +562,6 @@ const DEFAULT_SEED_ENTRIES = [
  * - `custom/apps/<app>/manifest.json` `seed` entries (file relative to app dir)
  * - undeclared `seed/type_permissions.json` is appended (mirrors seedApp)
  */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:collectseedfiles:function" type="function" identity="collectSeedFiles" parent="none"]
 export function collectSeedFiles(projectRoot: string, opts: { includeCustom: boolean }): { file: string; table: string }[] {
   const out: { file: string; table: string }[] = []
 
@@ -631,10 +609,8 @@ export function collectSeedFiles(projectRoot: string, opts: { includeCustom: boo
   }
   return out
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:collectseedfiles:function"]
 
 /** Build the seed index from collected seed files (JSON arrays of records). */
-// CIL[BEGIN stable_id="~/.framework/cli/lib/migration-refs.ts:buildseedindex:function" type="function" identity="buildSeedIndex" parent="none"]
 export function buildSeedIndex(files: { file: string; table: string }[]): SeedIndex {
   const index: SeedIndex = {}
   for (const { file, table } of files) {
@@ -650,4 +626,3 @@ export function buildSeedIndex(files: { file: string; table: string }[]): SeedIn
   }
   return index
 }
-// CIL[END stable_id="~/.framework/cli/lib/migration-refs.ts:buildseedindex:function"]

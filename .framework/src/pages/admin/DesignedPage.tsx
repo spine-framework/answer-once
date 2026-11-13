@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DesignedPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/DesignedPage.tsx"]
-// CIL[DOC-MACRO purpose="Define the admin dashboard page module and its top-level imports"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare React page dependencies and export the DesignedPage component for admin dashboard rendering"]
-// CIL[DOC-CONTEXT module="pages/admin" layer="presentation" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DesignedPage React component and module imports" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, shadcn UI primitives, and icons used across the admin dashboard page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'
@@ -74,21 +65,6 @@ import {
   Zap
 } from 'lucide-react'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Define the admin dashboard page module and its top-level imports'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/DesignedPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/DesignedPage.tsx:DesignedPage:component" type="component" identity="DesignedPage" parent="~/.framework/src/pages/admin/DesignedPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the admin DesignedPage dashboard with sidebar, header, stats, tabs, and settings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the admin dashboard UI including navigation, search, quick stats, activity, analytics, reports, and preferences"]
-// CIL[DOC-CONTEXT module="pages/admin" layer="presentation" related_files=".framework/src/components/ui/accordion.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/checkbox.tsx,.framework/src/components/ui/dialog.tsx,.framework/src/components/ui/dropdown-menu.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/separator.tsx,.framework/src/components/ui/switch.tsx,.framework/src/components/ui/tabs.tsx,.framework/src/pages/admin/DesignedPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (uses local React state)" outputs="JSX dashboard UI" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Manages selected tab, search query, and notification/autosave toggles; renders sidebar navigation, top search/filter bar, stat cards, tabbed content panels, and security/preferences form" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function DesignedPage() {
   const [selectedTab, setSelectedTab] = useState('overview')
   const [searchQuery, setSearchQuery] = useState('')
@@ -497,10 +473,3 @@ export function DesignedPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the admin DesignedPage dashboard with sidebar, header, stats, tabs, and settings'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/input.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/DesignedPage.tsx:DesignedPage:component"]

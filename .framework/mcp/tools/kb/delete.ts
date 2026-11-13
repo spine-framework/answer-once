@@ -13,27 +13,11 @@
  * @cil-generated
  */
 
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/kb/delete.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/mcp/tools/kb/delete.ts"]
-// CIL[DOC-MACRO purpose="Knowledge base entry deletion module for the MCP framework"]
-// CIL[DOC-RESPONSIBILITY responsibility="Delete KB articles through admin-data and revoke their embeddings"]
-// CIL[DOC-CONTEXT module="kb-delete" layer="shared-core" related_files=".framework/functions/admin-data.ts,.framework/mcp/shared/db.ts,.framework/mcp/shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="server, id, account_id, hard" outputs="deletion and revocation result" errors="invalid UUID, admin errors, revoke errors" side_effects="admin data removal and embedding revocation"]
-// CIL[DOC-MICRO logic_summary="Provides tool registration and context building for KB article deletion" notable_decisions="Only authorized admin users can invoke deletion"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="both"]
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { adminDb } from '../../shared/db.js'
 import { remove as adminRemove } from '../../../functions/admin-data.js'
 import { kbRevoke } from '../../shared/kb.js'
-// CIL[DOC-VECTOR type="context" content="purpose='Knowledge base entry deletion module for the MCP framework'; No verified external callers; imports: .framework/mcp/shared/db.ts,.framework/functions/admin-data.ts,.framework/mcp/shared/kb.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/kb/delete.ts:module_header:module_header"]
 
 
 /**
@@ -47,14 +31,6 @@ import { kbRevoke } from '../../shared/kb.js'
  * @stability   internal
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/kb/delete.ts:buildCtx:function" type="function" identity="buildCtx" parent="~/.framework/mcp/tools/kb/delete.ts"]
-// CIL[DOC-MACRO purpose="Builds a context object for knowledge base operations"]
-// CIL[DOC-RESPONSIBILITY responsibility="Constructs a request context with metadata, account, and query"]
-// CIL[DOC-CONTEXT module="kb-delete" layer="shared-core" related_files=".framework/functions/admin-data.ts,.framework/mcp/shared/db.ts,.framework/mcp/shared/kb.ts,.framework/mcp/tools/kb/delete.ts"]
-// CIL[DOC-CONTRACT inputs="accountId: string, query: any" outputs="context object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Creates a context with machine principal, admin database, and provided query" notable_decisions="Uses 'kb-mcp' principal with system_admin role"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="internal"]
 function buildCtx(accountId: string, query: any) {
   return {
     requestId: `kb-mcp-${Date.now()}`,
@@ -69,13 +45,6 @@ function buildCtx(accountId: string, query: any) {
     query,
   } as any
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Builds a context object for knowledge base operations'; No verified external callers; imports: .framework/mcp/shared/db.ts,.framework/functions/admin-data.ts,.framework/mcp/shared/kb.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/kb/delete.ts:buildCtx:function"]
 
 
 /**
@@ -94,14 +63,6 @@ function buildCtx(accountId: string, query: any) {
  * @calls       buildCtx, adminRemove, kbRevoke
  * @cil-generated
  */
-// CIL[BEGIN stable_id="~/.framework/mcp/tools/kb/delete.ts:register:function" type="function" identity="register" parent="~/.framework/mcp/tools/kb/delete.ts"]
-// CIL[DOC-MACRO purpose="Registers a tool for deleting a KB article and revoking its embeddings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Register the spine_kb_delete tool on an McpServer"]
-// CIL[DOC-CONTEXT module="kb-delete" layer="shared-core" related_files=".framework/functions/admin-data.ts,.framework/mcp/shared/db.ts,.framework/mcp/shared/kb.ts,.framework/mcp/tools/kb/delete.ts"]
-// CIL[DOC-CONTRACT inputs="server: McpServer" outputs="Promise<{ content: Array<{ type: string, text: string }> }>" errors="invalid UUID, admin errors, revoke errors" side_effects="Calls adminRemove and kbRevoke"]
-// CIL[DOC-MICRO logic_summary="Registers the tool, builds context, calls adminRemove and kbRevoke, and returns combined result" notable_decisions="Soft delete by default; hard delete controlled by 'hard' flag"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="internal"]
 export function register(server: McpServer) {
   server.registerTool(
     'spine_kb_delete',
@@ -130,10 +91,3 @@ export function register(server: McpServer) {
     }
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Registers a tool for deleting a KB article and revoking its embeddings'; No verified external callers; imports: .framework/mcp/shared/db.ts,.framework/functions/admin-data.ts,.framework/mcp/shared/kb.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/mcp/tools/kb/delete.ts:register:function"]

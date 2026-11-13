@@ -1,78 +1,19 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/install-app.test.ts"]
-// CIL[DOC-MACRO purpose="Import Vitest and filesystem fixture utilities for isolated CLI tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import Vitest and filesystem fixture utilities for isolated CLI tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Import Vitest and filesystem fixture utilities for isolated CLI tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Command } from 'commander'
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:dbcall:type" type="type" identity="DbCall" parent="none"]
-// CIL[DOC-MACRO purpose="Describe an operation recorded by a fake query builder."]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe an operation recorded by a fake query builder."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DbCall type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describe an operation recorded by a fake query builder." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 type DbCall = { op: string; args: any[] }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:dbcall:type"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:dbquery:type" type="type" identity="DbQuery" parent="none"]
-// CIL[DOC-MACRO purpose="Describe a table and its recorded fake query operations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe a table and its recorded fake query operations."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DbQuery type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describe a table and its recorded fake query operations." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 type DbQuery = { table: string; calls: DbCall[] }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:dbquery:type"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:dbresult:type" type="type" identity="DbResult" parent="none"]
-// CIL[DOC-MACRO purpose="Describe data and error returned by a fake database responder."]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe data and error returned by a fake database responder."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="DbResult type" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describe data and error returned by a fake database responder." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 type DbResult = { data?: any; error?: any }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:dbresult:type"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:supastate:constant" type="constant" identity="supaState" parent="none"]
-// CIL[DOC-MACRO purpose="Initialize hoisted state for fake Supabase clients and query history."]
-// CIL[DOC-RESPONSIBILITY responsibility="Initialize hoisted state for fake Supabase clients and query history."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mock state" errors="none" side_effects="Initializes local mock state"]
-// CIL[DOC-MICRO logic_summary="Initialize hoisted state for fake Supabase clients and query history." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const supaState = vi.hoisted(() => ({
   createClientCalls: [] as any[],
   responder: null as null | ((q: DbQuery) => DbResult),
   history: [] as DbQuery[],
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:supastate:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:supabase_mock:block" type="block" identity="supabase_mock" parent="none"]
-// CIL[DOC-MACRO purpose="Register a chainable fake Supabase client that records operations without network access."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a chainable fake Supabase client that records operations without network access."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="supaState" outputs="Vitest module mock" errors="none" side_effects="Registers a mock"]
-// CIL[DOC-MICRO logic_summary="Register a chainable fake Supabase client that records operations without network access." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 vi.mock('@supabase/supabase-js', () => ({
   createClient: (...args: any[]) => {
     supaState.createClientCalls.push(args)
@@ -98,32 +39,12 @@ vi.mock('@supabase/supabase-js', () => ({
     }
   },
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:supabase_mock:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:pgstate:constant" type="constant" identity="pgState" parent="none"]
-// CIL[DOC-MACRO purpose="Initialize hoisted state for fake migration clients."]
-// CIL[DOC-RESPONSIBILITY responsibility="Initialize hoisted state for fake migration clients."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mock state" errors="none" side_effects="Initializes local mock state"]
-// CIL[DOC-MICRO logic_summary="Initialize hoisted state for fake migration clients." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const pgState = vi.hoisted(() => ({
   instances: [] as any[],
   handler: null as null | ((sql: string, params?: any[]) => any),
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:pgstate:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:pg_mock:block" type="block" identity="pg_mock" parent="none"]
-// CIL[DOC-MACRO purpose="Register a fake Postgres client used by mocked installer migrations."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a fake Postgres client used by mocked installer migrations."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="pgState" outputs="Vitest module mock" errors="none" side_effects="Registers a mock"]
-// CIL[DOC-MICRO logic_summary="Register a fake Postgres client used by mocked installer migrations." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 vi.mock('pg', () => ({
   default: {
     Client: class {
@@ -141,55 +62,15 @@ vi.mock('pg', () => ({
     },
   },
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:pg_mock:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:execstate:constant" type="constant" identity="execState" parent="none"]
-// CIL[DOC-MACRO purpose="Hold recorded shell commands for the fake npm executor."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold recorded shell commands for the fake npm executor."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mock command list" errors="none" side_effects="Initializes local mock state"]
-// CIL[DOC-MICRO logic_summary="Hold recorded shell commands for the fake npm executor." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const execState = vi.hoisted(() => ({ calls: [] as string[] }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:execstate:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:exec_mock:block" type="block" identity="exec_mock" parent="none"]
-// CIL[DOC-MACRO purpose="Register a fake command executor so installer tests never run npm."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a fake command executor so installer tests never run npm."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="execState" outputs="Vitest module mock" errors="none" side_effects="Registers a mock"]
-// CIL[DOC-MICRO logic_summary="Register a fake command executor so installer tests never run npm." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 vi.mock('child_process', () => ({
   execSync: (cmd: string) => { execState.calls.push(cmd); return Buffer.from('') },
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:exec_mock:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:rlstate:constant" type="constant" identity="rlState" parent="none"]
-// CIL[DOC-MACRO purpose="Hold the answer the fake readline prompt returns."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold the answer the fake readline prompt returns."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mock prompt state" errors="none" side_effects="Initializes local mock state"]
-// CIL[DOC-MICRO logic_summary="Hold the answer the fake readline prompt returns." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const rlState = vi.hoisted(() => ({ answer: 'r' }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:rlstate:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:readline_mock:block" type="block" identity="readline_mock" parent="none"]
-// CIL[DOC-MACRO purpose="Register a fake prompt that returns the rlState answer."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a fake prompt that returns the rlState answer."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Vitest module mock" errors="none" side_effects="Registers a mock"]
-// CIL[DOC-MICRO logic_summary="Register a fake prompt that answers with rlState.answer — 'r' (Replace) by default; tests may set 'u' or 'k' for owned-type reconcile prompts." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 vi.mock('readline', () => ({
   default: {
     createInterface: () => ({
@@ -202,88 +83,18 @@ vi.mock('readline', () => ({
     close: () => {},
   }),
 }))
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:readline_mock:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:orig_cwd:constant" type="constant" identity="ORIG_CWD" parent="none"]
-// CIL[DOC-MACRO purpose="Capture cwd for restoring fixture isolation."]
-// CIL[DOC-RESPONSIBILITY responsibility="Capture cwd for restoring fixture isolation."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Original cwd" errors="none" side_effects="Reads process cwd"]
-// CIL[DOC-MICRO logic_summary="Capture cwd for restoring fixture isolation." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const ORIG_CWD = process.cwd()
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:orig_cwd:constant"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:env_keys:constant" type="constant" identity="ENV_KEYS" parent="none"]
-// CIL[DOC-MACRO purpose="List environment values saved and restored by installer fixtures."]
-// CIL[DOC-RESPONSIBILITY responsibility="List environment values saved and restored by installer fixtures."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Readonly key list" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="List environment values saved and restored by installer fixtures." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 const ENV_KEYS = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_DB_PASSWORD'] as const
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:env_keys:constant"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:savedenv:variable" type="variable" identity="savedEnv" parent="none"]
-// CIL[DOC-MACRO purpose="Hold original environment values for restoration."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold original environment values for restoration."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable saved environment map" errors="none" side_effects="Initializes local state"]
-// CIL[DOC-MICRO logic_summary="Hold original environment values for restoration." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let savedEnv: Record<string, string | undefined> = {}
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:savedenv:variable"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:workdir:variable" type="variable" identity="workdir" parent="none"]
-// CIL[DOC-MACRO purpose="Hold the temporary installer project path."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold the temporary installer project path."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable fixture path" errors="none" side_effects="Initializes local state"]
-// CIL[DOC-MICRO logic_summary="Hold the temporary installer project path." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let workdir = ''
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:workdir:variable"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:exitspy:variable" type="variable" identity="exitSpy" parent="none"]
-// CIL[DOC-MACRO purpose="Hold the process-exit spy used by CLI failure tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Hold the process-exit spy used by CLI failure tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Spy reference" errors="none" side_effects="Declares local state"]
-// CIL[DOC-MICRO logic_summary="Hold the process-exit spy used by CLI failure tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let exitSpy: any
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:exitspy:variable"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:writejson:function" type="function" identity="writeJson" parent="none"]
-// CIL[DOC-MACRO purpose="Create parent fixture directories and write a JSON fixture."]
-// CIL[DOC-RESPONSIBILITY responsibility="Create parent fixture directories and write a JSON fixture."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="path: string, value: any" outputs="void" errors="none" side_effects="Writes temporary fixture files"]
-// CIL[DOC-MICRO logic_summary="Create parent fixture directories and write a JSON fixture." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function writeJson(path: string, value: any) {
   mkdirSync(join(path, '..'), { recursive: true })
   writeFileSync(path, JSON.stringify(value, null, 2))
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:writejson:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:basemanifest:function" type="function" identity="baseManifest" parent="none"]
-// CIL[DOC-MACRO purpose="Build a minimal data-app manifest with supplied overrides."]
-// CIL[DOC-RESPONSIBILITY responsibility="Build a minimal data-app manifest with supplied overrides."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: Record<string, any> default empty object" outputs="Manifest fixture" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Build a minimal data-app manifest with supplied overrides." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function baseManifest(overrides: Record<string, any> = {}) {
   return {
     name: 'Test App',
@@ -293,17 +104,7 @@ function baseManifest(overrides: Record<string, any> = {}) {
     ...overrides,
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:basemanifest:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:manifestwithregistration:function" type="function" identity="manifestWithRegistration" parent="none"]
-// CIL[DOC-MACRO purpose="Build an enabled new-account registration fixture with optional overrides."]
-// CIL[DOC-RESPONSIBILITY responsibility="Build an enabled new-account registration fixture with optional overrides."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: Record<string, any> default empty object" outputs="Manifest fixture" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Build an enabled new-account registration fixture with optional overrides." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function manifestWithRegistration(overrides: Record<string, any> = {}) {
   return baseManifest({
     registration: {
@@ -316,17 +117,7 @@ function manifestWithRegistration(overrides: Record<string, any> = {}) {
     ...overrides,
   })
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:manifestwithregistration:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:makeapp:function" type="function" identity="makeApp" parent="none"]
-// CIL[DOC-MACRO purpose="Write an isolated app, package, and optional seed fixtures."]
-// CIL[DOC-RESPONSIBILITY responsibility="Write an isolated app, package, and optional seed fixtures."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="dir: string, manifest: Record<string, any>, files: Record<string, string> default empty object" outputs="App directory path" errors="none" side_effects="Creates temporary fixtures"]
-// CIL[DOC-MICRO logic_summary="Write an isolated app, package, and optional seed fixtures." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function makeApp(dir: string, manifest: Record<string, any>, files: Record<string, string> = {}) {
   mkdirSync(dir, { recursive: true })
   writeJson(join(dir, 'manifest.json'), manifest)
@@ -338,107 +129,37 @@ function makeApp(dir: string, manifest: Record<string, any>, files: Record<strin
   }
   return dir
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:makeapp:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:freshmodule:function" type="function" identity="freshModule" parent="none"]
-// CIL[DOC-MACRO purpose="Reset module cache and import installer code against fixture cwd."]
-// CIL[DOC-RESPONSIBILITY responsibility="Reset module cache and import installer code against fixture cwd."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Promise of installer module" errors="none" side_effects="Resets module cache and imports source"]
-// CIL[DOC-MICRO logic_summary="Reset module cache and import installer code against fixture cwd." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 async function freshModule() {
   vi.resetModules()
   return await import('../../cli/commands/install-app.ts')
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:freshmodule:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:setseedenv:function" type="function" identity="setSeedEnv" parent="none"]
-// CIL[DOC-MACRO purpose="Set fake backend Supabase values for isolated seeding tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Set fake backend Supabase values for isolated seeding tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="void" errors="none" side_effects="Sets fixture environment"]
-// CIL[DOC-MICRO logic_summary="Set fake backend Supabase values for isolated seeding tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function setSeedEnv() {
   process.env.SUPABASE_URL = 'https://abc123.supabase.co'
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key'
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:setseedenv:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:setmigrateenv:function" type="function" identity="setMigrateEnv" parent="none"]
-// CIL[DOC-MACRO purpose="Set fake seed and Postgres values for installer tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Set fake seed and Postgres values for installer tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="void" errors="none" side_effects="Sets fixture environment"]
-// CIL[DOC-MICRO logic_summary="Set fake seed and Postgres values for installer tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function setMigrateEnv() {
   setSeedEnv()
   process.env.SUPABASE_DB_PASSWORD = 'dbpass'
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:setmigrateenv:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:dbresponder:function" type="function" identity="dbResponder" parent="none"]
-// CIL[DOC-MACRO purpose="Install the fake query responder for a test."]
-// CIL[DOC-RESPONSIBILITY responsibility="Install the fake query responder for a test."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="handler: (q: DbQuery) => DbResult" outputs="void" errors="none" side_effects="Mutates mock state"]
-// CIL[DOC-MICRO logic_summary="Install the fake query responder for a test." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function dbResponder(handler: (q: DbQuery) => DbResult) {
   supaState.responder = handler
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:dbresponder:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:defaultresponder:function" type="function" identity="defaultResponder" parent="none"]
-// CIL[DOC-MACRO purpose="Return standard fake app reads, app IDs, and success results."]
-// CIL[DOC-RESPONSIBILITY responsibility="Return standard fake app reads, app IDs, and success results."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="q: DbQuery" outputs="DbResult" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Return standard fake app reads, app IDs, and success results." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function defaultResponder(q: DbQuery): DbResult {
   const first = q.calls[0]?.op
   if (q.table === 'apps' && first === 'select') return { data: null, error: null }
   if (first === 'upsert' && q.table === 'apps') return { data: { id: 'app-1' }, error: null }
   return { data: null, error: null }
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:defaultresponder:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:queriesto:function" type="function" identity="queriesTo" parent="none"]
-// CIL[DOC-MACRO purpose="Select recorded mock queries by table and optional operation."]
-// CIL[DOC-RESPONSIBILITY responsibility="Select recorded mock queries by table and optional operation."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="table: string, op?: string" outputs="DbQuery array" errors="none" side_effects="Reads mock history"]
-// CIL[DOC-MICRO logic_summary="Select recorded mock queries by table and optional operation." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function queriesTo(table: string, op?: string) {
   return supaState.history.filter(q => q.table === table && (!op || q.calls.some(c => c.op === op)))
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:queriesto:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:makeprogram:function" type="function" identity="makeProgram" parent="none"]
-// CIL[DOC-MACRO purpose="Create an in-memory Commander program with installer commands."]
-// CIL[DOC-RESPONSIBILITY responsibility="Create an in-memory Commander program with installer commands."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Promise of Command" errors="none" side_effects="Resets module cache and registers commands"]
-// CIL[DOC-MICRO logic_summary="Create an in-memory Commander program with installer commands." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 async function makeProgram() {
   const mod = await freshModule()
   const program = new Command()
@@ -446,45 +167,15 @@ async function makeProgram() {
   mod.registerInstallAppCommands(program)
   return program
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:makeprogram:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:writespineconfig:function" type="function" identity="writeSpineConfig" parent="none"]
-// CIL[DOC-MACRO purpose="Write a fixture configuration as JSON or raw malformed text."]
-// CIL[DOC-RESPONSIBILITY responsibility="Write a fixture configuration as JSON or raw malformed text."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="content: any" outputs="void" errors="none" side_effects="Writes fixture config"]
-// CIL[DOC-MICRO logic_summary="Write a fixture configuration as JSON or raw malformed text." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function writeSpineConfig(content: any) {
   writeFileSync(join(workdir, 'spine.config.json'), typeof content === 'string' ? content : JSON.stringify(content))
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:writespineconfig:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:readspineconfig:function" type="function" identity="readSpineConfig" parent="none"]
-// CIL[DOC-MACRO purpose="Read and parse a fixture configuration."]
-// CIL[DOC-RESPONSIBILITY responsibility="Read and parse a fixture configuration."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="path: string default fixture spine.config.json" outputs="Parsed config" errors="none" side_effects="Reads fixture config"]
-// CIL[DOC-MICRO logic_summary="Read and parse a fixture configuration." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function readSpineConfig(path = join(workdir, 'spine.config.json')) {
   return JSON.parse(readFileSync(path, 'utf8'))
 }
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:readspineconfig:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:fixture_setup:block" type="block" identity="fixture_setup" parent="none"]
-// CIL[DOC-MACRO purpose="Register isolated cwd, environment, client, process-exit, and console setup."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register isolated cwd, environment, client, process-exit, and console setup."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Vitest lifecycle" outputs="Fixture hook" errors="none" side_effects="Registers setup that creates a temp root, changes cwd, and installs mocks"]
-// CIL[DOC-MICRO logic_summary="Register isolated cwd, environment, client, process-exit, and console setup." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 beforeEach(() => {
   savedEnv = {}
   for (const k of ENV_KEYS) savedEnv[k] = process.env[k]
@@ -505,17 +196,7 @@ beforeEach(() => {
   vi.spyOn(console, 'warn').mockImplementation(() => {})
   vi.spyOn(process.stdout, 'write').mockImplementation((() => true) as any)
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:fixture_setup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:fixture_cleanup:block" type="block" identity="fixture_cleanup" parent="none"]
-// CIL[DOC-MACRO purpose="Register fixture removal and cwd, environment, and spy restoration."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register fixture removal and cwd, environment, and spy restoration."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture state" outputs="Cleanup hook" errors="none" side_effects="Registers fixture cleanup"]
-// CIL[DOC-MICRO logic_summary="Register fixture removal and cwd, environment, and spy restoration." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 afterEach(() => {
   process.chdir(ORIG_CWD)
   rmSync(workdir, { recursive: true, force: true })
@@ -525,17 +206,7 @@ afterEach(() => {
   }
   vi.restoreAllMocks()
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:fixture_cleanup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:seed_preflight_suite:block" type="block" identity="seed_preflight_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register missing credentials, mandatory seed, malformed fallback, path escape, and slug tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register missing credentials, mandatory seed, malformed fallback, path escape, and slug tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers fixture tests with fake clients"]
-// CIL[DOC-MICRO logic_summary="Register missing credentials, mandatory seed, malformed fallback, path escape, and slug tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp preflight', () => {
   it('throws when Supabase env is missing without creating a client', async () => {
     const { seedApp } = await freshModule()
@@ -595,17 +266,7 @@ describe('seedApp preflight', () => {
     expect(supaState.createClientCalls.length).toBe(0)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:seed_preflight_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:config_preflight_suite:block" type="block" identity="config_preflight_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register config shape, slug grammar, enabled policy, and zero-client preflight tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register config shape, slug grammar, enabled policy, and zero-client preflight tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers fake-client tests"]
-// CIL[DOC-MICRO logic_summary="Register config shape, slug grammar, enabled policy, and zero-client preflight tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp config and manifest preflight', () => {
   it.each([
     '{ not json',
@@ -715,17 +376,7 @@ describe('seedApp config and manifest preflight', () => {
     expect(supaState.createClientCalls.length).toBe(0)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:config_preflight_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:permissions_preflight_suite:block" type="block" identity="permissions_preflight_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register valid empty grants and malformed permissions-patch preflight tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register valid empty grants and malformed permissions-patch preflight tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers, seedApp, records: parameterized permission-patch fixture rows" outputs="Vitest assertions" errors="none" side_effects="Registers fake-client tests"]
-// CIL[DOC-MICRO logic_summary="Register valid empty grants and malformed permissions-patch preflight tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('permissions patch preflight', () => {
   const patchEntry = {
     file: 'seed/type_permissions.json',
@@ -773,17 +424,7 @@ describe('permissions patch preflight', () => {
     expect(queriesTo('types', 'update').length).toBe(0)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:permissions_preflight_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:seed_writes_suite:block" type="block" identity="seed_writes_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register seed write failures, pipeline resolution, generated validation, and permission-patch tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register seed write failures, pipeline resolution, generated validation, and permission-patch tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Mock responders and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fake-database tests"]
-// CIL[DOC-MICRO logic_summary="Register seed write failures, pipeline resolution, generated validation, and permission-patch tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp fail-closed writes', () => {
   it('seeds an empty declared seed array successfully', async () => {
     const { seedApp } = await freshModule()
@@ -930,17 +571,7 @@ describe('seedApp fail-closed writes', () => {
     expect(updateCall.validation_schema).toEqual({ fields: { title: { data_type: 'text', required: true } } })
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:seed_writes_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:registration_suite:block" type="block" identity="registration_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register policy parity, config preservation, disabled policy, and error handling tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register policy parity, config preservation, disabled policy, and error handling tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Mock responders, fixture config, overrides: local manifest helper options" outputs="Vitest assertions" errors="none" side_effects="Registers fake DB and temporary file tests"]
-// CIL[DOC-MICRO logic_summary="Register policy parity, config preservation, disabled policy, and error handling tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('registration sync', () => {
   function seededRegManifest(overrides: Record<string, any> = {}) {
     return baseManifest({
@@ -1186,17 +817,7 @@ describe('registration sync', () => {
     expect(fileCfg.registration.apps['other-app'].allow_domain_join).toBeUndefined()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:registration_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:update_app_suite:block" type="block" identity="update_app_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register update-db-app policy parity and preflight failure tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register update-db-app policy parity and preflight failure tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Commander and fixture helpers" outputs="Vitest assertions" errors="none" side_effects="Registers isolated CLI tests"]
-// CIL[DOC-MICRO logic_summary="Register update-db-app policy parity and preflight failure tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('update-db-app', () => {
   it('produces the same server registration as a fresh seed', async () => {
     setSeedEnv()
@@ -1273,17 +894,7 @@ describe('update-db-app', () => {
     expect(fileCfg.registration.apps.testapp).toEqual(updatePayload.config.registration)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:update_app_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:install_cli_suite:block" type="block" identity="install_cli_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register default seeding, no-seed, migration failure, and file-only installer tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register default seeding, no-seed, migration failure, and file-only installer tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/cli/commands/migrate.ts,.framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Mock npm, Postgres, Commander, manifest: package fixture metadata, files: package fixture contents" outputs="Vitest assertions" errors="none" side_effects="Registers isolated CLI tests"]
-// CIL[DOC-MICRO logic_summary="Register default seeding, no-seed, migration failure, and file-only installer tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('install-app CLI', () => {
   function makePkg(manifest: Record<string, any>, files: Record<string, string> = {}) {
     const pkgDir = join(workdir, 'node_modules/spine-framework-testapp')
@@ -1363,17 +974,7 @@ describe('install-app CLI', () => {
     expect(readSpineConfig().registration.apps.testapp.enabled).toBe(true)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:install_cli_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:seed_ordering_suite:block" type="block" identity="seed_ordering_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register deterministic seed-ordering tests independent of manifest declaration order."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register deterministic seed-ordering tests independent of manifest declaration order."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fake-database tests"]
-// CIL[DOC-MICRO logic_summary="Register deterministic seed-ordering tests independent of manifest declaration order." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp deterministic ordering', () => {
   it('seeds in dependency order regardless of manifest declaration order', async () => {
     const { seedApp } = await freshModule()
@@ -1432,17 +1033,7 @@ describe('seedApp deterministic ordering', () => {
     expect(patchUpdateIdx).toBeGreaterThan(typeUpsertIdx)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:seed_ordering_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:type_conflict_suite:block" type="block" identity="type_conflict_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register strict type-conflict detection tests for the types seed path."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register strict type-conflict detection tests for the types seed path."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts"]
-// CIL[DOC-CONTRACT inputs="Mock responders and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fake-database tests"]
-// CIL[DOC-MICRO logic_summary="Register strict type-conflict detection tests for the types seed path." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp type conflict detection', () => {
   const typesEntry = { file: 'seed/types.json', table: 'types', conflict: 'kind,slug', inject_app_id: false }
 
@@ -1502,17 +1093,7 @@ describe('seedApp type conflict detection', () => {
     expect(opts).toEqual({ onConflict: 'kind,slug', ignoreDuplicates: true })
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:type_conflict_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:reconcile_owned_types_suite:block" type="block" identity="reconcile_owned_types_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register --reconcile-owned-types declaration, diff-prompt, merge, and non-owned tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register --reconcile-owned-types declaration, diff-prompt, merge, and non-owned tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts"]
-// CIL[DOC-CONTRACT inputs="Mock responders, rlState answers, seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fake-database tests"]
-// CIL[DOC-MICRO logic_summary="Register --reconcile-owned-types declaration, diff-prompt, merge, and non-owned tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp --reconcile-owned-types', () => {
   const typesEntry = { file: 'seed/types.json', table: 'types', conflict: 'kind,slug', inject_app_id: false }
 
@@ -1636,17 +1217,7 @@ describe('seedApp --reconcile-owned-types', () => {
     expect(supaState.createClientCalls.length).toBe(0)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:reconcile_owned_types_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/install-app.test.ts:pipeline_stage_validation_suite:block" type="block" identity="pipeline_stage_validation_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register install-time pipeline stage_type and send_notification recipient validation tests."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register install-time pipeline stage_type and send_notification recipient validation tests."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/install-app.ts,.framework/functions/_shared/notify.ts"]
-// CIL[DOC-CONTRACT inputs="Mock responders and seedApp" outputs="Vitest assertions" errors="none" side_effects="Registers isolated fake-database tests"]
-// CIL[DOC-MICRO logic_summary="Register install-time pipeline stage_type and send_notification recipient validation tests." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('seedApp pipeline stage validation', () => {
   function pipelineApp(pipeline: Record<string, any>) {
     return makeApp(join(workdir, 'app'), baseManifest({
@@ -1756,4 +1327,3 @@ describe('seedApp pipeline stage validation', () => {
     expect(queriesTo('roles').length).toBe(1)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/install-app.test.ts:pipeline_stage_validation_suite:block"]

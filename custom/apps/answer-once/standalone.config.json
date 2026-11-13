@@ -25,7 +25,14 @@
     ],
     "custom_migrations": [
       "062",
-      "063"
+      "063",
+      "064",
+      "065",
+      "066",
+      "067",
+      "068",
+      "069",
+      "070"
     ],
     "custom_tests": [
       "custom/tests/answer-once-export.test.ts",

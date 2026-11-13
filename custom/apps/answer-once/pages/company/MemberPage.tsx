@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/MemberPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company team member detail — view/edit a support person and their assigned tickets"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show a spine-system person with editable full_name/email/phone/role (admins only), their platform account, status, and tickets assigned to them via aim_human_assignee_id"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/MemberPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/pages/company/ContactPage.tsx, custom/apps/answer-once/pages/company/TeamPage.tsx"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="not-found and load errors render inline" side_effects="GET /api/admin-data (people, items); PATCH /api/admin-data?entity=people; supabase roles read"]
-// CIL[DOC-MICRO logic_summary="Fetches the person, the platform account, support-capable roles (direct supabase read — /api/roles strips slugs), and tickets filtered client-side on data.aim_human_assignee_id; edit affordance is gated to support_admin/system_admin though person record_permissions would allow support writes" notable_decisions="role edit options exclude system_admin — admins may move members between support and support_admin only; an existing system_admin member keeps their role displayed but can't be re-assigned it"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -19,7 +10,6 @@ import { Input } from '@core/components/ui/input'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@core/components/ui/select'
 import { ArrowLeft, Pencil, Check, X, Ticket, Building2 } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/MemberPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

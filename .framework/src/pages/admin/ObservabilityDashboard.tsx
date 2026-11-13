@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * @module   ObservabilityDashboard
  * @audience both
@@ -31,7 +30,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import {
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:module_header:module_header"]
   LineChart,
   Line,
   BarChart,
@@ -68,7 +66,6 @@ import { Link } from 'react-router-dom'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:MetricData:interface" type="interface" identity="MetricData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The MetricData interface defines the structure for metric data used in the observability dashboard. It encapsulates the essential properties needed to represent a metric's bucket and its count.
  *
@@ -80,7 +77,6 @@ interface MetricData {
   bucket: string
   count: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:MetricData:interface"]
 
 
 
@@ -98,7 +94,6 @@ interface MetricData {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ErrorRateData:interface" type="interface" identity="ErrorRateData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The ErrorRateData interface defines the structure for representing error rate metrics in the observability dashboard. It provides essential data points for monitoring application performance and reliability.
  *
@@ -111,7 +106,6 @@ interface ErrorRateData {
   errors: number
   rate: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ErrorRateData:interface"]
 
 
 
@@ -129,7 +123,6 @@ interface ErrorRateData {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:LatencyData:interface" type="interface" identity="LatencyData" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The LatencyData interface defines a structure for capturing latency metrics at various percentiles. It provides a standardized way to represent and access latency statistics in the observability dashboard.
  *
@@ -143,7 +136,6 @@ interface LatencyData {
   p95: number
   p99: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:LatencyData:interface"]
 
 
 
@@ -161,7 +153,6 @@ interface LatencyData {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:PipelineStats:interface" type="interface" identity="PipelineStats" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The PipelineStats interface defines the structure for tracking the statistics of a data processing pipeline, including its success and failure counts as well as average duration. It exists to provide a standardized way to represent and access these metrics within the observability dashboard.
  *
@@ -175,7 +166,6 @@ interface PipelineStats {
   failure_count: number
   avg_duration_ms: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:PipelineStats:interface"]
 
 
 
@@ -193,7 +183,6 @@ interface PipelineStats {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:TopActor:interface" type="interface" identity="TopActor" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The TopActor interface defines the structure for representing an actor in the observability dashboard, including their unique identifier and the count of events associated with them. It facilitates the management and display of actor-related data within the application.
  *
@@ -205,7 +194,6 @@ interface TopActor {
   principal_id: string
   event_count: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:TopActor:interface"]
 
 
 
@@ -223,7 +211,6 @@ interface TopActor {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:AlertEvent:interface" type="interface" identity="AlertEvent" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The AlertEvent interface defines the structure of an alert event object used in the observability dashboard. It captures key details about the alert, including its identifier, metric, threshold, actual value, and creation timestamp.
  *
@@ -238,7 +225,6 @@ interface AlertEvent {
   actual_value: number
   created_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:AlertEvent:interface"]
 
 
 
@@ -259,7 +245,6 @@ interface AlertEvent {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:COLORS:constant" type="constant" identity="COLORS" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * COLORS is an array of hex color codes used for visual representation in the Observability Dashboard. It provides a consistent color scheme for various UI elements.
  *
@@ -268,7 +253,6 @@ interface AlertEvent {
  * @cil-generated
  */
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:COLORS:constant"]
 
 
 
@@ -288,7 +272,6 @@ const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ObservabilityDashboard:component" type="component" identity="ObservabilityDashboard" parent="~/.framework/src/pages/admin/ObservabilityDashboard.tsx"]
 /**
  * The ObservabilityDashboard component provides a user interface for monitoring various metrics related to system observability, such as event volume, error rates, and latency. It allows users to select time ranges and refresh intervals for the displayed data.
  *
@@ -694,7 +677,6 @@ export function ObservabilityDashboard() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/ObservabilityDashboard.tsx:ObservabilityDashboard:component"]
 
 
 

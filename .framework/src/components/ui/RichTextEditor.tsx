@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Declare dependencies and set up the RichTextEditor module"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import and expose all required libraries, components, and utilities"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="loads module dependencies"]
-// CIL[DOC-MICRO logic_summary="Imports DOMPurify, marked, TipTap, lowlight, language definitions, React hooks, icons, and the cn utility" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 
 
@@ -39,66 +30,21 @@ import {
   Minus,
 } from 'lucide-react'
 import { cn } from '@core/lib/utils'
-// CIL[DOC-VECTOR type="context" content="purpose='Declare dependencies and set up the RichTextEditor module'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:lowlight_setup:setup"]
-// CIL[DOC-MACRO purpose="Create and configure the lowlight syntax highlighter"]
-// CIL[DOC-RESPONSIBILITY responsibility="Register language parsers with lowlight for code block highlighting"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/components/ui/RichTextEditor.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="lowlight: Lowlight" errors="none" side_effects="registers TypeScript, JavaScript, JSON, Bash, and SQL language parsers in the lowlight instance"]
-// CIL[DOC-MICRO logic_summary="Creates a lowlight instance and registers five language parsers for code block syntax highlighting" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const lowlight = createLowlight()
 lowlight.register('typescript', typescript)
 lowlight.register('javascript', javascript)
 lowlight.register('json', json)
 lowlight.register('bash', bash)
 lowlight.register('sql', sql)
-// CIL[DOC-VECTOR type="context" content="purpose='Create and configure the lowlight syntax highlighter'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:lowlight_setup:setup"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:toHtml:function"]
-// CIL[DOC-MACRO purpose="Convert raw markdown or HTML text to HTML"]
-// CIL[DOC-RESPONSIBILITY responsibility="Return a string of HTML, parsing markdown only when input does not already look like HTML"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/components/ui/RichTextEditor.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="raw: string | undefined" outputs="html: string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Trims the input, tests for HTML-like tags, and either returns the source or parses markdown synchronously" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function toHtml(raw: string | undefined): string {
   const source = (raw ?? '').trim()
   if (!source) return ''
   const likelyHtml = /<\/?(?:h[1-6]|p|div|ul|ol|li|pre|code|br|span|strong|em|a|table|tr|td|th|thead|tbody|blockquote)\b/i.test(source)
   return likelyHtml ? source : (marked.parse(source, { async: false }) as string)
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Convert raw markdown or HTML text to HTML'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:toHtml:function"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:RichTextEditorProps:interface"]
-// CIL[DOC-MACRO purpose="Declare props for the RichTextEditor component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the typed prop contract for editor configuration"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/components/ui/RichTextEditor.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="value: string, onChange?: (html: string) => void, placeholder?: string, readonly?: boolean, className?: string, minHeight?: string" outputs="N/A" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="TypeScript interface describing optional and required props for RichTextEditor" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface RichTextEditorProps {
   value: string
   onChange?: (html: string) => void
@@ -107,22 +53,7 @@ interface RichTextEditorProps {
   className?: string
   minHeight?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Declare props for the RichTextEditor component'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:RichTextEditorProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:ToolbarButton:component"]
-// CIL[DOC-MACRO purpose="Render a single formatting toolbar button"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display a styled button that invokes a formatting command when clicked"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/components/ui/RichTextEditor.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="onClick: () => void, active?: boolean, title: string, children: React.ReactNode" outputs="JSX.Element" errors="none" side_effects="invokes onClick when clicked"]
-// CIL[DOC-MICRO logic_summary="Renders a styled button with active state and onMouseDown preventDefault for TipTap integration" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function ToolbarButton({
   onClick,
   active,
@@ -150,22 +81,7 @@ function ToolbarButton({
     </button>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a single formatting toolbar button'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:ToolbarButton:component"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:RichTextEditor:component"]
-// CIL[DOC-MACRO purpose="Rich text editor component with formatting toolbar and readonly preview"]
-// CIL[DOC-RESPONSIBILITY responsibility="Initialize a TipTap editor, render a formatting toolbar, and display sanitized HTML output"]
-// CIL[DOC-CONTEXT module="RichTextEditor" layer="ui" related_files=".framework/src/components/ui/RichTextEditor.tsx,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="props: RichTextEditorProps" outputs="JSX.Element" errors="none" side_effects="calls onChange on edits, syncs content and editable state via effects, renders sanitized HTML in readonly mode"]
-// CIL[DOC-MICRO logic_summary="Sanitizes initial HTML, creates a TipTap editor with StarterKit and lowlight, syncs content and readonly state, and renders a toolbar or read-only preview" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function RichTextEditor({
   value,
   onChange,
@@ -313,10 +229,3 @@ export function RichTextEditor({
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Rich text editor component with formatting toolbar and readonly preview'; No verified external callers; imports: .framework/src/lib/utils.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/ui/RichTextEditor.tsx:RichTextEditor:component"]

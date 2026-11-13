@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
 /**
  * @module   AIAgentDetailPage
  * @audience internal
@@ -39,7 +38,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { ArrowLeft, Bot, AlertCircle } from 'lucide-react'
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -60,7 +58,6 @@ import { ArrowLeft, Bot, AlertCircle } from 'lucide-react'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgent:interface" type="interface" identity="AIAgent" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
 /**
  * The AIAgent interface defines the structure for AI agents used in the application, encapsulating their properties and configurations. It serves to standardize the representation of various types of AI agents within the system.
  *
@@ -84,7 +81,6 @@ interface AIAgent {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgent:interface"]
 
 
 
@@ -106,7 +102,6 @@ interface AIAgent {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AGENT_TYPES:constant" type="constant" identity="AGENT_TYPES" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
 /**
  * AGENT_TYPES is a constant array that defines the different types of agents available in the application. It serves to standardize the agent type options throughout the module.
  *
@@ -120,7 +115,6 @@ const AGENT_TYPES = [
   { value: 'automation', label: 'Automation' },
   { value: 'custom', label: 'Custom' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AGENT_TYPES:constant"]
 
 
 
@@ -142,7 +136,6 @@ const AGENT_TYPES = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgentDetailPage:component" type="component" identity="AIAgentDetailPage" parent="~/.framework/src/pages/admin/AIAgentDetailPage.tsx"]
 /**
  * The AIAgentDetailPage component manages the creation and editing of AI agent details within the admin interface. It fetches existing agent data or initializes a new agent based on the provided ID.
  *
@@ -280,7 +273,6 @@ export function AIAgentDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AIAgentDetailPage.tsx:AIAgentDetailPage:component"]
 
 
 

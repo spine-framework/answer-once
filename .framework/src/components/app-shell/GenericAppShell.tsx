@@ -1,34 +1,10 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Module imports and re-exports for the GenericAppShell component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide React hooks, router utilities, app types, and child page components used by the app shell"]
-// CIL[DOC-CONTEXT module="app-shell" layer="ui" related_files=".framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/hooks/useApps.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="imported types and components" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Collects module-level imports (React hooks, react-router-dom, app record type, list/detail pages) that the GenericAppShell chunk consumes." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="spine"]
 import { useState } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { AppRecord } from '../../hooks/useApps'
 import { GenericListPage } from './GenericListPage'
 import { GenericDetailPage } from './GenericDetailPage'
 import { useBranding } from '../../hooks/useBranding'
-// CIL[DOC-VECTOR type="context" content="purpose='Module imports and re-exports for the GenericAppShell component'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:NavItem:interface" type="interface" identity="NavItem" parent="~/.framework/src/components/app-shell/GenericAppShell.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Describe a single navigation item in the generic app shell"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the NavItem contract used by the sidebar and route generation"]
-// CIL[DOC-CONTEXT module="app-shell" layer="ui" related_files=".framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/hooks/useApps.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="NavItem interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="TypeScript interface with id, label, icon, path, type_slug, view, and min_role fields that define a sidebar entry." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface NavItem {
   id: string
   label: string
@@ -38,41 +14,11 @@ interface NavItem {
   view?: string
   min_role?: string
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Describe a single navigation item in the generic app shell'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:NavItem:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:GenericAppShellProps:interface" type="interface" identity="GenericAppShellProps" parent="~/.framework/src/components/app-shell/GenericAppShell.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Declare props for the GenericAppShell component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Type the app record passed to GenericAppShell"]
-// CIL[DOC-CONTEXT module="app-shell" layer="ui" related_files=".framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/hooks/useApps.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="GenericAppShellProps interface" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Contains a single app prop of type AppRecord consumed by GenericAppShell." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface GenericAppShellProps {
   app: AppRecord
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Declare props for the GenericAppShell component'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:GenericAppShellProps:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:GenericAppShell:component" type="component" identity="GenericAppShell" parent="~/.framework/src/components/app-shell/GenericAppShell.tsx:module_header:module_header"]
-// CIL[DOC-MACRO purpose="Render a responsive generic app shell with sidebar navigation and dynamic routes"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render the app layout, sidebar nav, and list/detail routes for a generic app record"]
-// CIL[DOC-CONTEXT module="app-shell" layer="ui" related_files=".framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/hooks/useApps.ts"]
-// CIL[DOC-CONTRACT inputs="app: AppRecord" outputs="JSX layout with sidebar and Routes for list/new/detail" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Builds nav items from app.nav_items, detects active routes, manages mobile sidebar state, and generates Route components for list, new, and detail views." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function GenericAppShell({ app }: GenericAppShellProps) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -231,10 +177,3 @@ export function GenericAppShell({ app }: GenericAppShellProps) {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render a responsive generic app shell with sidebar navigation and dynamic routes'; No verified external callers; imports: .framework/src/hooks/useApps.ts,.framework/src/components/app-shell/GenericListPage.tsx,.framework/src/components/app-shell/GenericDetailPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericAppShell.tsx:GenericAppShell:component"]

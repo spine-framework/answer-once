@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Top-level imports and module entry point for the AppDetailPage admin component."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare external dependencies for the App detail admin page."]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts"]
-// CIL[DOC-CONTRACT inputs="" outputs="" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, React Router, API hooks, UI components, and utilities used by the AppDetailPage component." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 
 
@@ -25,7 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Skeleton } from '../../components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert'
 import { 
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:module_header:module_header"]
   Select,
   SelectContent,
   SelectItem,
@@ -34,21 +24,7 @@ import {
 } from '../../components/ui/select'
 import { ArrowLeft, Pencil, Trash2, AlertCircle } from 'lucide-react';
 import { formatDateTime } from '../../lib/utils'
-// CIL[DOC-VECTOR type="context" content="purpose='Top-level imports and module entry point for the AppDetailPage admin component.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Define the App data contract used across the admin app detail page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a TypeScript type describing the shape of an app record."]
-// CIL[DOC-CONTEXT module="admin" layer="domain" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="app record from API or plain object" outputs="App interface definition" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares the App interface with fields for metadata, configuration, and runtime settings." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface" type="interface" identity="App" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
 interface App {
   id: string
   slug: string
@@ -77,22 +53,7 @@ interface App {
   created_by?: string
   account_id?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:App:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='Define the App data contract used across the admin app detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[DOC-MACRO purpose="Render and manage the admin app create/edit/detail page."]
-// CIL[DOC-RESPONSIBILITY responsibility="Display app details, support editing and saving app configuration, and handle deletion."]
-// CIL[DOC-CONTEXT module="admin" layer="presentation" related_files=".framework/src/components/admin/PageInstructions.tsx,.framework/src/components/ui/Modal.tsx,.framework/src/components/ui/alert.tsx,.framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/select.tsx,.framework/src/components/ui/skeleton.tsx,.framework/src/components/ui/textarea.tsx,.framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/lib/utils.ts,.framework/src/pages/admin/AppDetailPage.tsx"]
-// CIL[DOC-CONTRACT inputs="route id param" outputs="Rendered admin app detail UI" errors="Invalid ID format, failed fetch, save/delete errors" side_effects="Navigates on save/delete; calls apiFetch for create/update/delete"]
-// CIL[DOC-MICRO logic_summary="Fetches app by id, manages edit state and JSON config, renders form fields, and persists changes via API." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component" type="component" identity="AppDetailPage" parent="~/.framework/src/pages/admin/AppDetailPage.tsx"]
 export function AppDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -553,10 +514,3 @@ export function AppDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AppDetailPage.tsx:AppDetailPage:component"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render and manage the admin app create/edit/detail page.'; No verified external callers; imports: .framework/src/hooks/useApi.ts,.framework/src/lib/api.ts,.framework/src/components/ui/button.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

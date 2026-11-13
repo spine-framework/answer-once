@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/NewAccountPage.tsx:module_header:module_header" type="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company new-account form — support_admin/system_admin create a customer account"]
-// CIL[DOC-RESPONSIBILITY responsibility="Collect display name (slug auto-derived, editable) and description, then POST an account record via admin-data and land on its detail page"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/NewAccountPage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts, custom/apps/answer-once/pages/company/AccountPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="create errors render inline" side_effects="POST /api/admin-data?entity=accounts"]
-// CIL[DOC-MICRO logic_summary="Slug is slugified from the display name with a random suffix for uniqueness; create sends type_slug=account so the record gets stamped with the account type's schema and permissions" notable_decisions="route is admin-gated at the router (RequireCompanyAdmin) — this page assumes the caller already passed"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -15,7 +6,6 @@ import { Button } from '@core/components/ui/button'
 import { Input } from '@core/components/ui/input'
 import { Textarea } from '@core/components/ui/textarea'
 import { ArrowLeft, Check } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/NewAccountPage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

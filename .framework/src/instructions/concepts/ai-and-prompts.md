@@ -147,4 +147,4 @@ feedback/observability side of the loop as `items` rows (default type
 `submit_feedback`, `create_interaction` (what the pipeline stage calls — it
 stamps `thread_id`, `ai_message_id`, `retrieved_sources`, `ai_confidence`,
 `kb_candidate`, and review fields), `update_interaction`,
-`create_cil_proposal`, and `list`.
+and `list`.

@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/APIKeyDetailPage.tsx"]
 /**
  * @module   APIKeyDetailPage
  * @audience both
@@ -44,7 +43,6 @@ import { ArrowLeft, Key, RefreshCw, Trash2, AlertCircle, Copy, Check } from 'luc
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -61,7 +59,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:APIKey:interface" type="interface" identity="APIKey" parent="~/.framework/src/pages/admin/APIKeyDetailPage.tsx"]
 /**
  * The APIKey interface defines the structure of an API key object used within the application, encapsulating its properties and metadata. It provides a consistent representation of API keys across the system.
  *
@@ -90,7 +87,6 @@ interface APIKey {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:APIKey:interface"]
 
 
 
@@ -108,7 +104,6 @@ interface APIKey {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:KEY_TYPE_OPTIONS:constant" type="constant" identity="KEY_TYPE_OPTIONS" parent="~/.framework/src/pages/admin/APIKeyDetailPage.tsx"]
 /**
  * KEY_TYPE_OPTIONS defines a structured set of options for categorizing different types of API keys used in the application. It helps in organizing keys based on their intended use cases.
  *
@@ -122,7 +117,6 @@ const KEY_TYPE_OPTIONS = [
   { value: 'internal', label: 'Internal (Spine-to-Spine)' },
   { value: 'cli', label: 'CLI / Script' }
 ]
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:KEY_TYPE_OPTIONS:constant"]
 
 
 
@@ -140,7 +134,6 @@ const KEY_TYPE_OPTIONS = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:APIKeyDetailPage:component" type="component" identity="APIKeyDetailPage" parent="~/.framework/src/pages/admin/APIKeyDetailPage.tsx"]
 /**
  * The APIKeyDetailPage component manages the creation and editing of API keys, providing a user interface for inputting key details and submitting them to the server. It handles both the retrieval of existing API key data and the submission of new or updated key information.
  *
@@ -369,7 +362,6 @@ export function APIKeyDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/APIKeyDetailPage.tsx:APIKeyDetailPage:component"]
 
 
 

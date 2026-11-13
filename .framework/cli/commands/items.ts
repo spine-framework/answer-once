@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/items.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/items.ts"]
-// CIL[DOC-MACRO purpose="Import dependencies and define module context for the items CLI command group"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load Commander type, CLI context utilities, and shared admin database access for use by registerItemCommands"]
-// CIL[DOC-CONTEXT module="cli" layer="commands" related_files=".framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="" outputs="Imported Command type, buildCliContext, printResult, handleError, adminDb" errors="" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Static import block for the items command module" notable_decisions="Uses path-relative .ts imports to remain Deno/Node compatible"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
-// CIL[DOC-AUDIENCE audience="cli-developer"]
 
 
 
@@ -14,22 +5,7 @@
 import type { Command } from 'commander'
 import { buildCliContext, printResult, handleError } from '../context.ts'
 import { adminDb } from '../../functions/_shared/index.ts'
-// CIL[DOC-VECTOR type="context" content="purpose='Import dependencies and define module context for the items CLI command group'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/items.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/items.ts:registerItemCommands:function" type="function" identity="registerItemCommands" parent="~/.framework/cli/commands/items.ts"]
-// CIL[DOC-MACRO purpose="Register items subcommands (list, get, create, update, delete) with the CLI program"]
-// CIL[DOC-RESPONSIBILITY responsibility="Attach item record management commands to a Commander program, handling account scoping, type resolution, CRUD operations, and soft/hard deletion"]
-// CIL[DOC-CONTEXT module="cli" layer="commands" related_files=".framework/cli/commands/items.ts,.framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="Side-effect: registers the 'items' command with list/get/create/update/delete subcommands and their options" errors="Throws Error for missing account, missing or invalid item type, invalid JSON data, database errors, and not-found records" side_effects="Prints results to stdout via printResult/console.log; reads and writes public.items and public.types rows"]
-// CIL[DOC-MICRO logic_summary="Configures Commander subcommands for item records; each action builds a CLI context, resolves the item type by slug when needed, performs adminDb queries, and prints or handles errors" notable_decisions="Account required for create; soft delete is default unless --hard is provided; result limit is parsed with parseInt; JSON output is optional"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
 export function registerItemCommands(program: Command) {
   const items = program
     .command('items')
@@ -235,10 +211,3 @@ export function registerItemCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Register items subcommands (list, get, create, update, delete) with the CLI program'; No verified external callers; imports: .framework/cli/context.ts,.framework/functions/_shared/index.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/items.ts:registerItemCommands:function"]

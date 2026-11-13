@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/TicketsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer ticket list with new ticket creation"]
-// CIL[DOC-RESPONSIBILITY responsibility="List tickets and provide a search + new ticket flow"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/TicketsPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/TicketCard.tsx, custom/apps/answer-once/components/SearchFilterBar.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Searchable ticket list; clicking a card navigates to the ticket detail; router state newTicket opens the form (used by the dashboard CTA)" notable_decisions="new ticket is created inline via a small form, not a separate page"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -17,7 +9,6 @@ import { Button } from '@core/components/ui/button'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@core/components/ui/tabs'
 import { Plus } from 'lucide-react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/TicketsPage.tsx:module_header:module_header"]
 
 const STATUS_FILTERS = [
   { value: 'all', label: 'All' },

@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Incremental shadcn UI component test page for the admin section"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declares and exports a demo page that exercises Card, Button, Badge, Input, and Label components"]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="React page module" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Top-level module for the incremental shadcn test page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="admin"]
 
 
 
@@ -19,21 +10,6 @@ import { Badge } from '../../components/ui/badge'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Incremental shadcn UI component test page for the admin section'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx:IncrementalShadcnTestPage:component" type="component" identity="IncrementalShadcnTestPage" parent="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx"]
-// CIL[DOC-MACRO purpose="Render an interactive test page demonstrating shadcn components"]
-// CIL[DOC-RESPONSIBILITY responsibility="Renders a React component that uses Card, Button, Badge, Input, and Label to exercise state, input, and interactivity"]
-// CIL[DOC-CONTEXT module="admin" layer="page" related_files=".framework/src/components/ui/badge.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/card.tsx,.framework/src/components/ui/input.tsx,.framework/src/components/ui/label.tsx,.framework/src/pages/admin/IncrementalShadcnTestPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX UI" errors="none" side_effects="Local React state updates (count, text)"]
-// CIL[DOC-MICRO logic_summary="Maintains count and text state; renders cards, labels, inputs, buttons, and badges; sets count from numeric input or button clicks" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export function IncrementalShadcnTestPage() {
   const [count, setCount] = useState(0)
   const [text, setText] = useState('')
@@ -137,13 +113,6 @@ export function IncrementalShadcnTestPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render an interactive test page demonstrating shadcn components'; No verified external callers; imports: .framework/src/components/ui/card.tsx,.framework/src/components/ui/button.tsx,.framework/src/components/ui/badge.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/admin/IncrementalShadcnTestPage.tsx:IncrementalShadcnTestPage:component"]
 
 
 

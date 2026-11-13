@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="User registration page for the auth flow"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the React component and helpers for registering new accounts, handling invites, and redirecting after signup"]
-// CIL[DOC-CONTEXT module="auth" layer="page" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Declares imports and shared types for the registration page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
@@ -25,55 +16,9 @@ import {
 } from '../../lib/registration'
 import { TurnstileWidget, turnstileEnabled } from '../../components/auth/TurnstileWidget'
 import { useBranding } from '../../hooks/useBranding'
-// CIL[DOC-NOTE type="change" content="Batch4b: POST invites calls go through apiFetch (authenticated); pending-registration intent helpers imported for confirm-email resume"]
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:usetype:type" type="type" identity="UseType" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-VECTOR type="context" content="purpose='User registration page for the auth flow'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Discriminate personal versus company registration paths"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the allowed values for registration use type"]
-// CIL[DOC-CONTEXT module="auth" layer="type" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Union type literal 'personal' | 'company'" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Type alias for 'personal' | 'company'" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 type UseType = 'personal' | 'company'
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:usetype:type"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:domainmatchchoice:type" type="type" identity="DomainMatchChoice" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-VECTOR type="context" content="purpose='Discriminate personal versus company registration paths'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Represent the user choice when an existing account matches the email domain"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define domain match join or create options"]
-// CIL[DOC-CONTEXT module="auth" layer="type" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Union type literal 'join' | 'create_new' | null" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Type alias for 'join' | 'create_new' | null" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 type DomainMatchChoice = 'join' | 'create_new' | null
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:domainmatchchoice:type"]
-// CIL[DOC-VECTOR type="context" content="purpose='Represent the user choice when an existing account matches the email domain'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:invitepreview:interface" type="interface" identity="InvitePreview" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Describe the payload returned by invite token validation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Interface for invitation metadata"]
-// CIL[DOC-CONTEXT module="auth" layer="interface" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="structured invite preview object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines email, full_name, account_name, role_name, and kind fields" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface InvitePreview {
   email: string
   full_name: string | null
@@ -81,23 +26,8 @@ interface InvitePreview {
   role_name: string | null
   kind: string
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:invitepreview:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='Describe the payload returned by invite token validation'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:registrationconfig:interface" type="interface" identity="RegistrationConfig" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Describe server-side registration routing configuration"]
-// CIL[DOC-RESPONSIBILITY responsibility="Interface for per-app role and account strategy mapping"]
-// CIL[DOC-CONTEXT module="auth" layer="interface" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="RegistrationConfig object" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines default_app, default_role, allow_url_override, apps map, account_strategy, and target_account" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 interface RegistrationConfig {
   default_app: string
   default_role: string
@@ -122,23 +52,9 @@ interface RegistrationConfig {
     default_workspace_name?: boolean
   }>
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:registrationconfig:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='Describe server-side registration routing configuration'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:callinvitesapi:function" type="function" identity="callInvitesApi" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Call the Netlify invites edge function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Abstract GET and POST calls to the /invites endpoint"]
-// CIL[DOC-CONTEXT module="auth" layer="function" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="action, params, method" outputs="parsed JSON response" errors="network or malformed response" side_effects="HTTP request to /.netlify/functions/invites"]
-// CIL[DOC-MICRO logic_summary="Builds query string for GET or POST body for the invites endpoint" notable_decisions="POST calls go through apiFetch so the session Bearer token is attached — complete-registration is authenticated server-side; public GET actions (check-first-user, check-domain, validate-token) stay on raw fetch"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="contract" content="complete-registration rejects anonymous callers; only GET actions remain unauthenticated"]
+// POST calls go through apiFetch so the session Bearer token is attached — complete-registration is authenticated server-side; public GET actions (check-first-user, check-domain, validate-token) stay on raw fetch
+// complete-registration rejects anonymous callers; only GET actions remain unauthenticated
 async function callInvitesApi(action: string, params: Record<string, any> = {}, method: 'GET' | 'POST' = 'GET') {
   const base = '/.netlify/functions/invites'
   if (method === 'GET') {
@@ -153,22 +69,7 @@ async function callInvitesApi(action: string, params: Record<string, any> = {}, 
   })
   return res.json()
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:callinvitesapi:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Call the Netlify invites edge function'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:loadregistrationconfig:function" type="function" identity="loadRegistrationConfig" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Fetch the runtime registration configuration from spine.config.json"]
-// CIL[DOC-RESPONSIBILITY responsibility="Load and parse public registration config"]
-// CIL[DOC-CONTEXT module="auth" layer="function" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="RegistrationConfig or null" errors="fetch or parse failure" side_effects="HTTP GET /spine.config.json"]
-// CIL[DOC-MICRO logic_summary="Fetches JSON and returns config.registration or null on any error" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function loadRegistrationConfig(): Promise<RegistrationConfig | null> {
   try {
     const res = await fetch('/spine.config.json')
@@ -179,22 +80,7 @@ async function loadRegistrationConfig(): Promise<RegistrationConfig | null> {
     return null
   }
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:loadregistrationconfig:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Fetch the runtime registration configuration from spine.config.json'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:checkfirstuser:function" type="function" identity="checkFirstUser" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Determine whether this platform has no users yet"]
-// CIL[DOC-RESPONSIBILITY responsibility="Query the invites API for the first-user flag"]
-// CIL[DOC-CONTEXT module="auth" layer="function" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="boolean" errors="network or error treated as false" side_effects="HTTP GET to the invites API"]
-// CIL[DOC-MICRO logic_summary="Calls callInvitesApi('check-first-user') and returns data.is_first_user or false" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 async function checkFirstUser(): Promise<boolean> {
   try {
     const result = await callInvitesApi('check-first-user')
@@ -203,22 +89,7 @@ async function checkFirstUser(): Promise<boolean> {
     return false
   }
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:checkfirstuser:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Determine whether this platform has no users yet'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:getpostregistrationredirect:function" type="function" identity="getPostRegistrationRedirect" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Resolve the redirect path after successful registration"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map role, app URL overrides, and config to a destination route"]
-// CIL[DOC-CONTEXT module="auth" layer="function" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="config, searchParams, isInvite, effectiveRole, inviteAccountId" outputs="string path" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Chooses target app/role path with fallbacks to /" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 function getPostRegistrationRedirect(
   config: RegistrationConfig | null,
   searchParams: URLSearchParams,
@@ -251,23 +122,7 @@ function getPostRegistrationRedirect(
 
   return { path: '/', appSlug: null }
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:getpostregistrationredirect:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Resolve the redirect path after successful registration'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:registerpage:function" type="function" identity="RegisterPage" parent="~/.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the registration form and handle account creation"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the main registration page UI, validate input, complete registration, and navigate"]
-// CIL[DOC-CONTEXT module="auth" layer="function" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/RegisterPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none (reads URL search params and auth context)" outputs="JSX registration page" errors="supabase errors, invite token errors, and registration errors surfaced in UI" side_effects="Updates React state, calls supabase auth, calls the invites API, and navigates"]
-// CIL[DOC-MICRO logic_summary="Handles token validation, domain checking, form submission, account creation, and post-registration redirect" notable_decisions="['invite_token passed in signUp metadata','complete-registration via apiFetch with {app,path,account_name} only','server role_slug drives redirect','confirmation-pending state + sessionStorage spine.pending_registration','resume mode for authenticated unplaced users','domain-join gated by app allow_domain_join/choice policy']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="change" content="Batch4b: signUp sends invite_token; POST complete-registration is authenticated and server binds email/role; pending intent persisted before placement call and resumed at /register?resume=1 or after /auth/confirm"]
 export function RegisterPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -870,10 +725,3 @@ export function RegisterPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/auth/RegisterPage.tsx:registerpage:function"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render the registration form and handle account creation'; No verified external callers; imports: .framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

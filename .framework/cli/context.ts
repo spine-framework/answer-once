@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/context.ts"]
 /**
  * @module   context
  * @audience both
@@ -27,7 +26,6 @@ import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { CoreContext, adminDb, SYSTEM_PRINCIPAL, Principal, getUserDb } from '../functions/_shared/index.ts'
 import { verifyApiKey } from '../functions/_shared/hash-api-key.ts'
-// CIL[END stable_id="~/.framework/cli/context.ts:module_header:module_header"]
 
 
 
@@ -44,7 +42,6 @@ import { verifyApiKey } from '../functions/_shared/hash-api-key.ts'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:__filename:constant" type="constant" identity="__filename" parent="~/.framework/cli/context.ts"]
 /**
  * __filename is a constant that holds the absolute path of the current module file, providing a reference to the file location for logging or resolving relative paths.
  *
@@ -54,7 +51,6 @@ import { verifyApiKey } from '../functions/_shared/hash-api-key.ts'
  * @cil-generated
  */
 const __filename = fileURLToPath(import.meta.url)
-// CIL[END stable_id="~/.framework/cli/context.ts:__filename:constant"]
 
 
 
@@ -71,7 +67,6 @@ const __filename = fileURLToPath(import.meta.url)
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:__dirname:constant" type="constant" identity="__dirname" parent="~/.framework/cli/context.ts"]
 /**
  * __dirname is a constant that holds the directory name of the current module, allowing for relative file path resolution. It exists to facilitate file operations within the module's directory context.
  *
@@ -81,7 +76,6 @@ const __filename = fileURLToPath(import.meta.url)
  * @cil-generated
  */
 const __dirname = dirname(__filename)
-// CIL[END stable_id="~/.framework/cli/context.ts:__dirname:constant"]
 
 
 
@@ -98,7 +92,6 @@ const __dirname = dirname(__filename)
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:loadEnv:function" type="function" identity="loadEnv" parent="~/.framework/cli/context.ts"]
 /**
  * Loads environment variables from a specified file into the process environment, ensuring that any variables defined in the file are available to the application at runtime.
  *
@@ -125,7 +118,6 @@ function loadEnv() {
     }
   }
 }
-// CIL[END stable_id="~/.framework/cli/context.ts:loadEnv:function"]
 
 
 
@@ -142,7 +134,6 @@ function loadEnv() {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:CliOptions:interface" type="interface" identity="CliOptions" parent="~/.framework/cli/context.ts"]
 /**
  * The CliOptions interface defines the structure for command-line interface options, allowing for optional configuration of an account string. It exists to standardize the way CLI options are handled within the module.
  *
@@ -153,7 +144,6 @@ function loadEnv() {
 export interface CliOptions {
   account?: string
 }
-// CIL[END stable_id="~/.framework/cli/context.ts:CliOptions:interface"]
 
 
 
@@ -170,7 +160,6 @@ export interface CliOptions {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:buildCliContext:function" type="function" identity="buildCliContext" parent="~/.framework/cli/context.ts"]
 /**
  * Builds a CLI context by validating environment variables and retrieving user or API key information. It ensures that the necessary credentials are available for subsequent operations.
  *
@@ -290,7 +279,6 @@ export async function buildCliContext(opts: CliOptions = {}): Promise<CoreContex
     requestId
   }
 }
-// CIL[END stable_id="~/.framework/cli/context.ts:buildCliContext:function"]
 
 
 
@@ -307,7 +295,6 @@ export async function buildCliContext(opts: CliOptions = {}): Promise<CoreContex
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:printResult:function" type="function" identity="printResult" parent="~/.framework/cli/context.ts"]
 /**
  * Prints the result of the given data to the console in a readable format for CLI users. It provides flexibility to display data either as a formatted table or as JSON based on the provided options.
  *
@@ -341,7 +328,6 @@ export function printResult(data: any, opts: { json?: boolean } = {}) {
     console.log(data)
   }
 }
-// CIL[END stable_id="~/.framework/cli/context.ts:printResult:function"]
 
 
 
@@ -358,7 +344,6 @@ export function printResult(data: any, opts: { json?: boolean } = {}) {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/context.ts:handleError:function" type="function" identity="handleError" parent="~/.framework/cli/context.ts"]
 /**
  * The handleError function logs error messages to the console based on the error type and exits the process. It provides specific messages for known error codes and a general message for other errors.
  *
@@ -385,7 +370,6 @@ export function handleError(error: any, context?: string) {
   
   process.exit(1)
 }
-// CIL[END stable_id="~/.framework/cli/context.ts:handleError:function"]
 
 
 

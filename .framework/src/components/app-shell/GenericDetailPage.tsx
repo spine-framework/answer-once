@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/components/app-shell/GenericDetailPage.tsx"]
-// CIL[DOC-MACRO purpose="Imports and module setup for the generic detail page"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide dependencies for GenericDetailPage rendering"]
-// CIL[DOC-CONTEXT module="app-shell" layer="framework" related_files=".framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx,.framework/src/hooks/useEntityRecord.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports hooks and UI subcomponents used by the detail page" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="framework"]
 
 import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
@@ -14,43 +5,13 @@ import { apiFetch } from '../../lib/api'
 import { useEntityRecord } from '../../hooks/useEntityRecord'
 import { DataDetailHeader } from '../runtime/DataDetailHeader'
 import { SchemaDetailForm } from '../runtime/SchemaDetailForm'
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:module_header:module_header"]
-// CIL[DOC-VECTOR type="context" content="purpose='Imports and module setup for the generic detail page'; No verified external callers; imports: .framework/src/hooks/useEntityRecord.ts,.framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[DOC-MACRO purpose="Props interface for GenericDetailPage"]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the expected props for the detail page"]
-// CIL[DOC-CONTEXT module="app-shell" layer="framework" related_files=".framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx,.framework/src/hooks/useEntityRecord.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="TypeScript interface describing typeSlug, viewSlug, and isCreating" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:GenericDetailPageProps:interface" type="interface" identity="GenericDetailPageProps" parent="~/.framework/src/components/app-shell/GenericDetailPage.tsx"]
 interface GenericDetailPageProps {
   typeSlug: string
   viewSlug?: string
   isCreating?: boolean
 }
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:GenericDetailPageProps:interface"]
-// CIL[DOC-VECTOR type="context" content="purpose='Props interface for GenericDetailPage'; No verified external callers; imports: .framework/src/hooks/useEntityRecord.ts,.framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
 
 
-// CIL[DOC-MACRO purpose="Render the generic detail page for an app type"]
-// CIL[DOC-RESPONSIBILITY responsibility="Display, edit, create, and delete records driven by a design schema"]
-// CIL[DOC-CONTEXT module="app-shell" layer="framework" related_files=".framework/src/components/app-shell/GenericDetailPage.tsx,.framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx,.framework/src/hooks/useEntityRecord.ts"]
-// CIL[DOC-CONTRACT inputs="typeSlug: string, viewSlug?: string, isCreating?: boolean" outputs="JSX.Element" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Load record with useEntityRecord, resolve detail view, initialize form data, and render DataDetailHeader and SchemaDetailForm" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:GenericDetailPage:component" type="component" identity="GenericDetailPage" parent="~/.framework/src/components/app-shell/GenericDetailPage.tsx"]
 export function GenericDetailPage({ typeSlug, viewSlug, isCreating: forceCreate }: GenericDetailPageProps) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -257,10 +218,3 @@ export function GenericDetailPage({ typeSlug, viewSlug, isCreating: forceCreate 
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/components/app-shell/GenericDetailPage.tsx:GenericDetailPage:component"]
-// CIL[DOC-VECTOR type="context" content="purpose='Render the generic detail page for an app type'; No verified external callers; imports: .framework/src/hooks/useEntityRecord.ts,.framework/src/components/runtime/DataDetailHeader.tsx,.framework/src/components/runtime/SchemaDetailForm.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]

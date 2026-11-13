@@ -1,20 +1,10 @@
 #!/usr/bin/env tsx
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="Read-only post-install contract check for a standalone repository against a target Supabase project"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify required tables exist, required RPCs are callable, the app row + registration config are present, and every seed-declared row (types, roles, link types, agents, prompt configs, pipelines, triggers) materialized with resolvable pipeline/stage references — plus optional emptiness assertions for fresh-database acceptance"]
-// CIL[DOC-CONTEXT module="export" layer="tooling" related_files="scripts/export-standalone.ts,custom/apps/demo/manifest.json,scripts/check-db-schema.ts"]
-// CIL[DOC-CONTRACT inputs="--app <slug> [--expect-empty-people] [--expect-empty-accounts] [--expect-empty-runtime] [--expected-project-ref <ref>]; .env with SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY" outputs="stdout check report; exit 0 all pass" errors="exit 2 usage/missing env; exit 1 any failed check" side_effects="READ-ONLY: table probes use HEAD selects; RPC probes use invalid argument values so the function signature resolves but execution fails before any write; auth admin listUsers reads only"]
-// CIL[DOC-MICRO logic_summary="RPC existence is probed by passing a malformed value to a typed parameter — PG rejects coercion (22P02) before executing the body, distinguishing 'exists but errors' from PostgREST PGRST202 'function not found'. Seed inventory is derived from the app manifest + seed JSONs, nothing is hardcoded" notable_decisions="no repair mode — this tool never writes; failures are reported for the operator"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// no repair mode — this tool never writes; failures are reported for the operator
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-// CIL[END stable_id="~/scripts/verify-install.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:setup:block" type="block" identity="setup" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="Env loading, arg parsing, result tracking"]
 function loadEnv(): void {
   const envPath = join(process.cwd(), '.env')
   if (!existsSync(envPath)) return
@@ -57,10 +47,7 @@ function check(name: string, ok: boolean, detail = ''): void {
   if (ok) { passed++; console.log(`  ✓ ${name}`) }
   else { failures.push(name); console.log(`  ✗ ${name}${detail ? ` — ${detail}` : ''}`) }
 }
-// CIL[END stable_id="~/scripts/verify-install.ts:setup:block"]
 
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:required:block" type="block" identity="required" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="Required tables and RPC probes"]
 const REQUIRED_TABLES = [
   'accounts', 'actions', 'ai_agents', 'apps', 'attachments',
   'document_leases', 'embeddings', 'invites', 'items', 'link_types',
@@ -90,10 +77,7 @@ const REQUIRED_RPCS: Record<string, Record<string, unknown>> = {
     p_status: '__probe__',
   },
 }
-// CIL[END stable_id="~/scripts/verify-install.ts:required:block"]
 
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:probes:block" type="block" identity="probes" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="Read-only DB probes"]
 async function tableExists(table: string): Promise<boolean> {
   const { error } = await db.from(table).select('*', { count: 'exact', head: true })
   return !error
@@ -109,11 +93,7 @@ async function rpcExists(name: string, probeArgs: Record<string, unknown>): Prom
   if (!error) return true
   return error.code !== 'PGRST202'
 }
-// CIL[END stable_id="~/scripts/verify-install.ts:probes:block"]
 
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:seed_check:block" type="block" identity="seed_inventory" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="Compare the app's declared seed inventory against DB state"]
-// CIL[DOC-MICRO logic_summary="Each seed table gets its own key extractor: types match kind+slug, most others match slug, prompt_configs match name (the table has no slug)" notable_decisions="DB is the oracle — seed rows are the contract the installer promised to materialize"]
 interface SeedCheck { table: string; label: string; key: (row: any) => string }
 
 const SEED_KEYS: Record<string, SeedCheck> = {
@@ -164,10 +144,7 @@ async function checkSeeds(appDir: string, seedEntries: any[]): Promise<void> {
     }
   }
 }
-// CIL[END stable_id="~/scripts/verify-install.ts:seed_check:block"]
 
-// CIL[BEGIN stable_id="~/scripts/verify-install.ts:main:function" type="function" identity="main" parent="~/scripts/verify-install.ts"]
-// CIL[DOC-MACRO purpose="CLI entry — run all contract checks and report"]
 async function main(): Promise<void> {
   const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
   const appDir = join(repoRoot, 'custom/apps', appSlug)
@@ -350,7 +327,6 @@ function summarize(): void {
   console.log(`❌ verify-install: ${failures.length} failed, ${passed} passed`)
   process.exit(1)
 }
-// CIL[END stable_id="~/scripts/verify-install.ts:main:function"]
 
 main().catch((err) => {
   console.error('❌ verify-install crashed:', err)

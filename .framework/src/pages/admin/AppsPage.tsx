@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
 /**
  * @module   AppsPage
  * @audience both
@@ -34,7 +33,6 @@ import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
 import { 
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:module_header:module_header"]
   Plus,
   Box,
   FileText,
@@ -73,7 +71,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:App:interface" type="interface" identity="App" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
 /**
  * The App interface defines the structure of an application object used within the admin module. It encapsulates essential properties related to an application, such as its identification, configuration, and status.
  *
@@ -96,7 +93,6 @@ interface App {
   created_at: string
   updated_at?: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:App:interface"]
 
 
 
@@ -115,7 +111,6 @@ interface App {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/AppsPage.tsx:AppsPage:component" type="component" identity="AppsPage" parent="~/.framework/src/pages/admin/AppsPage.tsx"]
 /**
  * The AppsPage component displays a list of applications with filtering, sorting, and navigation capabilities. It fetches app data from an API and allows users to search and filter based on type and status.
  *
@@ -434,7 +429,6 @@ export function AppsPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/AppsPage.tsx:AppsPage:component"]
 
 
 

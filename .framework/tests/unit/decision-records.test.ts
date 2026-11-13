@@ -1,6 +1,6 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
 import { describe, it, expect } from 'vitest'
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import {
@@ -9,13 +9,9 @@ import {
   refToPath,
 } from '../../cli/lib/decision-records.ts'
 import { resolve } from 'node:path'
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:repo:constant" type="constant" identity="REPO" parent="none"]
 const REPO = resolve(__dirname, '../../..')
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:repo:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:valid_fm:constant" type="constant" identity="VALID_FM" parent="none"]
 const VALID_FM = `---
 id: spine-framework:0001-test
 title: Test
@@ -35,9 +31,7 @@ provenance: reconstructed
 ---
 Body
 `
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:valid_fm:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:makeroot:function" type="function" identity="makeRoot" parent="none"]
 function makeRoot(): string {
   const root = mkdtempSync(join(tmpdir(), 'decisions-'))
   mkdirSync(join(root, '.framework/decisions'), { recursive: true })
@@ -46,17 +40,13 @@ function makeRoot(): string {
   writeFileSync(join(root, 'target.ts'), 'x')
   return root
 }
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:makeroot:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:writerecord:function" type="function" identity="writeRecord" parent="none"]
 function writeRecord(root: string, relDir: string, fm: string, name = '0001-a.md') {
   const path = join(root, relDir, name)
   writeFileSync(path, fm)
   return relDir + '/' + name
 }
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:writerecord:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/decision-records.test.ts:fmwith:function" type="function" identity="fmWith" parent="none"]
 function fmWith(overrides: Record<string, string>): string {
   let fm = VALID_FM
   for (const [k, v] of Object.entries(overrides)) {
@@ -64,7 +54,6 @@ function fmWith(overrides: Record<string, string>): string {
   }
   return fm
 }
-// CIL[END stable_id="~/.framework/tests/unit/decision-records.test.ts:fmwith:function"]
 
 describe('listDecisionDirs', () => {
   it('classifies package and customer dirs', () => {
@@ -178,6 +167,93 @@ describe('validateDecisions — unit rules', () => {
       // strict mode (release gate) fails proposed
       const strict = validateDecisions(root, { strictProposed: true })
       expect(strict.problems.some(p => p.level === 'error')).toBe(true)
+    } finally { rmSync(root, { recursive: true, force: true }) }
+  })
+})
+
+describe('release exceptions', () => {
+  const PROPOSED_FM = VALID_FM.replace('status: accepted', 'status: proposed')
+  const EXCEPTIONS_YAML = (release: string, record = 'spine-framework:0001-test') => `exceptions:
+  - record: ${record}
+    release: "${release}"
+    approved_by: tester
+    reason: test fixture
+`
+
+  function makeVersionedRoot(): string {
+    const root = makeRoot()
+    writeFileSync(join(root, 'package.json'),
+      JSON.stringify({ name: 'spine-framework', version: '0.5.5' }))
+    return root
+  }
+
+  it('a valid exception downgrades strict proposed to a warning', () => {
+    const root = makeVersionedRoot()
+    try {
+      writeRecord(root, '.framework/decisions', PROPOSED_FM)
+      writeFileSync(join(root, '.framework/decisions/exceptions.yaml'), EXCEPTIONS_YAML('0.5.5'))
+      const { problems } = validateDecisions(root, { strictProposed: true })
+      expect(problems.filter(p => p.level === 'error')).toHaveLength(0)
+      expect(problems.some(p => p.level === 'warning' && p.message.includes('exception'))).toBe(true)
+    } finally { rmSync(root, { recursive: true, force: true }) }
+  })
+
+  it('a stale exception fails validation — approved release != current version', () => {
+    const root = makeVersionedRoot()
+    try {
+      writeRecord(root, '.framework/decisions', PROPOSED_FM)
+      writeFileSync(join(root, '.framework/decisions/exceptions.yaml'), EXCEPTIONS_YAML('0.5.4'))
+      const { problems } = validateDecisions(root)
+      const errs = problems.filter(p => p.level === 'error').map(p => p.message).join('\n')
+      expect(errs).toContain('stale')
+      expect(errs).toContain('0.5.4')
+    } finally { rmSync(root, { recursive: true, force: true }) }
+  })
+
+  it('an exception for a non-proposed or missing record is obsolete', () => {
+    const root = makeVersionedRoot()
+    try {
+      writeRecord(root, '.framework/decisions', VALID_FM)
+      writeFileSync(join(root, '.framework/decisions/exceptions.yaml'), EXCEPTIONS_YAML('0.5.5'))
+      let { problems } = validateDecisions(root)
+      expect(problems.some(p => p.level === 'error' && p.message.includes('obsolete'))).toBe(true)
+
+      writeFileSync(join(root, '.framework/decisions/exceptions.yaml'),
+        EXCEPTIONS_YAML('0.5.5', 'spine-framework:9999-nope'))
+      ;({ problems } = validateDecisions(root))
+      expect(problems.some(p => p.level === 'error' && p.message.includes('unknown record'))).toBe(true)
+    } finally { rmSync(root, { recursive: true, force: true }) }
+  })
+
+  it('an unexceptioned proposed record still fails strict mode', () => {
+    const root = makeVersionedRoot()
+    try {
+      writeRecord(root, '.framework/decisions', PROPOSED_FM)
+      const { problems } = validateDecisions(root, { strictProposed: true })
+      expect(problems.some(p => p.level === 'error' && p.message.includes('proposed'))).toBe(true)
+    } finally { rmSync(root, { recursive: true, force: true }) }
+  })
+})
+
+describe('release gate wiring (evidence: source)', () => {
+  // Testing strictProposed alone is not enforcement — the gate must invoke it.
+  it('npm run gate includes verify:decisions', () => {
+    const pkg = JSON.parse(readFileSync(join(REPO, 'package.json'), 'utf8'))
+    expect(pkg.scripts.gate).toContain('verify:decisions')
+  })
+
+  it('the gate script rejects an unapproved proposed record end to end', () => {
+    const root = makeRoot()
+    try {
+      writeFileSync(join(root, 'package.json'),
+        JSON.stringify({ name: 'spine-framework', version: '0.5.5' }))
+      writeRecord(root, '.framework/decisions',
+        VALID_FM.replace('status: accepted', 'status: proposed'))
+      const tsx = join(REPO, 'node_modules', '.bin', 'tsx')
+      const res = spawnSync(tsx, ['scripts/check-decisions.ts', '--strict', '--root', root],
+        { cwd: REPO, encoding: 'utf8', timeout: 30000 })
+      expect(res.status).toBe(1)
+      expect(res.stdout + res.stderr).toContain('proposed')
     } finally { rmSync(root, { recursive: true, force: true }) }
   })
 })

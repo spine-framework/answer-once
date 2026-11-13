@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * @module   functions/ai-agents
  * @audience internal
@@ -33,7 +32,6 @@ import { PermissionEngine, sanitizeRecordData } from './_shared/permissions'
 import { runAgent, claimAgentEpisode, acquireEpisodeLease } from './_shared/agent-runner'
 import { checkRateLimit } from './_shared/rate-limit'
 import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_shared/security'
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:module_header:module_header"]
 
 
 
@@ -50,7 +48,6 @@ import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_sha
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:permissions:constant" type="constant" identity="permissions" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * The 'permissions' constant provides access to the PermissionEngine, allowing for permission management within the module. It exists to facilitate the handling of user permissions in AI agent functionalities.
  *
@@ -67,7 +64,6 @@ import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_sha
 
 
 const permissions = PermissionEngine as any
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:permissions:constant"]
 
 
 
@@ -91,7 +87,6 @@ const permissions = PermissionEngine as any
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * Fetches a list of AI agents based on query parameters such as agent type and active status. This function is designed to provide a sanitized view of AI agents for the requesting account.
  *
@@ -144,7 +139,6 @@ export const list = createHandler(async (ctx, _body) => {
 
   return sanitized
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:list:constant"]
 
 
 
@@ -161,7 +155,6 @@ export const list = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * Fetches an AI agent record by its ID from the database. This function ensures that only authorized users can access the data based on their role.
  *
@@ -198,7 +191,6 @@ export const get = createHandler(async (ctx, _body) => {
 
   return await sanitizeRecordData(ctx, data, 'ai_agent')
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:get:constant"]
 
 
 
@@ -215,7 +207,6 @@ export const get = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * Creates a new AI agent in the database based on the provided parameters. It ensures that required fields are present and that the user context is valid before performing the insertion.
  *
@@ -273,7 +264,6 @@ export const create = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:create:constant"]
 
 
 
@@ -290,7 +280,6 @@ export const create = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * Updates an AI agent's properties in the database based on the provided ID and update data. It ensures that the user context is valid and that the ID is provided before performing the update.
  *
@@ -343,7 +332,6 @@ export const update = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:update:constant"]
 
 
 
@@ -360,7 +348,6 @@ export const update = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * The 'remove' constant defines a handler for deleting an AI agent from the database based on its ID. It ensures that the ID is provided and logs the deletion event.
  *
@@ -408,7 +395,6 @@ export const remove = createHandler(async (ctx, _body) => {
 
   return { success: true }
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:remove:constant"]
 
 
 
@@ -425,7 +411,6 @@ export const remove = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:run:constant" type="constant" identity="run" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * The 'run' constant defines an asynchronous handler that processes user messages within a specified thread context. It ensures that necessary parameters are provided and manages the execution of an agent based on the provided mode.
  *
@@ -623,7 +608,6 @@ export const run = createHandler(async (ctx, body) => {
     prompt_config_id: message?.data?.prompt_config_id || updatedThread?.data?.prompt_config_id || null,
   }
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:run:constant"]
 
 
 
@@ -640,7 +624,6 @@ export const run = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/ai-agents.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/ai-agents.ts"]
 /**
  * The handler processes incoming requests based on the specified action and HTTP method, routing them to the appropriate function. It exists to manage different operations like retrieving, creating, or deleting resources in a structured manner.
  *
@@ -683,7 +666,6 @@ export const handler = createHandler(async (ctx, body) => {
 
   throw new Error('Invalid action or method')
 })
-// CIL[END stable_id="~/.framework/functions/ai-agents.ts:handler:constant"]
 
 
 

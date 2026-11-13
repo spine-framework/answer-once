@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/integrations.ts"]
 /**
  * @module   integrations
  * @audience both
@@ -30,7 +29,6 @@ import { emitLog } from './_shared/audit'
 import { sanitizeRecordData } from './_shared/permissions'
 import { isSystemAdmin } from './_shared/principal'
 import { isAccountAdmin } from './_shared/access'
-// CIL[END stable_id="~/.framework/functions/integrations.ts:module_header:module_header"]
 
 
 
@@ -47,7 +45,6 @@ import { isAccountAdmin } from './_shared/access'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:deriveSlug:function" type="function" identity="deriveSlug" parent="~/.framework/functions/integrations.ts"]
 /**
  * Derives a URL-friendly slug from a given name, ensuring it is lowercase and replaces spaces with hyphens while removing invalid characters. This function can also use a provided slug if available.
  *
@@ -62,7 +59,6 @@ import { isAccountAdmin } from './_shared/access'
 function deriveSlug(name: string, slug?: string): string {
   return slug || name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 }
-// CIL[END stable_id="~/.framework/functions/integrations.ts:deriveSlug:function"]
 
 
 
@@ -79,7 +75,6 @@ function deriveSlug(name: string, slug?: string): string {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:computeIsConfigured:function" type="function" identity="computeIsConfigured" parent="~/.framework/functions/integrations.ts"]
 /**
  * Determines if the provided credentials are configured correctly by checking for valid entries in the credentials object. This function ensures that all necessary credential values are present and valid.
  *
@@ -97,7 +92,6 @@ function computeIsConfigured(credentials: Record<string, any> | undefined): bool
     return typeof entry.value === 'string' && entry.value.length > 0
   })
 }
-// CIL[END stable_id="~/.framework/functions/integrations.ts:computeIsConfigured:function"]
 
 
 
@@ -113,7 +107,6 @@ function computeIsConfigured(credentials: Record<string, any> | undefined): bool
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/integrations.ts"]
 /**
  * The 'list' constant defines an asynchronous handler that retrieves a list of integrations based on various query parameters, ensuring that the request context includes an account ID. It applies filters based on the provided query parameters.
  *
@@ -165,7 +158,6 @@ export const list = createHandler(async (ctx, _body) => {
 
   return sanitized
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:list:constant"]
 
 
 
@@ -181,7 +173,6 @@ export const list = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/integrations.ts"]
 /**
  * Retrieves a specific integration record from the database based on the provided integration ID. This function ensures that the caller has the necessary permissions and handles potential errors during the database query.
  *
@@ -210,7 +201,6 @@ export const get = createHandler(async (ctx, _body) => {
 
   return await sanitizeRecordData(ctx, data, 'integration')
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:get:constant"]
 
 
 
@@ -226,7 +216,6 @@ export const get = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/integrations.ts"]
 /**
  * Creates a new integration record in the database based on the provided parameters while ensuring required fields are present and validating user context. This function is essential for managing integrations within the application.
  *
@@ -300,7 +289,6 @@ export const create = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:create:constant"]
 
 
 
@@ -316,7 +304,6 @@ export const create = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/integrations.ts"]
 /**
  * The update constant defines a handler for updating integration records in the database. It ensures that required fields are present and only allowed fields are updated.
  *
@@ -390,7 +377,6 @@ export const update = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:update:constant"]
 
 
 
@@ -406,7 +392,6 @@ export const update = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/integrations.ts"]
 /**
  * The 'remove' constant defines a handler for deleting an integration by its ID, marking it as inactive in the database. It ensures that the integration ID is provided and logs the deletion event.
  *
@@ -449,7 +434,6 @@ export const remove = createHandler(async (ctx, _body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:remove:constant"]
 
 
 
@@ -465,7 +449,6 @@ export const remove = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/integrations.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/integrations.ts"]
 /**
  * The handler processes incoming requests based on the HTTP method specified in the query parameters. It routes the request to the appropriate function for handling GET, POST, PATCH, or DELETE operations.
  *
@@ -495,7 +478,6 @@ export const handler = createHandler(async (ctx, body) => {
       throw new Error(`Unsupported method: ${method}`)
   }
 })
-// CIL[END stable_id="~/.framework/functions/integrations.ts:handler:constant"]
 
 
 

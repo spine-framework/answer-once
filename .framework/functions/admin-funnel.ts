@@ -1,30 +1,7 @@
-// CIL[BEGIN stable_id="~/.framework/functions/admin-funnel.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/admin-funnel.ts"]
-// CIL[DOC-MACRO purpose="Module-level imports for the admin funnel metrics handler"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import shared middleware and database client used by the handler"]
-// CIL[DOC-CONTEXT module="admin-funnel" layer="function" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Dependency wiring for the admin funnel function" notable_decisions="Uses createHandler and adminDb from _shared"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
-// CIL[DOC-AUDIENCE audience="internal"]
 
 import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import { adminDb } from './_shared/db'
-// CIL[DOC-VECTOR type="context" content="purpose='Module-level imports for the admin funnel metrics handler'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/admin-funnel.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/functions/admin-funnel.ts:metrics:constant" type="constant" identity="metrics" parent="~/.framework/functions/admin-funnel.ts"]
-// CIL[DOC-MACRO purpose="Compute admin funnel metrics for the last 30 days"]
-// CIL[DOC-RESPONSIBILITY responsibility="Query item type registry and items table to calculate visitor, user, install, and stage distribution metrics"]
-// CIL[DOC-CONTEXT module="admin-funnel" layer="function" related_files=".framework/functions/_shared/db.ts,.framework/functions/_shared/middleware.ts,.framework/functions/admin-funnel.ts"]
-// CIL[DOC-CONTRACT inputs="ctx: RequestContext, body: request payload" outputs="anonymous_visitors, identified_users, installed_instances, conversion_rates, stage_distribution" errors="none — missing signal types degrade to zeroed metrics" side_effects="Reads from adminDb; no writes"]
-// CIL[DOC-MICRO logic_summary="Resolve funnel_signal, anonymous_session, and spine_instance type IDs from types (kind='item'); count signals, anonymous sessions, identified accounts, and installed instances; return conversion rates and stage distribution" notable_decisions="Signal types are app-seeded, so absent types produce zeroed sections rather than errors; ignores signal items without account_id for stage counts; uses 30-day window; guards division with zero checks"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stable]
+// Signal types are app-seeded, so absent types produce zeroed sections rather than errors; ignores signal items without account_id for stage counts; uses 30-day window; guards division with zero checks
 export const metrics = createHandler(async (ctx, body) => {
   requireSystemContextWithAudit(ctx)
   const { data: typeRows } = await adminDb
@@ -111,10 +88,3 @@ export const metrics = createHandler(async (ctx, body) => {
     stage_distribution: stageDistribution
   }
 })
-// CIL[DOC-VECTOR type="context" content="purpose='Compute admin funnel metrics for the last 30 days'; No verified external callers; imports: .framework/functions/_shared/middleware.ts,.framework/functions/_shared/db.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/functions/admin-funnel.ts:metrics:constant"]

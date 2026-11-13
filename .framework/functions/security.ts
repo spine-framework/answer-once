@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/security.ts"]
 /**
  * @module   security
  * @audience internal
@@ -16,32 +15,17 @@
  *
  * @cil-generated
  */
-// CIL[DOC-MACRO purpose="System-admin security operations: flagged-actor report, ban/unban, blocklist CRUD, Netlify edge sync"]
-// CIL[DOC-RESPONSIBILITY responsibility="Aggregate security.* audit events into a flagged-accounts report; apply three-layer bans (security_blocklist + auth.admin ban_duration + Netlify firewall rule); expose blocklist list/add/revoke"]
-// CIL[DOC-CONTEXT module="functions" layer="security" related_files=".framework/functions/_shared/security.ts,.framework/migrations/049_security_blocklist.sql,.framework/src/pages/admin/SecurityPage.tsx"]
-// CIL[DOC-CONTRACT inputs="?action= flagged_accounts|ban_user|unban_user|blocklist|blocklist_add|blocklist_revoke + body" outputs="JSON report / action result" errors="403 non-system-admin; 400 bad action" side_effects="security_blocklist writes, auth.admin updates, Netlify firewall PUT, audit logs"]
-// CIL[DOC-MICRO logic_summary="Report groups security.* log events by principal id then enriches with people/auth data; ban writes person+email+ip blocklist rows, bans auth user (876600h), and syncs one managed Netlify ip-deny rule labelled spine-security:blocklist" notable_decisions="Edge rule is a single shared deny rule whose data.addresses array is mutated — preserves user-managed geo rules and stays within tight free-tier rule limits; all edge calls skip silently without NETLIFY_ACCESS_TOKEN/SITE_ID"]
-// CIL[DOC-STABILITY stability="experimental"]
+// Edge rule is a single shared deny rule whose data.addresses array is mutated — preserves user-managed geo rules and stays within tight free-tier rule limits; all edge calls skip silently without NETLIFY_ACCESS_TOKEN/SITE_ID
 
 import { createHandler, requireSystemContextWithAudit } from './_shared/middleware'
 import type { RequestContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitAudit } from './_shared/audit'
-// CIL[END stable_id="~/.framework/functions/security.ts:module_header:module_header"]
 
-// CIL[DOC-MACRO purpose="Netlify Firewall Traffic Rules sync for banned IPs"]
-// CIL[DOC-RESPONSIBILITY responsibility="Keep a single managed ip-deny rule (description spine-security:blocklist) whose data.addresses mirrors active ip blocklist entries"]
-// CIL[DOC-CONTRACT inputs="ips to add/remove" outputs="{ synced: boolean, skipped?: boolean, error?: string }" errors="never throws — returns error field" side_effects="Netlify API GET/PUT of full ruleset"]
-// CIL[DOC-MICRO logic_summary="GET firewall_rule_set → mutate managed rule's addresses (or create rule) → PUT whole published ruleset back; user-managed rules are preserved verbatim" notable_decisions="PUT replaces the entire ruleset, so the full published rule list is round-tripped; concurrent edits could still race — acceptable at admin-action frequency"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:MANAGED_RULE_DESC:constant" type="constant" identity="MANAGED_RULE_DESC" parent="~/.framework/functions/security.ts"]
+// PUT replaces the entire ruleset, so the full published rule list is round-tripped; concurrent edits could still race — acceptable at admin-action frequency
 const MANAGED_RULE_DESC = 'spine-security:blocklist'
-// CIL[END stable_id="~/.framework/functions/security.ts:MANAGED_RULE_DESC:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:NETLIFY_API:constant" type="constant" identity="NETLIFY_API" parent="~/.framework/functions/security.ts"]
 const NETLIFY_API = 'https://api.netlify.com'
-// CIL[END stable_id="~/.framework/functions/security.ts:NETLIFY_API:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:netlifyEdgeSync:function" type="function" identity="netlifyEdgeSync" parent="~/.framework/functions/security.ts"]
 async function netlifyEdgeSync(ipsToAdd: string[], ipsToRemove: string[] = []): Promise<{ synced: boolean; skipped?: boolean; error?: string }> {
   const token = process.env.NETLIFY_ACCESS_TOKEN
   const siteId = process.env.NETLIFY_SITE_ID
@@ -94,22 +78,14 @@ async function netlifyEdgeSync(ipsToAdd: string[], ipsToRemove: string[] = []): 
     return { synced: false, error: err?.message || 'Netlify sync failed' }
   }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:netlifyEdgeSync:function"]
 
-// CIL[DOC-MACRO purpose="Aggregate security.* audit events into a flagged-actors report"]
-// CIL[DOC-RESPONSIBILITY responsibility="Group recent security.rate_limit_exceeded / injection_detected / registration_blocked log rows by acting person or account, enrich with people + account + blocklist state"]
-// CIL[DOC-CONTRACT inputs="ctx" outputs="{ rows: FlaggedRow[] }" errors="returns empty rows on missing tables" side_effects="logs + people + accounts + security_blocklist reads"]
-// CIL[DOC-MICRO logic_summary="Fetch last 500 security.* events within 30 days → bucket by person id (fallback account id) → count signals + collect kinds/patterns/ips → join people(email, geo, status), accounts(display_name), active blocklist entries → sort by signal count desc" notable_decisions="IP shown comes from the person's registration_ip/last_ip (trusted edge capture), not spoofable request data; started_at lower bound keeps the span_name scan index-bounded (no span_name index, and zero-signal scans would otherwise walk the whole logs table)"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:SECURITY_SIGNALS:constant" type="constant" identity="SECURITY_SIGNALS" parent="~/.framework/functions/security.ts"]
+// IP shown comes from the person's registration_ip/last_ip (trusted edge capture), not spoofable request data; started_at lower bound keeps the span_name scan index-bounded (no span_name index, and zero-signal scans would otherwise walk the whole logs table)
 const SECURITY_SIGNALS = [
   'security.rate_limit_exceeded',
   'security.injection_detected',
   'security.registration_blocked',
 ]
-// CIL[END stable_id="~/.framework/functions/security.ts:SECURITY_SIGNALS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:flaggedAccounts:function" type="function" identity="flaggedAccounts" parent="~/.framework/functions/security.ts"]
 async function flaggedAccounts(ctx: RequestContext) {
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
   const { data: events, error } = await adminDb
@@ -202,14 +178,7 @@ async function flaggedAccounts(ctx: RequestContext) {
   rows.sort((a, b) => b.signals - a.signals)
   return { rows }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:flaggedAccounts:function"]
 
-// CIL[DOC-MACRO purpose="Upsert active hard-block rows into security_blocklist"]
-// CIL[DOC-RESPONSIBILITY responsibility="Insert rows with revoked_at cleared on (type,value) conflict so a re-ban re-activates a revoked row"]
-// CIL[DOC-CONTRACT inputs="rows[], bannedBy, reason" outputs="void" errors="throws on DB error" side_effects="security_blocklist upsert"]
-// CIL[DOC-MICRO logic_summary="map rows → upsert onConflict type,value with revoked_at:null" notable_decisions="[]"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:addBlockRows:function" type="function" identity="addBlockRows" parent="~/.framework/functions/security.ts"]
 async function addBlockRows(
   rows: Array<{ type: string; value: string }>,
   bannedBy: string | undefined,
@@ -233,14 +202,8 @@ async function addBlockRows(
     )
   if (error) throw new Error('security_blocklist upsert failed: ' + error.message)
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:addBlockRows:function"]
 
-// CIL[DOC-MACRO purpose="Three-layer ban: internal blocklist + Supabase Auth ban + Netlify edge deny"]
-// CIL[DOC-RESPONSIBILITY responsibility="Given a person_id (or bare email/ip), persist blocklist rows for person+email+account+IP, ban the auth user, and push the IP into the managed Netlify deny rule"]
-// CIL[DOC-CONTRACT inputs="ctx, body {person_id?|email?|ip?, reason?, block_ip?, block_email?}" outputs="{ ok, person_id, layers }" errors="400 missing target; 404 person not found; 500 blocklist write failure" side_effects="security_blocklist upserts, auth.admin.updateUserById, Netlify ruleset PUT, audit events"]
-// CIL[DOC-MICRO logic_summary="Resolve person → write blocklist rows (fail = abort) → auth ban via ban_duration 876600h → edge sync for last/registration IP → audit security.user_banned with per-layer results" notable_decisions="Internal blocklist is authoritative and must succeed; auth/edge failures are recorded in the audit event and returned, not thrown — a ban must never half-apply silently"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:banUser:function" type="function" identity="banUser" parent="~/.framework/functions/security.ts"]
+// Internal blocklist is authoritative and must succeed; auth/edge failures are recorded in the audit event and returned, not thrown — a ban must never half-apply silently
 async function banUser(ctx: RequestContext, body: any) {
   const { person_id, email: rawEmail, ip: rawIp, reason, block_ip = true, block_email = true } = body || {}
   if (!person_id && !rawEmail && !rawIp) {
@@ -303,14 +266,7 @@ async function banUser(ctx: RequestContext, body: any) {
 
   return { ok: true, person_id: person?.id || null, email, ip, layers }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:banUser:function"]
 
-// CIL[DOC-MACRO purpose="Reverse a ban: revoke blocklist rows, lift auth ban, remove edge IP"]
-// CIL[DOC-RESPONSIBILITY responsibility="Revoke active security_blocklist rows for the person's identifiers, lift the Supabase ban, and pull the IP out of the managed Netlify rule"]
-// CIL[DOC-CONTRACT inputs="ctx, body {person_id}" outputs="{ ok, revoked, layers }" errors="404 person not found" side_effects="blocklist updates, auth admin call, Netlify PUT, audit"]
-// CIL[DOC-MICRO logic_summary="Load person → revoke matching (type,value) rows → ban_duration 'none' → edge remove → audit security.user_unbanned" notable_decisions="account_id rows are intentionally left alone on unban — an org-level block is a separate decision"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:unbanUser:function" type="function" identity="unbanUser" parent="~/.framework/functions/security.ts"]
 async function unbanUser(ctx: RequestContext, body: any) {
   const { person_id } = body || {}
   if (!person_id) throw new Error('person_id is required')
@@ -361,13 +317,7 @@ async function unbanUser(ctx: RequestContext, body: any) {
 
   return { ok: true, person_id: person.id, layers }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:unbanUser:function"]
 
-// CIL[DOC-MACRO purpose="Blocklist list/add/revoke for the admin UI"]
-// CIL[DOC-RESPONSIBILITY responsibility="Expose the security_blocklist table to system admins; ip entries sync to the Netlify edge on add/revoke"]
-// CIL[DOC-MICRO logic_summary="list returns active+recent rows; add upserts (type,value,severity,reason,expires_at); revoke stamps revoked_at. Both edge-sync ip values" notable_decisions="[]"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:listBlocklist:function" type="function" identity="listBlocklist" parent="~/.framework/functions/security.ts"]
 async function listBlocklist() {
   const { data, error } = await adminDb
     .from('security_blocklist')
@@ -377,9 +327,7 @@ async function listBlocklist() {
   if (error) throw new Error('blocklist read failed: ' + error.message)
   return { rows: data || [] }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:listBlocklist:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:blocklistAdd:function" type="function" identity="blocklistAdd" parent="~/.framework/functions/security.ts"]
 async function blocklistAdd(ctx: RequestContext, body: any) {
   const { type, value, severity = 'hard', reason, expires_at } = body || {}
   if (!type || !value) throw new Error('type and value are required')
@@ -405,9 +353,7 @@ async function blocklistAdd(ctx: RequestContext, body: any) {
   })
   return { ok: true }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:blocklistAdd:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:blocklistRevoke:function" type="function" identity="blocklistRevoke" parent="~/.framework/functions/security.ts"]
 async function blocklistRevoke(ctx: RequestContext, body: any) {
   const { id, type, value } = body || {}
   if (!id && !(type && value)) throw new Error('id or (type, value) is required')
@@ -429,14 +375,7 @@ async function blocklistRevoke(ctx: RequestContext, body: any) {
   })
   return { ok: true, revoked: revoked?.length || 0 }
 }
-// CIL[END stable_id="~/.framework/functions/security.ts:blocklistRevoke:function"]
 
-// CIL[DOC-MACRO purpose="Action dispatcher — system-admin only"]
-// CIL[DOC-RESPONSIBILITY responsibility="Route ?action= to the security operations; every action is gated by requireSystemContextWithAudit"]
-// CIL[DOC-CONTRACT inputs="ctx, body" outputs="action result JSON" errors="401/403 unauthenticated/non-admin; 400 unknown action" side_effects="delegated"]
-// CIL[DOC-MICRO logic_summary="Gate once, then switch on ctx.query.action || body.action" notable_decisions="[]"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/.framework/functions/security.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/security.ts"]
 export const handler = createHandler(async (ctx, body) => {
   // Throws a statusCode-carrying error on denial; createHandler maps it to a
   // real HTTP 401/403 (F-051).
@@ -457,7 +396,4 @@ export const handler = createHandler(async (ctx, body) => {
     }
   }
 })
-// CIL[END stable_id="~/.framework/functions/security.ts:handler:constant"]
 
-// CIL[DOC-VECTOR type="context" content="purpose='System-admin security operations endpoint'; exposes flagged_accounts report, three-layer ban/unban, blocklist CRUD, Netlify edge IP sync" status="ready"]
-// CIL[DOC-VECTOR type="blast_radius" content="middleware.ts enforcement reads security_blocklist; invites.ts registration gate; admin SecurityPage consumes this API" status="ready"]

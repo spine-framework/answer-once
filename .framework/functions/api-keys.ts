@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/api-keys.ts"]
 /**
  * @module   api-keys
  * @audience both
@@ -60,7 +59,6 @@ import { isSystemAdmin, isSystemPrincipal } from './_shared/principal'
 import { sanitizeRecordData } from './_shared/permissions'
 import { hashApiKey, omitSecretFields } from './_shared/hash-api-key'
 import { resolveAppUuid } from './_shared/logging'
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:module_header:module_header"]
 
 
 // True only for platform-level principals: a system_admin role or an
@@ -83,7 +81,6 @@ import { resolveAppUuid } from './_shared/logging'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/api-keys.ts"]
 /**
  * This function retrieves a list of API keys based on various query parameters and returns sanitized records. It ensures that only authorized users can access the data and applies filters based on the provided criteria.
  *
@@ -145,7 +142,6 @@ export const list = createHandler(async (ctx, _body) => {
 
   return sanitized
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:list:constant"]
 
 
 
@@ -161,7 +157,6 @@ export const list = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/api-keys.ts"]
 /**
  * Retrieves an API key from the database based on the provided ID in the query parameters. It ensures that the caller has the necessary permissions and sanitizes the returned data before sending it back.
  *
@@ -198,7 +193,6 @@ export const get = createHandler(async (ctx, _body) => {
 
   return omitSecretFields(await sanitizeRecordData(ctx, data, 'api_key'))
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:get:constant"]
 
 
 
@@ -214,7 +208,6 @@ export const get = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/api-keys.ts"]
 /**
  * Creates a new API key for a specified integration and application, ensuring required fields are validated and generating a unique key. This function is essential for managing access to the API securely.
  *
@@ -320,7 +313,6 @@ export const create = createHandler(async (ctx, body) => {
     warning: 'Store this key now. It will not be shown again.'
   }
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:create:constant"]
 
 
 
@@ -336,7 +328,6 @@ export const create = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:validate:constant" type="constant" identity="validate" parent="~/.framework/functions/api-keys.ts"]
 /**
  * Validates an API key by checking its existence and permissions in the database. This function ensures that only active keys with the required permissions can be used.
  *
@@ -410,7 +401,6 @@ export const validate = createHandler(async (ctx, body) => {
 
   return { is_valid: false, error: 'Invalid or inactive API key' }
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:validate:constant"]
 
 
 
@@ -426,7 +416,6 @@ export const validate = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:revoke:constant" type="constant" identity="revoke" parent="~/.framework/functions/api-keys.ts"]
 /**
  * The 'revoke' constant defines a handler for deactivating an API key by its ID. It ensures that the API key ID is provided and logs the revocation action.
  *
@@ -466,7 +455,6 @@ export const revoke = createHandler(async (ctx, body) => {
 
   return omitSecretFields(data)
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:revoke:constant"]
 
 
 
@@ -482,7 +470,6 @@ export const revoke = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:listUsageLogs:constant" type="constant" identity="listUsageLogs" parent="~/.framework/functions/api-keys.ts"]
 /**
  * The listUsageLogs constant defines an asynchronous handler for retrieving API key usage logs based on various query parameters. It ensures that the account context is valid and constructs a query to fetch logs from the database.
  *
@@ -539,7 +526,6 @@ export const listUsageLogs = createHandler(async (ctx, _body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:listUsageLogs:constant"]
 
 
 
@@ -555,7 +541,6 @@ export const listUsageLogs = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/api-keys.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/api-keys.ts"]
 /**
  * The handler processes API requests based on the action and method specified in the query parameters. It routes the request to the appropriate function for validation, revocation, usage logs, or general data handling.
  *
@@ -599,7 +584,6 @@ export const handler = createHandler(async (ctx, body) => {
 
   throw new Error('Invalid action or method')
 })
-// CIL[END stable_id="~/.framework/functions/api-keys.ts:handler:constant"]
 
 
 

@@ -1,7 +1,5 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CoreContext } from '../../functions/_shared/middleware.ts'
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:module_header:module_header"]
 
 vi.mock('../../functions/_shared/db.ts', () => ({
   adminDb: { from: vi.fn(), rpc: vi.fn() }
@@ -47,7 +45,6 @@ import { adminDb } from '../../functions/_shared/db.ts'
 import { resolveKnowledgeScope } from '../../functions/_shared/kb.ts'
 import { executeApplyDirective, renderDirectiveTemplate } from '../../functions/_shared/agent-runner.ts'
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:makeCtx:function" type="function" identity="makeCtx" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 function makeCtx(): CoreContext {
   return {
     principal: { id: 'person-1', type: 'human', accountId: 'acct-1', roles: ['member'], provenance: {} },
@@ -57,9 +54,7 @@ function makeCtx(): CoreContext {
     appId: 'test-app',
   } as CoreContext
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:makeCtx:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:TICKET_FIELDS:constant" type="constant" identity="TICKET_FIELDS" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 const TICKET_FIELDS = {
   title: { system: true, data_type: 'text' },
   status: { system: true, data_type: 'select' },
@@ -67,9 +62,7 @@ const TICKET_FIELDS = {
   team: { system: false, data_type: 'text' },
   secret_field: { system: true, data_type: 'text' },
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:TICKET_FIELDS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:makeDirective:function" type="function" identity="makeDirective" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 function makeDirective(overrides: any = {}) {
   return {
     id: 'dir-1',
@@ -84,11 +77,9 @@ function makeDirective(overrides: any = {}) {
     },
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:makeDirective:function"]
 
 // adminDb.from returns a per-table fluent mock. For 'items' the .single()
 // resolves by the last .eq('id', <value>) — ticket vs directive.
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:mockDb:function" type="function" identity="mockDb" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 function mockDb(opts: {
   threadTarget?: string | null
   ticket?: any
@@ -156,18 +147,14 @@ function mockDb(opts: {
   })
   return { updates, inserts, eqLog }
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:mockDb:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:TICKET:constant" type="constant" identity="TICKET" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 const TICKET = {
   id: 'ticket-1',
   account_id: 'acct-1',
   data: {},
   type: { slug: 'ao_support_ticket', design_schema: { fields: TICKET_FIELDS } },
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:TICKET:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:RUN_CTX:constant" type="constant" identity="RUN_CTX" parent="~/.framework/tests/unit/apply-directive.test.ts"]
 const RUN_CTX = {
   threadId: 'thread-1',
   config: {
@@ -194,7 +181,6 @@ const RUN_CTX_OTHER_MATCH = {
     matched_directive_ids: ['dir-9'],
   } as any,
 }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:RUN_CTX:constant"]
 
 // The cross-account path calls resolveKnowledgeScope to check the app
 // envelope's platform action allowlist. Default: platform account exists but
@@ -235,48 +221,38 @@ describe('executeApplyDirective — gates', () => {
 
   it('rejects when the agent has no directive_type_slug configured', async () => {
     mockDb({})
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), {
       threadId: 'thread-1',
       config: { promptConfig: { id: 'pc-1', metadata: {} } } as any,
     })
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(false)
     expect(res.error).toMatch(/not configured/)
   })
 
   it('rejects a record of the wrong type', async () => {
     mockDb({ ticket: TICKET, directive: { ...makeDirective(), type: { slug: 'ao_kb_article' } } })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(false)
     expect(res.error).toMatch(/not the declared directive type/)
   })
 
   it('rejects a non-active directive', async () => {
     mockDb({ ticket: TICKET, directive: makeDirective({ status: 'draft' }) })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(false)
     expect(res.error).toMatch(/only active directives/)
   })
 
   it('rejects a directive from another account', async () => {
     mockDb({ ticket: TICKET, directive: { ...makeDirective(), account_id: 'acct-other' } })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(false)
     expect(res.error).toMatch(/different account/)
   })
 
   it('is idempotent — same directive on the same ticket is skipped', async () => {
     mockDb({ ticket: { ...TICKET, data: { matched_directive_id: 'dir-1' } }, directive: makeDirective() })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.already_applied).toBe(true)
   })
 
@@ -299,9 +275,7 @@ describe('executeApplyDirective — gates', () => {
       ticket: TICKET,
       directive: makeDirective({ actions: { record_ops: { set_fields: { secret_field: 'x', nope: 1 } } } }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(false)
     expect(res.error).toMatch(/rejected undeclared or system fields/)
     expect(res.error).toMatch(/secret_field/)
@@ -319,16 +293,12 @@ describe('executeApplyDirective — execution', () => {
       ticket: TICKET,
       directive: makeDirective({ actions: { record_ops: { tags: ['sales'], set_fields: { team: 'sales' } } } }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1', rationale: 'asked for sales', confidence: 0.9 }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
     expect(res.ends_episode).toBe(true)
     expect(res.actions_taken).toContain('tags')
     expect(res.actions_taken).toContain('set_fields')
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:itemsUpdate:constant" type="constant" identity="itemsUpdate" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const itemsUpdate = updates.find(u => u.table === 'items')
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:itemsUpdate:constant"]
     expect(itemsUpdate.payload.data.tags).toEqual(['sales'])
     expect(itemsUpdate.payload.data.team).toBe('sales')
     expect(itemsUpdate.payload.data.matched_directive_id).toBe('dir-1')
@@ -337,9 +307,7 @@ describe('executeApplyDirective — execution', () => {
 
   it('continue:true keeps the episode alive', async () => {
     mockDb({ ticket: TICKET, directive: makeDirective({ actions: { continue: true } }) })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
     expect(res.ends_episode).toBe(false)
   })
@@ -349,15 +317,11 @@ describe('executeApplyDirective — execution', () => {
       ticket: TICKET,
       directive: makeDirective({ reply_template: 'Thanks — sales will call about {{ticket.title}}.', actions: {} }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
     expect(res.mode).toBe('suggest')
     expect(res.reply_posted).toBe(false)
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:itemsUpdate:constant" type="constant" identity="itemsUpdate" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const itemsUpdate = updates.find(u => u.table === 'items')
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:itemsUpdate:constant"]
     expect(itemsUpdate.payload.data.suggested_directive_id).toBe('dir-1')
     expect(itemsUpdate.payload.data.suggested_reply).toContain('sales will call')
   })
@@ -367,9 +331,7 @@ describe('executeApplyDirective — execution', () => {
       ticket: TICKET,
       directive: makeDirective({ mode: 'auto_reply', reply_template: 'Sales will call you.', actions: {} }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
     expect(res.reply_posted).toBe(true)
   })
@@ -379,13 +341,9 @@ describe('executeApplyDirective — execution', () => {
       ticket: TICKET,
       directive: makeDirective({ actions: { record_ops: { watchers: ['role:sales'] } } }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:watcherInsert:constant" type="constant" identity="watcherInsert" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const watcherInsert = inserts.find(i => i.table === 'watchers')
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:watcherInsert:constant"]
     expect(watcherInsert.payload.person_id).toBe('person-9')
     expect(watcherInsert.payload.target_id).toBe('ticket-1')
     expect(watcherInsert.payload.watch_type).toBe('all')
@@ -396,9 +354,7 @@ describe('executeApplyDirective — execution', () => {
       ticket: TICKET,
       directive: makeDirective({ actions: { run_pipelines: ['ao_sales_handoff'] } }),
     })
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant" type="constant" identity="res" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const res = await executeApplyDirective({ directive_id: 'dir-1' }, makeCtx(), RUN_CTX)
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:res:constant"]
     expect(res.applied).toBe(true)
     expect(res.actions_taken).toContain('pipeline:ao_sales_handoff')
   })
@@ -515,9 +471,7 @@ describe('executeApplyDirective — platform directives', () => {
 
 describe('renderDirectiveTemplate', () => {
   it('interpolates ticket top-level and data fields', () => {
-// CIL[BEGIN stable_id="~/.framework/tests/unit/apply-directive.test.ts:ticket:constant" type="constant" identity="ticket" parent="~/.framework/tests/unit/apply-directive.test.ts"]
     const ticket = { title: 'Billing issue', status: 'open', data: { priority: 'high' } }
-// CIL[END stable_id="~/.framework/tests/unit/apply-directive.test.ts:ticket:constant"]
     expect(renderDirectiveTemplate('Re: {{ticket.title}} ({{ticket.priority}})', ticket)).toBe('Re: Billing issue (high)')
   })
   it('blanks unknown paths', () => {

@@ -1,84 +1,25 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/validate-app.test.ts"]
-// CIL[DOC-MACRO purpose="Import Vitest, filesystem fixture utilities, Commander, and validator entry points."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import Vitest, filesystem fixture utilities, Commander, and validator entry points."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Import Vitest, filesystem fixture utilities, Commander, and validator entry points." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { Command } from 'commander'
 import { validateAppStructure, registerValidateAppCommands } from '../../cli/commands/validate-app.ts'
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:root:variable" type="variable" identity="root" parent="none"]
-// CIL[DOC-MACRO purpose="Declare the temporary repository root used by validator fixtures."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the temporary repository root used by validator fixtures."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable root path" errors="Assertion or fixture failures propagate to Vitest" side_effects="Declares module-local fixture state"]
-// CIL[DOC-MICRO logic_summary="Declare the temporary repository root used by validator fixtures." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let root: string
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:root:variable"]
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:app:variable" type="variable" identity="app" parent="none"]
-// CIL[DOC-MACRO purpose="Declare the current temporary app directory."]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the current temporary app directory."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Mutable app path" errors="Assertion or fixture failures propagate to Vitest" side_effects="Declares module-local fixture state"]
-// CIL[DOC-MICRO logic_summary="Declare the current temporary app directory." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 let app: string
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:app:variable"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:fixture_setup:block" type="block" identity="fixture_setup" parent="none"]
-// CIL[DOC-MACRO purpose="Register fixture setup that creates a temporary root and mocks console output."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register fixture setup that creates a temporary root and mocks console output."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Vitest beforeEach lifecycle" outputs="Fixture paths and console spies" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a hook that creates a temporary directory and installs console spies"]
-// CIL[DOC-MICRO logic_summary="Register fixture setup that creates a temporary root and mocks console output." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'spine-validate-app-'))
   app = join(root, 'test-app')
   vi.spyOn(console, 'log').mockImplementation(() => {})
   vi.spyOn(console, 'warn').mockImplementation(() => {})
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:fixture_setup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:fixture_cleanup:block" type="block" identity="fixture_cleanup" parent="none"]
-// CIL[DOC-MACRO purpose="Register fixture cleanup that removes the created root and restores spies."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register fixture cleanup that removes the created root and restores spies."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture root and Vitest mocks" outputs="Cleaned fixture and restored mocks" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a cleanup hook"]
-// CIL[DOC-MICRO logic_summary="Register fixture cleanup that removes the created root and restores spies." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 afterEach(() => {
   rmSync(root, { recursive: true, force: true })
   vi.restoreAllMocks()
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:fixture_cleanup:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:fixtureoptions:interface" type="interface" identity="FixtureOptions" parent="none"]
-// CIL[DOC-MACRO purpose="Describe optional manifest, directory, file, and seed overrides for a fixture."]
-// CIL[DOC-RESPONSIBILITY responsibility="Describe optional manifest, directory, file, and seed overrides for a fixture."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture override values" outputs="FixtureOptions type" errors="Assertion or fixture failures propagate to Vitest" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Describe optional manifest, directory, file, and seed overrides for a fixture." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 interface FixtureOptions {
   manifest?: Record<string, any>
   manifestText?: string
@@ -86,17 +27,7 @@ interface FixtureOptions {
   files?: Record<string, string>
   seedJson?: Record<string, string>
 }
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:fixtureoptions:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:makeapp:function" type="function" identity="makeApp" parent="none"]
-// CIL[DOC-MACRO purpose="Write a minimal valid temporary app with optional manifest, directory, file, and seed overrides."]
-// CIL[DOC-RESPONSIBILITY responsibility="Write a minimal valid temporary app with optional manifest, directory, file, and seed overrides."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="opts: FixtureOptions default empty object" outputs="void" errors="Assertion or fixture failures propagate to Vitest" side_effects="Creates temporary app directories and writes fixture files"]
-// CIL[DOC-MICRO logic_summary="Write a minimal valid temporary app with optional manifest, directory, file, and seed overrides." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function makeApp(opts: FixtureOptions = {}): void {
   mkdirSync(app, { recursive: true })
   const manifest = opts.manifest ?? {
@@ -125,17 +56,7 @@ function makeApp(opts: FixtureOptions = {}): void {
     writeFileSync(join(app, rel), content)
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:makeapp:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:basemanifest:function" type="function" identity="baseManifest" parent="none"]
-// CIL[DOC-MACRO purpose="Build the standard validator fixture manifest with supplied overrides."]
-// CIL[DOC-RESPONSIBILITY responsibility="Build the standard validator fixture manifest with supplied overrides."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="overrides: Record<string, any> default empty object" outputs="Manifest fixture object" errors="Assertion or fixture failures propagate to Vitest" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Build the standard validator fixture manifest with supplied overrides." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 function baseManifest(overrides: Record<string, any> = {}): Record<string, any> {
   return {
     name: 'Test App',
@@ -150,17 +71,7 @@ function baseManifest(overrides: Record<string, any> = {}): Record<string, any> 
     ...overrides,
   }
 }
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:basemanifest:function"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:acceptance_suite:block" type="block" identity="acceptance_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register successful validation cases for current JSON seed paths, private packages, legacy app_type, source directories, and empty seeds."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register successful validation cases for current JSON seed paths, private packages, legacy app_type, source directories, and empty seeds."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="makeApp, baseManifest, validateAppStructure" outputs="Vitest acceptance assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers test cases using temporary fixture files"]
-// CIL[DOC-MICRO logic_summary="Register successful validation cases for current JSON seed paths, private packages, legacy app_type, source directories, and empty seeds." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — acceptance', () => {
   it('accepts a valid app fixture using current seed/ JSON paths', () => {
     makeApp()
@@ -190,17 +101,7 @@ describe('validateAppStructure — acceptance', () => {
     expect(() => validateAppStructure(app)).not.toThrow()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:acceptance_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:manifest_rules_suite:block" type="block" identity="manifest_rules_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register malformed and missing manifest, app_type precedence, invalid roots, and whitespace-name rejection cases."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register malformed and missing manifest, app_type precedence, invalid roots, and whitespace-name rejection cases."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and validateAppStructure" outputs="Vitest manifest validation assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers tests that mutate or remove their own fixture files"]
-// CIL[DOC-MICRO logic_summary="Register malformed and missing manifest, app_type precedence, invalid roots, and whitespace-name rejection cases." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — manifest rules', () => {
   it('rejects a missing manifest.json', () => {
     mkdirSync(app, { recursive: true })
@@ -255,34 +156,14 @@ describe('validateAppStructure — manifest rules', () => {
     expect(() => validateAppStructure(app)).toThrowError(/name/)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:manifest_rules_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:directory_rules_suite:block" type="block" identity="directory_rules_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register rejection of an unknown app source directory."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register rejection of an unknown app source directory."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="makeApp and validateAppStructure" outputs="Vitest directory validation assertion" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a temporary fixture test"]
-// CIL[DOC-MICRO logic_summary="Register rejection of an unknown app source directory." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — directory rules', () => {
   it('rejects unknown directories', () => {
     makeApp({ dirs: ['junk-drawer'] })
     expect(() => validateAppStructure(app)).toThrowError(/Unknown directories/)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:directory_rules_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:seed_rules_suite:block" type="block" identity="seed_rules_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register missing, malformed, non-object, absolute, escaping, and externally linked JSON seed rejection cases."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register missing, malformed, non-object, absolute, escaping, and externally linked JSON seed rejection cases."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and validateAppStructure" outputs="Vitest seed validation assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers tests that create, rewrite, and remove temporary seed fixtures"]
-// CIL[DOC-MICRO logic_summary="Register missing, malformed, non-object, absolute, escaping, and externally linked JSON seed rejection cases." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — seed rules', () => {
   it('rejects a missing seed file', () => {
     makeApp({ manifest: baseManifest({ seed: [{ file: 'seed/nope.json', table: 'roles', conflict: 'slug' }] }) })
@@ -358,17 +239,7 @@ describe('validateAppStructure — seed rules', () => {
     expect(() => validateAppStructure(app)).toThrowError()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:seed_rules_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:component_paths_suite:block" type="block" identity="component_paths_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register entry and sidebar path confinement checks plus successful contained paths."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register entry and sidebar path confinement checks plus successful contained paths."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and validateAppStructure" outputs="Vitest component path assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers temporary file and symlink fixture tests"]
-// CIL[DOC-MICRO logic_summary="Register entry and sidebar path confinement checks plus successful contained paths." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — component path confinement', () => {
   it('rejects an entry_point escaping the app root', () => {
     writeFileSync(join(root, 'escape.tsx'), 'export default () => null\n')
@@ -398,17 +269,7 @@ describe('validateAppStructure — component path confinement', () => {
     expect(() => validateAppStructure(app)).not.toThrow()
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:component_paths_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:isolation_suite:block" type="block" identity="isolation_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register successful validation while cwd differs from the repository and restore cwd afterward."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register successful validation while cwd differs from the repository and restore cwd afterward."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture app and validateAppStructure" outputs="Vitest cwd-independence assertion" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers a test that temporarily changes and restores process cwd"]
-// CIL[DOC-MICRO logic_summary="Register successful validation while cwd differs from the repository and restore cwd afterward." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — isolation', () => {
   it('validates without repo .env or cwd dependence and no network use', () => {
     makeApp()
@@ -421,17 +282,7 @@ describe('validateAppStructure — isolation', () => {
     }
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:isolation_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:command_registration_suite:block" type="block" identity="command_registration_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register a Commander assertion that validate-app appears in the command list and help."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register a Commander assertion that validate-app appears in the command list and help."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Command and registerValidateAppCommands" outputs="Vitest command registration assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers an in-memory Commander test"]
-// CIL[DOC-MICRO logic_summary="Register a Commander assertion that validate-app appears in the command list and help." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('registerValidateAppCommands', () => {
   it('registers a validate-app command that appears in CLI help', () => {
     const program = new Command()
@@ -440,17 +291,7 @@ describe('registerValidateAppCommands', () => {
     expect(program.helpInformation()).toContain('validate-app')
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:command_registration_suite:block"]
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/validate-app.test.ts:owned_types_suite:block" type="block" identity="owned_types_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Register owned_types shape and type-seed resolution validation cases."]
-// CIL[DOC-RESPONSIBILITY responsibility="Register owned_types shape and type-seed resolution validation cases."]
-// CIL[DOC-CONTEXT module="tests/unit" layer="test-unit" related_files=".framework/cli/commands/validate-app.ts"]
-// CIL[DOC-CONTRACT inputs="Fixture helpers and validateAppStructure" outputs="Vitest owned_types assertions" errors="Assertion or fixture failures propagate to Vitest" side_effects="Registers tests that write temporary seed fixtures"]
-// CIL[DOC-MICRO logic_summary="Register owned_types shape and type-seed resolution validation cases." notable_decisions=""]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="framework contributors"]
 describe('validateAppStructure — owned_types', () => {
   const typesSeedEntry = { file: 'seed/types.json', table: 'types', conflict: 'kind,slug', inject_app_id: false }
 
@@ -524,4 +365,3 @@ describe('validateAppStructure — owned_types', () => {
     expect(() => validateAppStructure(app)).toThrowError(/owned_types.*anything|anything.*types seed/)
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/validate-app.test.ts:owned_types_suite:block"]

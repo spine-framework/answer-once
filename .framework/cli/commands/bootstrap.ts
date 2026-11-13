@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/bootstrap.ts"]
 /**
  * @module   bootstrap
  * @audience engineers
@@ -25,13 +24,9 @@ import { createClient } from '@supabase/supabase-js'
 import { hashApiKey } from '../../functions/_shared/hash-api-key.ts'
 import { emitLog } from '../../functions/_shared/audit.ts'
 import { SYSTEM_PRINCIPAL } from '../../functions/_shared/principal.ts'
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:PROJECT_ROOT:constant" type="constant" identity="PROJECT_ROOT" parent="~/.framework/cli/commands/bootstrap.ts"]
 const PROJECT_ROOT = process.cwd()
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:PROJECT_ROOT:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:BootstrapOptions:interface" type="interface" identity="BootstrapOptions" parent="~/.framework/cli/commands/bootstrap.ts"]
 /**
  * Options accepted by `runBootstrap`. `scopes` entries of `system_admin`
  * normalize to the `*:*` wildcard — `resolveMachinePrincipal` maps `*:*` to
@@ -44,9 +39,7 @@ export interface BootstrapOptions {
   keyName?: string
   scopes?: string[]
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:BootstrapOptions:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:BootstrapResult:interface" type="interface" identity="BootstrapResult" parent="~/.framework/cli/commands/bootstrap.ts"]
 export interface BootstrapResult {
   /** 'created' when a new admin person was provisioned, 'existing' when a
       system_admin already occupied the spine-system account (idempotent skip). */
@@ -65,9 +58,7 @@ export interface BootstrapResult {
     raw_key: string
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:BootstrapResult:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:loadEnv:function" type="function" identity="loadEnv" parent="~/.framework/cli/commands/bootstrap.ts"]
 /**
  * Loads key=value pairs from the project .env into process.env without
  * overwriting already-set variables. Mirrors the helper in migrate.ts so the
@@ -87,18 +78,14 @@ function loadEnv() {
     if (key && !(key in process.env)) process.env[key] = val
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:loadEnv:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:normalizeScopes:function" type="function" identity="normalizeScopes" parent="~/.framework/cli/commands/bootstrap.ts"]
 /** Normalize requested scopes; default is the system_admin wildcard. */
 function normalizeScopes(scopes?: string[]): string[] {
   const requested = (scopes || []).filter(Boolean)
   if (requested.length === 0) return ['*:*']
   return requested.map((s) => (s === 'system_admin' ? '*:*' : s))
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:normalizeScopes:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:runBootstrap:function" type="function" identity="runBootstrap" parent="~/.framework/cli/commands/bootstrap.ts"]
 /**
  * Provision the first system admin and mint the first API key.
  *
@@ -307,9 +294,7 @@ export async function runBootstrap(db: any, options: BootstrapOptions = {}): Pro
     },
   }
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:runBootstrap:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:bootstrapCommand:function" type="function" identity="bootstrapCommand" parent="~/.framework/cli/commands/bootstrap.ts"]
 async function bootstrapCommand(options: {
   email?: string
   password?: string
@@ -364,9 +349,7 @@ async function bootstrapCommand(options: {
   console.log('\n  Use it as:  SPINE_CLI_API_KEY / x-api-key header / SPINE_API_KEY')
   console.log('\n✅ Bootstrap complete.\n')
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:bootstrapCommand:function"]
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/bootstrap.ts:registerBootstrapCommands:function" type="function" identity="registerBootstrapCommands" parent="~/.framework/cli/commands/bootstrap.ts"]
 export function registerBootstrapCommands(program: Command) {
   const collect = (value: string, previous: string[]) => previous.concat([value])
 
@@ -389,4 +372,3 @@ export function registerBootstrapCommands(program: Command) {
       }
     })
 }
-// CIL[END stable_id="~/.framework/cli/commands/bootstrap.ts:registerBootstrapCommands:function"]

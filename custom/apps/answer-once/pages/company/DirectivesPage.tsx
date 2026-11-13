@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
 /**
  * Triage Directives — review, author, and manage routing rules for the Answer
  * Once triage agent. Suggested directives arrive via case analysis or are
@@ -6,25 +5,19 @@
  * apply_directive can select it. All CRUD goes through /api/admin-data
  * entity=items (type_slug ao_triage_directive).
  */
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:module_header:module_header"]
 import { useState, useEffect, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 import { apiFetch } from '@core/lib/api'
 import { StatusBadge } from '../../components/StatusBadge'
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:fetchJSON:function" type="function" identity="fetchJSON" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, options)
   if (!res.ok) throw new Error(`Request failed: ${res.status}`)
   return res.json()
 }
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:fetchJSON:function"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:STATUS_ORDER:constant" type="constant" identity="STATUS_ORDER" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
 const STATUS_ORDER = ['suggested', 'draft', 'active', 'disabled']
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:STATUS_ORDER:constant"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:Directive:interface" type="interface" identity="Directive" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
 interface Directive {
   id: string
   title: string
@@ -32,9 +25,7 @@ interface Directive {
   data: any
   updated_at: string
 }
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:Directive:interface"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:DirectivesPage:component" type="component" identity="DirectivesPage" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
 export default function DirectivesPage() {
   const location = useLocation()
   const [directives, setDirectives] = useState<Directive[]>([])
@@ -281,6 +272,3 @@ export default function DirectivesPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:DirectivesPage:component"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:directivespage:component" type="component" identity="DirectivesPage" parent="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx"]
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/DirectivesPage.tsx:directivespage:component"]

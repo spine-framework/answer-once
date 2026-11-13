@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/auth/AuthConfirmPage.tsx"]
-// CIL[DOC-MACRO purpose="Defines the AuthConfirmPage React component for confirming email signup and password reset tokens."]
-// CIL[DOC-RESPONSIBILITY responsibility="Import dependencies, the Supabase client, and shared UI components."]
-// CIL[DOC-CONTEXT module="AuthConfirmPage" layer="pages/auth" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/lib/supabase.ts"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="N/A" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="Top-level module imports for the auth confirmation page." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers maintaining auth flows"]
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
@@ -18,21 +9,6 @@ import {
   readPendingRegistration,
 } from '../../lib/registration'
 import { useBranding } from '../../hooks/useBranding'
-// CIL[DOC-VECTOR type="context" content="purpose='Defines the AuthConfirmPage React component for confirming email signup and password reset tokens.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:stage:type" type="type" identity="Stage" parent="~/.framework/src/pages/auth/AuthConfirmPage.tsx"]
-// CIL[DOC-MACRO purpose="Union type describing the possible stages of the email and password confirmation flow."]
-// CIL[DOC-RESPONSIBILITY responsibility="Define the string literal stage values used by the AuthConfirmPage state machine."]
-// CIL[DOC-CONTEXT module="AuthConfirmPage" layer="pages/auth" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/AuthConfirmPage.tsx"]
-// CIL[DOC-CONTRACT inputs="N/A" outputs="Stage union string literal" errors="N/A" side_effects="N/A"]
-// CIL[DOC-MICRO logic_summary="Literal union type for the component's UI and verification state." notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 type Stage =
   | 'verifying'
   | 'signup_success'
@@ -40,22 +16,7 @@ type Stage =
   | 'password_saved'
   | 'error'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Union type describing the possible stages of the email and password confirmation flow.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:stage:type"]
-// CIL[BEGIN stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:authconfirmpage:function" type="function" identity="AuthConfirmPage" parent="~/.framework/src/pages/auth/AuthConfirmPage.tsx"]
-// CIL[DOC-MACRO purpose="Render the authentication confirmation page and allow users to set a new password after a recovery flow."]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify the OTP token hash, display success or error UI, and handle the new password form submission."]
-// CIL[DOC-CONTEXT module="AuthConfirmPage" layer="pages/auth" related_files=".framework/src/components/ui/LoadingSpinner.tsx,.framework/src/lib/supabase.ts,.framework/src/pages/auth/AuthConfirmPage.tsx"]
-// CIL[DOC-CONTRACT inputs="token_hash and type URL query parameters" outputs="JSX for the verifying, error, signup success, set password, or password saved states" errors="Invalid or missing confirmation link, expired or invalid OTP, failed password update, mismatched or short passwords" side_effects="Calls supabase.auth.verifyOtp and supabase.auth.updateUser; navigates to / on success after a timeout"]
-// CIL[DOC-MICRO logic_summary="Reads token_hash and type from the query string, verifies the OTP with Supabase, then renders a stage-based UI and processes password form submission with client-side validation." notable_decisions="['hash/implicit session fallback via getSession + PASSWORD_RECOVERY listener','resumes spine.pending_registration intent after signup confirm via finalizeRegistration + refreshUser']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="change" content="Batch4b: links with no token_hash fall back to supabase.auth.getSession (implicit/hash flow); successful signup confirms resume pending registration intent — non-invite runs authenticated complete-registration, invite just rebinds context"]
+// ['hash/implicit session fallback via getSession + PASSWORD_RECOVERY listener','resumes spine.pending_registration intent after signup confirm via finalizeRegistration + refreshUser']
 export function AuthConfirmPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -352,10 +313,3 @@ export function AuthConfirmPage() {
     </div>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Render the authentication confirmation page and allow users to set a new password after a recovery flow.'; No verified external callers; imports: .framework/src/lib/supabase.ts,.framework/src/components/ui/LoadingSpinner.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/pages/auth/AuthConfirmPage.tsx:authconfirmpage:function"]

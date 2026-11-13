@@ -42,7 +42,6 @@ Actions (dispatched on `?action=`):
 | `submit_feedback` | POST | Record `helpful`/`not_helpful` on an AI message; escalate or resolve the ticket. |
 | `create_interaction` | POST | Insert a telemetry item (default type `ai_feedback_record`, overridable via `type_slug`). The pipeline `create_interaction` stage lazy-imports this handler. |
 | `update_interaction` | PATCH or POST | Merge allow-listed fields into an existing interaction item. |
-| `create_cil_proposal` | POST | Insert a `status: 'draft'` learning-proposal item (fixed `cil_*` type slug) from ticket context and source references. |
 | `list` | GET | List interaction items for the caller's account (default action). |
 
 ## Route and methods
@@ -59,7 +58,7 @@ Actions (dispatched on `?action=`):
 `createHandler` resolves a principal and rejects anonymous requests with 401.
 There is no role gate — any authenticated human or machine principal may call
 the actions. `list` reads through `ctx.db` scoped to `ctx.accountId`;
-`create_interaction`/`create_cil_proposal`/`update_interaction` write through
+`create_interaction`/`update_interaction` write through
 admin-data `create`/`update`, so the caller's permissions, audit, and
 triggers apply. `submit_feedback` writes `messages`/`items` via `adminDb`
 directly (service role) — it does not check that the caller owns the ticket.
@@ -89,7 +88,6 @@ the type isn't installed), `retrieved_sources`, `per_source_feedback`,
 `assistance_outcome`, `eval_case_id`, the learning-proposal linkage id,
 `review_notes`, `reviewed_by`, `reviewed_at`.
 
-`create_cil_proposal` (POST): `ticket_id` and `proposed_summary` required;
 optional `thread_id`, `ai_message_id`, `source_message_ids`,
 `source_chunk_ids`, `proposed_tags`. Returns `{ skipped: true }` when the
 proposal type isn't installed.
@@ -101,7 +99,7 @@ proposal type isn't installed.
 
 - `submit_feedback` → `{ message_id, ticket_id, feedback, escalated }` where
   `escalated` is `feedback === 'not_helpful'`.
-- `create_interaction` / `create_cil_proposal` → the created `items` record,
+- `create_interaction` → the created `items` record,
   or `{ skipped: true, reason: '<type> type not found' }` when the type slug
   can't be resolved — **not** an error.
 - `update_interaction` → the admin-data `update` result.

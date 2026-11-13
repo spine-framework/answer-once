@@ -1,9 +1,3 @@
-// CIL[DOC-MACRO purpose="Unit tests for createInteraction's optional type_slug override in ai-interactions.ts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Assert body.type_slug selects the resolved item type (default ai_feedback_record), that a missing type reports the resolved slug in the skip reason, and required-field validation is unchanged"]
-// CIL[DOC-CONTEXT module="ai-interactions.test" layer="test-unit" related_files=".framework/functions/ai-interactions.ts"]
-// CIL[DOC-CONTRACT inputs="mocked middleware/db/resolve-ids/admin-data/audit/funnel" outputs="expect assertions on resolveTypeId args, create payloads, and skip reasons" errors="none" side_effects="registers vi.mock factories"]
-// CIL[DOC-AUDIENCE audience="test"]
-// CIL[DOC-STABILITY stability="stable"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../functions/_shared/middleware.ts', () => ({

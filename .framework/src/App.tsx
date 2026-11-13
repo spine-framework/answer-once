@@ -2,15 +2,6 @@
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/App.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Import React and routing dependencies for main app component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage all external module imports and lazy loading"]
-// CIL[DOC-CONTEXT module="App" layer="entry-point" related_files=".framework/src/components/AppWrapper.tsx,.framework/src/components/CustomAppLoader.tsx,.framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AppContext.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/NotFoundPage.tsx,.framework/src/pages/SetupPage.tsx,.framework/src/pages/auth/AuthConfirmPage.tsx,.framework/src/pages/auth/ForgotPasswordPage.tsx,.framework/src/pages/auth/LoginPage.tsx,.framework/src/pages/auth/PendingApprovalPage.tsx,.framework/src/pages/auth/RegisterPage.tsx,.framework/src/pages/spine-framework/APIPage.tsx,.framework/src/pages/spine-framework/CLIPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Imported modules and lazy components" errors="Import failures" side_effects="Module loading"]
-// CIL[DOC-MICRO logic_summary="Imports React hooks, routing components, pages, and app shell components" notable_decisions="['lazy_load_admin_app']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developer"]
 import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
@@ -31,40 +22,9 @@ import { CustomAppLoader } from './components/CustomAppLoader'
 import { GenericAppShell } from './components/app-shell/GenericAppShell'
 import { APIPage } from './pages/spine-framework/APIPage'
 import { CLIPage } from './pages/spine-framework/CLIPage'
-// CIL[DOC-VECTOR type="context" content="purpose='Import React and routing dependencies for main app component'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/App.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/App.tsx:adminapp:constant" type="constant" identity="AdminApp" parent="none"]
-// CIL[DOC-MACRO purpose="Lazy-load the admin app component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a lazy-loaded admin app component"]
-// CIL[DOC-CONTEXT module="App" layer="entry-point" related_files=".framework/src/App.tsx,.framework/src/components/AppWrapper.tsx,.framework/src/components/CustomAppLoader.tsx,.framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AppContext.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/NotFoundPage.tsx,.framework/src/pages/SetupPage.tsx,.framework/src/pages/auth/AuthConfirmPage.tsx,.framework/src/pages/auth/ForgotPasswordPage.tsx,.framework/src/pages/auth/LoginPage.tsx,.framework/src/pages/auth/PendingApprovalPage.tsx,.framework/src/pages/auth/RegisterPage.tsx,.framework/src/pages/spine-framework/APIPage.tsx,.framework/src/pages/spine-framework/CLIPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Lazy-loaded AdminApp component" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Lazily imports and exposes the admin application bundle" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 const AdminApp = lazy(() => import('./apps/admin/index'))
-// CIL[DOC-VECTOR type="context" content="purpose='Lazy-load the admin app component'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/App.tsx:adminapp:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/src/App.tsx:app:function" type="function" identity="App" parent="none"]
-// CIL[DOC-MACRO purpose="Root app component handling authentication state and routing"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage global app state, auth flows, and route selection"]
-// CIL[DOC-CONTEXT module="App" layer="entry-point" related_files=".framework/src/App.tsx,.framework/src/components/AppWrapper.tsx,.framework/src/components/CustomAppLoader.tsx,.framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AppContext.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/NotFoundPage.tsx,.framework/src/pages/SetupPage.tsx,.framework/src/pages/auth/AuthConfirmPage.tsx,.framework/src/pages/auth/ForgotPasswordPage.tsx,.framework/src/pages/auth/LoginPage.tsx,.framework/src/pages/auth/PendingApprovalPage.tsx,.framework/src/pages/auth/RegisterPage.tsx,.framework/src/pages/spine-framework/APIPage.tsx,.framework/src/pages/spine-framework/CLIPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX routes based on auth state" errors="Auth context failures" side_effects="Navigation, route rendering"]
-// CIL[DOC-MICRO logic_summary="Shows loading, handles auth states, routes to appropriate components" notable_decisions="['ternary_auth_routing', 'setup_mode_check', 'unplaced_person_resume_routing']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="change" content="Batch4b: authenticated-but-unplaced users (falsy account_id, not pending) are routed to /register?resume=1 for all paths so RegisterPage can finish placement — they no longer fall through to NotFound"]
 function App() {
   const { user, isLoading } = useAuth()
   const branding = useBranding()
@@ -119,24 +79,8 @@ function App() {
     </AppsRegistryProvider>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Root app component handling authentication state and routing'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/App.tsx:app:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/App.tsx:authenticatedrouter:function" type="function" identity="AuthenticatedRouter" parent="none"]
-// CIL[DOC-LEARNING topic="App:renderer_switch" content="The public.apps.renderer field switches routing: 'custom' uses CustomAppLoader and loads custom/apps/<slug>/index.tsx; 'generic' uses GenericAppShell and builds a schema-driven UI from nav_items."]
-// CIL[DOC-MACRO purpose="Handle authenticated user routing and dynamic app loading"]
-// CIL[DOC-RESPONSIBILITY responsibility="Manage app registry, route sorting, and dynamic component rendering"]
-// CIL[DOC-CONTEXT module="App" layer="routing" related_files=".framework/src/App.tsx,.framework/src/components/AppWrapper.tsx,.framework/src/components/CustomAppLoader.tsx,.framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AppContext.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/NotFoundPage.tsx,.framework/src/pages/SetupPage.tsx,.framework/src/pages/auth/AuthConfirmPage.tsx,.framework/src/pages/auth/ForgotPasswordPage.tsx,.framework/src/pages/auth/LoginPage.tsx,.framework/src/pages/auth/PendingApprovalPage.tsx,.framework/src/pages/auth/RegisterPage.tsx,.framework/src/pages/spine-framework/APIPage.tsx,.framework/src/pages/spine-framework/CLIPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Dynamic routes for authenticated apps" errors="App loading failures" side_effects="Navigation, lazy loading"]
-// CIL[DOC-MICRO logic_summary="Loads apps, sorts routes, handles redirects, renders dynamic app components" notable_decisions="['route_prefix_sorting', 'renderer_type_switching', 'no_app_page_landing', 'unplaced_register_guard']"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-NOTE type="change" content="Batch4b: '/' now resolves to admin / root app / first app prefix / NoAppPage; redirect effect no longer bounces unplaced users off /register"]
+// The public.apps.renderer field switches routing: 'custom' uses CustomAppLoader and loads custom/apps/<slug>/index.tsx; 'generic' uses GenericAppShell and builds a schema-driven UI from nav_items.
 function AuthenticatedRouter() {
   const { user } = useAuth()
   const { routableApps: apps, loading } = useAppsRegistry()
@@ -239,27 +183,5 @@ function AuthenticatedRouter() {
     </Suspense>
   )
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Handle authenticated user routing and dynamic app loading'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/App.tsx:authenticatedrouter:function"]
 
-// CIL[BEGIN stable_id="~/.framework/src/App.tsx:export_default:export" type="export" identity="export_default" parent="none"]
-// CIL[DOC-MACRO purpose="Export the main App component as default"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide the entry point for the React application"]
-// CIL[DOC-CONTEXT module="App" layer="entry-point" related_files=".framework/src/App.tsx,.framework/src/components/AppWrapper.tsx,.framework/src/components/CustomAppLoader.tsx,.framework/src/components/app-shell/GenericAppShell.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/contexts/AppContext.tsx,.framework/src/contexts/AuthContext.tsx,.framework/src/pages/NotFoundPage.tsx,.framework/src/pages/SetupPage.tsx,.framework/src/pages/auth/AuthConfirmPage.tsx,.framework/src/pages/auth/ForgotPasswordPage.tsx,.framework/src/pages/auth/LoginPage.tsx,.framework/src/pages/auth/PendingApprovalPage.tsx,.framework/src/pages/auth/RegisterPage.tsx,.framework/src/pages/spine-framework/APIPage.tsx,.framework/src/pages/spine-framework/CLIPage.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="App component" errors="none" side_effects="Application bootstrap"]
-// CIL[DOC-MICRO logic_summary="Default export of the root App component" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 export default App
-// CIL[DOC-VECTOR type="context" content="purpose='Export the main App component as default'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx,.framework/src/components/ui/LoadingSpinner.tsx,.framework/src/pages/auth/LoginPage.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/App.tsx:export_default:export"]

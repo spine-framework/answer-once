@@ -20,33 +20,9 @@
 
 
 
-// CIL[BEGIN stable_id="~/.framework/cli/commands/auth.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/cli/commands/auth.ts"]
-// CIL[DOC-MACRO purpose="Module setup and imports for auth.ts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Establish the public surface and dependencies of auth.ts"]
-// CIL[DOC-CONTEXT module=".framework/cli/commands/auth.ts" layer="cli" related_files=".framework/cli/context.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports required modules for auth.ts" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-AUDIENCE audience="cli"]
-// CIL[DOC-STABILITY stability="stable"]
 import type { Command } from 'commander'
 import { buildCliContext, handleError } from '../context.js'
 
-// CIL[DOC-VECTOR type="context" content="purpose='Module setup and imports for auth.ts'; No verified external callers; imports: .framework/cli/context.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/auth.ts:module_header:module_header"]
-// CIL[BEGIN stable_id="~/.framework/cli/commands/auth.ts:registerAuthCommands:function" type="function" identity="registerAuthCommands" parent="~/.framework/cli/commands/auth.ts"]
-// CIL[DOC-MACRO purpose="Implement registerAuthCommands"]
-// CIL[DOC-RESPONSIBILITY responsibility="Execute the core logic for registerAuthCommands"]
-// CIL[DOC-CONTEXT module=".framework/cli/commands/auth.ts" layer="cli" related_files=".framework/cli/commands/auth.ts,.framework/cli/context.ts"]
-// CIL[DOC-CONTRACT inputs="program: Command" outputs="result of the operation" errors="propagates dependency errors" side_effects="writes to stdout/stderr; calls process.exit"]
-// CIL[DOC-MICRO logic_summary="Processes inputs, performs work, and returns output for registerAuthCommands" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 /**
  * Registers authentication-related commands for the CLI, enabling users to manage their identity and validate credentials. This module provides commands for displaying the current user's identity and checking credential validity.
  *
@@ -118,10 +94,3 @@ export function registerAuthCommands(program: Command) {
       }
     })
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Implement registerAuthCommands'; No verified external callers; imports: .framework/cli/context.ts"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/cli/commands/auth.ts:registerAuthCommands:function"]

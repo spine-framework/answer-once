@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
 /**
  * @module   TimersPage
  * @audience both
@@ -37,7 +36,6 @@ import { Badge } from '../../components/ui/badge'
 import { formatDateTime } from '../../lib/utils'
 import { AdminListPage } from '../../components/admin/AdminListPage'
 import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
-// CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:module_header:module_header"]
 
 
 
@@ -55,7 +53,6 @@ import { SortableTableHeader } from '../../components/admin/SortableTableHeader'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:Timer:interface" type="interface" identity="Timer" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
 /**
  * The Timer interface defines the structure for timer objects used in the application, encapsulating their properties and configuration. It standardizes how timers are represented and managed within the system.
  *
@@ -88,7 +85,6 @@ interface Timer {
   success_count: number
   failure_count: number
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:Timer:interface"]
 
 
 
@@ -107,7 +103,6 @@ interface Timer {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/TimersPage.tsx:TimersPage:component" type="component" identity="TimersPage" parent="~/.framework/src/pages/admin/TimersPage.tsx"]
 /**
  * The TimersPage component manages the display and filtering of timer data in the admin interface. It allows users to search, filter by type and status, and sort timers.
  *
@@ -424,7 +419,6 @@ export function TimersPage() {
     </AdminListPage>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/TimersPage.tsx:TimersPage:component"]
 
 
 

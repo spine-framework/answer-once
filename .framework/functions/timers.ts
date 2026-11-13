@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/timers.ts"]
 /**
  * @module   timers
  * @audience both
@@ -33,14 +32,12 @@ import { joins, adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { sanitizeRecordData } from './_shared/permissions'
 import { isSystemAdmin } from './_shared/principal'
-// CIL[END stable_id="~/.framework/functions/timers.ts:module_header:module_header"]
 
 // Interval resolution mirrors public.update_timer_after_run (migration
 // 071_timer_interval_keys.sql): config.interval_minutes (minutes) wins,
 // then config.interval_seconds (seconds → minutes). A parseable
 // config.run_at / config.schedule datetime is the fallback so 'once'
 // timers can be armed too.
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:intervalMinutesFromConfig:function" type="function" identity="intervalMinutesFromConfig" parent="~/.framework/functions/timers.ts"]
 function intervalMinutesFromConfig(config: any): number | null {
   const minutes = Number(config?.interval_minutes)
   if (Number.isFinite(minutes) && minutes > 0) return minutes
@@ -48,9 +45,7 @@ function intervalMinutesFromConfig(config: any): number | null {
   if (Number.isFinite(seconds) && seconds > 0) return seconds / 60
   return null
 }
-// CIL[END stable_id="~/.framework/functions/timers.ts:intervalMinutesFromConfig:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:computeNextExecution:function" type="function" identity="computeNextExecution" parent="~/.framework/functions/timers.ts"]
 function computeNextExecution(config: any): string | null {
   const minutes = intervalMinutesFromConfig(config)
   if (minutes !== null) {
@@ -64,7 +59,6 @@ function computeNextExecution(config: any): string | null {
   const runAt = Date.parse(raw)
   return Number.isFinite(runAt) ? new Date(runAt).toISOString() : null
 }
-// CIL[END stable_id="~/.framework/functions/timers.ts:computeNextExecution:function"]
 
 
 
@@ -80,7 +74,6 @@ function computeNextExecution(config: any): string | null {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:list:constant" type="constant" identity="list" parent="~/.framework/functions/timers.ts"]
 /**
  * The 'list' constant retrieves a list of timers based on query parameters and the user's account context. It ensures that only authorized users can access the timer data.
  *
@@ -125,7 +118,6 @@ export const list = createHandler(async (ctx, _body) => {
 
   return sanitized
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:list:constant"]
 
 
 
@@ -141,7 +133,6 @@ export const list = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:get:constant" type="constant" identity="get" parent="~/.framework/functions/timers.ts"]
 /**
  * Retrieves a timer record from the database based on a provided ID while ensuring that only authorized users can access the timer data.
  *
@@ -170,7 +161,6 @@ export const get = createHandler(async (ctx, _body) => {
 
   return await sanitizeRecordData(ctx, data, 'timer')
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:get:constant"]
 
 
 
@@ -186,7 +176,6 @@ export const get = createHandler(async (ctx, _body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:create:constant" type="constant" identity="create" parent="~/.framework/functions/timers.ts"]
 /**
  * Creates a new timer entry in the database based on the provided parameters, ensuring required fields are present and user context is valid. This function is essential for managing timer data within the application.
  *
@@ -243,7 +232,6 @@ export const create = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:create:constant"]
 
 
 
@@ -259,7 +247,6 @@ export const create = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:update:constant" type="constant" identity="update" parent="~/.framework/functions/timers.ts"]
 /**
  * The 'update' constant defines a handler for updating timer records in the database. It ensures that a valid timer ID is provided and updates the specified fields accordingly.
  *
@@ -320,7 +307,6 @@ export const update = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:update:constant"]
 
 
 
@@ -336,7 +322,6 @@ export const update = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:remove:constant" type="constant" identity="remove" parent="~/.framework/functions/timers.ts"]
 /**
  * The 'remove' constant defines a handler for deleting a timer from the database. It ensures that a valid timer ID is provided and logs the deletion event.
  *
@@ -378,7 +363,6 @@ export const remove = createHandler(async (ctx, body) => {
 
   return { success: true }
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:remove:constant"]
 
 
 
@@ -394,7 +378,6 @@ export const remove = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:toggle:constant" type="constant" identity="toggle" parent="~/.framework/functions/timers.ts"]
 /**
  * The toggle function updates the active status of a timer based on its ID, ensuring the timer exists before making changes and logging the event. This function is essential for managing timer states in the application.
  *
@@ -454,7 +437,6 @@ export const toggle = createHandler(async (ctx, body) => {
 
   return data
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:toggle:constant"]
 
 
 
@@ -471,7 +453,6 @@ export const toggle = createHandler(async (ctx, body) => {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/timers.ts:handler:constant" type="constant" identity="handler" parent="~/.framework/functions/timers.ts"]
 /**
  * The handler processes various actions based on the query parameters from the context, providing a centralized entry point for handling different operations related to the resource. It delegates to specific functions for each action.
  *
@@ -501,7 +482,6 @@ export const handler = createHandler(async (ctx, body) => {
       throw new Error(`Unsupported action: ${action}`)
   }
 })
-// CIL[END stable_id="~/.framework/functions/timers.ts:handler:constant"]
 
 
 

@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/functions/_shared/agent-runner.ts"]
 
 
 /**
@@ -57,13 +56,11 @@ import { emitOutcome } from './outcomes'
 import { withSpan, startSpan, endSpan } from './tracing'
 import { create as createRecord } from '../admin-data'
 import { callOpenAIEmbeddings, callOpenAIChat } from './llm'
-import { stripCilBoilerplate, computeContentHash } from './cil'
 import { resolveKnowledgeScope, knowledgeRowAllowed, matchItemType, type KnowledgeScope } from './kb'
 import { resolveNotificationRecipients } from './notify'
 import { resolveTypeId, resolveLinkTypeId } from './resolve-ids'
 import { execute as executeOutbound } from '../integration-outbound'
 import { createHash } from 'crypto'
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:module_header:module_header"]
 
 
 
@@ -85,7 +82,6 @@ import { createHash } from 'crypto'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:buildContext:function" type="function" identity="buildContext" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Builds a context string for an agent based on user input, conversation history, and retrieved knowledge sources. This function is essential for generating responses that are informed by prior interactions and relevant data.
  *
@@ -119,8 +115,7 @@ import { createHash } from 'crypto'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveLinkedDirectives:function" type="function" identity="resolveLinkedDirectives" parent="~/.framework/functions/_shared/agent-runner.ts"]
-// CIL[DOC-LEARNING topic="design_decision" content="Article→directive links (ao_article_directive) are the steady-state delivery path for shared actions: a semantically-matched article carries its directive into agent context, while standalone directive recall (promptConfig.metadata.directive_recall) is the bootstrap path and can be disabled via directive_recall.enabled=false once links cover common cases. Only status=active directives surface — suggested/draft candidates stay dormant, and linked directives inherit the source article's similarity."]
+// Article→directive links (ao_article_directive) are the steady-state delivery path for shared actions: a semantically-matched article carries its directive into agent context, while standalone directive recall (promptConfig.metadata.directive_recall) is the bootstrap path and can be disabled via directive_recall.enabled=false once links cover common cases. Only status=active directives surface — suggested/draft candidates stay dormant, and linked directives inherit the source article's similarity.
 /**
  * Resolves directive records linked from retrieved articles via the prompt
  * config's directive_link_type_slug. Only active directives of the declared
@@ -184,7 +179,6 @@ export async function resolveLinkedDirectives(
   }
   return linked
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveLinkedDirectives:function"]
 
 async function buildContext(
   config: AgentConfig,
@@ -235,8 +229,7 @@ async function buildContext(
           const sourceLabel = doc.item_type === 'cil_chunk'
             ? `[${i + 1}] [code chunk] ${doc.chunk_name || doc.title || doc.document_id}${fileRef}`
             : `[${i + 1}] [KB article] ${doc.title || doc.document_id}${fileRef}`
-          const body = doc.item_type === 'cil_chunk' ? stripCilBoilerplate(doc.content || '') : doc.content
-          context += `${sourceLabel}\n${body}\n\n`
+          context += `${sourceLabel}\n${doc.content || ''}\n\n`
         })
         if (meanSimilarity > 0 && meanSimilarity < 0.35) {
           context += `Retrieval confidence is low (mean similarity ${meanSimilarity.toFixed(2)}). State explicitly which parts of the question the evidence does not cover instead of generalizing.\n`
@@ -353,7 +346,6 @@ async function buildContext(
     return { context, retrievedSources, meanSimilarity }
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:buildContext:function"]
 
 
 
@@ -375,7 +367,6 @@ async function buildContext(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:DEFAULT_VECTOR_CONCURRENCY:constant" type="constant" identity="DEFAULT_VECTOR_CONCURRENCY" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * DEFAULT_VECTOR_CONCURRENCY defines the default level of concurrency for vector operations in the agent runner module. It provides a configurable parameter that can be adjusted based on performance needs.
  *
@@ -400,7 +391,6 @@ async function buildContext(
 
 
 const DEFAULT_VECTOR_CONCURRENCY = 3
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:DEFAULT_VECTOR_CONCURRENCY:constant"]
 
 
 
@@ -428,7 +418,6 @@ const DEFAULT_VECTOR_CONCURRENCY = 3
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:MAX_VECTOR_CONCURRENCY:constant" type="constant" identity="MAX_VECTOR_CONCURRENCY" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * MAX_VECTOR_CONCURRENCY defines the maximum number of concurrent vector operations allowed in the agent runner. This constant helps manage resource utilization and performance within the module.
  *
@@ -453,7 +442,6 @@ const DEFAULT_VECTOR_CONCURRENCY = 3
 
 
 const MAX_VECTOR_CONCURRENCY = 5
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:MAX_VECTOR_CONCURRENCY:constant"]
 
 
 
@@ -481,7 +469,6 @@ const MAX_VECTOR_CONCURRENCY = 5
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveVectorConcurrency:function" type="function" identity="resolveVectorConcurrency" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Calculates the appropriate level of concurrency for vector processing based on the provided value and item count. It ensures that the concurrency does not exceed predefined limits and is at least one.
  *
@@ -516,7 +503,6 @@ function resolveVectorConcurrency(value: unknown, itemCount: number): number {
     : DEFAULT_VECTOR_CONCURRENCY
   return Math.min(itemCount, Math.max(1, Math.min(MAX_VECTOR_CONCURRENCY, parsed)))
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveVectorConcurrency:function"]
 
 
 
@@ -537,7 +523,6 @@ function resolveVectorConcurrency(value: unknown, itemCount: number): number {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:mapWithConcurrency:function" type="function" identity="mapWithConcurrency" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Maps an array of items to results using a worker function with a specified level of concurrency to efficiently process multiple asynchronous operations in parallel while managing error handling.
  *
@@ -604,7 +589,6 @@ async function mapWithConcurrency<T, R>(
   if (failed) throw firstError
   return results
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:mapWithConcurrency:function"]
 
 
 
@@ -626,7 +610,6 @@ async function mapWithConcurrency<T, R>(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:retrieveKnowledge:function" type="function" identity="retrieveKnowledge" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves knowledge documents based on a query and specified sources, applying a retrieval policy to filter results. This function is essential for obtaining relevant information tailored to user needs.
  *
@@ -757,7 +740,7 @@ export async function retrieveKnowledge(
     const allMatches = matchesByVectorType.flat()
     const filtered = allMatches.filter((r: any) => {
       if (r.similarity < SIMILARITY_THRESHOLD) return false
-      // App knowledge envelope per-corpus gate (account / platform / CIL).
+      // App knowledge envelope per-corpus gate (account / platform).
       if (!knowledgeRowAllowed(scope, r)) return false
       const secLevel = r.metadata?.security_level || 'internal'
       const rank = SECURITY_ORDER[secLevel] ?? 1
@@ -856,7 +839,7 @@ export async function retrieveKnowledge(
       if (alt) r.content = alt.content
     }
   }
-  // document_id is a UUID for regular records but a CIL stable_id for
+  // document_id is a UUID for regular records but a legacy stable_id for
   // cil_chunk embeddings — look items up by id for UUIDs and by
   // data->>stable_id otherwise so titles resolve for both.
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -915,7 +898,7 @@ export async function retrieveKnowledge(
   })
   // Top KB hits often hold a complete article (e.g. a full JSON example) that
   // never fits in one embedding slice — serve the whole document when it's
-  // small enough, otherwise point the agent at cil_fetch_document.
+  // small enough, otherwise point the agent at fetch_document.
   for (const doc of docs.slice(0, 3)) {
     if (doc.item_type === 'cil_chunk') continue
     const item = itemMap.get(doc.document_id)
@@ -924,7 +907,7 @@ export async function retrieveKnowledge(
       doc.content = full
       doc.full_document = true
     } else {
-      doc.content += `\n[excerpt — call cil_fetch_document with document_id "${doc.document_id}" for the full article]`
+      doc.content += `\n[excerpt — call fetch_document with document_id "${doc.document_id}" for the full article]`
     }
   }
   // Evidence quality is judged by the excerpts actually served (top 3), not
@@ -940,7 +923,6 @@ export async function retrieveKnowledge(
   return { docs, meanSimilarity }
 }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:retrieveKnowledge:function"]
 
 
 
@@ -961,7 +943,6 @@ export async function retrieveKnowledge(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:lexicalSearchEmbeddings:function" type="function" identity="lexicalSearchEmbeddings" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Performs a lexical search on embeddings based on a query and specified filters. This function retrieves relevant documents from the database while considering account permissions and project associations.
  *
@@ -1022,7 +1003,6 @@ async function lexicalSearchEmbeddings(
   if (error) throw error
   return (data || []).filter((r: any) => knowledgeRowAllowed(scope, r)).slice(0, limit)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:lexicalSearchEmbeddings:function"]
 
 
 
@@ -1044,7 +1024,6 @@ async function lexicalSearchEmbeddings(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:getConversationHistory:function" type="function" identity="getConversationHistory" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves the conversation history for a specific thread, limited to a specified number of messages. This function is essential for displaying past messages in a chat interface.
  *
@@ -1090,7 +1069,6 @@ async function getConversationHistory(
   }
   return messages?.reverse() || []
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:getConversationHistory:function"]
 
 
 
@@ -1105,7 +1083,6 @@ async function getConversationHistory(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:recoverUserQuestion:function" type="function" identity="recoverUserQuestion" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves the most recent inbound user question from the database based on the provided thread ID. It updates the state with the question if it is not already set.
  *
@@ -1131,7 +1108,6 @@ async function recoverUserQuestion(threadId: string, state: ResearchState): Prom
   if (question && !state.user_question) state.user_question = question
   return question
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:recoverUserQuestion:function"]
 
 
 
@@ -1150,7 +1126,6 @@ async function recoverUserQuestion(threadId: string, state: ResearchState): Prom
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:callInference:function" type="function" identity="callInference" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The callInference function performs inference using a specified agent and context, returning the result of the inference process. It handles both live inference through an external API and a mock response when the API is unavailable.
  *
@@ -1240,7 +1215,6 @@ async function callInference(
   }
 }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:callInference:function"]
 
 
 
@@ -1262,7 +1236,6 @@ async function callInference(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeInferenceHandler:function" type="function" identity="executeInferenceHandler" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes an inference request to a specified URL, returning the response or a mock response if no URL is configured. This function is designed to handle HTTP requests for inference processing in an agent context.
  *
@@ -1315,7 +1288,6 @@ async function executeInferenceHandler(
   }
   return result.response_body
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeInferenceHandler:function"]
 
 
 
@@ -1337,7 +1309,6 @@ async function executeInferenceHandler(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:dispatchTools:function" type="function" identity="dispatchTools" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Dispatches a series of tool calls, executing each tool action and returning the results. This function is essential for managing tool execution within the agent framework.
  *
@@ -1379,22 +1350,11 @@ async function dispatchTools(
     return Promise.all(toolCalls.map(async (call) => {
       return withSpan(ctx, `agent.tool.${call.tool}`, async (ctx) => {
         try {
-          // CIL tools are built into the runner and do not need an actions table row.
-          if (CIL_TOOL_SLUGS.has(call.tool)) {
-            // deny_cil is checked here (not only at config resolution) because a
-            // model can name a built-in tool that was never offered — the tool
-            // set carries no allowlist weight on this path. Scoped to the cil_*
-            // family so generic built-ins (search_knowledge, ask_user,
-            // escalate_to_human) stay callable under deny.
-            if (cilDenied(runCtx) && CIL_ONLY_TOOL_SLUGS.has(call.tool)) {
-              return {
-                tool: call.tool,
-                id: call.id,
-                result: null,
-                error: `Tool "${call.tool}" is not permitted by the retrieval policy`
-              }
-            }
-            const result = await executeToolAction({ handler: call.tool }, call.params, ctx, runCtx)
+          // Retired tool names still resolve through the compatibility window.
+          const toolName = LEGACY_TOOL_ALIASES[call.tool] ?? call.tool
+          // Built-in tools are compiled into the runner and do not need an actions table row.
+          if (BUILTIN_TOOL_SLUGS.has(toolName)) {
+            const result = await executeToolAction({ handler: toolName }, call.params, ctx, runCtx)
             return {
               tool: call.tool,
               id: call.id,
@@ -1415,7 +1375,7 @@ async function dispatchTools(
           for (const t of cfg?.promptConfig?.available_tools || []) {
             if (typeof t === 'string') granted.add(t)
           }
-          if (granted.size && !granted.has(call.tool)) {
+          if (granted.size && !granted.has(toolName)) {
             return {
               tool: call.tool,
               id: call.id,
@@ -1426,7 +1386,7 @@ async function dispatchTools(
           const { data: action, error } = await adminDb
             .from('actions')
             .select('*')
-            .eq('slug', call.tool)
+            .eq('slug', toolName)
             .eq('is_active', true)
             .single()
           if (error || !action) {
@@ -1455,7 +1415,6 @@ async function dispatchTools(
     }))
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:dispatchTools:function"]
 
 
 
@@ -1476,184 +1435,6 @@ async function dispatchTools(
 
 
 
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:cilDenied:function" type="function" identity="cilDenied" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * The cilDenied function checks if the retrieval policy denies CIL access based on the provided run context configuration. It exists to determine whether CIL should be denied for the current agent runner context.
- *
- * @inputSpec
- *   runCtx: { threadId?: string; config?: AgentConfig } (optional) — context containing thread ID and configuration settings.
- * @outputSpec  boolean — true if CIL is denied, otherwise false.
- * @sideEffects none
- * @stability   stable
- * @cil-generated
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function cilDenied(
-  runCtx?: { threadId?: string; config?: AgentConfig }
-): boolean {
-  return runCtx?.config?.promptConfig?.metadata?.retrieval_policy?.deny_cil === true
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:cilDenied:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:cilAllowedProjectIds:function" type="function" identity="cilAllowedProjectIds" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Retrieves a list of project IDs that are allowed for the given run context, returning null if access is denied. This function is essential for determining which projects can be interacted with based on the provided configuration.
- *
- * @inputSpec
- *   runCtx: { threadId?: string; config?: AgentConfig } (optional) — the context for the current run, which may include thread ID and configuration details.
- * @outputSpec  string[] | null — an array of allowed project IDs or null if access is denied or no IDs are configured.
- * @sideEffects none
- * @stability   stable
- * @calls       cilDenied
- * @cil-generated
- */
-function cilAllowedProjectIds(
-  runCtx?: { threadId?: string; config?: AgentConfig }
-): string[] | null {
-  if (cilDenied(runCtx)) return null
-  const configured: string[] =
-    runCtx?.config?.thread?.data?.cil_config?.project_ids
-    ?? runCtx?.config?.promptConfig?.metadata?.cil_config?.project_ids
-    ?? []
-  return configured.length ? configured : null
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:cilAllowedProjectIds:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CilAccess:interface" type="interface" identity="CilAccess" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * The CilAccess interface defines the structure for managing access control by specifying associated account and project identifiers. It exists to facilitate the organization and retrieval of access-related information within the module.
- *
- * @sideEffects none
- * @stability   stable
- * @cil-generated
- */
-export interface CilAccess {
-  accountIds: string[]
-  projectIds: string[]
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CilAccess:interface"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveCilAccess:function" type="function" identity="resolveCilAccess" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Resolves CIL access based on the provided context and run context, ensuring that access is not granted under a denied retrieval policy. It retrieves the relevant account and project IDs if access is permitted.
- *
- * @macro       Async resolver for CIL access permissions.
- * @micro       Evaluates access permissions by checking retrieval policies and resolving knowledge scope based on application references.
- * @inputSpec
- *   - ctx: CoreContext (required) — the core context for the operation.
- *   - runCtx: { threadId?: string; config?: AgentConfig } (optional) — context for the current run, including optional thread ID and agent configuration.
- * @outputSpec  Promise<CilAccess | null> — resolves to an object containing account IDs and project IDs or null if access is denied.
- * @sideEffects none
- * @stability   stable
- * @calls       cilDenied, resolveKnowledgeScope, cilAllowedProjectIds
- * @cil-generated
- */
-async function resolveCilAccess(
-  ctx: CoreContext,
-  runCtx?: { threadId?: string; config?: AgentConfig }
-): Promise<CilAccess | null> {
-  // Explicit deny: no app-envelope or thread-record configuration can grant
-  // CIL access under a denied retrieval policy.
-  if (cilDenied(runCtx)) return null
-  const appRef =
-    runCtx?.config?.promptConfig?.app_id ||
-    runCtx?.config?.agent?.app_id ||
-    (ctx as any).appId || null
-  const scope = await resolveKnowledgeScope(ctx, appRef, {
-    project_ids: cilAllowedProjectIds(runCtx) ?? undefined,
-  })
-  if (!scope.cilProjectIds?.length || !scope.accountIds.length) return null
-  return { accountIds: scope.accountIds, projectIds: scope.cilProjectIds }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveCilAccess:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalPolicy:type" type="type" identity="RetrievalPolicy" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalPolicy defines the criteria for retrieving items based on various attributes such as security level and project IDs. It provides a structured way to enforce retrieval constraints in the agent runner module.
  *
@@ -1684,11 +1465,7 @@ export type RetrievalPolicy = {
   require_approved?: boolean
   project_ids?: string[]
   max_vector_concurrency?: number
-  /** Explicit opt-out of the built-in CIL tool surface (cil_* tools plus the
-   *  shared built-ins in CIL_TOOL_SLUGS) and of thread cil_config augmentation. */
-  deny_cil?: boolean
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalPolicy:type"]
 
 
 
@@ -1705,7 +1482,6 @@ export type RetrievalPolicy = {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCacheEntry:type" type="type" identity="RetrievalCacheEntry" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalCacheEntry represents an entry in a retrieval cache, storing documents and their similarity metrics. It is used to manage and evaluate cached retrieval results efficiently.
  *
@@ -1719,13 +1495,11 @@ type RetrievalCacheEntry = {
   denied?: boolean
   deniedReason?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCacheEntry:type"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCache:type" type="type" identity="RetrievalCache" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RetrievalCache is a type that maps string keys to RetrievalCacheEntry objects, facilitating efficient storage and retrieval of cached data entries. It exists to provide a structured way to manage cached retrieval results in the module.
  *
@@ -1734,13 +1508,11 @@ type RetrievalCacheEntry = {
  * @cil-generated
  */
 export type RetrievalCache = Record<string, RetrievalCacheEntry>
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RetrievalCache:type"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RETRIEVAL_CACHE_MAX_ENTRIES:constant" type="constant" identity="RETRIEVAL_CACHE_MAX_ENTRIES" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RETRIEVAL_CACHE_MAX_ENTRIES defines the maximum number of entries allowed in the retrieval cache. This constant is used to limit the size of the cache for performance optimization.
  *
@@ -1749,13 +1521,11 @@ export type RetrievalCache = Record<string, RetrievalCacheEntry>
  * @cil-generated
  */
 const RETRIEVAL_CACHE_MAX_ENTRIES = 4
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RETRIEVAL_CACHE_MAX_ENTRIES:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:normalizeRetrievalQuery:function" type="function" identity="normalizeRetrievalQuery" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Normalizes a retrieval query string by trimming whitespace, converting it to lowercase, and reducing multiple spaces to a single space. This ensures consistent formatting for query processing.
  *
@@ -1769,13 +1539,11 @@ const RETRIEVAL_CACHE_MAX_ENTRIES = 4
 function normalizeRetrievalQuery(q: string): string {
   return (q || '').trim().toLowerCase().replace(/\s+/g, ' ')
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:normalizeRetrievalQuery:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheKey:function" type="function" identity="retrievalCacheKey" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Generates a unique cache key for retrieval operations based on the provided query and policy parameters. This key is used to optimize retrieval performance by caching results.
  *
@@ -1811,13 +1579,11 @@ function retrievalCacheKey(
   }
   return createHash('sha256').update(JSON.stringify(canonical)).digest('hex').slice(0, 24)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheKey:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheStore:function" type="function" identity="retrievalCacheStore" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Stores an entry in the retrieval cache, ensuring that the cache does not exceed a maximum number of entries by removing the oldest entries. This function helps manage memory usage and maintain the relevance of cached data.
  *
@@ -1838,7 +1604,6 @@ function retrievalCacheStore(cache: RetrievalCache, key: string, entry: Retrieva
   }
   cache[key] = entry
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:retrievalCacheStore:function"]
 
 
 
@@ -1859,7 +1624,6 @@ function retrievalCacheStore(cache: RetrievalCache, key: string, entry: Retrieva
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveRetrievalPolicy:function" type="function" identity="resolveRetrievalPolicy" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Resolves the retrieval policy based on the provided run context and its configuration, ensuring that only allowed project IDs are included in the final policy. This function is essential for maintaining access control in retrieval operations.
  *
@@ -1868,7 +1632,6 @@ function retrievalCacheStore(cache: RetrievalCache, key: string, entry: Retrieva
  * @outputSpec  RetrievalPolicy — an object representing the resolved retrieval policy.
  * @sideEffects none
  * @stability   stable
- * @calls       cilAllowedProjectIds
  * @cil-generated
  */
 
@@ -1892,16 +1655,9 @@ function resolveRetrievalPolicy(
 ): RetrievalPolicy {
   const configured: RetrievalPolicy =
     runCtx?.config?.promptConfig?.metadata?.retrieval_policy || {}
-  const policy: RetrievalPolicy = { ...configured }
-  const allowed = cilAllowedProjectIds(runCtx)
-  if (allowed) {
-    policy.project_ids = policy.project_ids?.length
-      ? policy.project_ids.filter((id) => allowed.includes(id))
-      : allowed
-  }
+  const { project_ids: _retired, ...policy } = configured
   return policy
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveRetrievalPolicy:function"]
 
 
 
@@ -1922,7 +1678,6 @@ function resolveRetrievalPolicy(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeToolAction:function" type="function" identity="executeToolAction" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a specified tool action based on the provided parameters and context, serving as a dispatcher for various action handlers. This allows for flexible integration with different services and workflows.
  *
@@ -1937,7 +1692,7 @@ function resolveRetrievalPolicy(
  * @throws      Error — if the action execution fails or returns an unsuccessful result.
  * @sideEffects External API calls to execute outbound actions and potentially modify external systems.
  * @stability   stable
- * @calls       withSpan, executeOutbound, runPipeline, executeSearchKnowledge, executeQueryItems, executeCreateRecord, executeUpdateItem, executeSendNotification, executeCilChunkLookup, executeCilFetchDocument, executeCilGetContract, executeCilBlastRadius, executeCilHashValidate, executeCilProjectStatus, executeEscalateToHuman
+ * @calls       withSpan, executeOutbound, runPipeline, executeSearchKnowledge, executeQueryItems, executeCreateRecord, executeUpdateItem, executeSendNotification, executeFetchDocument, executeEscalateToHuman
  * @errorHandling throws an error with the response body if the outbound execution fails.
  * @cil-generated
  */
@@ -2017,24 +1772,16 @@ export async function executeToolAction(
         return { success: result.status === 'completed', result }
       case 'send_notification':
         return await executeSendNotification(params, ctx)
-      case 'cil_chunk_lookup':
-      case 'cil_fetch_document':
-      case 'cil_get_contract':
-      case 'cil_blast_radius':
-      case 'cil_hash_validate':
-      case 'cil_project_status': {
-        const cilAccess = await resolveCilAccess(ctx, runCtx)
-        if (!cilAccess) {
-          return { error: 'knowledge_denied: cil corpus is not permitted by the app knowledge envelope', results: [], count: 0 }
+      case 'fetch_document': {
+        const appRef =
+          runCtx?.config?.promptConfig?.app_id ||
+          runCtx?.config?.agent?.app_id ||
+          (ctx as any).appId || null
+        const scope = await resolveKnowledgeScope(ctx, appRef, {})
+        if (!scope.allowed || !scope.accountIds.length) {
+          return { error: `knowledge_denied: ${scope.deniedReason || 'no account scope resolved'}`, results: [], count: 0 }
         }
-        switch (action.handler) {
-          case 'cil_chunk_lookup': return await executeCilChunkLookup(params, ctx, cilAccess)
-          case 'cil_fetch_document': return await executeCilFetchDocument(params, ctx, cilAccess)
-          case 'cil_get_contract': return await executeCilGetContract(params, ctx, cilAccess)
-          case 'cil_blast_radius': return await executeCilBlastRadius(params, ctx, cilAccess)
-          case 'cil_hash_validate': return await executeCilHashValidate(params, ctx, cilAccess)
-          default: return await executeCilProjectStatus(params, ctx, cilAccess)
-        }
+        return await executeFetchDocument(params, ctx, scope.accountIds)
       }
       case 'escalate_to_human':
         return await executeEscalateToHuman(params, ctx, runCtx)
@@ -2049,7 +1796,6 @@ export async function executeToolAction(
     }
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeToolAction:function"]
 
 
 
@@ -2071,7 +1817,6 @@ export async function executeToolAction(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeEscalateToHuman:function" type="function" identity="executeEscalateToHuman" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * This function escalates an agent's request to a human operator if certain conditions are met, ensuring that the escalation process is only initiated with an active agent thread context.
  *
@@ -2124,7 +1869,6 @@ async function executeEscalateToHuman(
   await handleEscalation(threadId, confidence, promptConfig, ctx, 'agent_requested', runCtx?.config?.leaseToken)
   return { escalated: true, already_escalated: false, reason: params?.reason || null }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeEscalateToHuman:function"]
 
 
 
@@ -2146,7 +1890,6 @@ async function executeEscalateToHuman(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:DIRECTIVE_SET_FIELDS_ALLOWLIST:constant" type="constant" identity="DIRECTIVE_SET_FIELDS_ALLOWLIST" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Apply an admin-authored routing directive to the thread's target record.
  * The model selects a directive by id; this executor runs the directive's
@@ -2204,9 +1947,7 @@ function directiveRequiredTier(d: any): DirectiveTier {
   if (d?.mode === 'auto_reply') return 'respond'
   return 'annotate'
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:DIRECTIVE_SET_FIELDS_ALLOWLIST:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:renderDirectiveTemplate:function" type="function" identity="renderDirectiveTemplate" parent="~/.framework/functions/_shared/agent-runner.ts"]
 export function renderDirectiveTemplate(template: string, ticket: any): string {
   return (template || '').replace(/\{\{\s*(ticket|record)\.([\w.]+)\s*\}\}/g, (_m, _ns, path) => {
     const parts = String(path).split('.')
@@ -2218,12 +1959,9 @@ export function renderDirectiveTemplate(template: string, ticket: any): string {
     return cur == null ? '' : String(cur)
   })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:renderDirectiveTemplate:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeApplyDirective:function" type="function" identity="executeApplyDirective" parent="~/.framework/functions/_shared/agent-runner.ts"]
-// CIL[DOC-LEARNING topic="design_decision" content="Directives are trusted admin-authored action records, not retrievable knowledge: the model may only pick a directive_id surfaced by recall or an article link (episode-scoped matched_directive_ids rejects invented ids), and the structured actions execute verbatim so customer input can never author or alter directive behavior."]
-// CIL[DOC-LEARNING topic="tenant_opt_in" content="Platform directives above the annotate tier require an active tenant item of promptConfig.metadata.directive_subscription_type_slug (ao_directive_subscription) with max_tier >= the directive's required tier. Tier derives from the actions/mode (annotate < respond < mutate < orchestrate); own-account directives bypass opt-in and annotate-tier shared directives run zero-config."]
-// CIL[DOC-NOTE type="api_behavior" content="actions shape: record_ops.tags[], record_ops.watchers[] ('role:<slug>' or 'person:<uuid>'), record_ops.set_fields (design-schema non-system fields + DIRECTIVE_SET_FIELDS_ALLOWLIST status/priority — other keys rejected), record_ops.escalate, run_pipelines[] (slugs or ids), continue. reply_template interpolates {{record.<path>}} / {{ticket.<path>}}."]
+// Directives are trusted admin-authored action records, not retrievable knowledge: the model may only pick a directive_id surfaced by recall or an article link (episode-scoped matched_directive_ids rejects invented ids), and the structured actions execute verbatim so customer input can never author or alter directive behavior.
+// Platform directives above the annotate tier require an active tenant item of promptConfig.metadata.directive_subscription_type_slug (ao_directive_subscription) with max_tier >= the directive's required tier. Tier derives from the actions/mode (annotate < respond < mutate < orchestrate); own-account directives bypass opt-in and annotate-tier shared directives run zero-config.
 export async function executeApplyDirective(
   params: any,
   ctx: CoreContext,
@@ -2535,7 +2273,6 @@ export async function executeApplyDirective(
     message: replyMessage,
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeApplyDirective:function"]
 
 
 
@@ -2557,7 +2294,6 @@ export async function executeApplyDirective(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchKnowledge:function" type="function" identity="executeSearchKnowledge" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a search for knowledge based on a query and specified sources, returning a limited number of results. This function is designed to facilitate knowledge retrieval in the context of an agent's operations.
  *
@@ -2623,7 +2359,6 @@ async function executeSearchKnowledge(
   }
   return { results: (docs || []).slice(0, limit), method: 'vector', mean_similarity: meanSimilarity }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchKnowledge:function"]
 
 
 
@@ -2648,7 +2383,6 @@ async function executeSearchKnowledge(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:QUERY_ITEMS_ENTITIES:constant" type="constant" identity="QUERY_ITEMS_ENTITIES" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * QUERY_ITEMS_ENTITIES is a Set that contains the names of various entity types used in the application. It provides a centralized collection of these entity names for easier management and reference throughout the module.
  *
@@ -2675,7 +2409,6 @@ async function executeSearchKnowledge(
 const QUERY_ITEMS_ENTITIES = new Set([
   'items', 'threads', 'messages', 'links', 'attachments', 'watchers',
 ])
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:QUERY_ITEMS_ENTITIES:constant"]
 
 
 
@@ -2696,7 +2429,6 @@ const QUERY_ITEMS_ENTITIES = new Set([
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeQueryItems:function" type="function" identity="executeQueryItems" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a query to retrieve items from a specified entity in the database, applying optional filters and a limit on the number of results. This function ensures that the entity is valid and handles potential query errors.
  *
@@ -2749,7 +2481,6 @@ async function executeQueryItems(
   if (error) throw new Error(`Query failed: ${error.message}`)
   return { items: data || [] }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeQueryItems:function"]
 
 
 
@@ -2771,32 +2502,20 @@ async function executeQueryItems(
 
 
 
-// CIL[DOC-MACRO purpose="Entity/column guardrails for LLM-callable write tools"]
-// CIL[DOC-RESPONSIBILITY responsibility="Confine agent create/update tools to runtime entities and strip privileged columns from model-supplied data"]
-// CIL[DOC-CONTRACT inputs="entity name, record data" outputs="sanitized data / throws" errors="Error when entity is not writable by agent tools" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="TOOL_WRITABLE_ENTITIES allowlists runtime tables; TOOL_FORBIDDEN_COLUMNS blocks mass-assignment of role_id/account_id/auth_uid/type_id/app_id/design_schema/validation_schema/created_by" notable_decisions="The model may name any entity/column — these lists are the enforcement, prompt config is not"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_WRITABLE_ENTITIES:constant" type="constant" identity="TOOL_WRITABLE_ENTITIES" parent="~/.framework/functions/_shared/agent-runner.ts"]
 const TOOL_WRITABLE_ENTITIES = new Set([
   'items', 'threads', 'messages', 'attachments', 'watchers', 'item_progress'
 ])
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_WRITABLE_ENTITIES:constant"]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_FORBIDDEN_COLUMNS:constant" type="constant" identity="TOOL_FORBIDDEN_COLUMNS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 const TOOL_FORBIDDEN_COLUMNS = new Set([
   'role_id', 'account_id', 'auth_uid', 'type_id', 'app_id',
   'design_schema', 'validation_schema', 'created_by'
 ])
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOOL_FORBIDDEN_COLUMNS:constant"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:assertToolEntity:function" type="function" identity="assertToolEntity" parent="~/.framework/functions/_shared/agent-runner.ts"]
 function assertToolEntity(entity: any): void {
   if (!TOOL_WRITABLE_ENTITIES.has(entity)) {
     throw new Error(`Entity "${entity}" is not writable by agent tools`)
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:assertToolEntity:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:stripToolColumns:function" type="function" identity="stripToolColumns" parent="~/.framework/functions/_shared/agent-runner.ts"]
 function stripToolColumns(data: any): any {
   if (!data || typeof data !== 'object') return data
   const clean: any = {}
@@ -2805,9 +2524,7 @@ function stripToolColumns(data: any): any {
   }
   return clean
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:stripToolColumns:function"]
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCreateRecord:function" type="function" identity="executeCreateRecord" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Creates a new record in the specified database entity using provided data and context information. This function ensures that the record is associated with the correct account and user details.
  *
@@ -2860,7 +2577,6 @@ async function executeCreateRecord(
   if (error) throw new Error(`Create failed: ${error.message}`)
   return { record: result }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCreateRecord:function"]
 
 
 
@@ -2882,7 +2598,6 @@ async function executeCreateRecord(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeUpdateItem:function" type="function" identity="executeUpdateItem" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Updates a specified record in the database with new data and timestamps, ensuring that the record is modified by tracking who made the update.
  *
@@ -2933,7 +2648,6 @@ async function executeUpdateItem(
   if (error) throw new Error(`Update failed: ${error.message}`)
   return { record: result }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeUpdateItem:function"]
 
 
 
@@ -2955,7 +2669,6 @@ async function executeUpdateItem(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSendNotification:function" type="function" identity="executeSendNotification" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Sends notifications to specified recipients based on the provided parameters. It constructs notification objects and inserts them into the database.
  *
@@ -3010,7 +2723,6 @@ async function executeSendNotification(
   }
   return { notified_count: notifications.length }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSendNotification:function"]
 
 
 
@@ -3032,7 +2744,6 @@ async function executeSendNotification(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:handleEscalation:function" type="function" identity="handleEscalation" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Handles the escalation of a thread based on low confidence levels, updating the thread and item statuses accordingly. It also triggers an escalation pipeline if specified in the prompt configuration.
  *
@@ -3176,7 +2887,6 @@ async function handleEscalation(
   }
 }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:handleEscalation:function"]
 
 
 
@@ -3198,7 +2908,6 @@ async function handleEscalation(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:getReplyTypeSlug:function" type="function" identity="getReplyTypeSlug" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Resolves the reply message type for a thread based on its declared binding. If no binding is declared, it defaults to the generic 'message' type.
  *
@@ -3229,7 +2938,6 @@ export function getReplyTypeSlug(threadType: any): string {
   const declared = threadType?.design_schema?.functionality?.thread?.reply_type_slug
   return typeof declared === 'string' && declared ? declared : 'message'
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:getReplyTypeSlug:function"]
 
 
 
@@ -3293,7 +3001,6 @@ export function getReplyTypeSlug(threadType: any): string {
 // triggers a reseed + retry inside saveMessage.
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqCounter:constant" type="constant" identity="threadSeqCounter" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The threadSeqCounter is a Map that associates string keys with numeric values, serving as a counter for thread sequences. It exists to efficiently track and manage the sequence numbers of threads in the agent runner module.
  *
@@ -3302,12 +3009,10 @@ export function getReplyTypeSlug(threadType: any): string {
  * @cil-generated
  */
 const threadSeqCounter = new Map<string, number>()
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqCounter:constant"]
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqSeeding:constant" type="constant" identity="threadSeqSeeding" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * A map that associates string keys with promises that resolve to void. It is used to manage asynchronous operations related to thread sequencing in the agent runner module.
  *
@@ -3316,13 +3021,11 @@ const threadSeqCounter = new Map<string, number>()
  * @cil-generated
  */
 const threadSeqSeeding = new Map<string, Promise<void>>()
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:threadSeqSeeding:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureSequenceCounter:function" type="function" identity="ensureSequenceCounter" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Ensures that a sequence counter for a given thread ID is initialized and updated based on the count of messages in the database. This function prevents duplicate initializations by using a seeding mechanism.
  *
@@ -3350,7 +3053,6 @@ async function ensureSequenceCounter(threadId: string): Promise<void> {
   }
   await seeding
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureSequenceCounter:function"]
 
 
 
@@ -3358,7 +3060,6 @@ async function ensureSequenceCounter(threadId: string): Promise<void> {
 // sequences up front so a Promise.all of inserts preserves display order.
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:allocSequence:function" type="function" identity="allocSequence" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Allocates a sequence number for a given thread ID, ensuring unique sequence numbers for each thread. This function is essential for managing thread-specific operations in a concurrent environment.
  *
@@ -3374,13 +3075,11 @@ function allocSequence(threadId: string): number {
   threadSeqCounter.set(threadId, next + 1)
   return next
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:allocSequence:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:saveMessage:function" type="function" identity="saveMessage" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Saves a message to a specified thread with relevant metadata. It ensures message sequence integrity and handles potential duplicate key errors during insertion.
  *
@@ -3452,7 +3151,6 @@ async function saveMessage(
     return message
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:saveMessage:function"]
 
 
 
@@ -3474,7 +3172,6 @@ async function saveMessage(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:AgentConfig:interface" type="interface" identity="AgentConfig" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The AgentConfig interface defines the configuration settings required for an agent to operate within the system. It encapsulates various properties that dictate the agent's behavior and execution context.
  *
@@ -3508,7 +3205,6 @@ export interface AgentConfig {
   /** DB lease token from acquire_episode_lease — heartbeats per turn and fences takeover writes. */
   leaseToken?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:AgentConfig:interface"]
 
 
 
@@ -3531,7 +3227,6 @@ export interface AgentConfig {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:InferenceResult:interface" type="interface" identity="InferenceResult" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The InferenceResult interface defines the structure of the result returned from an inference operation, encapsulating the content, confidence level, and optional metadata. It exists to standardize the output format for inference results across the module.
  *
@@ -3561,7 +3256,6 @@ export interface InferenceResult {
   tool_calls?: ToolCall[]
   metadata?: Record<string, any>
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:InferenceResult:interface"]
 
 
 
@@ -3584,7 +3278,6 @@ export interface InferenceResult {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolCall:interface" type="interface" identity="ToolCall" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The ToolCall interface defines the structure for a tool invocation, specifying the tool to be used, its parameters, and a unique identifier. This standardization facilitates consistent tool usage within the module.
  *
@@ -3613,7 +3306,6 @@ export interface ToolCall {
   params: Record<string, any>
   id: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolCall:interface"]
 
 
 
@@ -3636,7 +3328,6 @@ export interface ToolCall {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolResult:interface" type="interface" identity="ToolResult" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The ToolResult interface defines the structure for the result of a tool execution, encapsulating the tool's name, its result, any potential error, and a unique identifier. It exists to standardize the output format for tools used within the agent runner module.
  *
@@ -3666,7 +3357,6 @@ export interface ToolResult {
   error?: string
   id: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ToolResult:interface"]
 
 
 
@@ -3699,9 +3389,8 @@ export interface ToolResult {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOLS:constant" type="constant" identity="CIL_TOOLS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
- * CIL_TOOLS is a collection of utility functions for interacting with CIL chunks, providing search, retrieval, validation, and project status functionalities. It facilitates developers in managing and querying CIL data effectively.
+ * BUILTIN_TOOLS defines the runner-compiled tools available to agents — no actions-table row needed.
  *
  * @sideEffects none
  * @stability   stable
@@ -3723,78 +3412,8 @@ export interface ToolResult {
 
 
 
-const CIL_TOOLS: any[] = [
-  {
-    name: 'cil_chunk_lookup',
-    description: 'Search CIL chunks by name, file path, purpose, or code content (identifier usage). Returns chunk_id, stable_id, chunk_name, file_path, macro. Use for "where is X" / "which files use X".',
-    parameters: {
-      type: 'object',
-      properties: {
-        q: { type: 'string', description: 'Search term' },
-        project_id: { type: 'string', description: 'Optional project UUID to scope the search' },
-        limit: { type: 'number', description: 'Max results to return (default 5)' },
-      },
-      required: ['q'],
-    },
-  },
-  {
-    name: 'cil_get_contract',
-    description: 'Get the full contract and metadata for a specific CIL chunk by its UUID.',
-    parameters: {
-      type: 'object',
-      properties: {
-        chunk_id: { type: 'string', description: 'UUID of the cil_chunk item' },
-      },
-      required: ['chunk_id'],
-    },
-  },
-  {
-    name: 'cil_blast_radius',
-    description: 'Find all chunks that transitively call or are called by a given chunk (imports, calls, exports, tested_by). Use before refactoring.',
-    parameters: {
-      type: 'object',
-      properties: {
-        chunk_id: { type: 'string', description: 'UUID of the chunk to check callers/callees for' },
-        max_depth: { type: 'number', description: 'Maximum BFS hop depth (default 3, max 6)' },
-      },
-      required: ['chunk_id'],
-    },
-  },
-  {
-    name: 'cil_hash_validate',
-    description: 'Check whether a CIL chunk\'s stored hash is current or has drifted (code was changed without updating CIL).',
-    parameters: {
-      type: 'object',
-      properties: {
-        chunk_id: { type: 'string', description: 'UUID of the chunk to validate' },
-      },
-      required: ['chunk_id'],
-    },
-  },
-  {
-    name: 'cil_project_status',
-    description: 'Get the full CIL pipeline status for a project: file count, chunk count, embedding coverage, and doc coverage.',
-    parameters: {
-      type: 'object',
-      properties: {
-        project_id: { type: 'string', description: 'UUID of the cil_project' },
-      },
-      required: ['project_id'],
-    },
-  },
-  {
-    name: 'cil_fetch_document',
-    description: 'Fetch the full text of a retrieved document by its document_id (KB article UUID or CIL chunk stable_id such as "~/.framework/src/types/types.ts:DesignSchema:interface"). Use this when an excerpt is a fragment and you need the complete article, example, or source code before answering.',
-    parameters: {
-      type: 'object',
-      properties: {
-        document_id: { type: 'string', description: 'document_id from a retrieved excerpt (KB article UUID or CIL chunk stable_id)' },
-        max_chars: { type: 'number', description: 'Maximum characters to return (default 12000)' },
-      },
-      required: ['document_id'],
-    },
-  },
-  {
+const BUILTIN_TOOLS: any[] = [
+    {
     name: 'escalate_to_human',
     description: 'Escalate this conversation to a human support agent. Call this when the retrieved evidence is missing, thin, or contradictory, or when the user explicitly asks for a human. The ticket moves to the human review queue and support staff are notified.',
     parameters: {
@@ -3817,6 +3436,17 @@ const CIL_TOOLS: any[] = [
         knowledge_sources: { type: 'array', items: { type: 'string' }, description: 'Optional source slugs to restrict the search' },
       },
       required: ['query'],
+    },
+  },
+  {
+    name: 'fetch_document',
+    description: 'Fetch the full body of a document by its document_id. search_knowledge returns excerpts; call this when the excerpt is insufficient and the full article or record is needed.',
+    parameters: {
+      type: 'object',
+      properties: {
+        document_id: { type: 'string', description: 'document_id or item id of the document to fetch' },
+      },
+      required: ['document_id'],
     },
   },
   {
@@ -3844,7 +3474,6 @@ const CIL_TOOLS: any[] = [
     },
   },
 ]
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOLS:constant"]
 
 
 
@@ -3878,9 +3507,8 @@ const CIL_TOOLS: any[] = [
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOL_SLUGS:constant" type="constant" identity="CIL_TOOL_SLUGS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
- * CIL_TOOL_SLUGS is a Set that contains the names of tools defined in CIL_TOOLS, providing a quick reference for the tool names used in the module.
+ * BUILTIN_TOOL_SLUGS is a Set that contains the names of tools defined in CIL_TOOLS, providing a quick reference for the tool names used in the module.
  *
  * @sideEffects none
  * @stability   stable
@@ -3902,30 +3530,14 @@ const CIL_TOOLS: any[] = [
 
 
 
-const CIL_TOOL_SLUGS = new Set(CIL_TOOLS.map(t => t.name))
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_TOOL_SLUGS:constant"]
+const BUILTIN_TOOL_SLUGS = new Set(BUILTIN_TOOLS.map(t => t.name))
 
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_ONLY_TOOL_SLUGS:constant" type="constant" identity="CIL_ONLY_TOOL_SLUGS" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * CIL_ONLY_TOOL_SLUGS is a set that contains tool slugs prefixed with 'cil_' from the CIL_TOOL_SLUGS collection. It exists to filter and provide a specific subset of tool slugs for CIL-related operations.
- *
- * @sideEffects none
- * @stability   stable
- * @cil-generated
- */
-const CIL_ONLY_TOOL_SLUGS = new Set([...CIL_TOOL_SLUGS].filter((n: string) => n.startsWith('cil_')))
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:CIL_ONLY_TOOL_SLUGS:constant"]
+// Retired tool names that still resolve to their replacements — kept through
+// the 0.7.0 compatibility window so pre-migration prompt configs and in-flight
+// model calls don't hard-fail. All other cil_* tools were removed outright.
+const LEGACY_TOOL_ALIASES: Record<string, string> = {
+  cil_fetch_document: 'fetch_document',
+}
 
 
 
@@ -3945,7 +3557,7 @@ const CIL_ONLY_TOOL_SLUGS = new Set([...CIL_TOOL_SLUGS].filter((n: string) => n.
 
 
 
-// Tools that count as "research" for the ask_user gate: every built-in CIL tool
+// Tools that count as "research" for the ask_user gate: every built-in tool
 // except ask_user itself and the always-available escalate_to_human handoff.
 
 
@@ -3956,13 +3568,12 @@ const CIL_ONLY_TOOL_SLUGS = new Set([...CIL_TOOL_SLUGS].filter((n: string) => n.
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:RESEARCH_TOOLS:constant" type="constant" identity="RESEARCH_TOOLS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * RESEARCH_TOOLS is a filtered collection of tool names derived from CIL_TOOLS, excluding 'ask_user' and 'escalate_to_human'. It provides a focused set of tools for research purposes within the agent runner module.
  *
  * @sideEffects none
  * @stability   stable
- * @calls       CIL_TOOLS.map
+ * @calls       BUILTIN_TOOLS.map
  * @cil-generated
  */
 
@@ -3982,9 +3593,8 @@ const CIL_ONLY_TOOL_SLUGS = new Set([...CIL_TOOL_SLUGS].filter((n: string) => n.
 
 
 const RESEARCH_TOOLS = new Set(
-  CIL_TOOLS.map((t: any) => t.name).filter((n: string) => n !== 'ask_user' && n !== 'escalate_to_human')
+  BUILTIN_TOOLS.map((t: any) => t.name).filter((n: string) => n !== 'ask_user' && n !== 'escalate_to_human')
 )
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:RESEARCH_TOOLS:constant"]
 
 
 
@@ -4006,7 +3616,6 @@ const RESEARCH_TOOLS = new Set(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCilChunkHash:function" type="function" identity="computeCilChunkHash" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Computes a hash for the given content string to ensure data integrity and uniqueness of content chunks.
  *
@@ -4034,10 +3643,6 @@ const RESEARCH_TOOLS = new Set(
 
 
 
-function computeCilChunkHash(content: string): string {
-  return computeContentHash(content)
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCilChunkHash:function"]
 
 
 
@@ -4055,10 +3660,6 @@ function computeCilChunkHash(content: string): string {
 
 
 
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ResearchState:interface" type="interface" identity="ResearchState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The ResearchState interface defines the structure for managing the state of a research process, including its status and relevant metadata. It facilitates tracking and updating the progress of research tasks within the application.
  *
@@ -4111,7 +3712,6 @@ interface ResearchState {
   // terminal write) from a genuine same-text re-ask (inbound is newer).
   completed_at?: string
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ResearchState:interface"]
 
 
 
@@ -4132,7 +3732,6 @@ interface ResearchState {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:getResearchState:function" type="function" identity="getResearchState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves the current research state from a thread, returning a default state if none exists. This function ensures that a valid research state is always available for processing.
  *
@@ -4176,7 +3775,6 @@ function getResearchState(thread: any): ResearchState {
   thread.data = { ...(thread.data || {}), research_state: fresh }
   return fresh
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:getResearchState:function"]
 
 
 
@@ -4197,7 +3795,6 @@ function getResearchState(thread: any): ResearchState {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCompositeConfidence:function" type="function" identity="computeCompositeConfidence" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Computes a composite confidence score based on a language model confidence and mean similarity. This function adjusts the score based on specific thresholds of mean similarity to ensure the output remains within a defined range.
  *
@@ -4236,7 +3833,6 @@ function computeCompositeConfidence(llmConf: number, meanSimilarity: number): nu
   }
   return Math.min(Math.max(composite, 0), 1)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:computeCompositeConfidence:function"]
 
 
 
@@ -4257,7 +3853,6 @@ function computeCompositeConfidence(llmConf: number, meanSimilarity: number): nu
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EvidenceState:type" type="type" identity="EvidenceState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * EvidenceState defines the possible states of evidence in the context of verification processes. It provides a clear and consistent representation of evidence status throughout the module.
  *
@@ -4282,7 +3877,6 @@ function computeCompositeConfidence(llmConf: number, meanSimilarity: number): nu
 
 
 export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_established'
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EvidenceState:type"]
 
 
 
@@ -4342,7 +3936,6 @@ export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_
 // below it, a lone top hit could still be a low-signal lexical floater.
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:TOP_HIT_SIMILARITY:constant" type="constant" identity="TOP_HIT_SIMILARITY" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * TOP_HIT_SIMILARITY defines a constant value used to determine the threshold for similarity in hit scoring. It exists to provide a standard reference point for comparison across the module.
  *
@@ -4351,13 +3944,11 @@ export type EvidenceState = 'verified' | 'evidence_found' | 'incomplete' | 'not_
  * @cil-generated
  */
 const TOP_HIT_SIMILARITY = 0.5
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:TOP_HIT_SIMILARITY:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:computeEvidenceState:function" type="function" identity="computeEvidenceState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Computes the evidence state based on the provided documents and their mean similarity score. It determines whether evidence is found, incomplete, or not established based on specific thresholds.
  *
@@ -4383,14 +3974,12 @@ export function computeEvidenceState(
   if (meanSimilarity >= 0.35 || topSimilarity >= TOP_HIT_SIMILARITY) return 'evidence_found'
   return 'incomplete'
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:computeEvidenceState:function"]
 
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:hasInRangeCitationMarker:function" type="function" identity="hasInRangeCitationMarker" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Determines if the provided content contains at least one citation marker that corresponds to a valid source in the retrieved sources array. This function is essential for ensuring that evidence is properly cited in the content.
  *
@@ -4417,7 +4006,6 @@ export function hasInRangeCitationMarker(content: string, sourceCount: number): 
   }
   return false
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:hasInRangeCitationMarker:function"]
 
 
 
@@ -4437,7 +4025,6 @@ export function hasInRangeCitationMarker(content: string, sourceCount: number): 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:extractCitedSources:function" type="function" identity="extractCitedSources" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Extracts cited sources from the provided content based on reference numbers, returning either the cited sources or all sources if none are found. This function helps in identifying and organizing referenced materials within a text.
  *
@@ -4479,7 +4066,6 @@ export function extractCitedSources(content: string, sources: any[]): any[] {
   }
   return cited.length ? cited : sources
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:extractCitedSources:function"]
 
 
 
@@ -4495,7 +4081,6 @@ export function extractCitedSources(content: string, sources: any[]): any[] {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureInlineCitations:function" type="function" identity="ensureInlineCitations" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Ensures that inline citations are present in the provided content based on the given sources. If no citations are found, it appends a list of sources to the content.
  *
@@ -4521,7 +4106,6 @@ export function ensureInlineCitations(content: string, sources: any[]): string {
     .join('\n')
   return `${text}\n\n**Sources**\n${list}`
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:ensureInlineCitations:function"]
 
 
 
@@ -4542,7 +4126,6 @@ export function ensureInlineCitations(content: string, sources: any[]): string {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:shapeRetrievedSource:function" type="function" identity="shapeRetrievedSource" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * The function shapeRetrievedSource transforms a source object into a structured format containing specific fields. This standardization facilitates further processing of retrieved sources.
  *
@@ -4580,7 +4163,6 @@ function shapeRetrievedSource(s: any): any {
     chunk_name: s.chunk_name,
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:shapeRetrievedSource:function"]
 
 
 
@@ -4601,7 +4183,6 @@ function shapeRetrievedSource(s: any): any {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:truncateForMessage:function" type="function" identity="truncateForMessage" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Truncate a value to a specified maximum character length for message display, ensuring that long values are shortened with a notice of truncation. This function is useful for maintaining readability in logs or messages where space is limited.
  *
@@ -4635,7 +4216,6 @@ function truncateForMessage(value: any, maxChars: number): any {
   if (json.length <= maxChars) return value
   return json.slice(0, maxChars) + ` ... (truncated, ${json.length - maxChars} chars omitted)`
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:truncateForMessage:function"]
 
 
 
@@ -4656,7 +4236,6 @@ function truncateForMessage(value: any, maxChars: number): any {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:setResearchState:function" type="function" identity="setResearchState" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Updates the research state of a specified thread in the database, ensuring that the latest state is recorded along with the current data and a timestamp.
  *
@@ -4721,7 +4300,6 @@ async function setResearchState(
     .eq('id', threadId)
   if (error) console.error(`setResearchState failed for thread ${threadId}:`, error.message)
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:setResearchState:function"]
 
 
 
@@ -4742,7 +4320,6 @@ async function setResearchState(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isEmptyToolResult:function" type="function" identity="isEmptyToolResult" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Determines whether a given tool result is empty or not by evaluating various data types and structures. This function is essential for validating the presence of meaningful data in tool results.
  *
@@ -4782,7 +4359,6 @@ function isEmptyToolResult(result: any): boolean {
   }
   return false
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isEmptyToolResult:function"]
 
 
 
@@ -4803,7 +4379,6 @@ function isEmptyToolResult(result: any): boolean {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgentStep:function" type="function" identity="runAgentStep" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a single step in the agent's processing sequence, managing user input and context while coordinating research and inference tasks. This function is essential for maintaining the state and flow of interactions within the agent's operational framework.
  *
@@ -4973,7 +4548,7 @@ export async function runAgentStep(
         for (const tc of inferenceResult.tool_calls.filter((t: ToolCall) => t.tool === 'ask_user')) {
           gatedCalls.push({
             tool: 'ask_user', id: tc.id, result: null,
-            error: 'ask_user is unavailable until at least one research tool (cil_chunk_lookup, search_knowledge) has run this episode. Gather evidence first — even an empty result counts — then ask if still needed.',
+            error: 'ask_user is unavailable until at least one research tool (search_knowledge, fetch_document) has run this episode. Gather evidence first — even an empty result counts — then ask if still needed.',
           })
         }
       }
@@ -5095,7 +4670,7 @@ export async function runAgentStep(
         }, ctx, replyTypeSlug, 'internal')
         state.gathered_results.push({
           tool: 'research_gate',
-          result: 'You attempted to ask the customer a question before any research tool ran this episode (research_attempted=false). Research first with search_knowledge and/or cil_chunk_lookup — an empty result still counts as an attempt — then answer, or ask once research has been attempted.',
+          result: 'You attempted to ask the customer a question before any research tool ran this episode (research_attempted=false). Research first with search_knowledge and/or fetch_document — an empty result still counts as an attempt — then answer, or ask once research has been attempted.',
         })
         state.status = 'gathering'
         await setResearchState(threadId, state, thread.data, config.leaseToken)
@@ -5152,7 +4727,6 @@ export async function runAgentStep(
     return { message: finalMsg, state, confidence, evidenceState }
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgentStep:function"]
 
 
 
@@ -5173,7 +4747,6 @@ export async function runAgentStep(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgent:function" type="function" identity="runAgent" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Runs an agent to process a user's message and generate a response based on the agent's configuration and context. This function is essential for handling interactions with the agent in a conversational setting.
  *
@@ -5582,7 +5155,6 @@ export async function runAgent(
     }
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:runAgent:function"]
 
 
 
@@ -5604,7 +5176,6 @@ export async function runAgent(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveAgentConfig:function" type="function" identity="resolveAgentConfig" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Resolves the configuration for an agent based on a given thread ID, ensuring that all required components are present and valid. This function retrieves necessary data from the database to construct the agent configuration.
  *
@@ -5712,49 +5283,13 @@ export async function resolveAgentConfig(
     promptConfig = configRow
   }
 
-  // Explicit CIL deny: retrieval_policy.deny_cil on the prompt config is a
-  // policy-level kill switch — thread-record cil_config (writable by any thread
-  // writer) cannot reopen CIL augmentation or tool injection for a denied
-  // agent, and every cil_* tool is stripped from the resolved tool set.
-  // Generic built-ins (search_knowledge, ask_user, escalate_to_human) are
-  // unaffected — they are legitimate tools for non-CIL agents.
-  const denyCil = cilDenied({ config: { agent, promptConfig, thread, threadType } })
-
-  // Merge optional CIL augmentation config from the thread into the prompt config
-  // retrieval policy. This lets app-level manifest config (e.g. the calling app)
-  // augment retrieval with CIL chunks without changing the ai_agents/prompt_configs rows.
-  if (!denyCil && threadData.cil_config?.enabled) {
-    const existingMetadata = promptConfig.metadata || {}
-    const existingPolicy = existingMetadata.retrieval_policy || {}
-    const existingItemTypes = existingPolicy.item_types
-    // If the prompt config already constrains item_types, add cil_chunk to the
-    // list. If it does not, leave item_types unset so match_embeddings searches
-    // all item types; project_ids will still scope CIL chunks to the configured
-    // projects. This preserves KB/article retrieval and augments with CIL.
-    const newItemTypes = existingItemTypes?.length
-      ? Array.from(new Set([...existingItemTypes, 'cil_chunk']))
-      : undefined
-    promptConfig.metadata = {
-      ...existingMetadata,
-      retrieval_policy: {
-        ...existingPolicy,
-        ...(newItemTypes ? { item_types: newItemTypes } : {}),
-        project_ids: threadData.cil_config.project_ids || [],
-      },
-      cil_config: threadData.cil_config,
-    }
-  }
-
   // Build OpenAI function-calling tool definitions from configured available_tools.
-  // CIL tools and the ask_user clarification tool are built-in; anything else is
-  // only listed in the prompt context unless the caller supplies its own definitions
-  // in ai_agents.model_config.tools.
-  const requestedTools = new Set<string>(promptConfig.available_tools || [])
-  if (!denyCil && threadData.cil_config?.use_cil_tools) {
-    for (const t of CIL_TOOLS) {
-      if (t.name !== 'ask_user') requestedTools.add(t.name)
-    }
-  }
+  // Built-in tools and the ask_user clarification tool are compiled into the
+  // runner; anything else is only listed in the prompt context unless the
+  // caller supplies its own definitions in ai_agents.model_config.tools.
+  const requestedTools = new Set<string>(
+    (promptConfig.available_tools || []).map((n: string) => LEGACY_TOOL_ALIASES[n] ?? n)
+  )
   // ask_user is available in all multi-turn conversations
   if (promptConfig.is_multi_turn !== false) {
     requestedTools.add('ask_user')
@@ -5764,17 +5299,12 @@ export async function resolveAgentConfig(
   if (promptConfig.escalation_action) {
     requestedTools.add('escalate_to_human')
   }
-  // A denied agent's resolved tool set must contain zero cil_* tools even when
-  // seeds, the request, or agent.model_config.tools ask for them.
-  if (denyCil) {
-    for (const slug of CIL_ONLY_TOOL_SLUGS) requestedTools.delete(slug)
-  }
   const toolByName = new Map<string, any>()
   for (const existing of (agent.model_config?.tools || [])) {
     const name = existing.function?.name
-    if (name && !(denyCil && CIL_ONLY_TOOL_SLUGS.has(name))) toolByName.set(name, existing)
+    if (name) toolByName.set(LEGACY_TOOL_ALIASES[name] ?? name, existing)
   }
-  for (const t of CIL_TOOLS) {
+  for (const t of BUILTIN_TOOLS) {
     if (requestedTools.has(t.name) && !toolByName.has(t.name)) {
       toolByName.set(t.name, { type: 'function', function: t })
     }
@@ -5785,7 +5315,6 @@ export async function resolveAgentConfig(
 
   return { agent, promptConfig, thread, threadType }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:resolveAgentConfig:function"]
 
 
 
@@ -5807,7 +5336,6 @@ export async function resolveAgentConfig(
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeAgentInference:function" type="function" identity="executeAgentInference" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes agent inference based on user input and configuration, managing tool iterations to refine results. This function is essential for integrating user queries with agent capabilities and retrieving relevant information.
  *
@@ -5895,207 +5423,17 @@ async function executeAgentInference(
     throw new Error('Max tool iterations reached')
   }, { onEnd: emitSpan })
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeAgentInference:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilChunkLookup:function" type="function" identity="executeCilChunkLookup" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
- * Executes a lookup for CIL chunks based on a query and project context, returning matched results. This function facilitates searching through CIL chunks while respecting account and project scopes.
- *
- * @macro       Async function that retrieves and ranks CIL chunk data based on search terms.
- * @micro       Constructs a dynamic query with multiple search conditions and filters based on account and project IDs.
- * @inputSpec
- *   - params: any (required) — contains the search query, project ID, and limit for results.
- *   - ctx: CoreContext (required) — the context containing account information.
- *   - allowedProjectIds: string[] | null (optional) — an array of allowed project IDs for filtering results.
- * @outputSpec  Promise<any> — returns an object containing matched results and their count.
- * @throws      Error — 'q is required' if the query is missing.
- * @sideEffects Database reads from the accounts and items tables.
- * @stability   stable
- * @calls       adminDb.from('accounts'), adminDb.from('items')
- * @cil-generated
+ * executeFetchDocument returns the full text of a retrieved document by its
+ * document_id — the post-CIL form of the excerpt→document path. Accepts an
+ * item UUID or a legacy data.stable_id; lookup is scoped to the account ids
+ * the knowledge envelope resolved for this run.
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilChunkLookup(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
-  const { q, project_id, limit = 5 } = params
-  if (!q) throw new Error('q is required')
-
-  // Split the query into terms: exact-substring matching on the whole phrase
-  // can never match camelCase identifiers (e.g. "design schema" vs
-  // "DesignSchema" -> "designschema"), and matching per-term covers both.
-  const terms = String(q)
-    .toLowerCase()
-    .split(/\s+/)
-    .map(t => t.replace(/[^a-z0-9_.~:/-]/g, ''))
-    .filter(Boolean)
-  if (!terms.length) return { results: [], count: 0 }
-
-  // Account scope is resolved from the app knowledge envelope — the caller's
-  // account (when the account corpus is enabled) plus the platform account
-  // (when CIL is granted). No unconditional spine-system union.
-  const accountIds = cilAccess.accountIds
-
-  // Push per-term matching to the DB across the searchable fields, then rank
-  // client-side by how many distinct terms matched. A bounded prefetch is used
-  // for the term scan; ranking picks the best `limit` rows.
-  const orClauses = terms.flatMap(t => [
-    `title.ilike.*${t}*`,
-    `data->>chunk_name.ilike.*${t}*`,
-    `data->>file_path.ilike.*${t}*`,
-    `data->>macro.ilike.*${t}*`,
-    `data->>code_content.ilike.*${t}*`,
-  ])
-
-  let query = adminDb
-    .from('items')
-    .select('id, title, data')
-    .filter('data->>kb_type', 'eq', 'cil_chunk')
-    .in('account_id', accountIds)
-    .eq('is_active', true)
-    .or(orClauses.join(','))
-    .limit(200)
-
-  // Project scope: the resolved envelope∩pick whitelist is the ceiling. A
-  // model-supplied project_id may narrow it but never widen it.
-  const effective = project_id
-    ? cilAccess.projectIds.filter(id => id === project_id)
-    : cilAccess.projectIds
-  if (!effective.length) return { results: [], count: 0 }
-  query = query.in('data->>project_id', effective)
-
-  const { data, error } = await query
-  if (error) throw error
-
-  const matches = (data || [])
-    .map((item: any) => {
-      const d = item.data || {}
-      const haystack = [
-        item.title || '',
-        d.chunk_name || '',
-        d.file_path || '',
-        d.macro || '',
-        d.micro || '',
-        d.code_content || '',
-      ].join(' ').toLowerCase()
-      let score = terms.reduce((n, t) => n + (haystack.includes(t) ? 1 : 0), 0)
-      if (typeof d.file_path === 'string' && (d.file_path.includes('/archive/') || d.file_path.includes('/migrations/'))) {
-        score -= 0.5
-      }
-      return { item, d, score }
-    })
-    .filter(x => x.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map(({ d, item }) => ({
-      chunk_id: item.id,
-      stable_id: d.stable_id,
-      chunk_name: d.chunk_name,
-      file_path: d.file_path,
-      chunk_type: d.chunk_type,
-      macro: d.macro,
-      stability: d.stability,
-      ...(d.line_start !== undefined ? { line_start: d.line_start } : {}),
-      ...(d.line_end !== undefined ? { line_end: d.line_end } : {}),
-    }))
-
-  return { results: matches, count: matches.length }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilChunkLookup:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Fetches a document based on the provided document ID and context, ensuring it adheres to project restrictions if specified. It retrieves the document's content and metadata, handling various data structures and types.
- *
- * @macro       Async function that retrieves and formats document data from a database.
- * @micro       Validates the document ID format and checks project permissions before fetching the document.
- * @inputSpec
- *   params: any (required) — parameters including document_id and max_chars.
- *   ctx: CoreContext (required) — context containing account information.
- *   allowedProjectIds: string[] | null (optional) — list of allowed project IDs for access control.
- * @outputSpec  Promise<any> — returns an object containing document metadata and content.
- * @throws      Error — document_id is required
-Error — Document not found: {document_id}
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilFetchDocument:function" type="function" identity="executeCilFetchDocument" parent="~/.framework/functions/_shared/agent-runner.ts"]
- * @sideEffects Database read operations to fetch document data.
- * @stability   stable
- * @calls       adminDb.from('accounts'), adminDb.from('items')
- * @cil-generated
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilFetchDocument(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
+async function executeFetchDocument(params: any, ctx: CoreContext, accountIds: string[]): Promise<any> {
   const { document_id, max_chars = 12000 } = params
   if (!document_id) throw new Error('document_id is required')
 
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  const accountIds = cilAccess.accountIds
 
   let query = adminDb
     .from('items')
@@ -6110,13 +5448,7 @@ async function executeCilFetchDocument(params: any, ctx: CoreContext, cilAccess:
   if (error || !item) throw new Error(`Document not found: ${document_id}`)
 
   const d = item.data || {}
-  const isChunk = d.kb_type === 'cil_chunk'
-  // Direct fetches obey the same project ceiling as search — a fetched
-  // cil_chunk outside the allowed projects is reported as not found.
-  if (isChunk && (!d.project_id || !cilAccess.projectIds.includes(d.project_id))) {
-    throw new Error(`Document not found: ${document_id}`)
-  }
-  const full = isChunk
+  const full = d.kb_type === 'cil_chunk'
     ? (d.code_content || '')
     : (d.content || d.body || d.markdown || '')
   const maxChars = Math.max(1, Number(max_chars) || 12000)
@@ -6132,12 +5464,8 @@ async function executeCilFetchDocument(params: any, ctx: CoreContext, cilAccess:
   }
   const sourceFile = d.source_file || d.file_path
   if (sourceFile !== undefined) result.source_file = sourceFile
-  for (const key of ['chunk_name', 'file_path', 'macro', 'input_spec', 'output_spec', 'stability']) {
-    if (d[key] !== undefined) result[key] = d[key]
-  }
   return result
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilFetchDocument:function"]
 
 
 
@@ -6159,439 +5487,10 @@ async function executeCilFetchDocument(params: any, ctx: CoreContext, cilAccess:
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilGetContract:function" type="function" identity="executeCilGetContract" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Retrieves a CIL chunk contract from the database based on the provided chunk_id, ensuring it belongs to the correct account and optional project IDs. This function validates input and handles errors related to missing or unauthorized data.
- *
- * @macro       Async function that fetches and validates a CIL chunk contract from the database.
- * @micro       Queries the database for a specific item and checks project ID permissions before returning the contract details.
- * @inputSpec
- *   - params: any (required) — contains the chunk_id to retrieve the contract.
- *   - ctx: CoreContext (required) — context containing the accountId for validation.
- *   - allowedProjectIds: string[] | null (optional) — list of project IDs that are allowed to access the contract.
- * @outputSpec  Promise<any> — returns an object containing the contract details including chunk_id, chunk_name, and contract specifications.
- * @throws      Error — chunk_id is required; Error — CIL chunk not found: {chunk_id}
- * @sideEffects none
- * @stability   stable
- * @calls       adminDb.from('items')
- * @cil-generated
- */
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilGetContract(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
-  const { chunk_id } = params
-  if (!chunk_id) throw new Error('chunk_id is required')
-
-  const { data, error } = await adminDb
-    .from('items')
-    .select('id, title, data')
-    .eq('id', chunk_id)
-    .filter('data->>kb_type', 'eq', 'cil_chunk')
-    .in('account_id', cilAccess.accountIds)
-    .single()
-
-  if (error || !data) throw new Error(`CIL chunk not found: ${chunk_id}`)
-
-  const d = data.data || {}
-  if (!d.project_id || !cilAccess.projectIds.includes(d.project_id)) {
-    throw new Error(`CIL chunk not found: ${chunk_id}`)
-  }
-  return {
-    chunk_id: data.id,
-    chunk_name: d.chunk_name,
-    chunk_type: d.chunk_type,
-    file_path: d.file_path,
-    macro: d.macro,
-    responsibility: d.responsibility,
-    contract: {
-      inputs: d.input_spec,
-      outputs: d.output_spec,
-      errors: d.error_spec,
-      side_effects: d.side_effects,
-    },
-    micro: d.micro,
-    stability: d.stability,
-    confidence: d.confidence,
-    audience: d.audience,
-  }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilGetContract:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilBlastRadius:function" type="function" identity="executeCilBlastRadius" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Executes a CIL blast radius calculation based on a specified chunk ID and maximum depth. This function retrieves linked items and their relationships within a defined depth from the given chunk.
- *
- * @macro       Async function that calculates the affected CIL chunks based on link types and depth.
- * @micro       Utilizes a breadth-first search algorithm to traverse linked items up to a specified depth.
- * @inputSpec
- *   - params: any (required) — parameters including chunk_id and max_depth.
- *   - ctx: CoreContext (required) — the context containing account information.
- *   - allowedProjectIds: string[] | null (optional) — an array of allowed project IDs for validation.
- * @outputSpec  Promise<any> — returns an object containing the chunk_id, max_depth, and an array of affected chunks with additional metadata.
- * @throws      Error — chunk_id is required; Error — CIL chunk not found: {chunk_id}; ltError — error retrieving link types.
- * @sideEffects Database reads from 'items' and 'link_types', and conditional reads from 'links'.
- * @stability   stable
- * @calls       adminDb.from('items'), adminDb.from('link_types'), adminDb.from('links')
- * @cil-generated
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilBlastRadius(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
-  const { chunk_id, max_depth = 3 } = params
-  if (!chunk_id) throw new Error('chunk_id is required')
-
-  const { data: seed } = await adminDb
-    .from('items')
-    .select('data')
-    .eq('id', chunk_id)
-    .in('account_id', cilAccess.accountIds)
-    .maybeSingle()
-  const pid = seed?.data?.project_id
-  if (!pid || !cilAccess.projectIds.includes(pid)) {
-    throw new Error(`CIL chunk not found: ${chunk_id}`)
-  }
-
-  const maxDepth = Math.min(parseInt(max_depth, 10) || 3, 6)
-
-  const { data: linkTypes, error: ltError } = await adminDb
-    .from('link_types')
-    .select('id, slug')
-    .in('account_id', cilAccess.accountIds)
-    .in('slug', ['cil_imports', 'cil_calls', 'cil_exports', 'cil_tested_by'])
-
-  if (ltError) throw ltError
-  const linkTypeIds = (linkTypes || []).map((lt: any) => lt.id)
-  if (linkTypeIds.length === 0) return { chunk_id, max_depth: maxDepth, affected: [] }
-
-  const visited = new Set<string>()
-  const affected: any[] = []
-  const frontier: { id: string; depth: number }[] = [{ id: chunk_id, depth: 0 }]
-
-  while (frontier.length > 0) {
-    const current = frontier.shift()!
-    if (visited.has(current.id)) continue
-    visited.add(current.id)
-
-    const [sourceLinks, targetLinks] = await Promise.all([
-      adminDb
-        .from('links')
-        .select('id, source_id, target_id, link_type_id, data')
-        .eq('source_id', current.id)
-        .in('link_type_id', linkTypeIds),
-      adminDb
-        .from('links')
-        .select('id, source_id, target_id, link_type_id, data')
-        .eq('target_id', current.id)
-        .in('link_type_id', linkTypeIds),
-    ])
-
-    const allLinks = [...(sourceLinks.data || []), ...(targetLinks.data || [])]
-    for (const link of allLinks) {
-      const neighborId = link.source_id === current.id ? link.target_id : link.source_id
-      if (visited.has(neighborId)) continue
-      affected.push({
-        chunk_id: neighborId,
-        link_type_id: link.link_type_id,
-        depth: current.depth + 1,
-      })
-      if (current.depth + 1 < maxDepth) {
-        frontier.push({ id: neighborId, depth: current.depth + 1 })
-      }
-    }
-  }
-
-  const chunkIds = affected.map(a => a.chunk_id)
-  const { data: items } = await adminDb
-    .from('items')
-    .select('id, title, data')
-    .in('id', chunkIds)
-    .filter('data->>kb_type', 'eq', 'cil_chunk')
-    .in('account_id', cilAccess.accountIds)
-    .in('data->>project_id', cilAccess.projectIds)
-
-  const itemMap = new Map((items || []).map((i: any) => [i.id, i]))
-
-  return {
-    chunk_id,
-    max_depth: maxDepth,
-    affected: affected.map((a: any) => {
-      const item = itemMap.get(a.chunk_id)
-      const d = item?.data || {}
-      return {
-        ...a,
-        chunk_name: d.chunk_name,
-        file_path: d.file_path,
-        link_slug: linkTypes?.find((lt: any) => lt.id === a.link_type_id)?.slug,
-      }
-    }),
-  }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilBlastRadius:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilHashValidate:function" type="function" identity="executeCilHashValidate" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Validates the hash of a CIL chunk by retrieving it from the database and comparing the stored hash with a computed hash. This function ensures that the CIL chunk is valid and belongs to the allowed project IDs.
- *
- * @inputSpec
- *   params: any (required) — parameters containing chunk_id.
- *   ctx: CoreContext (required) — context containing accountId.
- *   allowedProjectIds: string[] | null (optional) — list of allowed project IDs.
- * @outputSpec  Promise<any> — returns an object containing chunk_id, stored_hash, computed_hash, is_current, and hash_updated_at.
- * @throws      Error — chunk_id is required, Error — CIL chunk not found
- * @sideEffects Database read operation
- * @stability   stable
- * @calls       adminDb.from('items')
- * @cil-generated
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilHashValidate(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
-  const { chunk_id } = params
-  if (!chunk_id) throw new Error('chunk_id is required')
-
-  const { data, error } = await adminDb
-    .from('items')
-    .select('id, title, data')
-    .eq('id', chunk_id)
-    .filter('data->>kb_type', 'eq', 'cil_chunk')
-    .in('account_id', cilAccess.accountIds)
-    .single()
-
-  if (error || !data) throw new Error(`CIL chunk not found: ${chunk_id}`)
-
-  const d = data.data || {}
-  if (!d.project_id || !cilAccess.projectIds.includes(d.project_id)) {
-    throw new Error(`CIL chunk not found: ${chunk_id}`)
-  }
-  const codeContent = d.code_content || ''
-  const storedHash = d.content_hash || d.stored_hash
-  const computedHash = computeCilChunkHash(codeContent)
-
-  return {
-    chunk_id,
-    stored_hash: storedHash,
-    computed_hash: computedHash,
-    is_current: storedHash === computedHash,
-    hash_updated_at: d.hash_updated_at,
-  }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilHashValidate:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilProjectStatus:function" type="function" identity="executeCilProjectStatus" parent="~/.framework/functions/_shared/agent-runner.ts"]
-/**
- * Retrieves the status of a CIL project based on the provided project ID, ensuring the project is accessible to the current user. It validates the project ID and fetches relevant project details from the database.
- *
- * @macro       Async function that fetches project status information from a database.
- * @micro       Performs database queries to retrieve project and associated file and chunk counts, handling potential errors in the process.
- * @inputSpec
- *   - params: any (required) — contains the project_id to identify the CIL project.
- *   - ctx: CoreContext (required) — context containing the account ID for authorization.
- *   - allowedProjectIds: string[] | null (optional) — list of project IDs that are allowed for access.
- * @outputSpec  Promise<any> — returns an object containing project_id, title, file_count, chunk_count, embedding_coverage_pct, doc_coverage_pct, and last_ingested_at.
- * @throws      Error — project_id is required, Error — CIL project not found: {project_id}
- * @sideEffects Database reads from the 'items' table.
- * @stability   stable
- * @calls       adminDb.from('items')
- * @cil-generated
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function executeCilProjectStatus(params: any, ctx: CoreContext, cilAccess: CilAccess): Promise<any> {
-  const { project_id } = params
-  if (!project_id) throw new Error('project_id is required')
-
-  if (!cilAccess.projectIds.includes(project_id)) {
-    throw new Error(`CIL project not found: ${project_id}`)
-  }
-
-  const { data: project, error: projectError } = await adminDb
-    .from('items')
-    .select('id, title, data')
-    .eq('id', project_id)
-    .filter('data->>kb_type', 'eq', 'cil_project')
-    .in('account_id', cilAccess.accountIds)
-    .single()
-
-  if (projectError || !project) throw new Error(`CIL project not found: ${project_id}`)
-
-  const d = project.data || {}
-
-  if (d.file_count !== undefined && d.chunk_count !== undefined) {
-    return {
-      project_id,
-      title: project.title,
-      file_count: d.file_count,
-      chunk_count: d.chunk_count,
-      embedding_coverage_pct: d.embedding_coverage_pct ?? 0,
-      doc_coverage_pct: d.doc_coverage_pct ?? 0,
-      last_ingested_at: d.last_ingested_at,
-    }
-  }
-
-  const [fileRes, chunkRes] = await Promise.all([
-    adminDb
-      .from('items')
-      .select('*', { count: 'exact' })
-      .filter('data->>project_id', 'eq', project_id)
-      .filter('data->>kb_type', 'eq', 'cil_file')
-      .eq('is_active', true),
-    adminDb
-      .from('items')
-      .select('*', { count: 'exact' })
-      .filter('data->>project_id', 'eq', project_id)
-      .filter('data->>kb_type', 'eq', 'cil_chunk')
-      .eq('is_active', true),
-  ])
-
-  return {
-    project_id,
-    title: project.title,
-    file_count: fileRes.count || 0,
-    chunk_count: chunkRes.count || 0,
-    embedding_coverage_pct: d.embedding_coverage_pct ?? 0,
-    doc_coverage_pct: d.doc_coverage_pct ?? 0,
-    last_ingested_at: d.last_ingested_at,
-  }
-}
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeCilProjectStatus:function"]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchLogs:function" type="function" identity="executeSearchLogs" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Executes a search on the logs based on the provided parameters, returning matching log entries and their count. This function facilitates querying logs for specific messages and levels within a given account context.
  *
@@ -6635,7 +5534,6 @@ async function executeSearchLogs(params: any, ctx: CoreContext): Promise<any> {
   if (error) throw error
   return { results: data || [], count: (data || []).length }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchLogs:function"]
 
 
 
@@ -6657,7 +5555,6 @@ async function executeSearchLogs(params: any, ctx: CoreContext): Promise<any> {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchObservability:function" type="function" identity="executeSearchObservability" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Retrieves observability metrics for a specific account, optionally filtered by metric name. This function is used to gather performance data for monitoring purposes.
  *
@@ -6703,7 +5600,6 @@ async function executeSearchObservability(params: any, ctx: CoreContext): Promis
   if (error) throw error
   return { results: data || [], count: (data || []).length }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:executeSearchObservability:function"]
 
 
 
@@ -6725,7 +5621,6 @@ async function executeSearchObservability(params: any, ctx: CoreContext): Promis
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DRIVER_LEASE_MS:constant" type="constant" identity="EPISODE_DRIVER_LEASE_MS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * EPISODE_DRIVER_LEASE_MS defines the duration in milliseconds for which a driver lease is valid. This constant is used to manage the timing of driver availability in the episode processing workflow.
  *
@@ -6734,13 +5629,11 @@ async function executeSearchObservability(params: any, ctx: CoreContext): Promis
  * @cil-generated
  */
 const EPISODE_DRIVER_LEASE_MS = 60000
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DRIVER_LEASE_MS:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_LEASE_TTL_SECONDS:constant" type="constant" identity="EPISODE_LEASE_TTL_SECONDS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * EPISODE_LEASE_TTL_SECONDS is the database-lease TTL a driver holds per
  * episode. Heartbeats extend it every turn; it must exceed the slowest
@@ -6753,13 +5646,11 @@ const EPISODE_DRIVER_LEASE_MS = 60000
  * @cil-generated
  */
 const EPISODE_LEASE_TTL_SECONDS = 90
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_LEASE_TTL_SECONDS:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DETACHED_STALE_SECONDS:constant" type="constant" identity="EPISODE_DETACHED_STALE_SECONDS" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Heartbeat age (seconds) after which a 'detached:' lease holder counts as
  * stalled and may be stolen by a request-bound driver. A healthy detached
@@ -6768,13 +5659,11 @@ const EPISODE_LEASE_TTL_SECONDS = 90
  * POST displace it mid-flight.
  */
 const EPISODE_DETACHED_STALE_SECONDS = 30
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EPISODE_DETACHED_STALE_SECONDS:constant"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:EpisodeLeaseLost:class" type="class" identity="EpisodeLeaseLost" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * EpisodeLeaseLost is thrown when a driver's lease_token no longer owns
  * the thread's episode_lease — i.e. an expired-lease takeover displaced
@@ -6790,13 +5679,11 @@ class EpisodeLeaseLost extends Error {
     this.name = 'EpisodeLeaseLost'
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:EpisodeLeaseLost:class"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:acquireEpisodeLease:function" type="function" identity="acquireEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Atomically claims the episode lease for a thread via the
  * acquire_episode_lease RPC (migration 063). Returns the RPC verdict:
@@ -6849,13 +5736,11 @@ export async function acquireEpisodeLease(
   }
   return data as { outcome: 'claimed' | 'held'; lease_token?: string; holder_driver_id?: string }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:acquireEpisodeLease:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:heartbeatEpisodeLease:function" type="function" identity="heartbeatEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Extends the held lease's TTL. Returns true when the token still owns
  * the lease, false when a takeover displaced this driver (the caller
@@ -6888,13 +5773,11 @@ async function heartbeatEpisodeLease(
   // fail open rather than aborting a healthy driver.
   return data === false ? false : data === true ? true : null
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:heartbeatEpisodeLease:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:mergeThreadData:function" type="function" identity="mergeThreadData" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Atomically shallow-merges a patch into threads.data via the
  * merge_thread_data RPC (migration 066). Unlike the read-modify-write
@@ -6937,13 +5820,11 @@ async function mergeThreadData(
   }
   return data === true ? true : data === false ? false : null
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:mergeThreadData:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:releaseEpisodeLease:function" type="function" identity="releaseEpisodeLease" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Releases the held lease on terminal state (complete/awaiting_input/
  * failed) or abort. Token-gated: a displaced driver's release returns
@@ -6976,13 +5857,11 @@ async function releaseEpisodeLease(
     console.warn(`[episode-lease] release_episode_lease fenced for ${threadId} — lease already superseded`)
   }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:releaseEpisodeLease:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isAnsweredQuestionReplay:function" type="function" identity="isAnsweredQuestionReplay" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Tells a re-delivered question from a genuine re-ask. A late claim can
  * carry the same userMessage text the just-finished episode already
@@ -7029,7 +5908,6 @@ async function isAnsweredQuestionReplay(
   // between the inbound insert and the terminal write in the same txn.
   return Number.isFinite(inboundAt) && Number.isFinite(terminalAt) && inboundAt <= terminalAt + 2000
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isAnsweredQuestionReplay:function"]
 
 
 
@@ -7037,9 +5915,8 @@ async function isAnsweredQuestionReplay(
 
 
 
-// CIL[DOC-LEARNING topic="human_owner_gate" content="thread.data.owner:'human' is THE human/agent gate — while set, no agent episode may be claimed, narrated, or run. It is semantic ownership, orthogonal to the episode lease (who may write now). Both must hold for agent work: a free lease alone is not permission. The gate exists because serverless invocations freeze and resume into a changed world — a driver resuming after handoff found the lease free and re-escalated a thread waiting on a human (prod, Oct 2026)."]
-// CIL[DOC-NOTE type="caution" content="Core must NEVER gate on app-level item statuses (human_assigned, pending_resolution, human_action...) — core is domain-agnostic. Apps translate their workflow into the framework signal by stamping threads.data.owner:'human' themselves. The only core writer is handleEscalation."]
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function" type="function" identity="isHumanOwned" parent="~/.framework/functions/_shared/agent-runner.ts"]
+// thread.data.owner:'human' is THE human/agent gate — while set, no agent episode may be claimed, narrated, or run. It is semantic ownership, orthogonal to the episode lease (who may write now). Both must hold for agent work: a free lease alone is not permission. The gate exists because serverless invocations freeze and resume into a changed world — a driver resuming after handoff found the lease free and re-escalated a thread waiting on a human (prod, Oct 2026).
+// Core must NEVER gate on app-level item statuses (human_assigned, pending_resolution, human_action...) — core is domain-agnostic. Apps translate their workflow into the framework signal by stamping threads.data.owner:'human' themselves. The only core writer is handleEscalation.
 /**
  * The human/agent ownership gate. `thread.data.owner === 'human'` means a
  * person owns this conversation and NO agent episode may be claimed,
@@ -7068,13 +5945,11 @@ async function isAnsweredQuestionReplay(
 function isHumanOwned(threadData: any): boolean {
   return threadData?.owner === 'human' || threadData?.escalation_status === 'pending'
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:isHumanOwned:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:claimAgentEpisode:function" type="function" identity="claimAgentEpisode" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Atomically claims an episode for a driver: acquires the episode lease,
  * stamps research_state via the fenced merge RPC, and writes the intake
@@ -7105,7 +5980,7 @@ export async function claimAgentEpisode(
   threadData?: any,
   opts?: { driverPrefix?: string; stealDetached?: boolean }
 ): Promise<{ claimed: boolean; driver_id?: string; lease_token?: string; already_done?: boolean }> {
-  // CIL[DOC-NOTE type="ordering" content="The human-owner gate runs BEFORE the lease claim and from a fresh threads read — never the caller's threadData snapshot, which a frozen caller may have fetched before the handoff. Order matters: checking after claim would write an episode lease + narrate on a human-owned thread."]
+  // The human-owner gate runs BEFORE the lease claim and from a fresh threads read — never the caller's threadData snapshot, which a frozen caller may have fetched before the handoff. Order matters: checking after claim would write an episode lease + narrate on a human-owned thread.
   // Human-owner gate FIRST — before any lease or narration work, and always
   // from a fresh read rather than the caller's threadData snapshot: a
   // serverless invocation frozen between the caller's fetch and this claim
@@ -7224,13 +6099,11 @@ export async function claimAgentEpisode(
   }
   return { claimed: true, driver_id: driverId, lease_token: leaseToken }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:claimAgentEpisode:function"]
 
 
 
 
 
-// CIL[BEGIN stable_id="~/.framework/functions/_shared/agent-runner.ts:kickAgentEpisode:function" type="function" identity="kickAgentEpisode" parent="~/.framework/functions/_shared/agent-runner.ts"]
 /**
  * Claims the episode and spawns a detached complete-mode driver — the
  * fallback path for episodes with no live client (ticket-creation kicks,
@@ -7273,7 +6146,6 @@ export async function kickAgentEpisode(
   )
   return { claimed: true, driver_id: claim.driver_id }
 }
-// CIL[END stable_id="~/.framework/functions/_shared/agent-runner.ts:kickAgentEpisode:function"]
 
 
 

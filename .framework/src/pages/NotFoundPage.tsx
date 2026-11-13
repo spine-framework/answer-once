@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/NotFoundPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/NotFoundPage.tsx"]
 /**
  * @module   NotFoundPage
  * @audience both
@@ -28,7 +27,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Home } from 'lucide-react';
-// CIL[END stable_id="~/.framework/src/pages/NotFoundPage.tsx:module_header:module_header"]
 
 
 
@@ -48,7 +46,6 @@ import { Home } from 'lucide-react';
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/NotFoundPage.tsx:NotFoundPage:component" type="component" identity="NotFoundPage" parent="~/.framework/src/pages/NotFoundPage.tsx"]
 /**
  * The NotFoundPage component displays a 404 error message when a page is not found, providing a user-friendly interface to guide users back to the home page.
  *
@@ -85,7 +82,6 @@ export function NotFoundPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/NotFoundPage.tsx:NotFoundPage:component"]
 
 
 

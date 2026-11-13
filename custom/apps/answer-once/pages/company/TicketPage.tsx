@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
-// CIL[DOC-MACRO purpose="Company ticket workspace — external customer thread + internal notes + actions"]
-// CIL[DOC-RESPONSIBILITY responsibility="Show ticket detail with external/internal threads, reply box, and resolution actions for support"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/TicketPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/hooks/useSupportThreads.ts"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Two-pane layout: left = conversation threads, right = ticket metadata; lifecycle actions live in the composer footer and appear by state" notable_decisions="agent step messages collapse into persistent AI Agent cards for provenance; case-analysis runs narrate via activity card in-thread and results render as a thread card"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
 import { useAuth } from '@core/contexts/AuthContext'
@@ -26,16 +17,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@core/components/ui/tabs'
 import { ArrowLeft, Send, Lock, Globe, Bot, User, CheckCircle, Clock, Brain, BookOpen, Eye, EyeOff, Info } from 'lucide-react'
 import { useState, useCallback, useEffect, useRef } from 'react'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:STEP_TYPES:constant" type="constant" identity="STEP_TYPES" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 const STEP_TYPES = new Set(['plan', 'thinking', 'tool_call', 'tool_result'])
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:STEP_TYPES:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:isStepMessage:function" type="function" identity="isStepMessage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 const isStepMessage = (m: any) => STEP_TYPES.has(m.data?.message_type)
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:isStepMessage:function"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:ThreadMessage:component" type="component" identity="ThreadMessage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 function ThreadMessage({ msg }: { msg: any }) {
   const mt = msg.data?.message_type
   const isAgent = mt === 'agent' || mt === 'final'
@@ -79,9 +64,7 @@ function ThreadMessage({ msg }: { msg: any }) {
     </div>
   )
 }
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:ThreadMessage:component"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:TicketPage:component" type="component" identity="TicketPage" parent="~/custom/apps/answer-once/pages/company/TicketPage.tsx"]
 export default function TicketPage() {
   const { id } = useParams<{ id: string }>()
   const appPath = useAppPath()
@@ -852,4 +835,3 @@ export default function TicketPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketPage.tsx:TicketPage:component"]

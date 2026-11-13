@@ -1,11 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/customer/KBArticlePage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Customer KB article detail"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render a published KB article (own ao_kb_article or platform ao_kb_shared) for the customer"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/customer/KBArticlePage.tsx" layer="custom_app" related_files=".framework/src/lib/api.ts"]
-// CIL[DOC-CONTRACT inputs="route param id" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Fetches the article by id through admin-data (platform-scope RLS admits shared artifacts) and renders title, description, content, and a Shared badge for ao_kb_shared" notable_decisions="content renders through RichTextEditor readonly — it sanitizes HTML and also converts legacy markdown bodies, so both authoring formats display correctly"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -15,7 +7,6 @@ import { Badge } from '@core/components/ui/badge'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { ArrowLeft } from 'lucide-react'
 import { RichTextEditor } from '@core/components/ui/RichTextEditor'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/customer/KBArticlePage.tsx:module_header:module_header"]
 
 async function fetchJSON(path: string, options?: RequestInit) {
   const res = await apiFetch(path, {

@@ -1,9 +1,3 @@
-// CIL[DOC-MACRO purpose="Unit tests for emitSignal dedupe_scope behavior in _shared/funnel.ts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Assert the optional dedupe_scope narrows the dedupe lookup to (account_id, action_type, dedupe_scope), is stamped into the inserted row data, and that omitting it preserves the once-per-account default"]
-// CIL[DOC-CONTEXT module="funnel-signals.test" layer="test-unit" related_files=".framework/functions/_shared/funnel.ts"]
-// CIL[DOC-CONTRACT inputs="mocked adminDb + fireCreateTriggers" outputs="expect assertions on query filters and inserted payloads" errors="none" side_effects="registers vi.mock factories"]
-// CIL[DOC-AUDIENCE audience="test"]
-// CIL[DOC-STABILITY stability="stable"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../functions/_shared/db.ts', () => ({

@@ -1,4 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
 /**
  * @module   PromptConfigDetailPage
  * @audience internal
@@ -44,7 +43,6 @@ import { ArrowLeft, FileText, AlertCircle } from 'lucide-react'
 import { useApi } from '../../hooks/useApi'
 import { apiFetch } from '../../lib/api'
 import { formatDateTime } from '../../lib/utils'
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:module_header:module_header"]
 
 
 
@@ -61,7 +59,6 @@ import { formatDateTime } from '../../lib/utils'
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfig:interface" type="interface" identity="PromptConfig" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
 /**
  * The PromptConfig interface defines the structure for configuration settings related to prompts in the application. It encapsulates various properties that control the behavior and characteristics of prompts used in the system.
  *
@@ -98,7 +95,6 @@ interface PromptConfig {
   created_at: string
   updated_at: string
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfig:interface"]
 
 
 
@@ -115,7 +111,6 @@ interface PromptConfig {
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfigDetailPage:component" type="component" identity="PromptConfigDetailPage" parent="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx"]
 /**
  * The PromptConfigDetailPage component manages the creation and editing of prompt configurations in an admin interface. It fetches existing configurations or initializes a new one based on the provided ID.
  *
@@ -585,7 +580,6 @@ export function PromptConfigDetailPage() {
     </div>
   )
 }
-// CIL[END stable_id="~/.framework/src/pages/admin/PromptConfigDetailPage.tsx:PromptConfigDetailPage:component"]
 
 
 

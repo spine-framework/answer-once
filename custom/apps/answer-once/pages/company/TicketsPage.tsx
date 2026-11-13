@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/pages/company/TicketsPage.tsx:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Company ticket queue — filterable list of all tickets"]
-// CIL[DOC-RESPONSIBILITY responsibility="List tickets for support staff with status filtering and search"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/pages/company/TicketsPage.tsx" layer="custom_app" related_files="custom/apps/answer-once/hooks/useTickets.ts, custom/apps/answer-once/components/TicketCard.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="JSX page" errors="none" side_effects="renders DOM"]
-// CIL[DOC-MICRO logic_summary="Search + status tabs filter ao_support_ticket records; clicking navigates to company ticket detail" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="developers"]
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppPath } from '@core/hooks/useAppPath'
@@ -19,7 +10,6 @@ import { TicketCard } from '../../components/TicketCard'
 import { SearchFilterBar } from '../../components/SearchFilterBar'
 import { Skeleton } from '@core/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@core/components/ui/tabs'
-// CIL[END stable_id="~/custom/apps/answer-once/pages/company/TicketsPage.tsx:module_header:module_header"]
 
 const STATUS_FILTERS = [
   { value: 'all', label: 'All' },

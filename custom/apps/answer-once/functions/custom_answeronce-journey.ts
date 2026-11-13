@@ -1,13 +1,4 @@
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
-// CIL[DOC-MACRO purpose="Answer Once orchestrator — ticket creation, triage finalize, three-flavor article publish, and embedding lifecycle"]
-// CIL[DOC-RESPONSIBILITY responsibility="Own only Answer Once–specific orchestration; runtime records are still created through /api/admin-data — this is not a CRUD wrapper"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/customer/TicketPage.tsx, custom/apps/answer-once/pages/company/KBReviewPage.tsx, custom/apps/answer-once/pages/company/KBPage.tsx"]
-// CIL[DOC-CONTRACT inputs="Netlify event with ?action=create_ticket|finalize|analyze_ticket|finalize_analysis|publish_article(flavor)|reembed_article|verify_completion" outputs="action-specific JSON payloads" errors="throws on missing context/ids; 400 on hard validation failures; 404 when caller lacks record access" side_effects="admin-data updates, thread wiring + internal re-home via adminDb, detached kbIngest, embedding freshness stamps"]
-// CIL[DOC-MICRO logic_summary="Action router for Answer Once orchestration; record-centric actions derive account_id from the target record via an RLS-scoped load so support in spine-system can operate on customer-account tickets/articles" notable_decisions="three learning flavors map to storage boundaries: private=ao_kb_article in customer account, internal=ao_kb_article re-homed to spine-system, shared=ao_kb_shared platform-scope artifact"]
-// CIL[DOC-LEARNING topic="design_decision" content="Shared-article actions design: when finalizeAnalysis produces both a KB candidate and a directive candidate for one resolution it links article→directive via the ao_article_directive link type, so platform articles carry tenant-executable actions without per-account KB copies. Retrieval and execution are separate gates (envelope platform.sources vs platform.actions); platform directives above the annotate tier also need an active tenant ao_directive_subscription."]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[DOC-AUDIENCE audience="answer-once developers and framework maintainers"]
+// Shared-article actions design: when finalizeAnalysis produces both a KB candidate and a directive candidate for one resolution it links article→directive via the ao_article_directive link type, so platform articles carry tenant-executable actions without per-account KB copies. Retrieval and execution are separate gates (envelope platform.sources vs platform.actions); platform directives above the annotate tier also need an active tenant ao_directive_subscription.
 import { createHandler, CoreContext } from './_shared/middleware'
 import { emitAudit } from './_shared/audit'
 import { adminDb } from './_shared/db'
@@ -19,26 +10,15 @@ import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_sha
 import { kickAgentEpisode } from './_shared/agent-runner'
 import { insertMessageSequenced } from './_shared/message-sequence'
 import { createHash } from 'crypto'
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:module_header:module_header"]
 
-// CIL[DOC-MACRO purpose="Internal helpers for admin-data updates, RLS-scoped record loads, and platform account resolution"]
-// CIL[DOC-RESPONSIBILITY responsibility="Provide a thin wrapper around the shared admin-data update() so ticket bookkeeping stays consistent; loadRecord enforces caller read access via ctx.db before orchestration; platformAccountId resolves spine-system"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, entity, id, fields" outputs="update result / record row / platform account id" errors="propagates update errors; 404 when loadRecord hits RLS denial or missing row" side_effects="DB write/read"]
-// CIL[DOC-MICRO logic_summary="adminDataUpdate passes entity/id through ctx.query into update(); loadRecord reads via ctx.db so RLS proves caller access and the returned row's account_id drives subsequent query scoping" notable_decisions="record-centric actions derive account_id from the record, not ctx.accountId — support operates on customer-account records"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:adminDataUpdate:function" type="function" identity="adminDataUpdate" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 function adminDataUpdate(ctx: CoreContext, entity: string, id: string, fields: Record<string, any>) {
   return update({ ...ctx, query: { ...((ctx as any).query || {}), entity, id } } as any, fields)
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:adminDataUpdate:function"]
 
 // Loads a record through the caller's RLS-scoped client — the caller must be
 // able to read the record before any orchestration runs on it. Returns the row
 // so callers can derive the record's real account_id (support in spine-system
 // operates on tickets/articles owned by customer accounts).
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:loadRecord:function" type="function" identity="loadRecord" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function loadRecord(ctx: any, entity: 'items' | 'threads' | 'messages', id: string, columns = '*') {
   const { data } = await ctx.db.from(entity).select(columns).eq('id', id).maybeSingle()
   if (!data) {
@@ -48,28 +28,15 @@ async function loadRecord(ctx: any, entity: 'items' | 'threads' | 'messages', id
   }
   return data
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:loadRecord:function"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:platformAccountId:function" type="function" identity="platformAccountId" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function platformAccountId(): Promise<string> {
   const { data } = await adminDb.from('accounts').select('id').eq('slug', 'spine-system').single()
   if (!data?.id) throw new Error('Platform account (spine-system) not found')
   return data.id
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:platformAccountId:function"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:UUID_RE:constant" type="constant" identity="UUID_RE" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:UUID_RE:constant"]
 
-// CIL[DOC-MACRO purpose="Resolve Answer Once type/agent/prompt ids"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map ao_* type slugs and agent/prompt names to ids once per request"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/seed/types.json, custom/apps/answer-once/seed/ai-agents.json, custom/apps/answer-once/seed/prompt-configs.json"]
-// CIL[DOC-CONTRACT inputs="none" outputs="Promise<{ ticket; thread; message; article; sharedArticle; triageAgentId; triagePromptId; analysisAgentId; analysisPromptId }>" errors="propagates resolve errors" side_effects="DB reads"]
-// CIL[DOC-MICRO logic_summary="Parallel resolves via resolveTypeId/resolveAgentId/resolvePromptConfigId" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:resolveIds:function" type="function" identity="resolveIds" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function resolveIds() {
   const [ticket, thread, message, article, sharedArticle, directive, triageAgentId, triagePromptId, analysisAgentId, analysisPromptId] = await Promise.all([
     resolveTypeId('item', 'ao_support_ticket'),
@@ -85,16 +52,7 @@ async function resolveIds() {
   ])
   return { ticket, thread, message, article, sharedArticle, directive, triageAgentId, triagePromptId, analysisAgentId, analysisPromptId }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:resolveIds:function"]
 
-// CIL[DOC-MACRO purpose="Create an ao_support_ticket + external ao_ticket_thread"]
-// CIL[DOC-RESPONSIBILITY responsibility="Create the ticket and its external customer-visible thread in one orchestrated step"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/customer/TicketPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ message: string, title?: string })" outputs="{ ticketId: string, threadId: string }" errors="400 on missing message or failed create" side_effects="items + threads writes via admin-data"]
-// CIL[DOC-MICRO logic_summary="Creates ticket with status ai_responding, then external thread wired to ao_triage agent + prompt config" notable_decisions="no demo/run identity — the ticket id is the run identity"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:createTicket:function" type="function" identity="createTicket" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function createTicket(ctx: any, body: any) {
   const { message, title } = body
   if (!message) throw new Error('message is required')
@@ -229,16 +187,8 @@ async function createTicket(ctx: any, body: any) {
 
   return { ticketId: ticket.id, threadId: thread.id, escalated: injectionEscalated }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:createTicket:function"]
 
-// CIL[DOC-MACRO purpose="Finalize a ticket after triage agent episode completes"]
-// CIL[DOC-RESPONSIBILITY responsibility="Read the latest agent message, apply confidence/escalation rules, and stamp the ticket"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/customer/TicketPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ ticket_id, thread_id })" outputs="{ ticketId, threadId, agentMessageId, confidence, escalated }" errors="400 on missing ids or ownership failure" side_effects="items update, optional escalation message"]
-// CIL[DOC-MICRO logic_summary="Mirrors Portal's handleFinalize: finds latest agent/final message, checks confidence threshold, escalates if needed, stamps ticket fields including true KB-reuse stamp (aim_answered_from_kb + aim_kb_source_ids verified against published ao_kb_* items)" notable_decisions="no demo-specific journey_role logic — Answer Once tickets are always root tickets; cited_sources preferred over retrieved_sources for the reuse stamp so retrieval alone doesn't count as reuse"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeTicket:function" type="function" identity="finalizeTicket" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
+// no demo-specific journey_role logic — Answer Once tickets are always root tickets; cited_sources preferred over retrieved_sources for the reuse stamp so retrieval alone doesn't count as reuse
 async function finalizeTicket(ctx: any, body: any) {
   const { ticket_id, thread_id } = body
   if (!ticket_id) throw new Error('ticket_id is required')
@@ -392,16 +342,7 @@ async function finalizeTicket(ctx: any, body: any) {
     escalated,
   }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeTicket:function"]
 
-// CIL[DOC-MACRO purpose="Validate the analysis agent's postmortem envelope for earned completeness"]
-// CIL[DOC-RESPONSIBILITY responsibility="Check cause/solution/evidence floors; classify as validated | incomplete | unearned"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/cortex/functions/custom_case_analysis.ts"]
-// CIL[DOC-CONTRACT inputs="envelope: any" outputs="{ state, checks, issues }" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Same earned-analysis gate as Cortex: cause identified+evidenced, diagnostics and solution recorded, outcome evidenced" notable_decisions="kb_candidate is clamped by the caller when state is unearned or not generalizable"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validatePostmortem:function" type="function" identity="validatePostmortem" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 function validatePostmortem(envelope: any): {
   state: 'validated' | 'incomplete' | 'unearned'
   checks: Record<string, boolean>
@@ -420,16 +361,7 @@ function validatePostmortem(envelope: any): {
     : (checks.cause_identified && checks.solution_recorded) ? 'incomplete' : 'unearned'
   return { state, checks, issues }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validatePostmortem:function"]
 
-// CIL[DOC-MACRO purpose="Provision a manual case-analysis run for a resolved ticket"]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate the ticket, build the transcript prompt, and find-or-create the internal case_analysis thread wired to the AO analysis agent + prompt"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/cortex/functions/custom_case_analysis.ts, .framework/functions/_shared/agent-runner.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ ticket_id })" outputs="{ ticketId, analysisThreadId, analysisPrompt }" errors="400 on unresolved/missing ticket" side_effects="threads write"]
-// CIL[DOC-MICRO logic_summary="Mirrors Cortex handleAnalyzeTicket minus demo/solution threads; thread wiring fields are written via adminDb because they are undeclared on ao_ticket_thread" notable_decisions="client drives the agent via /api/ai-agents step mode — no inference happens in this function"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:analyzeTicket:function" type="function" identity="analyzeTicket" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function analyzeTicket(ctx: any, body: any) {
   const { ticket_id } = body
   if (!ticket_id) throw new Error('ticket_id is required')
@@ -547,31 +479,17 @@ async function analyzeTicket(ctx: any, body: any) {
 
   return { ticketId: ticket_id, analysisThreadId, analysisPrompt }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:analyzeTicket:function"]
 
-// CIL[DOC-MACRO purpose="Finalize a case-analysis run — stamp ca_* fields and create the KB candidate"]
-// CIL[DOC-RESPONSIBILITY responsibility="Parse the terminal agent message, validate the postmortem, stamp ticket ca_* fields, post a summary message, and find-or-create the ao_kb_article candidate with provenance"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/cortex/functions/custom_case_analysis.ts, custom/apps/cortex/functions/custom_kb-embeddings.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ ticket_id })" outputs="{ ticketId, kbCandidate, kbCandidateArticleId, confidence }" errors="400 on missing analysis thread" side_effects="items/messages writes"]
-// CIL[DOC-MICRO logic_summary="Idempotent finalize: clamps kb_candidate on unearned/non-generalizable analysis; candidate article is status=candidate with source_ticket_id provenance" notable_decisions="no tags/case_analysis item/funnel signals — Answer Once keeps the analysis on the ticket record itself"]
-// CIL[DOC-LEARNING topic="design_decision" content="When one resolution yields both a KB candidate and a directive candidate, finalizeAnalysis links article→directive via the ao_article_directive link type — this is how shared/platform articles gain tenant-executable actions without per-account KB copies (shared-directives design: platform retrieval via envelope platform.sources, execution gated by platform.actions + tenant ao_directive_subscription opt-in for tiers above annotate)."]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// When one resolution yields both a KB candidate and a directive candidate, finalizeAnalysis links article→directive via the ao_article_directive link type — this is how shared/platform articles gain tenant-executable actions without per-account KB copies (shared-directives design: platform retrieval via envelope platform.sources, execution gated by platform.actions + tenant ao_directive_subscription opt-in for tiers above annotate).
 async function finalizeAnalysis(ctx: any, body: any) {
   const { ticket_id } = body
   if (!ticket_id) throw new Error('ticket_id is required')
   if (!ctx.accountId) throw new Error('Account context required')
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ids:constant" type="constant" identity="ids" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const ids = await resolveIds()
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ids:constant"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ticket:constant" type="constant" identity="ticket" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const ticket = await loadRecord(ctx, 'items', ticket_id)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ticket:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ticketAccountId:constant" type="constant" identity="ticketAccountId" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const ticketAccountId = ticket.account_id
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ticketAccountId:constant"]
 
   const { data: analysisThread } = await adminDb
     .from('threads')
@@ -591,21 +509,15 @@ async function finalizeAnalysis(ctx: any, body: any) {
     .eq('account_id', ticketAccountId)
     .order('created_at', { ascending: false })
     .limit(20)
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:agentMsg:constant" type="constant" identity="agentMsg" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const agentMsg = (recent || []).find((m: any) =>
     m.data?.message_type === 'final' || m.data?.message_type === 'agent')
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:agentMsg:constant"]
 
 
   let envelope: any = {}
 
   try {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:raw:constant" type="constant" identity="raw" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const raw = agentMsg?.content || '{}'
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:raw:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:cleaned:constant" type="constant" identity="cleaned" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:cleaned:constant"]
     envelope = JSON.parse(cleaned)
   } catch {
     envelope = {
@@ -620,9 +532,7 @@ async function finalizeAnalysis(ctx: any, body: any) {
     }
   }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validation:constant" type="constant" identity="validation" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const validation = validatePostmortem(envelope)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validation:constant"]
   if (envelope.kb_candidate && (validation.state === 'unearned' || envelope.generalizable === false)) {
     envelope.kb_candidate = false
     validation.issues.push('kb_candidate_clamped')
@@ -631,7 +541,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
   // Keep one stamped snapshot — admin-data replaces `data` wholesale, so any
   // later update (e.g. kb_article_id below) must spread this object, not the
   // stale ticket.data, or it silently wipes every ca_* field just written.
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:stampedData:constant" type="constant" identity="stampedData" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const stampedData = {
     ...(ticket.data || {}),
     ca_reported_issue: envelope.reported_issue,
@@ -653,11 +562,9 @@ async function finalizeAnalysis(ctx: any, body: any) {
     ca_sentiment_progression: envelope.sentiment_progression,
     analysis_timestamp: new Date().toISOString(),
   }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:stampedData:constant"]
   await adminDataUpdate(ctx, 'items', ticket_id, { data: stampedData })
 
   // Human-readable summary message on the analysis thread — idempotent.
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:summaryContent:constant" type="constant" identity="summaryContent" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const summaryContent = [
     '**Case analysis complete**',
     `**Reported issue:** ${envelope.reported_issue || 'N/A'}`,
@@ -666,15 +573,12 @@ async function finalizeAnalysis(ctx: any, body: any) {
     `**Confidence:** ${envelope.confidence_score || 0.5}`,
     `**KB candidate:** ${envelope.kb_candidate ? 'Yes' : 'No'}`,
   ].join('\n\n')
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:summaryContent:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:summaryData:constant" type="constant" identity="summaryData" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
   const summaryData = {
     message_type: 'case_analysis_summary',
     agent_id: ids.analysisAgentId,
     analysis_summary: envelope.analysis_summary || '',
     confidence_score: envelope.confidence_score || 0.5,
   }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:summaryData:constant"]
   const { data: existingSummary } = await adminDb
     .from('messages')
     .select('id')
@@ -715,29 +619,19 @@ async function finalizeAnalysis(ctx: any, body: any) {
       .eq('data->>source_ticket_id', ticket_id)
       .maybeSingle()
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:mdSteps:function" type="function" identity="mdSteps" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const mdSteps = (v: any): string =>
       Array.isArray(v)
         ? v.map((s: any) => `- ${typeof s === 'string' ? s : (s?.step || s?.description || s?.action || JSON.stringify(s))}`).join('\n')
         : (v ? String(v) : '')
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:mdSteps:function"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:d:constant" type="constant" identity="d" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const d = ticket.data || {}
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:d:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:resolutionMd:constant" type="constant" identity="resolutionMd" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const resolutionMd = mdSteps(envelope.solution_steps) || (envelope.final_solution ? String(envelope.final_solution) : '')
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:resolutionMd:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:diagnosticMd:constant" type="constant" identity="diagnosticMd" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const diagnosticMd = mdSteps(envelope.diagnostic_steps)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:diagnosticMd:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:content:constant" type="constant" identity="content" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const content = [
       envelope.reported_issue && `## Reported issue\n\n${envelope.reported_issue}`,
       envelope.true_problem && `## Root cause\n\n${envelope.true_problem}`,
       diagnosticMd && `## Diagnostic steps\n\n${diagnosticMd}`,
       resolutionMd && `## Resolution\n\n${resolutionMd}`,
     ].filter(Boolean).join('\n\n') || ticket.title || ''
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:content:constant"]
 
     if (existingArticle?.id) {
       await adminDataUpdate(ctx, 'items', existingArticle.id, {
@@ -753,7 +647,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
       })
       kbCandidateArticleId = existingArticle.id
     } else {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:article:constant" type="constant" identity="article" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
       const article = await create(ctx, {
         entity: 'items',
         type_id: ids.article,
@@ -772,7 +665,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
           confidence_score: envelope.confidence_score || 0.5,
         },
       })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:article:constant"]
       kbCandidateArticleId = article?.id || null
     }
 
@@ -792,9 +684,7 @@ async function finalizeAnalysis(ctx: any, body: any) {
   let directiveCandidateId: string | null = null
 
   if (envelope.directive_candidate === true && envelope.suggested_directive) {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:sd:constant" type="constant" identity="sd" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const sd = envelope.suggested_directive
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:sd:constant"]
     const { data: existingDirective } = await adminDb
       .from('items')
       .select('id, data')
@@ -803,7 +693,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
       .eq('data->>source_ticket_id', ticket_id)
       .maybeSingle()
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:directiveData:constant" type="constant" identity="directiveData" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
     const directiveData = {
       status: 'suggested',
       match_description: sd.match_description || envelope.reported_issue || ticket.title || '',
@@ -815,7 +704,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
       source_resolution_message_id: ticket.data?.human_resolution_message_id || null,
       notes: sd.rationale || envelope.analysis_summary || '',
     }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:directiveData:constant"]
 
     if (existingDirective?.id) {
       await adminDataUpdate(ctx, 'items', existingDirective.id, {
@@ -823,7 +711,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
       })
       directiveCandidateId = existingDirective.id
     } else {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:created:constant" type="constant" identity="created" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:finalizeAnalysis:function"]
       const created = await create(ctx, {
         entity: 'items',
         type_id: ids.directive,
@@ -832,7 +719,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
         status: 'suggested',
         data: directiveData,
       })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:created:constant"]
       directiveCandidateId = created?.id || null
     }
     if (directiveCandidateId) {
@@ -888,14 +774,6 @@ async function finalizeAnalysis(ctx: any, body: any) {
   }
 }
 
-// CIL[DOC-MACRO purpose="Content hash used to detect stale article embeddings"]
-// CIL[DOC-RESPONSIBILITY responsibility="Compute a deterministic sha256 over the article's normalized title, content, and sorted tags"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files=".framework/functions/_shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="article (ao_kb_article item row)" outputs="hex sha256 string" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="null/undefined normalize to '', tags sort for order-insensitivity" notable_decisions="stored as data.embedded_content_hash at publish; mismatch means embeddings are stale"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:computeArticleHash:function" type="function" identity="computeArticleHash" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 function computeArticleHash(article: any): string {
   const norm = (v: any) => (v === undefined || v === null ? '' : String(v)).trim()
   const d = article?.data || {}
@@ -907,16 +785,7 @@ function computeArticleHash(article: any): string {
     tags,
   })).digest('hex')
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:computeArticleHash:function"]
 
-// CIL[DOC-MACRO purpose="Pre-publish validation for an ao_kb_article"]
-// CIL[DOC-RESPONSIBILITY responsibility="Enforce hard checks (title, content, ticket provenance) and surface warnings (unvalidated analysis, missing resolution message, non-generalizable)"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/seed/types.json"]
-// CIL[DOC-CONTRACT inputs="article, sourceTicket" outputs="{ checks, hard_failures, warnings }" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="hard_failures block publish; warnings require explicit acknowledgement" notable_decisions="provenance is a hard requirement — articles without a source ticket cannot be published"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validateArticle:function" type="function" identity="validateArticle" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 function validateArticle(article: any, sourceTicket: any) {
   const d = article?.data || {}
   const checks = {
@@ -933,65 +802,40 @@ function validateArticle(article: any, sourceTicket: any) {
     .filter((k) => !(checks as any)[k])
   return { checks, hard_failures, warnings }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validateArticle:function"]
 
-// CIL[DOC-MACRO purpose="Publish an ao_kb_article as one of three learning flavors — private | internal | shared"]
-// CIL[DOC-RESPONSIBILITY responsibility="Validate source ticket + content, apply the one-time flavor choice (private: publish in place; internal: publish + re-home to spine-system; shared: create a platform-scope ao_kb_shared artifact), then run kbIngest detached with embedding_state markers"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/company/KBArticlePage.tsx, .framework/functions/_shared/kb.ts, .framework/functions/admin-data.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ article_id, flavor?, acknowledge_warnings? })" outputs="{ published, record, flavor, shared_article_id, validation, embedding_state } or { published:false, requires_acknowledgement:true, validation }" errors="400 on hard validation failure, invalid flavor, already-published article, or missing article; 404 via loadRecord" side_effects="status update via admin-data, account_id re-home via adminDb (internal), ao_kb_shared create (shared), detached kbIngest, embedding marker stamps"]
-// CIL[DOC-MICRO logic_summary="Flavor is chosen once: private embeds the candidate in its customer account; internal re-homes it to spine-system (support-only corpus); shared mints a separate ao_kb_shared record — platform-scope design_schema auto-homes it to spine-system and platform.sources grants member retrieval" notable_decisions="no private-to-public promotion — a published article's learning_scope is immutable; internal re-home uses adminDb because admin-data strips account_id from item updates, and it runs only after the permission-validated admin-data write"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
+// no private-to-public promotion — a published article's learning_scope is immutable; internal re-home uses adminDb because admin-data strips account_id from item updates, and it runs only after the permission-validated admin-data write
 async function publishArticle(ctx: any, body: any) {
   const { article_id, acknowledge_warnings } = body || {}
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:flavor:constant" type="constant" identity="flavor" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const flavor = (body?.flavor || 'private') as 'private' | 'internal' | 'shared'
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:flavor:constant"]
   if (!ctx.accountId) throw new Error('Account context required')
   if (!article_id) throw new Error('article_id is required')
   if (!['private', 'internal', 'shared'].includes(flavor)) {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant" type="constant" identity="e" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
     const e: any = new Error(`Invalid flavor: ${flavor} — expected private | internal | shared`)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant"]
     e.statusCode = 400
     throw e
   }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ids:constant" type="constant" identity="ids" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const ids = await resolveIds()
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ids:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:article:constant" type="constant" identity="article" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const article = await loadRecord(ctx, 'items', article_id)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:article:constant"]
   if (article.type_id !== ids.article) {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant" type="constant" identity="e" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
     const e: any = new Error('Only ao_kb_article candidates can be published — shared artifacts are created by this action')
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant"]
     e.statusCode = 400
     throw e
   }
   if (article.status === 'published' && article.data?.learning_scope) {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant" type="constant" identity="e" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
     const e: any = new Error(`Article already published as '${article.data.learning_scope}' — flavor is chosen once at publish`)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:e:constant"]
     e.statusCode = 400
     throw e
   }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:sourceTicketId:constant" type="constant" identity="sourceTicketId" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const sourceTicketId = article.data?.source_ticket_id
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:sourceTicketId:constant"]
   const { data: sourceTicket } = sourceTicketId
     ? await adminDb.from('items').select('id, status').eq('id', sourceTicketId).eq('account_id', article.account_id).maybeSingle()
     : { data: null }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validation:constant" type="constant" identity="validation" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const validation = validateArticle(article, sourceTicket)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:validation:constant"]
   if (validation.hard_failures.length) {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:err:constant" type="constant" identity="err" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
     const err: any = new Error(`Article has blocking validation failures: ${validation.hard_failures.join(', ')}`)
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:err:constant"]
     err.statusCode = 400
     throw err
   }
@@ -999,10 +843,7 @@ async function publishArticle(ctx: any, body: any) {
     return { published: false, requires_acknowledgement: true, validation }
   }
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:now:constant" type="constant" identity="now" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const now = new Date().toISOString()
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:now:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:approvalData:constant" type="constant" identity="approvalData" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const approvalData = {
     approved_at: now,
     approved_by: ctx.principal?.id || null,
@@ -1013,7 +854,6 @@ async function publishArticle(ctx: any, body: any) {
       validation_acknowledged_by: ctx.principal?.id || null,
     } : {}),
   }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:approvalData:constant"]
 
   // The record that gets embedded — private/internal reuse the candidate;
   // shared produces a new platform-scope ao_kb_shared artifact.
@@ -1041,7 +881,6 @@ async function publishArticle(ctx: any, body: any) {
     } else {
       // ao_kb_shared is design_schema scope=platform — admin-data create
       // auto-homes the record into the spine-system account.
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:shared:constant" type="constant" identity="shared" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
       const shared = await create(ctx, {
         entity: 'items',
         type_id: ids.sharedArticle,
@@ -1061,7 +900,6 @@ async function publishArticle(ctx: any, body: any) {
           ...approvalData,
         },
       })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:shared:constant"]
       if (!shared?.id) throw new Error('Failed to create shared article artifact')
       sharedArtifactId = shared.id
     }
@@ -1071,27 +909,21 @@ async function publishArticle(ctx: any, body: any) {
 
   // Publish the source candidate (permission-validated admin-data write) and
   // stamp its final learning_scope + provenance link for shared artifacts.
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:candidateData:constant" type="constant" identity="candidateData" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const candidateData = {
     ...(article.data || {}),
     ...approvalData,
     learning_scope: flavor,
     ...(sharedArtifactId ? { shared_article_id: sharedArtifactId } : {}),
   }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:candidateData:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:embeddingPatch:constant" type="constant" identity="embeddingPatch" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const embeddingPatch = flavor === 'shared'
     // The artifact carries the embedding lifecycle — the candidate is only
     // the published source, so clear any stale embed markers on it.
     ? { embedding_state: null, embedding_pending_at: null, embedding_error: null }
     : { embedding_state: 'processing', embedding_pending_at: now, embedding_error: null }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:embeddingPatch:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:record:constant" type="constant" identity="record" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const record = await adminDataUpdate(ctx, 'items', article.id, {
     status: 'published',
     data: { ...candidateData, ...embeddingPatch },
   })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:record:constant"]
 
   // Internal learnings are support-only: re-home the record into spine-system
   // via adminDb — admin-data strips account_id from item updates, so this is
@@ -1146,27 +978,21 @@ async function publishArticle(ctx: any, body: any) {
   // seconds to publish but returns the real embedding_state. A concurrent
   // worker holding the document lease yields in_progress — the marker stays
   // 'processing' and the owning worker's completion reconciles it.
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:stamp:function" type="function" identity="stamp" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
   const stamp = async (patch: Record<string, any>) => {
     const { data: cur } = await adminDb.from('items').select('data').eq('id', embedId).single()
     await adminDataUpdate(ctx, 'items', embedId, {
       data: { ...(cur?.data || {}), ...patch },
     })
   }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:stamp:function"]
 
   let finalEmbeddingState = 'processing'
 
   try {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ingest:constant" type="constant" identity="ingest" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
     const ingest = await kbIngest(ctx, { id: embedId, account_id: embedAccountId })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:ingest:constant"]
     if (ingest?.in_progress) {
       finalEmbeddingState = 'processing'
     } else {
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:embedded:constant" type="constant" identity="embedded" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:publishArticle:function"]
       const embedded = ingest?.ok === true && (ingest.count ?? 0) > 0
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:embedded:constant"]
       finalEmbeddingState = embedded ? 'embedded' : 'error'
       await stamp({
         embedding_state: finalEmbeddingState,
@@ -1190,14 +1016,6 @@ async function publishArticle(ctx: any, body: any) {
   return { published: true, record, flavor, shared_article_id: sharedArtifactId, validation, embedding_state: finalEmbeddingState }
 }
 
-// CIL[DOC-MACRO purpose="Create a review candidate that republishes a published article into a different learning scope"]
-// CIL[DOC-RESPONSIBILITY responsibility="Copy a published ao_kb_article or ao_kb_shared into a new in_review ao_kb_article targeted at another flavor — the publish path then archives the source"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/company/KBArticlePage.tsx"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ article_id, target_flavor })" outputs="{ candidate_id, target_flavor, source_scope }" errors="400 on missing ids, wrong type, unpublished source, or same-scope target; 404 via loadRecord" side_effects="new ao_kb_article candidate (in_review) via admin-data create"]
-// CIL[DOC-MICRO logic_summary="Scope changes are never in-place: the source stays published until the candidate completes the normal review → publish cycle, at which point publish_article archives it. The candidate is created in the source ticket's account when known so private republishes land in the originating customer account" notable_decisions="forcing re-review is deliberate — widening an audience requires scrutiny of potentially sensitive content"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:republishArticle:function" type="function" identity="republishArticle" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function republishArticle(ctx: any, body: any) {
   const { article_id, target_flavor } = body || {}
   if (!ctx.accountId) throw new Error('Account context required')
@@ -1271,16 +1089,7 @@ async function republishArticle(ctx: any, body: any) {
 
   return { candidate_id: candidate.id, target_flavor, source_scope: sourceScope }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:republishArticle:function"]
 
-// CIL[DOC-MACRO purpose="Re-ingest an ao_kb_article or ao_kb_shared artifact when content drifts"]
-// CIL[DOC-RESPONSIBILITY responsibility="Run kbIngest synchronously on a published article of either knowledge type and refresh embedded_content_hash/embedded_at only when embeddings were actually written"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/company/KBArticlePage.tsx, .framework/functions/_shared/kb.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ article_id })" outputs="{ ok, ingest, embedding_state }" errors="400 on missing, wrong-type, or unpublished article; 404 via loadRecord" side_effects="kbIngest writes embeddings; embedding marker stamps"]
-// CIL[DOC-MICRO logic_summary="zero-ingest stamps embedding_state 'error' with the ingest message instead of silently reporting success" notable_decisions="explicit error stamp keeps a failed reindex from looking healthy"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:reembedArticle:function" type="function" identity="reembedArticle" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function reembedArticle(ctx: any, body: any) {
   const { article_id } = body || {}
   if (!ctx.accountId) throw new Error('Account context required')
@@ -1311,16 +1120,7 @@ async function reembedArticle(ctx: any, body: any) {
   })
   return { ok: embedded, ingest, embedding_state: embedded ? 'embedded' : 'error' }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:reembedArticle:function"]
 
-// CIL[DOC-MACRO purpose="Verify a retrieval answer cited a specific published article"]
-// CIL[DOC-RESPONSIBILITY responsibility="Inspect the ticket's external thread for an evidence_found terminal agent message whose inline [n] marker maps to the given article in retrieved_sources"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/demo/functions/custom_demo-journey.ts"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({ ticket_id, article_id })" outputs="{ verified, messageId, evidence_state }" errors="400 on missing ids" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Mirrors demo verifiesExactCitation: mere presence in retrieved_sources is not proof — the answer must use an [n] marker" notable_decisions="checks the external thread only; internal analysis threads are not customer answers"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:verifyCompletion:function" type="function" identity="verifyCompletion" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 async function verifyCompletion(ctx: any, body: any) {
   const { ticket_id, article_id } = body || {}
   if (!ctx.accountId) throw new Error('Account context required')
@@ -1372,20 +1172,10 @@ async function verifyCompletion(ctx: any, body: any) {
 
   return { verified, messageId: finalMsg.id, evidence_state: finalMsg.data?.evidence_state }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:verifyCompletion:function"]
 
-// CIL[DOC-MACRO purpose="Auto-resolve pending_resolution tickets after 72h of customer silence"]
-// CIL[DOC-RESPONSIBILITY responsibility="Sweep stale pending tickets, stamp resolved_via/resolved_at, and post a courtesy close note"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/pages/company/TicketsPage.tsx"]
-// CIL[DOC-CONTRACT inputs="ctx, body ({} — optional since_ms override)" outputs="{ resolved, ticketIds }" errors="propagates db errors" side_effects="items updates + courtesy message on external thread"]
-// CIL[DOC-MICRO logic_summary="Pending tickets whose resolve_pending_since is older than the auto-resolve window become resolved with resolved_via ai_auto|human_auto based on pending_proposed_by; a customer-visible close message documents the reopen path" notable_decisions="sweeps every account — the transition is a deterministic time-based rule, idempotent and safe to re-run; invoked by the once-a-day lazy sweep on the tickets page and wireable to a scheduler"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:AUTO_RESOLVE_MS:constant" type="constant" identity="AUTO_RESOLVE_MS" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
+// sweeps every account — the transition is a deterministic time-based rule, idempotent and safe to re-run; invoked by the once-a-day lazy sweep on the tickets page and wireable to a scheduler
 const AUTO_RESOLVE_MS = 72 * 60 * 60 * 1000
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:AUTO_RESOLVE_MS:constant"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:autoResolvePending:function" type="function" identity="autoResolvePending" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 export async function autoResolvePending(ctx: any, body: any) {
   const ids = await resolveIds()
   const windowMs = typeof body?.since_ms === 'number' && body.since_ms > 0 ? body.since_ms : AUTO_RESOLVE_MS
@@ -1443,16 +1233,7 @@ export async function autoResolvePending(ctx: any, body: any) {
 
   return { resolved: resolved.length, ticketIds: resolved }
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:autoResolvePending:function"]
 
-// CIL[DOC-MACRO purpose="Allowlisted action map for the Answer Once journey function"]
-// CIL[DOC-RESPONSIBILITY responsibility="Map action names to handlers so the router is stable across milestones"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files=""]
-// CIL[DOC-CONTRACT inputs="none" outputs="action map" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="all actions live: create_ticket/finalize (triage), auto_resolve (72h pending sweep), analyze_ticket/finalize_analysis (case analysis), publish_article/republish_article/reembed_article (ingest lifecycle), verify_completion (citation proof)" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:actions:constant" type="constant" identity="actions" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 const actions = {
   create_ticket: createTicket,
   finalize: finalizeTicket,
@@ -1464,16 +1245,8 @@ const actions = {
   reembed_article: reembedArticle,
   verify_completion: verifyCompletion,
 }
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:actions:constant"]
 
-// CIL[DOC-MACRO purpose="Export the Answer Once journey handler"]
-// CIL[DOC-RESPONSIBILITY responsibility="Route incoming Netlify function events to the allowlisted action handlers"]
-// CIL[DOC-CONTEXT module="custom/apps/answer-once/functions/custom_answeronce-journey.ts" layer="custom_app" related_files="custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
-// CIL[DOC-CONTRACT inputs="Netlify event" outputs="action response" errors="unhandled action -> 400" side_effects="delegates to action handler"]
-// CIL[DOC-MICRO logic_summary="Reads action from query params, looks it up in the actions map, gates company actions on support roles, and calls the handler" notable_decisions="allowlist prevents arbitrary action execution; company gate lives at dispatch — autoResolvePending sweeps every account via adminDb so a member reaching it is cross-account escalation; the cron bypasses dispatch by importing autoResolvePending directly"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:COMPANY_ACTIONS:constant" type="constant" identity="COMPANY_ACTIONS" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
+// allowlist prevents arbitrary action execution; company gate lives at dispatch — autoResolvePending sweeps every account via adminDb so a member reaching it is cross-account escalation; the cron bypasses dispatch by importing autoResolvePending directly
 const COMPANY_ACTIONS = new Set([
   'auto_resolve',
   'analyze_ticket',
@@ -1482,12 +1255,8 @@ const COMPANY_ACTIONS = new Set([
   'republish_article',
   'reembed_article',
 ])
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:COMPANY_ACTIONS:constant"]
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:COMPANY_ROLES:constant" type="constant" identity="COMPANY_ROLES" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 const COMPANY_ROLES = new Set(['support', 'support_admin', 'system_admin'])
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:COMPANY_ROLES:constant"]
 
-// CIL[BEGIN stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:handler:constant" type="constant" identity="handler" parent="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts"]
 export const handler = createHandler(async (ctx, body) => {
   const action = (ctx.query as any)?.action
   const handlerFn = (actions as any)[action]
@@ -1505,4 +1274,3 @@ export const handler = createHandler(async (ctx, body) => {
   }
   return handlerFn(ctx, body || {})
 })
-// CIL[END stable_id="~/custom/apps/answer-once/functions/custom_answeronce-journey.ts:handler:constant"]

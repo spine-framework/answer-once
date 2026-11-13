@@ -1,12 +1,3 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/runtime-isolation.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="none"]
-// CIL[DOC-MACRO purpose="Unit tests for framework runtime isolation: declared reply types, KB security levels, lineage config, generic record-flag filters, typed signals, account-driven rate limits, and the doctor wiring check"]
-// CIL[DOC-RESPONSIBILITY responsibility="Verify agent-runner, kb, admin-data, funnel, rate-limit, and doctor read app-specific behavior from design_schema.functionality/accounts.data declarations instead of hardcoded custom-app knowledge"]
-// CIL[DOC-CONTEXT module="tests/unit/runtime-isolation" layer="test-unit" related_files=".framework/functions/_shared/agent-runner.ts,.framework/functions/_shared/kb.ts,.framework/functions/admin-data.ts,.framework/functions/_shared/funnel.ts,.framework/functions/_shared/rate-limit.ts,.framework/cli/commands/doctor.ts"]
-// CIL[DOC-CONTRACT inputs="none" outputs="vitest assertions" errors="none" side_effects="Installs vitest module mocks for db, audit, outcomes, llm, permissions, logging, trigger-engine, security, outbound, pipeline-runner, cli context, and the _shared barrel"]
-// CIL[DOC-MICRO logic_summary="Mocks the data and side-effect layers, then exercises getReplyTypeSlug, resolveSecurityLevel, the admin-data get/attachLineage path, the list flag filters, emitSignal/accountDataFlag, resolveRateLimitPolicies, and checkRuntimeWiring" notable_decisions="admin-data handlers are invoked directly through createHandler's (event-with-principal) passthrough so no auth or HTTP plumbing is needed; funnel/rate-limit run for real against the mocked adminDb"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.85" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="test maintainers"]
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../../functions/_shared/db.ts', () => ({
@@ -75,7 +66,6 @@ import { list, get } from '../../functions/admin-data.ts'
 import { emitSignal, accountDataFlag } from '../../functions/_shared/funnel.ts'
 import { resolveRateLimitPolicies } from '../../functions/_shared/rate-limit.ts'
 import { checkRuntimeWiring } from '../../cli/commands/doctor.ts'
-// CIL[END stable_id="~/.framework/tests/unit/runtime-isolation.test.ts:module_header:module_header"]
 
 // Chainable + thenable query-builder fake. Every chained call is recorded on
 // _calls; terminal single()/maybeSingle() and any await resolve through the

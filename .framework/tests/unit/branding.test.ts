@@ -1,11 +1,5 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/branding.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/branding.test.ts"]
-// CIL[DOC-MACRO purpose="Unit tests for resolveBranding — host-keyed brand resolution over the flat branding block"]
-// CIL[DOC-CONTRACT inputs="resolveBranding calls with branding/brands/hostname args" outputs="vitest assertions" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { describe, it, expect } from 'vitest'
 import { resolveBranding, DEFAULT_BRANDING } from '../../src/lib/branding.ts'
-// CIL[END stable_id="~/.framework/tests/unit/branding.test.ts:module_header:module_header"]
 
 const brands = {
   default: 'answer-once',
@@ -31,8 +25,6 @@ const brands = {
   },
 }
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/branding.test.ts:resolvebranding_suite:block" type="block" identity="resolvebranding_suite" parent="none"]
-// CIL[DOC-MACRO purpose="Cover flat-branding fallback, host-keyed definition override, default-brand fallback, per-field merge, and absent-brands legacy behavior"]
 describe('resolveBranding', () => {
   it('returns flat branding unchanged when no brands block exists (legacy)', () => {
     const b = { app_name: 'Answer Once', logo_url: '/ao.svg' }
@@ -84,4 +76,3 @@ describe('resolveBranding', () => {
     expect(resolveBranding({}, defs, 'any').app_name).toBe('ViaAppName')
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/branding.test.ts:resolvebranding_suite:block"]

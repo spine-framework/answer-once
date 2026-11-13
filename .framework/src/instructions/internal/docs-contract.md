@@ -64,27 +64,17 @@ discovered while doing the work are appended to the relevant page's
 learned. Positive-only corrections: update the source; never append
 "correction notes" that contradict an untouched stale claim.
 
-### Relationship to CIL
+### Relationship to the retired CIL
 
-CIL (Code Intelligence Layer, the `cil_*` tooling used inside this monorepo)
-is **bottom-up code truth**: per-chunk contracts, `stored_hash` drift
-detection, a call/import/test graph, semantic code search. The book is
-**top-down narrative comprehension**: curated prose at system granularity.
+The legacy Code Intelligence Layer (`cil_*` functions, markers, chunk
+embeddings) was retired in migration 079 — it produced confident but
+unverified claims at scale. The book is now the sole curated-comprehension
+layer: code and tests remain the source of truth for *what*; decision
+records (`decisions/`) hold *why*; deterministic checks (`npm run gate`,
+`db:fixtures`) establish *what is true*.
 
-Neither replaces the other:
-
-- CIL can *prove* a doc is stale (hash recompute); the book can only *assert*
-  freshness (`verified_*` stamps + lint gate). The capture contract above is
-  the manual stand-in for CIL's automatic re-sync pipeline.
-- The book carries CIL's *purpose* into shipped projects where no `cil_*`
-  tooling runs — it is the portable distillation, not a replacement.
-
-The definition of done for `.framework/` edits in this repo is therefore
-**both**: CIL re-sync (`cil_store_markers` → `cil_generate_embeddings` →
-`cil_generate_mappings` → `cil_validate_file`) for code truth, and book
-re-verify for narrative truth. Mechanical pages (`reference/functions/*`,
-entity field tables) may eventually be generated/verified from CIL chunks;
-narrative layers stay hand-authored.
+The definition of done for `.framework/` edits is book re-verify plus the
+unit/integrity gates — there is no secondary doc pipeline to re-sync.
 
 ## Layer taxonomy — which layer answers which question
 

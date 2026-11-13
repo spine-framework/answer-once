@@ -1,11 +1,5 @@
-// CIL[BEGIN stable_id="~/.framework/tests/unit/site-brand.test.ts:module_header:module_header" type="module_header" identity="module_header" parent="~/.framework/tests/unit/site-brand.test.ts"]
-// CIL[DOC-MACRO purpose="Unit tests for site-brand pure resolvers — parseBrandsConfig, resolveBrand, brandForHost"]
-// CIL[DOC-CONTRACT inputs="pure function calls with config/host/slug args" outputs="vitest assertions" errors="none" side_effects="none"]
-// CIL[DOC-CONFIDENCE pass="first" score="0.9" flags="none"]
-// CIL[DOC-STABILITY stability="experimental"]
 import { describe, it, expect } from 'vitest'
 import { parseBrandsConfig, resolveBrand, brandForHost } from '../../functions/_shared/site-brand.ts'
-// CIL[END stable_id="~/.framework/tests/unit/site-brand.test.ts:module_header:module_header"]
 
 const cfg = parseBrandsConfig({
   default: 'answer-once',
@@ -28,8 +22,6 @@ const cfg = parseBrandsConfig({
   },
 })
 
-// CIL[BEGIN stable_id="~/.framework/tests/unit/site-brand.test.ts:suites:block" type="block" identity="suites" parent="none"]
-// CIL[DOC-MACRO purpose="Cover config parsing tolerance, slug resolution with default fallback, and host→brand mapping incl. port stripping"]
 describe('parseBrandsConfig', () => {
   it('parses a well-formed config', () => {
     expect(cfg.default).toBe('answer-once')
@@ -92,4 +84,3 @@ describe('brandForHost', () => {
     expect(brandForHost({}, 'anything.example.com').slug).toBe('default')
   })
 })
-// CIL[END stable_id="~/.framework/tests/unit/site-brand.test.ts:suites:block"]

@@ -7,56 +7,17 @@
 
 
 
-// CIL[BEGIN stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:module_header:module_header" type="module_header" identity="module_header" parent=""]
-// CIL[DOC-MACRO purpose="Provide the module-level imports for the ProtectedRoute component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Import the React runtime, Navigate router utility, and the Auth context hook"]
-// CIL[DOC-CONTEXT module="components/auth" layer="presentation" related_files=".framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="none" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Imports React, Navigate from react-router-dom, and useAuth from the AuthContext for use by the ProtectedRoute function" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
-// CIL[DOC-AUDIENCE audience="developers"]
 
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
-// CIL[DOC-VECTOR type="context" content="purpose='Provide the module-level imports for the ProtectedRoute component'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:module_header:module_header"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:protectedrouteprops:interface" type="interface" identity="ProtectedRouteProps" parent="module_header"]
-// CIL[DOC-MACRO purpose="Define the props contract for the ProtectedRoute component"]
-// CIL[DOC-RESPONSIBILITY responsibility="Declare the typed shape of props accepted by the ProtectedRoute function"]
-// CIL[DOC-CONTEXT module="components/auth" layer="presentation" related_files=".framework/src/components/auth/ProtectedRoute.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="children React.ReactNode, requireSystemAdmin boolean" outputs="none" errors="none" side_effects="none"]
-// CIL[DOC-MICRO logic_summary="Defines an interface with children of type React.ReactNode and an optional requireSystemAdmin boolean" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 interface ProtectedRouteProps {
   children: React.ReactNode
   requireSystemAdmin?: boolean
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Define the props contract for the ProtectedRoute component'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:protectedrouteprops:interface"]
 
-// CIL[BEGIN stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:protectedroute:function" type="function" identity="ProtectedRoute" parent="module_header"]
-// CIL[DOC-MACRO purpose="Guard a React route by authentication and optional system-admin role"]
-// CIL[DOC-RESPONSIBILITY responsibility="Render children when the user is authenticated and authorized, redirect anonymous users to login, and deny non-admin users when required"]
-// CIL[DOC-CONTEXT module="components/auth" layer="presentation" related_files=".framework/src/components/auth/ProtectedRoute.tsx,.framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-CONTRACT inputs="children React.ReactNode, requireSystemAdmin boolean" outputs="ReactElement | null" errors="none" side_effects="Navigates to /login via Navigate, and to /dashboard via window.location when denied"]
-// CIL[DOC-MICRO logic_summary="Obtains user from useAuth; if user is missing redirects to /login; if requireSystemAdmin is true and user does not hold system_admin role renders an Access Denied view with a dashboard button; otherwise renders children" notable_decisions="[]"]
-// CIL[DOC-CONFIDENCE pass="second" score="0.90" flags="none"]
-// CIL[DOC-STABILITY stability="stable"]
 
 export function ProtectedRoute({ children, requireSystemAdmin = false }: ProtectedRouteProps) {
   const { user } = useAuth()
@@ -94,10 +55,3 @@ export function ProtectedRoute({ children, requireSystemAdmin = false }: Protect
 
   return <>{children}</>
 }
-// CIL[DOC-VECTOR type="context" content="purpose='Guard a React route by authentication and optional system-admin role'; No verified external callers; imports: .framework/src/contexts/AuthContext.tsx"]
-// CIL[DOC-VECTOR type="blast_radius" content="No direct caller data from CIL graph; local impact only"]
-// CIL[DOC-VECTOR type="configuration" content="No environment or build configuration dependencies identified"]
-// CIL[DOC-VECTOR type="constraint" content="Standard runtime; no special invariants documented"]
-// CIL[DOC-VECTOR type="implementation_pattern" content="" status="pending_human_input"]
-// CIL[DOC-VECTOR type="user_journey" content="" status="pending_human_input"]
-// CIL[END stable_id="~/.framework/src/components/auth/ProtectedRoute.tsx:protectedroute:function"]
