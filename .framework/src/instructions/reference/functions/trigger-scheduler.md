@@ -71,7 +71,7 @@ Anything that fails detection goes through `system-cron`'s own checks:
 ## Response contract
 
 Whatever `system-cron`'s handler returns — a JSON summary of the tick
-(`executed`, `success`, `failed`, `skipped`, `thresholds_evaluated`,
+(`schedules_due`, `executed`, `success`, `failed`, `skipped`,
 `logs_cleaned`, `deliveries_retried`, `results[]`), or an auth/500 error.
 See the `system-cron` reference page for the full shape.
 

@@ -1,6 +1,6 @@
 // Tests for system-cron's per-tick maintenance blocks (F-052).
 // Regression: when get_due_schedules returns zero rows the handler used to
-// return early, skipping due timers, threshold alerts, delivery retries,
+// return early, skipping due timers, delivery retries,
 // and log cleanup. These tests exercise the handler with all shared deps
 // mocked; createHandler is stubbed to identity so a fabricated
 // RequestContext flows straight into the handler body.
@@ -111,9 +111,7 @@ describe('system-cron', () => {
       get_due_schedules: { data: [], error: null },
       get_due_timers: { data: [], error: null },
     }))
-    fromMock.mockImplementation(fromImpl({
-      threshold_alerts: { data: [], error: null },
-    }))
+    fromMock.mockImplementation(fromImpl())
 
     const res = await handler(makeCtx())
     expect(res.statusCode).toBe(200)
@@ -121,14 +119,12 @@ describe('system-cron', () => {
     // Every per-tick block still ran despite the empty schedule list.
     expect(sweepMock).toHaveBeenCalledOnce()
     expect(rpcMock).toHaveBeenCalledWith('get_due_timers', expect.anything())
-    expect(fromMock).toHaveBeenCalledWith('threshold_alerts')
     expect(retryMock).toHaveBeenCalledOnce()
 
     const body = JSON.parse(res.body)
     expect(body.schedules_due).toBe(0)
     expect(body.executed).toBe(0)
     expect(body.results).toEqual([])
-    expect(body.thresholds_evaluated).toBe(0)
     expect(body.deliveries_retried).toEqual(RETRY_SUMMARY)
   })
 
@@ -147,9 +143,7 @@ describe('system-cron', () => {
       get_due_timers: { data: [timer], error: null },
       update_timer_after_run: { data: null, error: null },
     }))
-    fromMock.mockImplementation(fromImpl({
-      threshold_alerts: { data: [], error: null },
-    }))
+    fromMock.mockImplementation(fromImpl())
     runPipelineMock.mockResolvedValue({ status: 'completed' })
 
     const res = await handler(makeCtx())
@@ -176,9 +170,7 @@ describe('system-cron', () => {
       get_due_schedules: { data: [], error: null },
       get_due_timers: new Error('rpc down'),
     }))
-    fromMock.mockImplementation(fromImpl({
-      threshold_alerts: { data: [], error: null },
-    }))
+    fromMock.mockImplementation(fromImpl())
 
     const res = await handler(makeCtx())
     expect(res.statusCode).toBe(200)
@@ -219,7 +211,6 @@ describe('system-cron', () => {
     fromMock.mockImplementation(fromImpl({
       actions: { data: action, error: null },
       api_keys: { data: machine, error: null },
-      threshold_alerts: { data: [], error: null },
       schedule_executions: { data: null, error: null },
     }))
 
@@ -234,7 +225,6 @@ describe('system-cron', () => {
 
     // Maintenance blocks still ran after schedule processing.
     expect(rpcMock).toHaveBeenCalledWith('get_due_timers', expect.anything())
-    expect(fromMock).toHaveBeenCalledWith('threshold_alerts')
     expect(retryMock).toHaveBeenCalledOnce()
   })
 })

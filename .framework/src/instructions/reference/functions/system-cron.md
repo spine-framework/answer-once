@@ -20,7 +20,7 @@ source_files:
 
 The worker behind every `trigger-scheduler` tick. Each authenticated run
 performs, in order: a stale-execution sweep, due-schedule execution, due-
-timer pipelines, threshold-alert evaluation, webhook-delivery retries, and
+timer pipelines, webhook-delivery retries, and
 — on the 00:00 UTC tick — log cleanup. It is also directly invocable over
 HTTP for manual runs.
 
@@ -70,15 +70,9 @@ never match, so only internal machine principals pass — fail closed.
    principal `timer:<timer_id>` with scope `pipelines:execute`, then
    `update_timer_after_run` reschedules it. Timers without `pipeline_id`
    fail that item only.
-4. **Threshold alerts** — active `threshold_alerts` rows are evaluated
-   against `error_rate`, `latency_p95`, or `pipeline_failure_rate` metric
-   RPCs over `window_minutes`. `operator: 'gt'` compares `>`; anything
-   else compares `<`. A breached threshold with a `pipeline_id` fires
-   `runPipeline` with the metric details as trigger data, and a
-   `threshold.breached` audit event is emitted either way on breach.
-5. **Log cleanup** — only when the tick lands on UTC 00:00:
+4. **Log cleanup** — only when the tick lands on UTC 00:00:
    `cleanup_old_logs` RPC with `p_retention_days: 30`.
-6. **Delivery retries** — `retryPendingDeliveries(ctx)` sweeps due
+5. **Delivery retries** — `retryPendingDeliveries(ctx)` sweeps due
    outbound webhook deliveries.
 
 `executeAction` routes `action.handler_module`:
@@ -92,14 +86,12 @@ never match, so only internal machine principals pass — fail closed.
 
 ## Response contract
 
-- 200 — `{ message, executed, success, failed, skipped,
-  thresholds_evaluated, thresholds_breached, logs_cleaned,
-  deliveries_retried, results }` where `results[]` carries
+- 200 — `{ message, schedules_due, executed, success, failed, skipped,
+  logs_cleaned, deliveries_retried, results }` where `results[]` carries
   `{ scheduleId, actionId, status: success|failed|skipped, error?,
-  durationMs }` per schedule/timer item.
-- 200 with `{ message: 'No schedules due for execution', executed: 0,
-  results: [] }` when `get_due_schedules` returns nothing — see the early
-  return note below.
+  durationMs }` per schedule/timer item. An empty `get_due_schedules`
+  result does not short-circuit the tick — timers, retries, and cleanup
+  still run.
 - 403 — invalid scheduler authentication.
 - 500 — top-level failure, with a `system_cron.error` audit event.
 
@@ -108,7 +100,7 @@ never match, so only internal machine principals pass — fail closed.
 Writes `pipeline_executions` (via `runPipeline` and the sweep),
 `schedule_executions`, schedule/timer bookkeeping via RPC, `logs` audit
 events (`system_cron.unauthorized_access`, `system_cron.error`,
-`schedule.execute`, `threshold.breached`), deletes old `logs` rows at
+`schedule.execute`), deletes old `logs` rows at
 00:00 UTC, and mutates `webhook_deliveries` through the retry sweep.
 
 ## Errors
@@ -117,17 +109,11 @@ Per-item failures are contained: a failing schedule/timer records a
 `failed` result and a `schedule_executions`/`update_*_after_run` failure
 record rather than aborting the tick. A failure in the outer block —
 e.g. `get_due_schedules` itself erroring — short-circuits to 500 with a
-`system_cron.error` audit. Threshold, timer-loop, cleanup, and sweep
+`system_cron.error` audit. Timer-loop, cleanup, and sweep
 failures are caught and logged without failing the response.
 
 ## Agent notes
 
-- **Early return:** when `get_due_schedules` yields no due schedules the
-  handler returns immediately — due timers, threshold evaluation,
-  delivery retries, and log cleanup all sit *after* that return and only
-  run on ticks where at least one schedule is due. Installations relying
-  on timers need at least one due schedule per tick for those steps to
-  execute; verify this is intended before depending on timer cadence.
 - `send_email`, `generate_report`, `notify_watchers`, and the
   `integrations` module are stubs — a schedule pointing at them "succeeds"
   while doing nothing but a console log. Only `run_pipeline` performs real

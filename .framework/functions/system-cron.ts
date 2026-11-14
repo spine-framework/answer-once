@@ -129,8 +129,8 @@ export const handler = createHandler(async (ctx: RequestContext) => {
       throw new Error(`Failed to fetch due schedules: ${schedulesError.message}`)
     }
     
-    // An empty schedule list must not end the tick: due timers, threshold
-    // alerts, delivery retries, and log cleanup below run every minute.
+    // An empty schedule list must not end the tick: due timers, delivery
+    // retries, and log cleanup below run every minute.
     for (const schedule of dueSchedules || []) {
       const startTime = Date.now()
       
@@ -343,19 +343,6 @@ export const handler = createHandler(async (ctx: RequestContext) => {
       console.error('Timer execution error:', timerLoopError)
     }
     
-    let thresholdResults: any[] = []
-    try {
-      thresholdResults = await evaluateThresholds(ctx)
-      const breachedCount = thresholdResults.filter(r => r.breached).length
-      const firedCount = thresholdResults.filter(r => r.fired).length
-      
-      if (breachedCount > 0) {
-        console.log(`Thresholds: ${breachedCount} breached, ${firedCount} pipelines fired`)
-      }
-    } catch (thresholdError) {
-      console.error('Threshold evaluation error:', thresholdError)
-    }
-    
     let logsCleaned = 0
     const now = new Date()
     const currentHour = now.getUTCHours()
@@ -389,8 +376,6 @@ export const handler = createHandler(async (ctx: RequestContext) => {
         success: successCount,
         failed: failedCount,
         skipped: skippedCount,
-        thresholds_evaluated: thresholdResults.length,
-        thresholds_breached: thresholdResults.filter(r => r.breached).length,
         logs_cleaned: logsCleaned,
         deliveries_retried: retrySummary,
         results
@@ -607,145 +592,6 @@ async function executeIntegrationHandler(
 
 
 
-/**
- * Evaluates active thresholds for various metrics to determine if they have been breached, potentially triggering associated pipelines. This function is essential for monitoring system performance and alerting based on predefined criteria.
- *
- * @macro       Async function responsible for evaluating threshold alerts and managing pipeline executions.
- * @micro       Iterates through active thresholds, fetching metric data via RPC calls and assessing breaches based on specified operators.
- * @inputSpec
- *   ctx: RequestContext (required) — the context for the request containing necessary information for processing.
- * @outputSpec  Promise<Array<{thresholdId: string, breached: boolean, fired: boolean}>> — an array of objects indicating the threshold ID, breach status, and whether the associated pipeline was fired.
- * @sideEffects DB reads from 'threshold_alerts', RPC calls to fetch metric data, potential DB writes when triggering pipelines.
- * @stability   internal
- * @calls       adminDb.from('threshold_alerts'), adminDb.rpc('get_error_rate'), adminDb.rpc('get_latency_percentiles'), adminDb.rpc('get_pipeline_stats'), runPipeline
- * @errorHandling logs errors to the console but does not throw them.
- * @cil-generated
- */
-async function evaluateThresholds(ctx: RequestContext): Promise<Array<{thresholdId: string, breached: boolean, fired: boolean}>> {
-  const results: Array<{thresholdId: string, breached: boolean, fired: boolean}> = []
-  
-  try {
-    const { data: thresholds, error } = await adminDb
-      .from('threshold_alerts')
-      .select('*')
-      .eq('is_active', true)
-    
-    if (error) {
-      console.error('Failed to fetch thresholds:', error)
-      return results
-    }
-    
-    if (!thresholds || thresholds.length === 0) {
-      return results
-    }
-    
-    const now = new Date()
-    
-    for (const threshold of thresholds) {
-      try {
-        const { metric, operator, value, window_minutes, pipeline_id } = threshold
-        let actualValue: number
-        let breached = false
-        
-        switch (metric) {
-          case 'error_rate':
-            const { data: errorRateData } = await adminDb.rpc('get_error_rate', {
-              p_window_minutes: window_minutes
-            })
-            
-            if (errorRateData && errorRateData.length > 0) {
-              actualValue = errorRateData[0].error_rate || 0
-              breached = operator === 'gt' ? actualValue > value : actualValue < value
-            }
-            break
-            
-          case 'latency_p95':
-            const { data: latencyData } = await adminDb.rpc('get_latency_percentiles', {
-              p_window_minutes: window_minutes
-            })
-            
-            if (latencyData && latencyData.length > 0) {
-              actualValue = latencyData[0].p95 || 0
-              breached = operator === 'gt' ? actualValue > value : actualValue < value
-            }
-            break
-            
-          case 'pipeline_failure_rate':
-            const { data: pipelineStats } = await adminDb.rpc('get_pipeline_stats', {
-              p_window_minutes: window_minutes
-            })
-            
-            if (pipelineStats && pipelineStats.length > 0) {
-              const totalSuccess = pipelineStats[0].total_success || 0
-              const totalFailure = pipelineStats[0].total_failure || 0
-              const total = totalSuccess + totalFailure
-              actualValue = total > 0 ? (totalFailure / total) * 100 : 0
-              breached = operator === 'gt' ? actualValue > value : actualValue < value
-            }
-            break
-            
-          default:
-            console.warn(`Unknown metric: ${metric}`)
-            continue
-        }
-        
-        let fired = false
-        if (breached && pipeline_id) {
-          try {
-            await runPipeline(pipeline_id, {
-              threshold_id: threshold.id,
-              metric,
-              threshold_value: value,
-              actual_value: actualValue,
-              window_minutes,
-              triggered_at: now.toISOString()
-            }, ctx)
-            
-            fired = true
-          } catch (pipelineError: any) {
-            console.error(`Failed to fire threshold pipeline ${pipeline_id}:`, pipelineError)
-          }
-        }
-        
-        if (breached) {
-          await emitAudit(ctx, 'threshold.breached', {
-            type: 'threshold_alert',
-            id: threshold.id,
-            account_id: threshold.account_id
-          }, {
-            metric,
-            operator,
-            threshold_value: value,
-            actual_value: actualValue,
-            window_minutes,
-            pipeline_fired: fired,
-            pipeline_id
-          })
-        }
-        
-        results.push({
-          thresholdId: threshold.id,
-          breached,
-          fired
-        })
-        
-      } catch (thresholdError: any) {
-        console.error(`Error evaluating threshold ${threshold.id}:`, thresholdError)
-        results.push({
-          thresholdId: threshold.id,
-          breached: false,
-          fired: false
-        })
-      }
-    }
-    
-    return results
-    
-  } catch (error: any) {
-    console.error('Threshold evaluation error:', error)
-    return results
-  }
-}
 
 
 

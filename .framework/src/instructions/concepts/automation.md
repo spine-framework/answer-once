@@ -146,9 +146,6 @@ Each tick, `system-cron` does all of the following:
 - **Runs due timers** — each due timer runs its pipeline as machine principal
   `timer:<timer_id>` with scope `pipelines:execute`, then
   `update_timer_after_run` reschedules it.
-- **Evaluates threshold alerts** — `threshold_alerts` rows compare
-  `error_rate`, `latency_p95`, or `pipeline_failure_rate` metrics against a
-  value and fire the alert's `pipeline_id` on breach.
 - **Retries webhook deliveries** — `retryPendingDeliveries` runs every tick.
 - **Cleans logs** — `cleanup_old_logs` runs on the 00:00 UTC tick.
 
