@@ -2,8 +2,8 @@
 title: admin-install-funnel
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/admin-install-funnel.ts
   - .framework/functions/_shared/middleware.ts
@@ -34,8 +34,8 @@ live endpoint.
 
 ## Authentication
 
-If wired: `createHandler` requires any non-anonymous principal — no role
-check inside either export. All queries run on `adminDb` across **all
+If wired: `requireSystemContextWithAudit` runs first — anonymous → 401,
+non-`system_admin` → 403. All queries run on `adminDb` across **all
 accounts** (see Agent notes).
 
 ## Request contract
@@ -94,10 +94,11 @@ queries) — slow but not an error.
 
 - **Verify before use** — no `handler` export means no routed endpoint;
   `?action=export`-style dispatch does not exist in the file.
-- **Platform-wide PII.** `exportData` and the `recent_installs` join
-  return `people.email` and `accounts.name` across all accounts via
-  `adminDb`, gated only by authentication if this is ever wired. Any
-  dispatch handler added later must gate on `system_admin` (or narrower)
+- **Platform-wide PII, system-gated.** `exportData` and the
+  `recent_installs` join return `people.email` and `accounts.name` across
+  all accounts via `adminDb`. Both exports already run
+  `requireSystemContextWithAudit`, so only `system_admin` reaches them if
+  wired.
   before exposing these exports.
 - The daily-trend loop is 60 round trips per call — do not put it on a
   hot path; if the endpoint is wired for real use, fold the loop into a

@@ -4,7 +4,7 @@
  * @layer    shared-core
  * @stability stable
  *
- * This module manages API key operations, including creation and validation, as part of the system's security framework. It serves as a middleware handler that interacts with the database and performs necessary logging and permission checks. INVARIANT: All API key operations require system admin privileges. Route patterns include /api/keys for key management operations.
+ * This module manages API key operations, including creation and validation, as part of the system's security framework. It serves as a middleware handler that interacts with the database and performs necessary logging and permission checks. INVARIANT: key management is account-scoped self-service — account-bound principals create/list/revoke keys in their own account with scopes clipped to what they hold; wildcard `*:*` scopes, `is_internal` keys, and cross-account operations are system-only (S-011). Route patterns include /api/keys for key management operations.
  *
  * @seeAlso middleware.ts (provides request handling functionality).
  * @seeAlso db.ts (interacts with the database for key storage).

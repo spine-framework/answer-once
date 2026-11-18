@@ -2,8 +2,8 @@
 title: "Concurrency and idempotency"
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 1485758
+verified_on: 2026-11-15
 source_files:
   - .framework/functions/_shared/message-sequence.ts
   - .framework/functions/_shared/agent-runner.ts
@@ -120,6 +120,37 @@ Each file runs inside one transaction together with its ledger insert into
 `_spine_migrations` (`filename UNIQUE`, `applied_at`): a file either lands
 complete with its ledger row or rolls back, and the run stops at the first
 failure. Re-runs skip anything already in the ledger (`--dry-run` lists
-pending without touching the DB). The connection is derived from
-`SUPABASE_URL` (a hosted `*.supabase.co` URL only — no credentials, ports, or
-paths) plus `SUPABASE_DB_PASSWORD`.
+pending without touching the DB). The connection comes from
+`SUPABASE_DB_URL` when set (any Postgres URI — hosted, pooler, or a local
+`supabase start` stack); otherwise it is derived from `SUPABASE_URL`
+(hosted `*.supabase.co` only) plus `SUPABASE_DB_PASSWORD`.
+
+## Why it exists
+
+### document-leases
+
+Ingesting a document means chunking, embedding, and writing — expensive, side-effecting work that must not run twice at once and shouldn't run at all when nothing changed.
+
+**Why it exists (5-whys):**
+
+1. Ingest is long-running side-effecting work — two concurrent workers on one document double-embed and double-write.
+2. The claim must be atomic — read-then-write "is it ingesting?" races; `INSERT ... ON CONFLICT` on `document_id` is one statement.
+3. `content_hash` (sha256 over the document) makes the lease double as dedup — same content means no work to do, so "in progress" and "unchanged" share one atomic row (`kb.ts` ~line 432).
+4. `lease_id` + `expires_at` fence and bound: a crashed worker's lease lapses; a stale holder's write fails its token.
+5. **Root:** exactly-once and skip-if-unchanged are the same atomic claim — the lease persists it in the database, fenced by token and bounded by expiry. *(confirmed 2026-11-13)*
+
+Sibling primitive: episode leases — same pattern for agent episodes.
+
+### episode-leases
+
+An agent episode is long-running, side-effecting work: it appends messages, merges thread state, checkpoints research. Two concurrent drivers double-write and contradict each other mid-conversation — and read-then-write "is anyone running?" checks race under concurrency.
+
+**Why it exists (5-whys):**
+
+1. Long-running, side-effecting work must have exactly one driver — two concurrent agents on one thread double-write messages and merge conflicting state.
+2. Read-then-write coordination races — the claim must be a single atomic statement (`INSERT ... ON CONFLICT` / conditional `UPDATE`).
+3. `lease_token` fences writes — a stale holder's write fails the token check (a fence, not an error); `expires_at` means a crashed driver's lease lapses instead of deadlocking the episode.
+4. The holder heartbeats — `agent-runner` refreshes `expires_at` per turn (`leaseToken` threaded through `mergeThreadData` and escalation paths), so liveness is proved by renewing the claim, not by a process being alive.
+5. **Root:** exactly-once semantics can't come from coordination logic alone — the claim lives in the database itself, fenced by tokens and bounded by expiry, so supervisors recover by watching persisted state rather than trusting responses. *(confirmed 2026-11-13)*
+
+Sibling primitive: document leases — same pattern for ingest. See also Spine Way rule 11 in `concepts/spine-way.md` and the long-form article: Why leases exist.

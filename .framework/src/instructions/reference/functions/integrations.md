@@ -2,8 +2,8 @@
 title: integrations
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/integrations.ts
   - .framework/functions/_shared/middleware.ts
@@ -45,7 +45,10 @@ anonymous → 401.
 
 - `list`/`create` require `ctx.accountId` (`Account context required` /
   `User context (person and account) required`).
-- There is **no role check** anywhere in this file. System admins use
+- Mutations are role-gated: `create`/`update`/`remove` require
+  `system_admin` or an `*_admin` role on the caller's account
+  (`isAccountAdmin`) — otherwise `Insufficient permissions — *_admin
+  role required to manage integrations` (403). System admins use
   `adminDb`; others use `ctx.db` (JWT-scoped for humans, service role
   for machines).
 - Credential exposure is controlled on the **read** path by

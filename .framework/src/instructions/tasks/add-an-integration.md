@@ -2,8 +2,10 @@
 title: Add an integration
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-add-integration
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/integrations.ts
   - .framework/functions/integration-outbound.ts

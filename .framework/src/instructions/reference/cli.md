@@ -2,8 +2,8 @@
 title: CLI Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/cli/index.ts
   - .framework/cli/context.ts
@@ -62,7 +62,7 @@ Global behaviors:
 | Command | What it does |
 |---|---|
 | `migrate` | Applies pending `.framework/migrations/` then `custom/migrations/` SQL files in filename order, tracked in the `_spine_migrations` ledger table, one transaction per file. `--db-password` (default `SUPABASE_DB_PASSWORD`), `--dry-run`, `--framework-only` (skip `custom/`) |
-| `migrations list` | Lists applied migrations from `supabase_migrations.schema_migrations` (`--json`) |
+| `migrations list` | Lists applied migrations from `_spine_migrations` (`--json`) |
 | `migrations status` | Diffs local migration files against applied ones (`--json`) |
 
 ## App management

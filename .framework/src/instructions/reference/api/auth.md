@@ -2,8 +2,8 @@
 title: API Authentication
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/_shared/principal.ts
   - .framework/functions/_shared/middleware.ts

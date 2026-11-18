@@ -2,8 +2,8 @@
 title: system-cron
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/system-cron.ts
   - .framework/functions/trigger-scheduler.ts
@@ -48,9 +48,14 @@ never match, so only internal machine principals pass — fail closed.
 
 ## Request contract
 
-- Query: `api_key` or `scheduler_key` (scheduler key auth path only).
+- Query: `api_key` or `scheduler_key` (scheduler key auth path only —
+  still requires a resolved non-anonymous principal, e.g. any `x-api-key`).
 - Headers: `x-internal-secret` (internal machine principal path).
 - No body is read.
+
+Prefer the header path for manual local calls: `netlify dev` logs
+request URLs verbatim, so `?api_key=<secret>` lands plaintext in dev
+log files — headers do not.
 
 ## What runs per invocation
 

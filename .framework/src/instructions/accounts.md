@@ -2,8 +2,8 @@
 title: Accounts
 audience: both
 kind: entity
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/functions/account-nodes.ts
@@ -22,6 +22,18 @@ account plus descendants), and a person may access several accounts and
 switch between them. Record `scope: "account"` in a type's `design_schema`
 means "rows belong to the active account"; `scope: "platform"` means the
 spine-system account.
+
+## Why it exists
+
+You need isolation between customers while still allowing cross-account support and system administration.
+
+**Why it exists (5-whys):**
+
+1. Multi-tenancy needs a unit of isolation — every record, role, and policy must answer "whose data is this?"
+2. `parent_id` makes tenancy hierarchical — orgs contain sub-orgs, agencies manage client accounts; support sees down the tree without seeing sideways.
+3. `account_paths` (closure table, ancestor/descendant/depth) exists because hierarchy lookups run inside RLS policies on every governed read — they must be a fast join, not a recursive CTE per row. `get_accessible_accounts` resolves the accessible set in one service-role RPC.
+4. Accounts are typed (`type_id` + stamped `design_schema`) because accounts are domain-shaped too — a "client org" and a "sandbox" can carry different fields, same types-as-data pattern as items.
+5. **Root:** tenancy is the foundation's non-negotiable — `accounts` defines the boundary, `account_paths` makes it traversable at policy speed, and every other primitive's `account_id` borrows this isolation. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

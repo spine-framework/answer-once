@@ -35,24 +35,32 @@ async function connectDb(): Promise<PgClient | null> {
     return null
   }
 
-  let projectRef: string
-  try {
-    const parsed = new URL(supabaseUrl)
-    if (
-      parsed.protocol !== 'https:' ||
-      parsed.username !== '' ||
-      parsed.password !== '' ||
-      parsed.port !== '' ||
-      parsed.search !== '' ||
-      parsed.hash !== '' ||
-      (parsed.pathname !== '/' && parsed.pathname !== '') ||
-      !/^[a-z0-9-]+\.supabase\.co$/.test(parsed.hostname)
-    ) {
-      throw new Error('not a hosted Supabase URL')
+  // SUPABASE_DB_URL carries the full connection itself, so the hosted-URL
+  // parse only applies on the derived-host path (db.<ref>.supabase.co). This
+  // also lets local stacks (supabase start → http://127.0.0.1:54321) migrate.
+  let projectRef: string | null = null
+  if (!process.env.SUPABASE_DB_URL) {
+    try {
+      const parsed = new URL(supabaseUrl)
+      if (
+        parsed.protocol !== 'https:' ||
+        parsed.username !== '' ||
+        parsed.password !== '' ||
+        parsed.port !== '' ||
+        parsed.search !== '' ||
+        parsed.hash !== '' ||
+        (parsed.pathname !== '/' && parsed.pathname !== '') ||
+        !/^[a-z0-9-]+\.supabase\.co$/.test(parsed.hostname)
+      ) {
+        throw new Error('not a hosted Supabase URL')
+      }
+      projectRef = parsed.hostname.split('.')[0]
+    } catch {
+      throw new Error(
+        'Invalid SUPABASE_URL — expected a URL like https://<project-ref>.supabase.co ' +
+        '(for local `supabase start` stacks set SUPABASE_DB_URL instead)'
+      )
     }
-    projectRef = parsed.hostname.split('.')[0]
-  } catch {
-    throw new Error('Invalid SUPABASE_URL — expected a URL like https://<project-ref>.supabase.co')
   }
 
   const { default: pg } = await import('pg')

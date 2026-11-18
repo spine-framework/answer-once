@@ -2,8 +2,8 @@
 title: Core vs Custom Boundary
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/upgrade.ts
@@ -44,6 +44,16 @@ plus tests and vendored packages. This tree is created by `init` / `create-app`
 / `install-app`; it is not part of the npm package and `upgrade` never writes
 into it.
 
+"Project-owned" is scoped to **framework upgrade**. The app lifecycle
+commands are a different writer: `install-app`/`update-app` re-copy every
+package entry into `custom/apps/<slug>/` (preserving only the local
+`manifest.json` on reinstall), and `uninstall-app` deletes the directory.
+Inside a *packaged* app, shipped files — `decisions/`, `docs/`,
+`functions/`, `pages/`, … — are publisher-owned and replaced on app
+update; hand-written additions there are not guaranteed to survive.
+`custom/decisions/`, `custom/migrations/`, `custom/functions/`, and your
+own hand-written apps are untouched by everything.
+
 **Shared but owned:** `config/` (Vite + tsconfig), `netlify.toml`, and the
 `scripts/` assembly-and-integrity scripts ship with the framework and are
 synced on upgrade, with one carve-out — `netlify.toml`
@@ -78,8 +88,10 @@ re-hashes the tree and compares.
   known app slugs, or if `custom/` code reaches `.framework/` via relative
   imports instead of the `@core` alias.
 - **Aliases** — `config/tsconfig.json` maps `@core/*` → `.framework/src/*` and
-  `@custom/*` → `custom/*`; `config/vite.config.ts` maps `@core` to the
-  assembled `src` tree. `config/tsconfig.functions.json` maps `@shared/*` to
+  `@custom/*` → `custom/apps/*`; `config/vite.config.ts` maps `@core` to the
+  assembled `src` tree and `@custom` to `custom/apps` as well — the two
+  configs agree by decision `0025` (`@custom/<slug>` = cross-app import).
+  `config/tsconfig.functions.json` maps `@shared/*` to
   the assembled `_shared/` directory — custom functions import `./_shared/...`
   at runtime.
 - **Assembly** — `scripts/assemble-frontend.sh` copies `.framework/src` as the

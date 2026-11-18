@@ -4,7 +4,7 @@
  * Make.com scenario payload into a full Answer Once intake: ao_support_ticket
  * + external ao_ticket_thread + first inbound ao_ticket_message + triage
  * episode kick. Make becomes an intake channel (Gmail, Typeform, Shopify,
- * etc.) whose tickets are triaged exactly like portal-originated ones.
+ * etc.) whose tickets go through the same triage flow as UI-originated ones.
  *
  * The adapter creates the records itself (via admin-data) rather than
  * returning the ticket as its AdapterResult — integration-routes creates the

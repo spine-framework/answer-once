@@ -2,8 +2,10 @@
 title: Test your code
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-test
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - vitest.config.ts
   - .framework/tests/setup.ts

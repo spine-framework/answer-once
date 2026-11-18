@@ -2,8 +2,8 @@
 title: Collaboration records (threads, messages, links, attachments, watchers)
 audience: both
 kind: entity
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 95cb55f
+verified_on: 2026-11-15
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/functions/admin-data.ts
@@ -21,6 +21,80 @@ gets a conversation (`threads`/`messages`), relationships to other records
 (`watchers`). They are ordinary typed records — created and read through
 `/api/admin-data` like everything else — but their shapes and uniqueness
 rules are fixed.
+
+## Why it exists
+
+### link-types
+
+Without typed links, a row in `links` is just two IDs. Link types give the relationship a name, icon, color, and app-specific semantics.
+
+**Why it exists (5-whys):**
+
+1. Free-text relationship names can't be queried, validated, displayed consistently, or reasoned about by shared code — `links.link_type_id` is required, and `resolveLinkTypeIds` throws on unregistered slugs.
+2. A hardcoded enum of relationship kinds would freeze domain semantics into core — every new relationship would need a platform change.
+3. A registry gives relationships identity: a slug to resolve, a name/icon/color to render, and a constraint that stops typos becoming data.
+4. The schema permits app-scoped vocabularies (`UNIQUE(app_id, slug)`), but the shared resolver looks up slugs globally — app-scoped slugs that collide across apps will mis-resolve. Treat slugs as platform-global today.
+5. **Root:** relationships are part of the domain, so their vocabulary must be app-definable — but they're queried by platform code, so that vocabulary must be registered data, not per-app convention. *(confirmed 2026-11-13)*
+
+### attachments
+
+You need to upload, store, and retrieve files tied to specific records with access control.
+
+**Why it exists (5-whys):**
+
+1. "Record has files" is universal — tickets, records, messages all need it; per-type file columns mean per-type upload/storage/permission plumbing.
+2. The table stores file metadata, not blobs: binary lives in object storage (`storage_path` + `storage_provider`), the row holds what queries need — filename, size, mime, provenance.
+3. `type_id` + typed attachments let apps declare kinds (invoice vs screenshot vs contract) with their own schema and permissions.
+4. `uploaded_by` + `account_id` + RLS ride on the same governance as every other record — files are the most common leak vector, so access control can't be bespoke.
+5. **Root:** files are a capability every domain needs but none should rebuild — the attachment row decouples "this record has files" (governed data) from "the file's bytes" (provider storage), so storage stays swappable and access stays governed. *(confirmed 2026-11-13)*
+
+### links
+
+You need many-to-many or directed relationships (parent/child, blocks, depends on, verified by) without adding foreign keys to every type.
+
+**Why it exists (5-whys):**
+
+1. Relationships are many-to-many and open-ended — any record can relate to any other; foreign keys fix both cardinality and participants.
+2. Polymorphic `source_type`/`target_type` connects anything to anything — item↔item, item↔thread, cross-app — without a column or join table per pairing.
+3. `UNIQUE(source_type, source_id, target_type, target_id, link_type_id)` means the same pair can carry multiple *kinds* of relationship but not duplicates — dedup is a constraint, not application logic.
+4. `metadata` + `data` on the link itself makes relationships first-class records — edges carry data (weight, provenance, reason), not just endpoints.
+5. **Root:** domain models are graphs, and graphs can't be pre-declared in table structure — `links` makes the relationship layer as generic as the record layer, the only way a generic platform supports arbitrary domains. *(confirmed 2026-11-13)*
+
+### messages
+
+You need ordered, typed messages with metadata (direction, visibility, sender) attached to threads.
+
+**Why it exists (5-whys):**
+
+1. A thread is a context; messages are its ordered content — different cardinality, lifecycle, and permissions (a message can be internal-only inside a public thread).
+2. `sequence` + `UNIQUE(thread_id, sequence)` gives deterministic ordering that survives clock skew and concurrent writers — sequence is a contract, timestamps are a hint.
+3. `direction` + `visibility` + `person_id` per row captures flow direction (inbound/outbound), audience, and authorship for audit and attribution — per message, not per thread.
+4. `type_id` on messages lets apps declare *kinds* of message (note vs email vs system event) with their own schema — types-as-data at message granularity.
+5. **Root:** conversation content needs structure the container can't provide — ordering, direction, audience, authorship per entry — so messages are their own typed, sequenced primitive rather than text blobs on the thread. *(confirmed 2026-11-13)*
+
+### threads
+
+You need a consistent way to add comments, chat history, or audit trails to any record without adding comment fields to every type.
+
+**Why it exists (5-whys):**
+
+1. A comment field per type means per-type plumbing for a capability every record can need.
+2. Polymorphic `target_type`/`target_id` attaches a thread to any record — item, account, another app's record — without schema changes per attachable thing.
+3. A thread is a container separate from its messages: it has its own lifecycle (open/closed, visibility, participants) independent of the content inside.
+4. `UNIQUE(target_type, target_id, visibility)` enforces one conversation context per thing per audience — internal and public threads on the same record are separate contexts, not filtered views of one pile.
+5. **Root:** conversation is a capability, not a property of one entity — the platform provides it once, polymorphically, so every type gets threads without shipping a comments feature. *(confirmed 2026-11-13)*
+
+### watchers
+
+You need to know who cares about a record change without embedding a watchers list in every type.
+
+**Why it exists (5-whys):**
+
+1. "Someone cares about changes to this record" is universal — per-type subscriber lists are per-type plumbing and can't drive generic notification logic.
+2. Polymorphic `target_type`/`target_id` lets any record be watched — same reason threads and links are polymorphic.
+3. `watch_type` + `notification_level` capture that watching isn't binary — all changes vs status only vs mentions; the preference must live on the subscription or notification routing can't be generic.
+4. `UNIQUE(target_type, target_id, person_id)` means one subscription per person per thing — duplicate watchers mean duplicate notifications.
+5. **Root:** notification routing needs a single place to answer "who cares about this?" — `watchers` makes interest queryable data so any record type is subscribable and any notifier (including pipelines, which resolve `watchers` as recipients, and agents, which can add them) can find its audience. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

@@ -2,8 +2,8 @@
 title: Integrations
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/integrations.ts
   - .framework/functions/integration-outbound.ts
@@ -16,6 +16,34 @@ source_files:
 ## What this is for
 
 An **integration** connects Spine to an external service (OpenAI, Resend, a generic HTTP endpoint, a database, ...). The record stores the provider, runtime `config` (including which adapter handles calls), and `credentials`. Pipelines and app code reference the integration by slug.
+
+## Why it exists
+
+### integrations
+
+You need a central place to manage third-party connections and route incoming webhooks without hardcoding URLs in every function.
+
+**Why it exists (5-whys):**
+
+1. Connections (provider endpoints, tokens, feature flags) are per-app per-account — hardcoded means redeploys and secrets in code.
+2. `config`/`metadata` JSONB absorbs provider variance — every service's shape differs; a document per integration beats a column per possible field.
+3. `UNIQUE(app_id, slug)` + `type_id` make integrations domain vocabulary — apps declare which services they connect; accounts bind instances.
+4. Typed integrations mean a "Slack" connection and a "webhook" connection carry different schemas — same types-as-data pattern.
+5. **Root:** external connectivity is configuration the platform must govern — `integrations` makes third-party connections declarable, scoped, and swappable instead of code-bound. *(confirmed 2026-11-13)*
+
+### webhook-handlers
+
+Every new integration used to require a static import in `integration-routes.ts`. The registry lets apps register handlers at runtime.
+
+**Why it exists (5-whys):**
+
+1. A static route table means platform edits per app handler — `integration_routes` was exactly that, and `004` dropped it for this registry.
+2. Self-registration (`function_name` + `events[]` via `_shared/webhook-registration.ts`) makes handlers discoverable at runtime — no central file, no import graph crossing the core/custom boundary.
+3. `UNIQUE(app_id, account_id, name)` + a GIN index on `events` make dispatch a data lookup — `webhook-registry.ts` `resolveHandler` resolves by name/app/account, with caching.
+4. `is_deleted` soft-delete keeps the audit of what was registered when deliveries arrived — unregistering shouldn't erase history.
+5. **Root:** extensibility can't flow through core code — `webhook_handlers` makes inbound handlers discoverable data, so apps extend the integration surface without touching the framework. *(confirmed 2026-11-13)*
+
+Companion ledger: webhook-deliveries.
 
 ## Fields and settings
 

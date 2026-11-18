@@ -1183,7 +1183,7 @@ async function callInference(
       ...(modelConfig.tools?.length ? { tools: modelConfig.tools, tool_choice: 'auto' } : {})
     })
   } catch (err: any) {
-    if (err?.message?.includes('not found') || err?.message?.includes('credential')) {
+    if (err?.message?.includes('not found') || err?.message?.includes('credential') || err?.message?.includes('is not set')) {
       console.warn('No OpenAI integration or credential configured, returning mock inference response')
       return {
         content: `[Mock Response] Received ${context.length} chars of context. Set OPENAI_API_KEY in .env or configure the openai integration for live inference.`,

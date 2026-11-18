@@ -2,8 +2,10 @@
 title: Package and install an app
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-install-app
+verified_against: 71dae29
+verified_on: 2026-11-15
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts
@@ -123,7 +125,9 @@ seeds applied. Field-level manifest semantics are in
   `pipeline_slug`, and `send_notification` recipients are validated
   fail-closed before any DB writes; fix the manifest, don't retry.
 - **`SUPABASE_URL` must be a hosted `https://<ref>.supabase.co` URL** —
-  the migrator rejects anything else before connecting
+  unless `SUPABASE_DB_URL` is set, which carries the full connection
+  itself (and enables local `supabase start` stacks); without it the
+  migrator derives the host from `SUPABASE_URL` and rejects other shapes
   (`.framework/cli/commands/migrate.ts`).
 
 ## Reference

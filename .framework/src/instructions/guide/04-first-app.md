@@ -2,7 +2,7 @@
 title: Build your first app
 audience: developers, agents
 kind: guide
-verified_against: f69c37d
+verified_against: 8a0dc59
 verified_on: 2026-10-29
 source_files:
   - .framework/functions/types.ts
@@ -42,7 +42,7 @@ Admin UI → **Configs → Types → New** (or `POST /api/types`). Set:
   "scope": "account",
   "fields": {
     "title":    { "data_type": "text",   "label": "Title",    "required": true,  "system": true },
-    "status":   { "data_type": "select", "label": "Status",   "required": true,
+    "status":   { "data_type": "select", "label": "Status",   "required": true, "system": true,
                   "options": ["todo", "doing", "done"] },
     "priority": { "data_type": "select", "label": "Priority", "required": false,
                   "options": ["low", "normal", "high"] },
@@ -83,9 +83,13 @@ Admin UI → **Configs → Types → New** (or `POST /api/types`). Set:
 On save, `validation_schema` is regenerated from `design_schema` by the types
 API (`.framework/functions/types.ts`,
 `.framework/functions/_shared/schema-utils.ts`) — you never write it yourself.
-The rules that matter here: `select` fields need `options`; `title` is
-`system: true` so it maps to the `items.title` column while `status`,
-`priority`, and `notes` live in `items.data`; `record_permissions` is the base
+The rules that matter here: `select` fields need `options`; `title` and
+`status` are `system: true` so they map to the real `items.title` and
+`items.status` columns — a field named `status` *without* `system: true`
+lands in `items.data` while list/detail views still render the column's
+lifecycle value (`active`), so the flag is load-bearing for reserved column
+names — while `priority` and `notes` live in `items.data`;
+`record_permissions` is the base
 grant evaluated on every `/api/admin-data` call, and its keys are matched
 **verbatim** against `roles.slug` — so use real seeded slugs (`system_admin`,
 `engineering`, `support`, …); a nonexistent or misspelled slug silently grants
@@ -164,7 +168,8 @@ await apiFetch('/api/admin-data?action=create', {
     entity: 'items',
     type_slug: 'task',
     title: 'Ship the docs',
-    data: { status: 'todo', priority: 'high' }
+    status: 'todo',
+    data: { priority: 'high' }
   })
 })
 
@@ -172,7 +177,7 @@ await apiFetch('/api/admin-data?action=create', {
 await apiFetch('/api/admin-data?action=update&entity=items&id=<uuid>', {
   method: 'PATCH',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ data: { status: 'doing' } })
+  body: JSON.stringify({ status: 'doing' })
 })
 
 // remove — soft-deletes (is_active = false) unless soft=false is passed

@@ -56,7 +56,7 @@ echo ""
 # Only flag actual code (imports, JSX, logic) — comments, JSDoc, and string literals in examples are fine
 echo "3. Checking for app-specific references in core..."
 APP_REFS=$(grep -rE "^\s*(import|export|from|<[A-Z])" .framework/src/ --include="*.ts" --include="*.tsx" 2>/dev/null \
-  | grep -E "cortex|funnel|support-triage|kb-chunker|portal-signals" \
+  | grep -E "answeronce|answer-once|custom_demo|demo_" \
   | grep -v "manifest\.json\|webhook-registry" || true)
 if [ -n "$APP_REFS" ]; then
     echo "   ❌ FAIL: App-specific references found in core:"
@@ -92,9 +92,9 @@ echo ""
 
 # Check 6: Sidebar components should not be in core
 echo "6. Checking app-specific components removed from core..."
-if [ -d ".framework/src/components/cortex" ] || [ -d ".framework/src/components/crm" ]; then
+if [ -d ".framework/src/components/answer-once" ] || [ -d ".framework/src/components/demo" ]; then
     echo "   ❌ FAIL: App-specific component directories still exist in core"
-    ls -la .framework/src/components/ | grep -E "cortex|crm" || true
+    ls -la .framework/src/components/ | grep -E "answer-once|demo" || true
     VIOLATIONS=$((VIOLATIONS + 1))
 else
     echo "   ✅ PASS: App-specific component directories removed from core"

@@ -8,6 +8,19 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/reference/cli.md
+    - .framework/src/instructions/reference/functions/tests.md
+    - custom/apps/<slug>/tests/
+    - custom/tests/
+    - .framework/src/instructions/tasks/test-your-code.md
+  commands:
+    - "npm run test"
+    - "npm run test:unit"
+    - "npm run typecheck"
+    - "npm run verify"
+    - "npx spine-framework doctor"
 ---
 
 You run the project's verification suite and add tests in the right places.

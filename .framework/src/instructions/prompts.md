@@ -2,7 +2,7 @@
 title: Prompt Configs
 audience: both
 kind: entity
-verified_against: e13127d
+verified_against: 1485758
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/prompt-configs.ts
@@ -14,6 +14,18 @@ source_files:
 ## What this is for
 
 A **prompt config** stores the prompt body, model settings, escalation rules, knowledge sources, available tools, and metadata that AI agents and chat interfaces use at runtime. Callers select a config by slug.
+
+## Why it exists
+
+You want prompts to be editable in admin without redeploying code, and you want consistent variable naming across agents.
+
+**Why it exists (5-whys):**
+
+1. Prompts are edited constantly — code-bound prompts mean redeploys for wording and no audit of what the model was told.
+2. `config` + consistent variable conventions (`{{ticket}}`, `{{history}}`) let different agents share prompt structure without forking strings — templating needs declared config, not concatenation.
+3. `UNIQUE(app_id, slug)` makes prompts app vocabulary — seeded, versioned per app, overridable per account.
+4. Persona (agent) vs text (prompt) evolve independently — one agent can A/B prompts; one prompt can serve multiple agents.
+5. **Root:** what you tell the model *is* behavior — `prompt_configs` makes prompts governed data: editable in admin, seeded per app, and resolvable at runtime without a deploy. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

@@ -2,7 +2,7 @@
 title: "AI agents, prompt configs, and embeddings"
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
+verified_against: 15b5f8b
 verified_on: 2026-10-29
 source_files:
   - .framework/functions/ai-agents.ts

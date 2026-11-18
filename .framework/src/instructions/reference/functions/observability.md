@@ -2,8 +2,8 @@
 title: observability
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/observability.ts
   - .framework/functions/_shared/principal.ts

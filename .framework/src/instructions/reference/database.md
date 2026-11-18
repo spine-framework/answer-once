@@ -2,13 +2,14 @@
 title: Database Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 71dae29
+verified_on: 2026-11-15
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/004_core_rpc_and_broker.sql
   - .framework/migrations/018_runtime_tables.sql
   - .framework/migrations/035_rate_limits.sql
+  - .framework/migrations/046_security_missing_rls.sql
   - .framework/migrations/049_security_blocklist.sql
   - .framework/migrations/050_notifications.sql
   - .framework/migrations/054_kb_ingest_lease.sql
@@ -25,6 +26,10 @@ Column lists are the ones custom code actually reads/writes — every table has
 `account_id`, `app_id`, `created_by`/`updated_by`, and stamped
 `design_schema`/`validation_schema` jsonb. The canonical DDL is
 `.framework/migrations/001_core_schema.sql` (base) plus later migrations.
+**Every table is RLS-enabled** — verified across all migrations;
+`046_security_missing_rls.sql` closed the last gaps (`account_paths`,
+`invites`, `alerts`, `observability`, `test_runs`, `test_cases`,
+`test_results`, `_spine_migrations`).
 
 ## Tenancy & identity
 
@@ -130,3 +135,29 @@ in `data`.
 - [Design Schema](design-schema.md) · [Runtime Records](../concepts/runtime-records.md)
 - [admin-data](api/admin-data.md) — the API surface over these tables
 - `.framework/migrations/` — authoritative DDL
+
+## Why it exists
+
+### system-settings
+
+Some behavior (log levels, feature flags, tool defaults) should be configurable at runtime without redeploying code.
+
+**Why it exists (5-whys):**
+
+1. Environment variables require a redeploy to change, and scoped overrides (one account with louder logging, one tool's default) can't exist in env at all.
+2. These toggles don't belong in `apps.config` — they're cross-app, platform-owned, runtime-scoped. (`apps.config.analytics` was deliberately chosen over `system_settings` *for app-shipped config* — the distinction is ownership.)
+3. The store is scoped (`global` / `app` / `account` / `source` / `principal` / `tool`), not a flat map, because operability means "turn debug logging on for *this* account" — a flat toggle is all-or-nothing.
+4. It's lightly used today — `logging.ts` is the only live reader — because most app config legitimately lives in types, apps, and seed files.
+5. **Root:** a platform needs a narrow, scoped channel for behavior that changes at runtime without code deploys; everything else belongs in schema or app config. *(confirmed 2026-11-13)*
+
+### _spine-migrations
+
+The migration CLI must know which files to skip on subsequent runs so it does not re-run migrations that have already been executed.
+
+**Why it exists (5-whys):**
+
+1. Migrations must be idempotent-checked — the system needs to know what already ran or every `migrate` replays everything.
+2. Filenames (not version numbers or checksums) are ordered, human-readable identity (`NNN_description.sql`) — the ledger doubles as "what lineage built this database" for drift debugging.
+3. The tooling creates it (`CREATE TABLE IF NOT EXISTS` in the migrate CLI / `apply-single-migration.mjs`), not a migration — the ledger must exist before the first migration runs. It can't be row 001 of the thing it tracks.
+4. RLS is service-role-only (`046`) because the ledger is infrastructure — PostgREST exposure would leak platform internals, and tenants have no business in migration history.
+5. **Root:** reproducibility requires memory — the ledger is the smallest possible "what is true about this database's lineage" record, deliberately dumb so every tool that touches it can agree. *(confirmed 2026-11-13)*

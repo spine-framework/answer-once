@@ -1,3 +1,12 @@
+---
+title: ".framework/ — managed framework core"
+kind: index
+verified_against: 6d4c39b
+verified_on: 2026-11-15
+source_files:
+  - scripts/verify-integrity.sh
+---
+
 # `.framework/` — Spine Framework core (managed copy)
 
 This directory is the framework core of a Spine project: the React + Vite
@@ -44,4 +53,4 @@ to apply any new framework migrations.
 ## License
 
 Part of Spine Framework — see `LICENSE.md` at the project root
-(Spine Framework Business Use License).
+(Apache License 2.0).

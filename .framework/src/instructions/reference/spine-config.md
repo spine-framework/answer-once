@@ -2,8 +2,8 @@
 title: spine.config.json Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/schemas/spine.config.schema.json
   - .framework/templates/spine.config.neutral.json
@@ -62,6 +62,19 @@ an absent block falls back to Spine defaults.
 | `title` | `app_name` (or `"Spine Framework"`) | `document.title` and sidebar wordmark |
 | `logo_url` | `"/spine-logo.svg"` | public asset path for the brand logo |
 | `favicon_url` | `"/spine-logo.svg"` | swapped into `link[rel=icon]` at runtime |
+
+## `brands`
+
+Multi-brand map, resolved by `resolveBranding(config.branding, config.brands, hostname)`:
+`by_host` maps a request hostname to a brand slug, `definitions` holds
+per-brand identity, `default` is the fallback slug. A host with no
+`by_host` entry (and no `default`) uses flat `branding` as the base.
+
+| Key | Type | Effect |
+|---|---|---|
+| `default` | string | fallback brand slug when no host match |
+| `by_host` | `{hostname: brandSlug}` | host → brand resolution |
+| `definitions.<slug>` | object | per-brand identity: `name`, `app_name`, `title`, `site_url`, `logo_url`, `favicon_url`, `email_logo_url`, `email_from` |
 
 ## `registration`
 

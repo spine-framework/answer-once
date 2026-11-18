@@ -2,8 +2,8 @@
 title: Orientation — what Spine Framework is
 audience: developers, agents
 kind: guide
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: d4f74cf
+verified_on: 2026-11-17
 source_files:
   - package.json
   - netlify.toml
@@ -87,7 +87,8 @@ ASCII; the renderer does not load mermaid.
 
 Entity files all use the same seven sections — *What this is for → Fields and
 settings → Minimal configuration → Full configuration → Example → Core files →
-Agent notes* — so once you have read one, you know the shape of all of them.
+Agent notes* — plus a `## Why it exists` 5-whys block — so once you have read
+one, you know the shape of all of them.
 
 ## How to read it
 

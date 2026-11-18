@@ -7,6 +7,16 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/decisions/
+    - .framework/tests/unit/decision-records.test.ts
+    - custom/apps/<slug>/decisions/
+    - custom/decisions/
+    - custom/decisions/NNNN-<slug>.md
+    - .framework/src/instructions/concepts/decision-records.md
+  commands:
+    []
 ---
 
 You capture **why** a change was made so later work can check proposals

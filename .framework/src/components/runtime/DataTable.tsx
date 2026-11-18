@@ -48,7 +48,7 @@ export function DataTable({
   emptyIcon 
 }: DataTableProps) {
   const navigate = useNavigate()
-  const EmptyIconComponent = (Icons as Record<string, React.ComponentType<{ className?: string }>>)[emptyIcon] || Icons.Box
+  const EmptyIconComponent = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[emptyIcon] || Icons.Box
   
   const handleSort = (key: string) => {
     if (sort.field === key) {

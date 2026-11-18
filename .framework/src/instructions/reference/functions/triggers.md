@@ -2,13 +2,14 @@
 title: triggers
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/triggers.ts
   - .framework/functions/_shared/middleware.ts
   - .framework/functions/_shared/trigger-engine.ts
   - .framework/migrations/020_schema_reconciliation.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
   - .framework/public/_redirects
 ---
 
@@ -56,8 +57,12 @@ anonymous → 401.
 - `list`/`listByEvent`/`getExecutions`/`create` require `ctx.accountId`.
 - `create` requires `system_admin` or a `canCreate` grant from
   `resolveFirstSurfacePermissions(..., 'trigger', 'create')`.
-- `update`/`remove`/`toggle` have no explicit gate — humans are bounded
-  by RLS on `ctx.db`; machines run service-role.
+- `update`/`remove`/`toggle` are second-surface gated
+  (`canAccessConfigObject`, decision `0026`): `system_admin` only —
+  everyone else gets `Insufficient permissions to … triggers`. RLS
+  agrees: migration `081` splits `triggers_access` into an
+  account-scoped `triggers_read` plus a system-admin `triggers_write`,
+  so direct PostgREST matches the API.
 - Reads are sanitized: non-admins get `{ id }` per row (trigger rows
   carry no `design_schema`).
 
@@ -120,6 +125,7 @@ Standard `{ data, error, meta }` envelope.
 | `getExecutions` without `trigger_id` | 500 | `trigger_id is required` |
 | Missing create fields | 500 | `name, event_type, and pipeline_id are required` |
 | Non-admin without create grant | 500 | `Insufficient permissions to create triggers` |
+| Non-admin on `update`/`remove`/`toggle` | 500 | `Insufficient permissions to update/delete/toggle triggers` |
 | Missing `id` | 500 | `Trigger ID is required` |
 | Missing row | 500 | `Trigger not found` |
 | Missing/unknown action | 500 | `Unsupported action: <action>` |

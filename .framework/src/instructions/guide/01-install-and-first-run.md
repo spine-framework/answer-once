@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: d0c49d4
-verified_on: 2026-10-30
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -29,6 +29,13 @@ source_files:
 Prerequisites: Node ≥ 22.13 and npm ≥ 10 (recorded in `.spine-manifest.json`
 by init), a Supabase project, and (for local dev) the Netlify CLI — pinned as a
 devDependency, so `npm install` puts it in `node_modules`.
+
+> **Joining a project that already exists?** This page is the from-scratch
+> install — see [Join an existing project](06-join-an-existing-project.md)
+> for the clone → env → migrate → `doctor` short path.
+>
+> **Running this as an agent?** The `spine-install` skill is the
+> deterministic, no-browser sequence for this page.
 
 ## Step 1 — scaffold
 
@@ -103,6 +110,49 @@ protection on auth pages), `SCHEDULER_API_KEY` (system-cron HTTP guard), and
 is unset, triggers write a `queued` execution row but the pipeline runner is
 never invoked (`.framework/functions/_shared/trigger-engine.ts`).
 
+### Local stack — `supabase start` instead of a hosted project
+
+A local Supabase CLI stack covers the same surface with no hosted project:
+
+```bash
+supabase init && supabase start    # run inside the project dir
+```
+
+`supabase start` prints the API URL and JWTs. Point the env vars at it:
+
+| Variable | Local value |
+|---|---|
+| `VITE_SUPABASE_URL`, `SUPABASE_URL` | `http://127.0.0.1:54321` |
+| `VITE_SUPABASE_ANON_KEY`, `SUPABASE_ANON_KEY` | the printed `anon key` JWT |
+| `SUPABASE_SERVICE_ROLE_KEY` | the printed `service_role key` JWT |
+| `SUPABASE_DB_URL` | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
+
+`SUPABASE_DB_URL` is **required** on a local stack — `migrate` only derives
+the database host from `SUPABASE_URL` when it is absent, and the hosted-URL
+check rejects `127.0.0.1` (see `reference/env-vars.md`).
+
+Three local-only adjustments the installer can't make for you:
+
+- **CSP.** `netlify.toml`'s `connect-src` allows `https://*.supabase.co`
+  only, so browser auth against a local stack fails with a bare "Failed to
+  fetch". Add the loopback origins
+  `http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321
+  ws://localhost:54321`. `netlify.toml` is not in `.spine-manifest.json`,
+  so `npm run verify` won't flag the edit — but it is **regenerated on
+  every upgrade** (`renderNetlifyToml` keeps only
+  `[functions."custom_*"]` sections), so re-apply this CSP change after
+  each `npx spine-framework upgrade`. `netlify dev` does NOT
+  hot-reload headers — restart `dev:netlify` after editing. The same holds
+  for `.env`: `netlify dev` injects env vars when each function process
+  spawns — edits are not re-injected into already-loaded functions, so
+  restart `dev:netlify` after changing `.env` too.
+- **Services.** The framework uses Postgres, GoTrue auth, PostgREST, and
+  Kong only — `storage`, `realtime`, `studio`, `inbucket`, `edge_runtime`,
+  and `analytics` may be disabled in `supabase/config.toml` when Docker
+  resources are tight (nothing in `.framework/` calls them).
+- **Email confirmation** is already off: the generated `config.toml` ships
+  `[auth.email] enable_confirmations = false`.
+
 ## Step 3 — install deps and verify
 
 ```bash
@@ -133,6 +183,9 @@ role, the `spine-core` and `admin` apps, the `spine-system` account, and the
 core runtime types (`.framework/migrations/003_core_system_data.sql`,
 `.framework/migrations/011_spine_system_account.sql`).
 
+`ref-optional` preflight warnings — references to types seeded by app
+packages that aren't installed — are expected on a bare install, not errors.
+
 ## Step 5 — run it
 
 ```bash
@@ -149,14 +202,17 @@ appears; this is normal, not a hang. Early requests during function bundling
 can crash the dev server (noted in `scripts/dev-netlify.sh`).
 
 Ports are **fixed**: `netlify dev` must bind 8888 and Vite 3001 — both are
-set in manifest-protected files (`netlify.toml` `[dev]` port/targetPort,
-`config/vite.config.ts`), and there is no supported alternate-port
+pinned by framework-owned config (`netlify.toml` `[dev]` port/targetPort,
+regenerated on upgrade; `config/vite.config.ts`, manifest-sealed), and
+there is no supported alternate-port
 configuration. Moving only one side breaks the `/api` proxy and can
-silently cross-connect two Spine projects on the same machine. Check the
-ports are free first (`lsof -i :8888 -i :3001`): `dev-netlify.sh` cleans up
-stale processes it owns but will not kill an unrelated server holding the
-port — a second Spine project's dev stack is the usual culprit; stop that
-one yourself.
+silently cross-connect two Spine projects on the same machine. There is no
+supported coexistence — two Spine dev stacks cannot run simultaneously, so
+the only option is stopping one (its Supabase data volumes are preserved by
+`supabase stop`). Check the ports are free first (`lsof -i :8888 -i :3001`):
+`dev-netlify.sh` cleans up stale processes it owns but will not kill an
+unrelated server holding the port — a second Spine project's dev stack is
+the usual culprit; stop that one yourself.
 
 Ignore `Failed to fetch AI Gateway token … Unauthorized` in `netlify dev`
 output — that is the Netlify CLI's own AI feature probing your Netlify

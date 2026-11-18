@@ -1,3 +1,12 @@
+---
+title: "Spine Framework — agent rules (template)"
+kind: index
+verified_against: a0299a2
+verified_on: 2026-11-17
+source_files:
+  - .framework/src/instructions/internal/docs-contract.md
+---
+
 <!-- spine-framework:begin version={{SPINE_VERSION}} -->
 <!--
   Framework-owned block. `spine-framework upgrade` replaces everything between
@@ -22,7 +31,10 @@ outside it (`custom/`, app packages, project config).
   through the `@core/*` alias; from custom functions (post-assembly), import
   `./_shared/*`.
 - If a change could serve more than one app it may be a framework concern —
-  flag it to the maintainer instead of patching `.framework/` locally.
+  report it at support.spine-framework.com instead of patching
+  `.framework/` locally (`npx spine-framework doctor --ticket <id>`
+  attaches a sanitized diagnostic bundle to a ticket item in the project
+  DB — include that ticket reference in the report).
 
 ## Runtime record CRUD — admin-data only
 
@@ -72,7 +84,7 @@ stale schema breaks permissions, validation, and UI rendering.
     }
   },
   "record_permissions": {
-    "system-admin": ["create", "read", "update", "delete"]
+    "system_admin": ["create", "read", "update", "delete"]
   },
   "functionality": null
 }
@@ -85,7 +97,7 @@ stale schema breaks permissions, validation, and UI rendering.
   `display_type` values. Custom apps may omit views if they render everything
   themselves, but keeping them preserves the generic admin/runtime fallback.
 - `record_permissions`: required. The **base, most restrictive** grant per
-  role; at minimum grant `system-admin`.
+  role; at minimum grant `system_admin`.
 - `functionality`: `null` until automation bindings are confirmed active.
 
 **Permission design rule:** `record_permissions` is the base grant — if a role
@@ -114,7 +126,7 @@ actions are `read` and `write` only; `create`/`delete` are record-level.
   `attachment`, `watcher`, `person`, `account`).
 - `system: true` fields live at `record.<field>`; non-system fields at
   `record.data.<field>`. `system: true` fields restrict `write` to
-  `system-admin` when the record-level grant would allow writes.
+  `system_admin` when the record-level grant would allow writes.
 - `ownership`, `is_active`, `icon`, `color` are set on the `types` row.
 - Validate the JSON before saving: `npx spine-framework validate-schema <file>`.
 
@@ -186,4 +198,5 @@ the `spine-decision-capture` skill. Your records go in `custom/decisions/`
 - A code change without its doc update is incomplete.
 <!-- spine-framework:end -->
 
-<!-- Your project rules below this line are never overwritten by spine-framework upgrade -->
+<!-- Your project rules below this line are never overwritten by spine-framework upgrade.
+     Your `## Environments` promotion ladder lives here too — see the spine-ship skill. -->

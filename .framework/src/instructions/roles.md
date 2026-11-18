@@ -2,8 +2,8 @@
 title: Roles
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/roles.ts
   - .framework/functions/_shared/permissions.ts
@@ -17,6 +17,18 @@ source_files:
 ## What this is for
 
 A **role** is a named principal category assigned to people (`people.role_id`). Its **slug** is what permission evaluation keys on: each type's `design_schema.record_permissions` maps role slugs to the record actions that role may perform. The role's own `permissions` column feeds `principal.permissions` for coarse gates.
+
+## Why it exists
+
+Multi-tenant SaaS needs per-account, per-app role definitions that RLS and the permission engine can enforce.
+
+**Why it exists (5-whys):**
+
+1. Permission vocabularies are domain-shaped — a support app's roles aren't a CRM's — and hardcoding them freezes domain into core.
+2. `permissions` JSONB (a document per role) beats join tables here: role definitions are small, config-shaped, and read whole — the consumer needs "what can this role do?" in one row.
+3. `UNIQUE(slug)` is global while `app_id`/`account_id` columns scope ownership — slugs resolve globally (`role_slug` lookups in `invites.ts`), but system roles are platform-wide while apps/accounts can define domain vocabularies.
+4. `is_system` + `is_protected` keep framework roles (`system_admin`, `member`) intact — installs and seeds can't rewrite the vocabulary the platform depends on.
+5. **Root:** permissions need a name before they need enforcement — `roles` is the shared vocabulary that `record_permissions`, `required_roles`, `min_role`, and RLS policies all dereference. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

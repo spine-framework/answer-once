@@ -120,10 +120,13 @@ export function assertPublicOutboundUrl(rawUrl: string): void {
     throw new Error(`Outbound URL must be http(s): ${url.protocol}`)
   }
   const host = url.hostname.toLowerCase()
+  const allowPrivate = (globalThis as any).process?.env?.SPINE_ALLOW_PRIVATE_OUTBOUND
   if (
-    PRIVATE_HOSTNAMES.has(host) ||
-    PRIVATE_HOST_RE.test(host) ||
-    isPrivateIpLiteral(host)
+    allowPrivate !== '1' && allowPrivate !== 'true' && (
+      PRIVATE_HOSTNAMES.has(host) ||
+      PRIVATE_HOST_RE.test(host) ||
+      isPrivateIpLiteral(host)
+    )
   ) {
     const e: any = new Error(`Outbound URL host is not allowed: ${host}`)
     e.statusCode = 403

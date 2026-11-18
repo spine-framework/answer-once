@@ -2,8 +2,8 @@
 title: integration-routes
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: bc8b7a2
+verified_on: 2026-11-15
 source_files:
   - .framework/functions/integration-routes.ts
   - .framework/functions/_shared/webhook-registry.ts

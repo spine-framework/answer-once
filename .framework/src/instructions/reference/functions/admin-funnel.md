@@ -2,8 +2,8 @@
 title: admin-funnel
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/admin-funnel.ts
   - .framework/functions/_shared/middleware.ts
@@ -35,9 +35,9 @@ wiring bug); do not cite it as a live endpoint.
 
 ## Authentication
 
-If `metrics` were wired: `createHandler` requires any non-anonymous
-principal — no role check inside the function. All queries run on
-`adminDb` across **all accounts** (see Agent notes).
+If `metrics` were wired: `requireSystemContextWithAudit` runs first —
+anonymous → 401, non-`system_admin` → 403. All queries run on `adminDb`
+across **all accounts** (see Agent notes).
 
 ## Request contract
 
@@ -75,10 +75,11 @@ failing. Database errors would surface as thrown errors through
 - **Verify before use.** The missing `handler` export means there is no
   routed endpoint; check the current tree before assuming
   `GET /api/admin-funnel` does anything.
-- **Unscoped platform-wide reads.** If wired as-is, every query runs on
-  `adminDb` with no `account_id` filter and no `isSystemAdmin` gate — any
-  authenticated principal would see cross-account funnel data. A
-  `system_admin` check belongs in any dispatch handler that exposes it.
+- **Platform-wide reads, system-gated.** Every query runs on `adminDb`
+  with no `account_id` filter — appropriate for a platform funnel. The
+  `requireSystemContextWithAudit` gate means only `system_admin`
+  principals reach it, so cross-account visibility is intended, not a
+  leak.
 - Signal data is written elsewhere — `emitSignal` in
   `.framework/functions/_shared/funnel.ts` inserts typed signal items
   (`funnel_signal` among them) and fires `item_created` triggers; these

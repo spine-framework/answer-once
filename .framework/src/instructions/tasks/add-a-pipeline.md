@@ -2,8 +2,10 @@
 title: Add a pipeline
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-add-automation
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/_shared/pipeline-runner.ts

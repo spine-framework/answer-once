@@ -2,8 +2,8 @@
 title: Pipelines
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/_shared/pipeline-runner.ts
@@ -16,6 +16,18 @@ source_files:
 ## What this is for
 
 A **pipeline** is a multi-step workflow run by the pipeline runner. It can be triggered manually, on a schedule (via a timer), by a webhook, or by an event (via a trigger). This page controls pipeline metadata, trigger type, and the JSON `stages` the runner executes.
+
+## Why it exists
+
+You need repeatable workflows such as "validate schema, notify Slack, transition stage" without hardcoding them in every custom function.
+
+**Why it exists (5-whys):**
+
+1. "Validate → notify → transition" sequences get re-coded per app if there's no declared flow — same logic, N handlers.
+2. `stages` is a real column (reconciled in migration `020` — dev lineage had it, `001` dropped it) interpreted by `pipeline-runner.ts`, so every app's workflow shares one executor instead of bespoke code.
+3. `UNIQUE(app_id, slug)` + `type_id` make pipelines domain vocabulary — apps declare flows (triage, escalation) scoped to their app, typed like everything else.
+4. `pipeline_executions` records status, input/output data, and errors per run — async workflows are unauditable without a durable run log.
+5. **Root:** automation is domain behavior, so it must be declarable like the rest of the domain — `pipelines` turns multi-step business logic into seeded data the platform executes and audits. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

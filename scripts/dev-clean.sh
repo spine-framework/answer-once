@@ -60,6 +60,10 @@ done
 pgrep -f "$PROJECT_ROOT" 2>/dev/null | while read -r pid; do
   cmd=$(ps -p "$pid" -o command= 2>/dev/null || true)
   case "$cmd" in
+    # Shell/npm wrappers hold no ports — their real children match below and
+    # die by name. Killing the wrapper amputates detached launchers whose
+    # stack would otherwise survive.
+    *"bash -c"*|*"sh -c"*|*"npm run "*) ;;
     *vite*|*netlify*|*esbuild*|*lambda-local*)
       note "repo proc: killing $(echo "$cmd" | cut -c1-80) (pid $pid)"
       kill "$pid" 2>/dev/null || true

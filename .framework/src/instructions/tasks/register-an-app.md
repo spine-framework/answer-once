@@ -2,7 +2,9 @@
 title: Register an app
 audience: developers, agents
 kind: task
-verified_against: b3b3ae0
+skills:
+  - spine-new-app
+verified_against: 8a0dc59
 verified_on: 2026-11-01
 source_files:
   - .framework/cli/commands/create-app.ts

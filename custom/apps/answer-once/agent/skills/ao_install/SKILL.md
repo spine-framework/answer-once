@@ -5,6 +5,11 @@ allowed-tools:
   - exec
   - read
   - grep
+depends_on:
+  files:
+    - custom/apps/answer-once/src/instructions/tasks/install.md
+  commands:
+    - "npm run verify"
 ---
 
 You install the **answer-once** app. Read

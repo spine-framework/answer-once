@@ -50,7 +50,7 @@ export function DataStats({ stats, data, loading }: DataStatsProps) {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => {
-        const IconComponent = (Icons as Record<string, React.ComponentType<{ className?: string }>>)[stat.icon] || Icons.Box
+        const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[stat.icon] || Icons.Box
         const value = loading ? '-' : calculateStat(stat)
         
         return (

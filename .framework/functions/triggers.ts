@@ -208,8 +208,13 @@ export const create = createHandler(async (ctx, body) => {
 
   return data
 })
-// No explicit permission call; relies on caller middleware
 export const update = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): system_admin only —
+  // canAccessConfigObject denies everyone else, machines included.
+  if (!(await permissions.canAccessRecord(ctx, { type: 'triggers' }, 'update'))) {
+    throw new Error('Insufficient permissions to update triggers')
+  }
+
   const id = body?.id || ctx.query?.id
   const { id: _bodyId, ...updates } = body || {}
 
@@ -241,6 +246,11 @@ export const update = createHandler(async (ctx, body) => {
   return data
 })
 export const remove = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): system_admin only.
+  if (!(await permissions.canAccessRecord(ctx, { type: 'triggers' }, 'delete'))) {
+    throw new Error('Insufficient permissions to delete triggers')
+  }
+
   const id = body?.id || ctx.query?.id
 
   if (!id) {
@@ -276,6 +286,12 @@ export const remove = createHandler(async (ctx, body) => {
   return { success: true }
 })
 export const toggle = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): toggling is a write —
+  // system_admin only.
+  if (!(await permissions.canAccessRecord(ctx, { type: 'triggers' }, 'update'))) {
+    throw new Error('Insufficient permissions to toggle triggers')
+  }
+
   const id = body?.id || ctx.query?.id
 
   if (!id) {

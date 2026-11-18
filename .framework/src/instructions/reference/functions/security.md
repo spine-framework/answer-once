@@ -2,8 +2,8 @@
 title: security
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/security.ts
   - .framework/functions/_shared/middleware.ts
@@ -113,9 +113,9 @@ Standard `{ data, error, meta }` envelope.
 | Invalid `type` | 500 | `invalid type: <type>` |
 | Blocklist write failures | 500 | `security_blocklist upsert failed: …` etc. |
 
-The system-admin denial is returned as the handler result, so it lands
-inside `data` (a `{ statusCode, headers, body }` object) with HTTP 200 —
-not as a real 403. See "Agent notes".
+The system-admin denial is a real HTTP 403 — `requireSystemContextWithAudit`
+throws `{ statusCode: 401 | 403 }` and `createHandler` maps it to the HTTP
+status (F-051 fix). See "Agent notes".
 
 ## Agent notes
 
@@ -133,8 +133,6 @@ not as a real 403. See "Agent notes".
   'skipped'` just means Netlify env vars are absent, while
   `layers.auth: 'skipped'` means the person has no `auth_uid` (e.g. an
   unregistered invite stub).
-- Denial quirk: a non-system-admin caller gets HTTP 200 with the denial
-  response object nested under `data`, because
-  `requireSystemContextWithAudit(ctx)` returns a response-shaped value
-  that the outer envelope wraps. Check `data.statusCode === 403` rather
-  than the HTTP status.
+- Non-system-admin callers get a real HTTP 403 (`Authentication required`
+  for anonymous, `System context required` for authenticated non-admins) —
+  the denial throws, it is not wrapped under 200.

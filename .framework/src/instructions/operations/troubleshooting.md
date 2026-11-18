@@ -2,8 +2,10 @@
 title: Troubleshooting Playbook
 audience: both
 kind: guide
-verified_against: d0c49d4
-verified_on: 2026-10-30
+skills:
+  - spine-troubleshoot
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/_shared/trigger-engine.ts
   - .framework/functions/_shared/pipeline-runner.ts
@@ -38,6 +40,23 @@ Everything operational lands in three places (see
    (**Configs → Deliveries** / `/api/deliveries`): `last_error`,
    `response_status`, `next_attempt_at`; `POST /api/deliveries?action=retry`
    re-fires an outbound delivery.
+
+## Escalating to framework support
+
+When the fault is inside `.framework/` (don't patch core) or you've run
+the isolation procedure and still can't name the cause:
+
+1. **Report at support.spine-framework.com** — the framework's support
+   channel for consumers.
+2. **Attach diagnostics**: `npx spine-framework doctor --ticket <id>`
+   writes a sanitized diagnostic bundle into `data.diagnostics` of an
+   `items` row *in your own project database* (e.g. a ticket record your
+   app keeps) — it does not send anything to the support site. Create or
+   pick the ticket item first, run the command, then reference that
+   ticket in your support report.
+3. **Include**: the symptom + signature row you hit, the doctor output,
+   `system manifest` version, and whether it's reproducible on a clean
+   install.
 
 ## Common failure signatures
 
@@ -167,4 +186,4 @@ find why it never reached its terminal write. Useful queries:
 
 - [Observability](../concepts/observability.md) — logs/executions/deliveries model
 - [Errors and Envelopes](../reference/api/errors-and-envelopes.md) — the 200-wrapped-denial contract
-- [Security Checklist](security-checklist.md) · [Migrations](migrations.md) · [Deployment](deployment.md)
+- [Security Checklist](security-checklist.md) · [Migrations](migrations.md) · [Deployment](deployment.md) · [Backup and recovery](recovery.md)

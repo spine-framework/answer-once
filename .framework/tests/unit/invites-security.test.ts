@@ -131,7 +131,7 @@ describe('completeRegistration', () => {
     } as any)
 
     const res = await completeRegistration(makeCtx() as any, {
-      app: 'portal',
+      app: 'demo',
       path: 'new_account',
       account_name: 'Acme Co',
       email: 'victim@other.example', // spoofed — must not drive placement
@@ -139,7 +139,7 @@ describe('completeRegistration', () => {
 
     expect(adminDb.rpc).toHaveBeenCalledWith('complete_registration_placement', {
       p_person_id: 'person-1',
-      p_app_slug: 'portal',
+      p_app_slug: 'demo',
       p_path: 'new_account',
       p_account_name: 'Acme Co',
       p_host: null,
@@ -156,7 +156,7 @@ describe('completeRegistration', () => {
   it('rejects when app or path is missing', async () => {
     await expect(completeRegistration(makeCtx() as any, { path: 'new_account' }))
       .rejects.toThrow('app and path are required')
-    await expect(completeRegistration(makeCtx() as any, { app: 'portal' }))
+    await expect(completeRegistration(makeCtx() as any, { app: 'demo' }))
       .rejects.toThrow('app and path are required')
     expect(adminDb.rpc).not.toHaveBeenCalled()
   })
@@ -164,14 +164,14 @@ describe('completeRegistration', () => {
   it('maps RPC errors (unknown app, disabled registration, join_request policy) to a 400', async () => {
     const cases = [
       "Unknown or uninstalled app 'ghost' or no registration policy configured",
-      "Registration is not enabled for app 'portal'",
-      "App 'portal' does not allow domain-based join requests",
+      "Registration is not enabled for app 'demo'",
+      "App 'demo' does not allow domain-based join requests",
       'No account found for this email domain',
     ]
     for (const message of cases) {
       vi.mocked(adminDb.rpc).mockResolvedValueOnce({ data: null, error: { message } } as any)
       const err = await completeRegistration(makeCtx() as any, {
-        app: 'portal', path: 'join_request',
+        app: 'demo', path: 'join_request',
       }).then(() => null).catch((e: any) => e)
       expect(err).toBeTruthy()
       expect(err.statusCode).toBe(400)
@@ -185,7 +185,7 @@ describe('completeRegistration', () => {
       error: null,
     } as any)
     const res = await completeRegistration(makeCtx() as any, {
-      app: 'portal', path: 'new_account', account_name: 'Acme Co',
+      app: 'demo', path: 'new_account', account_name: 'Acme Co',
     })
     expect(res).toMatchObject({ status: 'active', account_slug: 'acme-a1b2c3', role_slug: 'member_admin' })
   })
@@ -196,7 +196,7 @@ describe('completeRegistration', () => {
       error: null,
     } as any)
     const res = await completeRegistration(makeCtx() as any, {
-      app: 'portal', path: 'join_request',
+      app: 'demo', path: 'join_request',
     })
     expect(res).toMatchObject({ status: 'pending', next: 'pending_approval' })
   })
@@ -405,7 +405,7 @@ describe('createInvite', () => {
 
   it('rejects roles outside the app allowlist', async () => {
     queue.push(q({ data: { config: { invitation: { allowed_roles: ['member'] } } } }))
-    await expect(createInvite(adminCtx() as any, { ...baseBody, app: 'portal', role_slug: 'member_admin' }))
+    await expect(createInvite(adminCtx() as any, { ...baseBody, app: 'demo', role_slug: 'member_admin' }))
       .rejects.toThrow('not permitted')
   })
 
@@ -416,7 +416,7 @@ describe('createInvite', () => {
     vi.mocked(adminDataCreate).mockResolvedValue({ id: 'stub-1' } as any)
 
     const res = await createInvite(adminCtx() as any, {
-      ...baseBody, app: 'portal', base_url: 'https://app.example.com/some/path',
+      ...baseBody, app: 'demo', base_url: 'https://app.example.com/some/path',
     })
     expect(res.invite_url).toMatch(/^https:\/\/app\.example\.com\/register\?t=/)
     expect(res.invite_url).not.toContain('yourapp.com')

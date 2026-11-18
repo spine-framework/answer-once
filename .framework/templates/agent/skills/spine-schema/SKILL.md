@@ -8,6 +8,15 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/concepts/design-schema.md
+    - .framework/src/instructions/reference/design-schema.md
+    - .framework/src/instructions/types.md
+    - .framework/src/instructions/tasks/add-a-type.md
+  commands:
+    - "npx spine-framework validate-app"
+    - "npx spine-framework validate-schema"
 ---
 
 You author and validate `design_schema` JSON for Spine types. The schema drives
@@ -39,7 +48,7 @@ or unwriteable records.
    - `fields` — each field needs `data_type`, `label`, `required`.
    - `views.default_list` — `type: "list"`, `fields`, `default_sort`.
    - `views.default_detail` — `type: "detail"`, `sections[].fields`.
-   - `record_permissions` — base grant per role; at least `system-admin`.
+   - `record_permissions` — base grant per role; at least `system_admin`.
    - `functionality` — `null` until automation bindings are confirmed.
 3. Apply the permission rule: `record_permissions` is the most restrictive
    grant. Use `fields.<name>.permissions` **only** to loosen a field beyond the

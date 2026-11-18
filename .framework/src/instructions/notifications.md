@@ -2,7 +2,7 @@
 title: Notifications
 audience: both
 kind: entity
-verified_against: b3b3ae0
+verified_against: 1485758
 verified_on: 2026-11-01
 source_files:
   - .framework/migrations/050_notifications.sql
@@ -21,6 +21,18 @@ is written by pipeline `send_notification` stages and the agent-runner's
 notification action, and read by the signed-in recipient. It is the
 *inbound* counterpart to [Deliveries](deliveries.md), which tracks outbound
 webhook/integration sends.
+
+## Why it exists
+
+Automation needs a way to reach humans that survives the request — a send receipt isn't an inbox.
+
+**Why it exists (5-whys):**
+
+1. A notification is user-facing state — unread/read, badge counts, a list — not just a send receipt. `webhook_deliveries` is transport; `notifications` is the user's inbox.
+2. `person_id` recipient + polymorphic `target_type`/`target_id` tie the message to a person *and* a thing — "your ticket changed" links to the record it concerns.
+3. `source_type`/`source_id` record provenance — which pipeline execution or request produced it. The default (`pipeline_execution`) shows automation, not humans, is the primary producer.
+4. `is_read`/`read_at` keep read state on the row — the badge count is a query, not a counter to keep in sync.
+5. **Root:** automation needs a way to reach humans — `notifications` is where pipelines and agents deposit durable, person-scoped messages so "tell someone" is a governed write, not an email bolted on. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

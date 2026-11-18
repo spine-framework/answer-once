@@ -250,7 +250,7 @@ async function finalizeTicket(ctx: any, body: any) {
   // True reuse signal: prefer cited_sources (articles the answer actually cited),
   // fall back to retrieved_sources only when nothing was cited. document_id for
   // regular records is the item UUID; verify against published ao_kb_* items so
-  // CIL/code sources can't produce false positives.
+  // non-`ao_kb_*` document_ids can't produce false positives.
   let kbSourceIds: string[] = []
   if (answeredByAi && agentMsg) {
     const cited = Array.isArray(agentMsg.data?.cited_sources) ? agentMsg.data.cited_sources : []

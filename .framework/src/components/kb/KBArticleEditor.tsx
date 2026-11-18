@@ -351,7 +351,7 @@ export function KBArticleEditor({
     ? (formData.description || '')
     : (record?.description || '')
 
-  const buildPayload = () => {
+  const buildPayload = (): Record<string, any> => {
     const system: Record<string, any> = {}
     const data: Record<string, any> = {}
     Object.entries(schema?.fields || {}).forEach(([fieldName, fieldDef]: [string, any]) => {

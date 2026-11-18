@@ -2,8 +2,8 @@
 title: trigger-scheduler
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/trigger-scheduler.ts
   - .framework/functions/system-cron.ts
@@ -21,8 +21,8 @@ minute. The file itself is a thin shim: it detects whether the invocation
 is a genuine scheduled tick (which arrives with no credentials) and runs
 the shared `system-cron` handler under a fabricated system context, or
 falls through to `system-cron`'s normal middleware auth for everything
-else. All actual work — due schedules, due timers, threshold alerts,
-delivery retries, log cleanup — lives in `system-cron`.
+else. All actual work — due schedules, due timers, delivery retries,
+log cleanup — lives in `system-cron`.
 
 ## Route and methods
 

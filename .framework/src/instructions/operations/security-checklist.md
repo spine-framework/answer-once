@@ -2,8 +2,8 @@
 title: Security Checklist
 audience: both
 kind: guide
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts
@@ -15,7 +15,14 @@ source_files:
   - .framework/functions/security.ts
   - .framework/functions/logs.ts
   - .framework/functions/debug-auth.ts
+  - .framework/functions/timers.ts
+  - .framework/functions/triggers.ts
+  - .framework/functions/pipelines.ts
+  - .framework/functions/ai-agents.ts
+  - .framework/functions/prompt-configs.ts
+  - .framework/functions/embeddings.ts
   - .framework/migrations/049_security_blocklist.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
   - netlify.toml
   - .env.example
 ---
@@ -152,6 +159,21 @@ they are tightened:
   `isSystemAdmin ? adminDb : ctx.db`; a scoped machine key still gets
   `adminDb`, so "machine keys are always RLS-bounded" is not a safe
   assumption anywhere `ctx.db` is used without an explicit account filter.
+- **`pipelines`, `ai_agents`, `prompt_configs`, and `embeddings` writes
+  are ungated for humans** — their mutating handlers branch
+  `isSystemAdmin ? adminDb : ctx.db` with no engine check, so **any
+  account member — not just `system_admin` — can create/modify/delete
+  these config objects** via `/api/*`, bounded only by account-scoped
+  RLS. `timers`/`triggers` had this same shape until decision `0026`
+  (handler gates + migration `081`); the remaining tables are not yet
+  adjudicated, so treat their writes as tenant-writable, not
+  admin-only.
+- **`timers` and `triggers` writes are enforced** (fixed by decision
+  `0026`): mutating handlers call `canAccessConfigObject` —
+  `system_admin` only — and migration `081` replaced the account-scoped
+  `FOR ALL` policies with account-scoped read + system-admin write, so
+  direct PostgREST matches the API. Kept here as context for the
+  residual surfaces above.
 
 ## Checklist
 

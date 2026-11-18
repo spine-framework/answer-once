@@ -22,7 +22,7 @@
     "paths": {
       "@/*": ["../.assembled/src/*"],              // Assembled frontend
       "@core/*": ["../.framework/src/*"],          // Core source (same tree as .assembled/src base layer)
-      "@custom/*": ["../custom/*"],                // Custom source
+      "@custom/*": ["../custom/apps/*"],           // Custom app source (matches vite alias — decision 0025)
       "@shared/*": ["../.framework/functions/_shared/*"] // Shared functions (resolved at runtime via assembly)
     }
   },

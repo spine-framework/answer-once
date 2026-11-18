@@ -13,6 +13,8 @@ interface Article {
   status?: string
   description?: string
   created_at: string
+  type_slug?: string
+  design_schema?: { scope?: string }
   data?: Record<string, any>
 }
 

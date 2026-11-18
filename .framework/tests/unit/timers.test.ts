@@ -17,7 +17,8 @@ vi.mock('../../functions/_shared/audit.ts', () => ({
 }))
 
 vi.mock('../../functions/_shared/permissions.ts', () => ({
-  sanitizeRecordData: vi.fn((_ctx: any, record: any) => Promise.resolve(record))
+  sanitizeRecordData: vi.fn((_ctx: any, record: any) => Promise.resolve(record)),
+  canAccessRecord: vi.fn().mockResolvedValue(true)
 }))
 
 import { create, update, toggle } from '../../functions/timers.ts'

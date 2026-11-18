@@ -2,8 +2,8 @@
 title: admin-data API
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -121,9 +121,11 @@ thread is `external`/`public`.
 
 ## Triggers
 
-`create`/`update`/`remove` await `fireCreateTriggers` / `fireUpdateTriggers`
-/ `fireDeleteTriggers` (errors logged, never fail the request). Update
-triggers receive the previous row for field-change evaluation.
+`create`/`update` await `fireCreateTriggers` / `fireUpdateTriggers`
+(errors logged, never fail the request). **`remove` fires nothing** —
+`fireDeleteTriggers` is imported but never called, so `*_deleted`
+triggers do not run on this path. Update triggers receive the previous
+row for field-change evaluation.
 
 ## Examples
 

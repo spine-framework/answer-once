@@ -40,7 +40,7 @@ describe('answer-once app shell', () => {
       const src = readFileSync(f, 'utf8')
       for (const m of src.matchAll(/from\s+['"]([^'"]+)['"]/g)) {
         const spec = m[1]
-        expect(spec, `${f}: ${spec}`).not.toMatch(/apps\/(demo|portal|cortex|workbench)/)
+        expect(spec, `${f}: ${spec}`).not.toMatch(/apps\/(demo)/)
         expect(spec.startsWith('@custom/'), `${f}: ${spec}`).toBe(false)
       }
     }

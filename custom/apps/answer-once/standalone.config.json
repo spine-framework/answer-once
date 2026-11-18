@@ -12,7 +12,6 @@
       ".framework/seeds",
       ".framework/src",
       ".framework/tests",
-      ".framework/docs",
       ".framework/mcp",
       ".framework/templates"
     ],

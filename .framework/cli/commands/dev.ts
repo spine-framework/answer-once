@@ -4,25 +4,10 @@
 
 import type { Command } from 'commander'
 import { spawn } from 'child_process'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 import { watch, existsSync } from 'fs'
 
-
-
-const __filename = fileURLToPath(import.meta.url)
-
-
-const __dirname = dirname(__filename)
-/**
- * PROJECT_ROOT defines the root directory of the project, allowing for relative path resolution. It exists to facilitate file operations within the project structure.
- *
- * @sideEffects none
- * @stability   stable
- * @calls       resolve
- * @cil-generated
- */
-const PROJECT_ROOT = resolve(__dirname, '../../../')
+const PROJECT_ROOT = process.cwd()
 
 /**
  * Registers development commands for starting the Spine development server with various options. It facilitates the assembly and verification of core components before launching the server.

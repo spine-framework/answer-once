@@ -2,8 +2,8 @@
 title: Types
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/types.ts
   - .framework/src/pages/admin/TypesPage.tsx
@@ -18,6 +18,18 @@ source_files:
 ## What this is for
 
 A **type** is the design schema for a runtime record kind. It defines the fields, default list/detail views, record permissions, icon, and color that the generic admin and runtime UIs use to create, validate, and display records. Every `items`/`threads`/`messages`/etc. record is stamped with its type's `design_schema` at creation.
+
+## Why it exists
+
+Without `types`, a row in `items` could be any kind of record. Types turn generic tables into domain-specific records.
+
+**Why it exists (5-whys):**
+
+1. A table per entity means the shared runtime (CRUD, permissions, triggers, views, admin UI) needs custom code per entity — the domain gets tangled back into the platform.
+2. Letting every app write its own handlers means each re-implements validation, permission checks, and audit differently — the foundation bugs the framework exists to eliminate.
+3. The schema lives in the database, not app code, because a schema in code only runs where that code is deployed; a schema in the database is enforced on every write path — UI, API, pipelines, agents, integrations.
+4. The schema is declarative (`design_schema`), not code, because declarative data can be validated, diffed, seeded, reconciled on upgrade, and interpreted generically by UI and validators alike.
+5. **Root:** reusable foundations die when domain knowledge is hardcoded. `types` is the seam where the platform ends and the app begins — without a data-defined schema registry there is no generic middle layer at all. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

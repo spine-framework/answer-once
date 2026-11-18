@@ -1,0 +1,40 @@
+# Spine CI — framework-owned, replaced by `spine-framework upgrade`.
+# Put your own workflows in sibling files; anything named spine-* under
+# .github/workflows/ is framework territory.
+name: Spine CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Integrity first — a stale manifest fails everything downstream.
+      - name: Verify framework integrity
+        run: npm run verify
+
+      - name: Type check
+        run: npm run typecheck && npm run typecheck:functions
+
+      - name: Unit tests
+        run: npm run test
+
+      # Build last — `prebuild` re-runs verify + assemble, so this also
+      # catches assembly errors (basename collisions, missing imports).
+      - name: Build
+        run: npm run build

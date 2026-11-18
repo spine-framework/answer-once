@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useApi } from '../hooks/useApi'
 import { apiFetch } from '../lib/api'
 import { useNavigate } from 'react-router-dom'
-import { Box, UserGroupIcon, FileText, BarChart3, Settings, Plus, CubeIcon } from 'lucide-react';
+import { Box, FileText, BarChart3, Settings, Plus } from 'lucide-react';
 
 interface TypeStat {
   name: string
@@ -49,7 +49,7 @@ export function DashboardPage() {
                 name: type.name,
                 count: countData.count || 0,
                 slug: type.slug,
-                icon: CubeIcon
+                icon: Box
               }
             }
             return null

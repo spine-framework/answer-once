@@ -2,7 +2,9 @@
 title: Add an AI agent
 audience: developers, agents
 kind: task
-verified_against: e13127d
+skills:
+  - spine-add-ai-agent
+verified_against: 15b5f8b
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/ai-agents.ts

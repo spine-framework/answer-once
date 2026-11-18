@@ -63,8 +63,13 @@ export function validateDesignSchema(
 
   if (!schema.record_permissions || typeof schema.record_permissions !== 'object') {
     errors.push('record_permissions is required')
-  } else if (!Object.keys(schema.record_permissions).includes('system-admin') && !Object.keys(schema.record_permissions).includes('system_admin')) {
-    errors.push('record_permissions must grant at least system-admin or system_admin')
+  } else {
+    if (!Object.keys(schema.record_permissions).includes('system_admin')) {
+      errors.push('record_permissions must grant at least system_admin')
+    }
+    if (Object.keys(schema.record_permissions).includes('system-admin')) {
+      errors.push(`'system-admin' is not a valid role slug — record_permissions keys must match roles.slug verbatim (use 'system_admin')`)
+    }
   }
 
   if (schema.views) {

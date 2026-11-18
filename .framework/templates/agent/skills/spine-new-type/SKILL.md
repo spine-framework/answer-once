@@ -8,6 +8,14 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/concepts/runtime-records.md
+    - .framework/src/instructions/reference/design-schema.md
+    - .framework/src/instructions/types.md
+    - .framework/src/instructions/tasks/add-a-type.md
+  commands:
+    - "npx spine-framework validate-schema"
 ---
 
 You create a new Spine type: a `public.types` row whose `design_schema`
@@ -40,7 +48,7 @@ governs how runtime records validate, render, and authorize.
    - `fields`: every field gets `data_type`, `label`, `required`.
    - `views`: `default_list` (table fields + `default_sort`) and
      `default_detail` (sections → fields) — required for generic apps.
-   - `record_permissions`: base grant per role; at least `system-admin`.
+   - `record_permissions`: base grant per role; at least `system_admin`.
    - `functionality`: `null` until automation bindings are confirmed.
    See the `spine-schema` skill for the full checklist and valid values.
 
@@ -59,7 +67,7 @@ governs how runtime records validate, render, and authorize.
 
 - `validation_schema` is generated — never author it by hand.
 - Changing `data_type` on a field with existing records does not migrate data.
-- `system: true` fields restrict `write` to `system-admin` when the
+- `system: true` fields restrict `write` to `system_admin` when the
   record-level grant would otherwise allow it.
 - Verification: `validate-schema` clean + a created record reads back with
   the expected `data` shape.

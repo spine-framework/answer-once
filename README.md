@@ -1,3 +1,13 @@
+---
+title: "Answer Once — standalone readme"
+kind: index
+verified_against: 4dea482
+verified_on: 2026-11-17
+source_files:
+  - custom/apps/answer-once/manifest.json
+  - custom/apps/answer-once/docs/install.md
+---
+
 # Answer Once
 
 > A person should not have to answer the same organizational question twice.
@@ -124,6 +134,6 @@ To run **this repo** directly: same steps as above minus `npm create` —
 
 ## License
 
-See [LICENSE.md](LICENSE.md) — Answer Once Perpetual License. Unpaid installs
-are licensed for evaluation, testing, and due diligence only; production use
-requires a purchased license (see answer-once.com/license.html).
+See [LICENSE.md](../LICENSE.md) — Apache License 2.0. Free for any use,
+including commercial software products
+(see spine-framework.com/software-license.html).

@@ -1,11 +1,8 @@
 import type { Command } from 'commander'
 import { spawn } from 'child_process'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const PROJECT_ROOT = resolve(__dirname, '../../../')
+const PROJECT_ROOT = process.cwd()
 
 // Keeps suite names as a single source of truth for CLI validation
 type TestSuite = 'unit' | 'integration' | 'api' | 'ui' | 'all'

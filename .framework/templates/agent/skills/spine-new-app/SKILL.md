@@ -8,6 +8,25 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/apps.md
+    - .framework/src/instructions/concepts/apps-and-renderers.md
+    - .framework/src/instructions/guide/04-first-app.md
+    - .framework/src/instructions/reference/app-manifest.md
+    - .framework/src/instructions/tasks/document-your-app.md
+    - custom/.devin/skills/<prefix>_*/
+    - custom/apps/<slug>/
+    - custom/apps/<slug>/src/instructions/
+    - .framework/src/instructions/tasks/register-an-app.md
+    - .framework/src/instructions/tasks/build-a-custom-page.md
+    - .framework/src/instructions/tasks/add-a-role.md
+  commands:
+    - "npm run test"
+    - "npm run typecheck"
+    - "npx spine-framework install-app"
+    - "npx spine-framework update-db-app"
+    - "npx spine-framework validate-app"
 ---
 
 You scaffold a new Spine app into `custom/apps/<slug>/` following the app
@@ -61,6 +80,23 @@ package contract.
 
 5. **Install/dev:** `npx spine-framework install-app <pkg>` installs from npm;
    `npx spine-framework update-db-app <slug>` pushes manifest changes to the DB.
+
+## Adding a custom page to an existing app
+
+When the job is "this app needs a bespoke screen," not a new app — full
+procedure: `.framework/src/instructions/tasks/build-a-custom-page.md`.
+
+- Custom pages require `renderer: 'custom'` on the `apps` row —
+  `GenericAppShell` only generates routes for nav items carrying
+  `type_slug`. Generic CRUD apps should usually *stay* generic; go custom
+  for dashboards, wizards, bespoke layouts.
+- `CustomAppLoader` lazy-imports only `custom/apps/<slug>/index.tsx` —
+  pages live under `pages/` and are imported by `index.tsx`, which wires
+  its own `<Routes>` (or the app's router).
+- Inside the app, import framework modules via `@core/*` and runtime
+  record CRUD via `/api/admin-data` — never custom Netlify wrappers.
+- Register the page in `manifest.json` nav/routes, then
+  `npx spine-framework update-db-app <slug>` to push it.
 
 ## Rules
 

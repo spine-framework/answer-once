@@ -2,8 +2,8 @@
 title: Runtime Records
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/resolve-ids.ts
@@ -109,3 +109,29 @@ exists but looks empty" is a permission answer, not missing data.
   entities hard-delete.
 - Creates fire triggers (`fireCreateTriggers`) and per-type rate limits after
   permission checks — a custom insert path loses both.
+
+## Why it exists
+
+### item-progress
+
+You need to know "User X has completed 7 of 10 lessons" without adding progress fields to every item type.
+
+**Why it exists (5-whys):**
+
+1. Progress is per-person per-item (N×M) — a field can hold one value; "User X completed 7/10 lessons" needs rows.
+2. Completion/state tracking is a universal capability (courses, checklists, onboarding) that would otherwise be rebuilt per type.
+3. Rows are typed (`type_id`) because progress isn't just a percent — it's a state machine: the type's `design_schema.pipeline` declares valid states and `isValidTransition` gates `not_started → in_progress → completed` (or whatever pipeline the app declares).
+4. Person-scoped rows with RLS keep progress personal — each person sees their own; aggregate views are queries, not stored fields.
+5. **Root:** cross-cutting state (per-person, per-record) is the second dimension a single record can't express — `item_progress` is the platform's generic pattern for "every record × every person" state, complete with a declarable transition machine. *(confirmed 2026-11-13)*
+
+### items
+
+You need a single table that can hold deals, tickets, posts, KB articles, or any other record type without a separate table per entity.
+
+**Why it exists (5-whys):**
+
+1. Per-entity tables mean per-entity CRUD, RLS policies, UI, and permissions — the foundation rebuilt inside the app layer.
+2. An unstructured document store pushes typed fields, permissions, triggers, and schema validation back into app code.
+3. `type_id` + `data` JSONB means apps declare entities as seed data and ship zero DDL; `design_schema` is stamped at creation so records carry their contract.
+4. The `system` field split puts indexable fields (title, status) on real columns and arbitrary fields in `data` — typed columns where needed, freedom where not.
+5. **Root:** `types` is the seam where the domain enters as data; `items` is the governed store that makes it real — any declared type becomes a first-class record with permissions, validation, triggers, and audit for free. *(confirmed 2026-11-13)*

@@ -2,14 +2,18 @@
 title: Add a timer
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-add-automation
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/timers.ts
   - .framework/functions/system-cron.ts
   - .framework/functions/trigger-scheduler.ts
   - .framework/migrations/020_schema_reconciliation.sql
   - .framework/migrations/068_cron_schedule_timer_rpcs.sql
+  - .framework/migrations/071_timer_interval_keys.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
   - .framework/src/pages/admin/TimerDetailPage.tsx
 ---
 
@@ -22,13 +26,16 @@ Create a `public.timers` row that runs a pipeline every
 
 ## Prerequisites
 
+- The `system_admin` role — timer mutations are second-surface gated
+  (decision `0026`, migration `081`); account members read but cannot
+  write.
 - A pipeline to point at ([Add a pipeline](./add-a-pipeline.md)) —
   `get_due_timers` ignores timers with `pipeline_id` NULL.
 
 ## Steps
 
 1. **Create the timer.** Admin UI → **Configs → Timers → New**
-   (`configs/timers/new`), or `POST /api/timers` — `name` and `timer_type`
+   (`configs/timers/new`), or `POST /api/timers?action=create` — `name` and `timer_type`
    required (`.framework/functions/timers.ts`). Set
    `pipeline_id` and `config.interval_minutes`:
 
@@ -42,9 +49,9 @@ Create a `public.timers` row that runs a pipeline every
    ```
 
    `timer_type` is a label (`interval` | `cron` | `once` in the admin
-   detail page, `.framework/src/pages/admin/TimerDetailPage.tsx`) — the
-   only field that actually reschedules is `config.interval_minutes`
-   (see below).
+   detail page, `.framework/src/pages/admin/TimerDetailPage.tsx`) —
+   rescheduling resolves `config.interval_minutes` first, then
+   `config.interval_seconds` (seconds ÷ 60) (see below).
 
 2. **`next_execution` is armed for you.** On create or toggle-on, the API
    computes `next_execution` from `config.interval_minutes` (or
@@ -76,10 +83,12 @@ Create a `public.timers` row that runs a pipeline every
 4. **Rescheduling is automatic — or never.** `update_timer_after_run`
    stamps `last_execution`, increments `execution_count` /
    `success_count` / `failure_count`, and sets
-   `next_execution = now() + interval_minutes` when
-   `config.interval_minutes` is a positive number — otherwise `NULL`, so
-   the timer fires once and stops
-   (`.framework/migrations/068_cron_schedule_timer_rpcs.sql`).
+   `next_execution = now() + <resolved interval>` where the interval is
+   `config.interval_minutes` (canonical, minutes) or
+   `config.interval_seconds` (fallback, seconds ÷ 60) — otherwise `NULL`,
+   so the timer fires once and stops
+   (`.framework/migrations/071_timer_interval_keys.sql` — the dual-key
+   resolver; the RPCs themselves are from `068`).
 
 ## Verify
 
@@ -92,12 +101,14 @@ Create a `public.timers` row that runs a pipeline every
 
 ## Common mistakes
 
-- **`interval_seconds` vs `interval_minutes`.** The admin detail page seeds
-  `config` with `{ "interval_seconds": 3600 }`, but `update_timer_after_run`
-  only reads `config.interval_minutes` — a timer saved with the default
-  config fires once (if `next_execution` was set) and never reschedules.
-- **No `next_execution`.** The API can't set it; timers created through
-  `/api/timers` or the admin UI sit dormant until the column is seeded.
+- **`interval_seconds` vs `interval_minutes`.** `interval_minutes`
+  (minutes) is canonical; `interval_seconds` is a fallback (seconds ÷ 60).
+  A timer saved with only `interval_seconds` still reschedules — but set
+  `interval_minutes` for clarity since the admin page may seed either.
+- **`next_execution` is armed but can go NULL.** The API sets it on
+  create and re-arms on activation — a timer stuck dormant has usually
+  lost `next_execution` to a one-shot completion or a NULL reschedule;
+  check the column first.
 - **`toggle` is blind.** `?action=toggle` flips `is_active` to its negation
   with no target-state argument — read the row first.
 - **Cron expressions do nothing.** There is no cron-expression evaluator;

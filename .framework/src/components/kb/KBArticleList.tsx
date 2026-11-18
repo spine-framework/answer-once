@@ -311,7 +311,7 @@ export function KBArticleList({ typeSlugs, typeName, onSelect, onNew, onEdit }: 
     const updates: { id: string; type_slug?: string; data: any }[] = []
 
     newGroup.forEach((a, order) => {
-      const nextData = { ...a.data, order }
+      const nextData: Record<string, any> = { ...a.data, order }
       if (a.id === itemId) {
         nextData.parent_id = targetParentId ?? null
       }

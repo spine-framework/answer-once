@@ -2,8 +2,8 @@
 title: Observability Dashboard
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/ObservabilityDashboard.tsx
   - .framework/functions/observability.ts
@@ -14,6 +14,18 @@ source_files:
 ## What this is for
 
 The **Observability Dashboard** (`/spine-framework/admin/observability`, also `/observability/dashboard`) is the account's health console: event volume, error rate, latency percentiles, per-pipeline run stats, top actors, and recent threshold-alert breaches — all computed from the `logs` table and refreshed on an interval.
+
+## Why it exists
+
+You need stored numeric/business metrics (event volume, error rates, latency percentiles) that can be charted and alerted on, separate from the free-text `logs` table.
+
+**Why it exists (5-whys):**
+
+1. `logs` answers "what happened"; metrics answer "how much/how fast" — you can't chart `metric_value` out of a message string.
+2. `metric_name`/`metric_value`/`metric_unit` make metrics queryable series — named, numeric, unit-tagged, the shape charts and threshold checks need.
+3. Metrics live in the governed schema because they're account-scoped tenant data — error rates and latencies differ per tenant; external-only metrics lose the account dimension.
+4. `context`/`metadata` carry dimensions — a metric without which-function/which-span is a number with no debugging value.
+5. **Root:** "is the system healthy" is a data question — `observability` keeps measurable signals queryable where the rest of the governed data lives. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 
@@ -58,4 +70,4 @@ After deploying a new pipeline, set the range to Last Hour and refresh to 10s: E
 - Flat charts with healthy traffic = log-level filtering, not broken metrics — the dashboard can only chart what `system_settings.logging.levels` allowed to be written.
 - `system_admin` sees cross-account aggregates here; account members see only their own account.
 - The 10s refresh is client-side polling — each tick re-runs all five metric queries; don't leave it open on a metered connection.
-- Breach alerts shown here are read from `logs`, not from the alert records — see Threshold Alerts for the rules themselves.
+- Breach alerts shown here are read from `logs` rows with `event = 'threshold.breached'` — but nothing currently emits that event (the threshold evaluator was a dead path, removed; see `alerts.md`), so the feed is empty until threshold alerting is implemented.

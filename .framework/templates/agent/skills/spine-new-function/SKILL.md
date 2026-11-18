@@ -8,6 +8,15 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/api-keys.md
+    - .framework/src/instructions/reference/api/admin-data.md
+    - .framework/src/instructions/reference/functions/index.md
+    - custom/functions/
+    - .framework/src/instructions/tasks/write-a-function.md
+  commands:
+    - "npm run typecheck:functions"
 ---
 
 You decide whether a piece of server logic may become a custom function, and

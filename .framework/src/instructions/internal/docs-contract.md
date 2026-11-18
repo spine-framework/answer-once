@@ -2,12 +2,14 @@
 title: "Docs contract — how the instruction book is written, tested, and kept true"
 audience: developers, agents
 kind: reference
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: d4f74cf
+verified_on: 2026-11-17
 source_files:
   - scripts/docs-lint.mts
+  - scripts/docs-release-check.mts
+  - scripts/docs-retention-check.mts
+  - scripts/lib/docs-common.mts
   - .framework/src/instructions/README.md
-  - docs/audit/clean-room-walkthrough.md
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts
 ---
@@ -48,7 +50,9 @@ Docs are part of the change, not a follow-up chore. One rule, two layers:
 files whose behavior the page interprets. Editing any file in that set
 requires re-verifying every page that lists it, in the same change, and
 bumping `verified_against` (commit short hash) and `verified_on` (date).
-`npm run docs:lint` is the gate.
+`npm run docs:release-check --affected <base>..<head>` finds the affected
+set; `npm run docs:lint` inside `npm run gate` is the gate; the `docs-sync`
+skill is the procedure.
 
 **Custom.** Editing anything under `custom/apps/<slug>/` requires updating
 that app's `src/instructions/` in the same change:
@@ -84,13 +88,13 @@ unit/integrity gates — there is no secondary doc pipeline to re-sync.
 | `concepts/` | concept | "Why is it like this? What's the mental model?" | Model first, mechanics second; links to tasks |
 | `tasks/` | task | "How do I do X?" | `## Goal` → `## Steps` → `## Verify` → `## Common mistakes` → `## Reference` |
 | `reference/` | reference | "What's the exact spelling/shape?" | Tables over prose; every row verifiable against `source_files` |
-| Entity pages (root) | entity | "What is this thing and how do I configure it?" | The 7-section template (enforced by docs:lint) |
+| Entity pages (root) | entity | "What is this thing and how do I configure it?" | The 7-section template + `## Why it exists` (enforced by docs:lint) |
 | `operations/` | ui | "How do I run/diagnose it in the admin UI?" | Runbook steps anchored to real pages/endpoints |
 | `internal/` | * | "How is the book itself maintained?" | Repo-only; exempt from archived-docs and cil_* reference rules |
 
 Frontmatter on every page: `title`, `audience`, `kind`,
-`verified_against`, `verified_on`, `source_files` (list). Exemption:
-`status: LEGACY_UNVERIFIED` — still checked for links and paths.
+`verified_against`, `verified_on`, `source_files` (list) — or `asserted_by`
+when the page's truth is a recorded human source rather than code.
 
 ## Skills
 
@@ -106,6 +110,13 @@ one exists; a skill should link its task/reference doc.
 must match `^[a-z][a-z0-9]{0,7}$` and be unique across installed apps.
 See [App manifest reference](../reference/app-manifest.md) and
 [Document your app](../tasks/document-your-app.md).
+
+**App `agent/` is generated, not authored.** Authoring sources are
+`src/instructions/` (docs) and `custom/.devin/skills/<prefix>_*/` (skills);
+`agent/instructions/` and `agent/skills/` are their checked-in packaging
+stage. `prepack-app.mjs stage` regenerates them — never edit `agent/`
+directly. `validate-app` drift-checks the same pairs; on drift, re-stage
+rather than editing the staged copy.
 
 ## Acceptance matrix — the regression suite
 
@@ -125,10 +136,15 @@ means the book regressed, not that the agent did.
 | T7 | Package this app; install it into another Spine project; show create/list working | `tasks/package-and-install-an-app.md`, `reference/app-manifest.md`, `reference/seeds.md`; skill `spine-install-app` |
 | T8 | Something broke — creating a task fails / the pipeline fails. Find and fix it | `operations/troubleshooting.md`, `pipeline-executions.md`, `logs.md`, `deliveries.md`; skill `spine-troubleshoot` |
 | T9 | (cold) Create a type, register an app, wire a pipeline — from docs alone | The whole book end to end |
+| T10 | Declare my environments, then take a green commit up the ladder to the release gate | `tasks/declare-your-environments.md`, `operations/deployment.md`, `operations/migrations.md`; skill `spine-ship` |
+| T11 | Check the deployment is healthy; audit who has access; rotate a key | `tasks/set-up-monitoring.md`, `tasks/rotate-an-api-key.md`, `observability.md`, `api-keys.md`, `invites.md`; skill `spine-operate` |
+| T12 | The database was restored from a backup — reconcile the project | `operations/recovery.md`, `operations/migrations.md`; skill `spine-operate` |
+| T13 | I just cloned this project — get me running | `guide/06-join-an-existing-project.md`, `guide/01-install-and-first-run.md`; skill `spine-install` |
 | M1 | Mount this app at the site root (served from `/`) | `tasks/register-an-app.md`, `apps.md`, `reference/app-manifest.md`, `concepts/apps-and-renderers.md` |
 | M2 | What can I import in a custom app? Build a page using the framework's UI kit | `reference/frontend-sdk.md`, `tasks/build-a-custom-page.md` |
 | M3 | Install this app, then use its shipped skill and its instruction book | `tasks/package-and-install-an-app.md`, `reference/app-manifest.md` (`agent` block), app `src/instructions/` |
 | M4 | You changed file X — which docs did you update? | This contract (capture section), `AGENTS.md` verify rules |
+| M5 | Why does a primitive exist — what problem does it solve? | `## Why it exists` on its entity page + `docs/articles/` long-form |
 
 ## Authoring checklist for a new page
 
@@ -141,8 +157,69 @@ means the book regressed, not that the agent did.
 
 ## The gate
 
-`npm run docs:lint` (`scripts/docs-lint.mts`, repo-only) checks: required
-frontmatter, kind taxonomy, the 7-section headings on `entity`/`ui` pages,
-relative-link resolution, existence of every backticked `.framework/...`
-path, and (outside `internal/`) no `docs/archive` references and no `cil_*`
-tool references.
+`npm run docs:lint` (`scripts/docs-lint.mts`, repo-only) is repo-wide and
+runs inside `npm run gate`. Per plan §4.1 every `.md` is classified by
+location and checked by the rules that apply to its class:
+
+- **location** — no `.md` outside allowlisted locations
+- **frontmatter** — living: `title`, `kind`, `verified_against`,
+  `verified_on` (+`audience` for the shipped book); `SKILL.md`: `name`,
+  `description`, `depends_on`; point-in-time: `describes`
+- **skill linkage** — a `SKILL.md` lists the book pages it owns in
+  `depends_on.files`; book pages name their covering skills in an
+  optional `skills:` frontmatter list
+- **provenance** — living docs need non-empty `source_files` or `asserted_by`
+- **sources** — every cited `source_files`/`depends_on.files` path exists
+- **commands** — `depends_on.commands` resolve (`npm run` target or
+  `spine-framework` CLI command)
+- **links / paths** — markdown links and backticked repo paths resolve
+- **denylist** — no `cil_*`, `npm run mcp`, `cil-legacy` in living classes
+- **headings** — book `entity`/`ui` pages carry the 7-section template
+- **entity-why** — `kind: entity` carries `## Why it exists`
+
+The `docs-debt.json` shrink-only baseline is retired — the realignment
+ratchet completed at 0.6.1, so **any** violation fails `docs:lint`. The
+`--write-debt` flag exists only if a future deliberate ratchet is decided
+and recorded; never use it to make a commit pass.
+
+Release-time, `npm run docs:release-check` (the `release` skill runs it)
+checks `verified_against` is an ancestor of the release commit (D3), maps
+changed sources through `source_files`/`depends_on.files` to docs and
+skills needing re-verification (`--affected`), and writes
+`docs-manifest.json` stamping shipped docs with the release version (D4).
+`npm run docs:retention-check` asserts every 5-whys chain in the baseline
+corpus (`docs/audit/baseline/5whys-*.json`) still exists at its recorded
+location (D6). The `docs-sync` skill is the re-verification procedure.
+
+## `--affected` semantics — how staleness settles
+
+A doc is stale when a cited source's last change does not descend from the
+doc's `verified_against`. A doc's **own change never flags it** — editing a
+page is not a source change to itself (both the directory hit-test and the
+last-commit lookup exclude the doc's own path).
+
+Because an anchor must descend from each cited source's *last* change,
+re-verification has a mandatory order: **sources before citers**. Bump the
+pages citing code first, then the pages citing those pages, then the
+directory-citers (index pages citing `instructions/`, `docs/`,
+`custom/apps/`) — each wave's anchor is the previous wave's commit. The
+generated artifacts come after the last change to the trees they cover:
+`npm run manifest` after the last `.framework/`/`scripts/` edit,
+`scripts/docs-facts.mts` (which stamps `verified_against: HEAD` itself)
+after the last `.framework/` change, and the top-level index pages
+(`docs/README.md`, `custom/README.md`) last of all.
+
+**Citation hygiene** — what `source_files` may and may not point at:
+
+- Cite the precise files a claim depends on. A directory citation flags on
+  *any* change beneath it — right for an index page describing a tree,
+  wrong for a page describing two files.
+- Never cite **generated outputs**: `docs-manifest.json`,
+  `.spine-manifest.json`, and `docs/audit/facts/*` regenerate from inputs
+  that already include the citing file — citing them is an unverifiable
+  self-reference. Cite the generator or the inputs instead.
+- No **citation cycles**: doc A citing doc B while B cites A can never
+  settle (each bump re-flags the other). One direction must win — the
+  dependent page cites the contract, not vice versa.
+- A doc may not cite a directory **containing its own citers** for the same
+  reason — the citers' bumps re-flag it forever.

@@ -2,8 +2,8 @@
 title: Pipeline Executions
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/PipelineExecutionsPage.tsx
   - .framework/functions/pipeline-executions.ts
@@ -14,6 +14,20 @@ source_files:
 ## What this is for
 
 **Pipeline Executions** (`/spine-framework/admin/observability/executions`) is the run history for every pipeline — manual runs, trigger fires, timer runs, and webhook calls. Each row is a `pipeline_executions` record: who ran it, when, how long, and whether it finished. Use it to confirm a pipeline fired, find the run that failed, and measure cadence and duration.
+
+## Why it exists
+
+### pipeline-executions
+
+Pipelines can be triggered by events, timers, or AI agents and run asynchronously. You need a durable record of when each run started, what triggered it, how long it took, and whether it succeeded.
+
+Companion of `pipelines` — its full reasoning is level 4 of the chain in pipelines `## Problem it solves` and the pipelines article.
+
+### trigger-executions
+
+Triggers fire asynchronously in response to events; you need a record of when they ran, what data they received, and whether they succeeded.
+
+Companion of `triggers` — its full reasoning is level 4 of the chain in triggers `## Problem it solves` and the triggers article.
 
 ## Fields and settings
 

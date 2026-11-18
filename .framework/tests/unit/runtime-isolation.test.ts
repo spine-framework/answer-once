@@ -149,22 +149,22 @@ describe('resolveSecurityLevel (declared kb security level)', () => {
 describe('attachLineage via admin-data get (declared lineage config)', () => {
   const INITIATIVE_TYPE = {
     id: 't-initiative',
-    slug: 'workbench_initiative',
+    slug: 'test_initiative',
     kind: 'item',
     design_schema: {
       functionality: {
         lineage: {
           parent_fields: ['idea_id', 'discovery_id', 'initiative_id', 'epic_id', 'sprint_id'],
-          link_type: 'workbench_originated_from',
-          children: { workbench_epic: 'initiative_id', workbench_work_item: 'initiative_id' }
+          link_type: 'test_originated_from',
+          children: { test_epic: 'initiative_id', test_work_item: 'initiative_id' }
         }
       }
     }
   }
   const PLAIN_TYPE = { id: 't-plain', slug: 'support_ticket', kind: 'item', design_schema: { functionality: null } }
-  const EPIC_TYPE = { id: 't-epic', slug: 'workbench_epic', kind: 'item', design_schema: {} }
-  const WI_TYPE = { id: 't-wi', slug: 'workbench_work_item', kind: 'item', design_schema: {} }
-  const DISCOVERY_TYPE = { id: 't-discovery', slug: 'workbench_discovery', kind: 'item', design_schema: {} }
+  const EPIC_TYPE = { id: 't-epic', slug: 'test_epic', kind: 'item', design_schema: {} }
+  const WI_TYPE = { id: 't-wi', slug: 'test_work_item', kind: 'item', design_schema: {} }
+  const DISCOVERY_TYPE = { id: 't-discovery', slug: 'test_discovery', kind: 'item', design_schema: {} }
 
   function setup(opts: {
     record: any
@@ -241,7 +241,7 @@ describe('attachLineage via admin-data get (declared lineage config)', () => {
       record,
       items: [parent],
       types: [INITIATIVE_TYPE, PLAIN_TYPE, EPIC_TYPE, WI_TYPE, DISCOVERY_TYPE],
-      parentLinks: [{ source_id: 'r1', target_id: 'd-link', link_type: 'workbench_originated_from' }],
+      parentLinks: [{ source_id: 'r1', target_id: 'd-link', link_type: 'test_originated_from' }],
       childLinks: []
     })
     const result = await get(makeCtx(db.db, { entity: 'items', id: 'r1' }), null)
@@ -249,7 +249,7 @@ describe('attachLineage via admin-data get (declared lineage config)', () => {
     expect(result.parents.map((p: any) => p.id)).toEqual(['d-link'])
     const linkCalls = db.allCalls.filter(c => c.some(x => x[0] === 'eq' && x[1] === 'link_type'))
     expect(linkCalls.length).toBeGreaterThan(0)
-    expect(linkCalls[0].some(x => x[0] === 'eq' && x[1] === 'link_type' && x[2] === 'workbench_originated_from')).toBe(true)
+    expect(linkCalls[0].some(x => x[0] === 'eq' && x[1] === 'link_type' && x[2] === 'test_originated_from')).toBe(true)
   })
 
   it('falls back to declared parent_fields scan when no link edge exists', async () => {
@@ -275,7 +275,7 @@ describe('attachLineage via admin-data get (declared lineage config)', () => {
       record,
       items: [epicChild, wiChild, linkChild],
       types: [INITIATIVE_TYPE, EPIC_TYPE, WI_TYPE, DISCOVERY_TYPE],
-      childLinks: [{ source_id: 'l1', target_id: 'r1', link_type: 'workbench_originated_from' }],
+      childLinks: [{ source_id: 'l1', target_id: 'r1', link_type: 'test_originated_from' }],
       itemsByField: { 'data->>initiative_id': { r1: [epicChild, wiChild] } }
     })
     const result = await get(makeCtx(db.db, { entity: 'items', id: 'r1' }), null)
@@ -292,7 +292,7 @@ describe('attachLineage via admin-data get (declared lineage config)', () => {
       items: [],
       types: [PLAIN_TYPE],
       // even with a matching link present, no link_type is declared so no query runs
-      childLinks: [{ source_id: 'x', target_id: 'r2', link_type: 'workbench_originated_from' }]
+      childLinks: [{ source_id: 'x', target_id: 'r2', link_type: 'test_originated_from' }]
     })
     const result = await get(makeCtx(db.db, { entity: 'items', id: 'r2' }), null)
     expect(result.parents).toEqual([])

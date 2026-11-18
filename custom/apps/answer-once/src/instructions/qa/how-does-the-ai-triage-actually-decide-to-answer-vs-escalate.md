@@ -2,8 +2,8 @@
 title: "How does the AI triage actually decide to answer vs. escalate"
 audience: developers, agents
 kind: qa
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: a01bd7b
+verified_on: 2026-11-15
 suggested_kb_tag: faq
 source_files:
   - custom/apps/answer-once/functions/custom_answeronce-journey.ts

@@ -2,8 +2,8 @@
 title: Database Migrations
 audience: both
 kind: reference
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/cli/commands/migrate.ts
   - .framework/cli/commands/migrations.ts
@@ -48,12 +48,12 @@ insert the ledger row, `COMMIT`. On the **first** statement error the file
 rolls back, the error is printed, and the run stops — later files are never
 attempted. Files already in the ledger are skipped, so reruns are safe.
 
-Note there is a **second, unrelated ledger**: `migrations list` /
-`migrations status` read `supabase_migrations.schema_migrations` — the table
-Supabase's own tooling maintains, which `spine-framework migrate` never
-writes. `migrations status` therefore reports local files as `pending` even
-when `_spine_migrations` shows them applied. Use the `_spine_migrations`
-table itself as the authoritative "what ran" record.
+`migrations list` and `migrations status` read this same
+`_spine_migrations` table (`migrations.ts` shares `collectMigrations`
+with `migrate`), so `status` is a trustworthy pending/applied check.
+Do not confuse it with `supabase_migrations.schema_migrations` — the
+Supabase CLI's own ledger, which `spine-framework migrate` never writes
+and which always looks empty for Spine.
 
 ## Running migrations
 
@@ -69,8 +69,8 @@ npx spine-framework migrate --dry-run
   (`--db-password` overrides; `.env` is preloaded).
 - `--dry-run` prints **every collected file**, not just pending ones — the
   pending filter lives inside `runMigrations`, which dry-run never reaches.
-  To see real pending state, query `_spine_migrations` or run it for real
-  (applied files skip cleanly).
+  To see real pending state, run `npx spine-framework migrations status`
+  or query `_spine_migrations` directly.
 - `npx spine-framework install-app` also calls `runMigrations` before
   seeding; a migration failure aborts the install (`--no-seed` installs
   files only and tolerates missing DB credentials).
@@ -99,11 +99,16 @@ Two different channels, don't confuse them:
   them (see [Upgrade](upgrade.md)).
 - **App-level schema** is data, not DDL: `public.types` `design_schema`
   rows, roles, pipelines ship in the app package's `manifest.json` `seed`
-  block, applied by `install-app`/`seed-app`. `install-app` copies only
-  `index.tsx`, `manifest.json`, `package.json`, `pages`, `components`,
-  `hooks`, `utils`, `functions`, `seed`, `public` into `custom/apps/<slug>/`
-  — there is no per-app migrations directory. If an app truly needs DDL,
-  ship it as a `custom/migrations/` file in the project repo.
+  block, applied by `install-app`/`seed-app`. `install-app` copies the
+  package's `APP_COPY_ENTRIES` (`index.tsx`, `manifest.json`,
+  `package.json`, `pages`, `components`, `hooks`, `utils`, `lib`,
+  `views`, `docs`, `functions`, `api`, `seed`, `public`, `installer`,
+  `mcp`, `migrations`, `migrations-archive`, `tests`, `agent`,
+  `decisions`, `standalone.config.json`) into `custom/apps/<slug>/`.
+  `runMigrations`/`collectMigrations` only scan `.framework/migrations`
+  and `custom/migrations` — an app package's `migrations/` dir is copied
+  but not applied by `install-app`; project DDL belongs in
+  `custom/migrations/`.
 
 Production rollout order: deploy code first or migrate first — both work
 because migrations are additive-by-convention, but the safe default is
@@ -116,7 +121,7 @@ expects.
 - [ ] `SELECT filename FROM _spine_migrations ORDER BY filename` reviewed for drift before major upgrades.
 - [ ] New custom migration is idempotent and numbered after the highest local prefix.
 - [ ] After `spine-framework upgrade`: `npx spine-framework migrate` run — upgrade only syncs files.
-- [ ] `migrations status` not trusted as the source of truth (it reads `supabase_migrations`).
+- [ ] `migrations status` used as the pending gate — it reads `_spine_migrations`; only `supabase_migrations.schema_migrations` output (Supabase CLI tooling) is meaningless for Spine.
 
 ## Related
 

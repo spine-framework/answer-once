@@ -6,6 +6,26 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/reference/app-manifest.md
+    - .framework/src/instructions/reference/seeds.md
+    - custom/.devin/skills/<prefix>_*/
+    - custom/apps/
+    - custom/apps/<slug>/
+    - custom/apps/<slug>/src/instructions/
+    - custom/functions/
+    - custom/migrations/
+    - .framework/src/instructions/tasks/package-and-install-an-app.md
+  commands:
+    - "npm run verify"
+    - "npx spine-framework doctor"
+    - "npx spine-framework install-app"
+    - "npx spine-framework migrate"
+    - "npx spine-framework uninstall-app"
+    - "npx spine-framework update-app"
+    - "npx spine-framework update-db-app"
+    - "npx spine-framework validate-app"
 ---
 
 You install Spine app packages into the project's `custom/apps/` workspace.

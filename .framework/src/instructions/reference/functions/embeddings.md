@@ -2,7 +2,7 @@
 title: embeddings
 audience: both
 kind: reference
-verified_against: f69c37d
+verified_against: 15b5f8b
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/embeddings.ts

@@ -2,8 +2,8 @@
 title: App Manifest Reference
 audience: developers, agents
 kind: reference
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/_shared/app-manifest.ts
   - .framework/cli/commands/install-app.ts
@@ -60,6 +60,9 @@ Read by `.framework/functions/_shared/app-manifest.ts` and mirrored onto the
 | `auth_required` | boolean | `true` |
 | `preview_domain` | string | `null` |
 | `prod_domain` | string | `null` |
+| `prod_domains` | string[] | `null` — extra production hosts; either `prod_domain` or a non-empty `prod_domains` satisfies a `prod_route_prefix` override |
+| `preview_route_prefix` | string | `null` — mount prefix used when the host matches `preview_domain`; requires `preview_domain` |
+| `prod_route_prefix` | string | `null` — mount prefix used when the host matches `prod_domain`/`prod_domains`; requires one of them |
 
 `mergeWithManifest` always keeps DB-owned values for `id`, `is_active`,
 `is_system`, `account_id`, `pack_id`, and `ownership`; the manifest wins for

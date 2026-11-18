@@ -5,6 +5,11 @@ allowed-tools:
   - exec
   - read
   - grep
+depends_on:
+  files:
+    - custom/apps/answer-once/src/instructions/tasks/ticket-lifecycle.md
+  commands:
+    []
 ---
 
 You drive the **answer-once** ticket loop. Read

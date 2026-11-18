@@ -99,7 +99,7 @@ interface DataHeaderProps {
 export function DataHeader({ title, icon, description, newButtonHref }: DataHeaderProps) {
   const navigate = useNavigate()
   // Dynamically get the icon component
-  const IconComponent = (Icons as Record<string, React.ComponentType<{ className?: string }>>)[icon] || Icons.Box
+  const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[icon] || Icons.Box
 
   return (
     <div className="flex justify-between items-center">

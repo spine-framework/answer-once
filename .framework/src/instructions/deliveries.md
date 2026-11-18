@@ -2,8 +2,8 @@
 title: Deliveries
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/deliveries.ts
   - .framework/functions/integration-outbound.ts
@@ -14,6 +14,18 @@ source_files:
 ## What this is for
 
 **Deliveries** is the outbound delivery log — every webhook/integration delivery attempt, its status, retries, and response. It is primarily a diagnostic, read-mostly page: use it to confirm an event left Spine, to debug a failing endpoint, and to see retry behavior.
+
+## Why it exists
+
+Webhooks are unreliable by nature — arrivals get lost, retries duplicate, senders time out. Without a ledger, "did the delivery happen?" is a guess.
+
+**Why it exists (5-whys):**
+
+1. Async external I/O needs durability — arrivals get lost and retries duplicate; the crossing of the trust boundary must be recorded.
+2. `direction` + `status` lifecycle (`pending → processing → delivered/failed/cancelled`) covers both inbound receipt and outbound send — same reliability problem, one ledger.
+3. `attempt_count`/`max_attempts`/`next_attempt_at` put retry state on the row, not in-process memory — `deliveries.ts` redrives failed sends after restarts (manual `retry` for outbound is permission-checked).
+4. `external_id` + `payload` + `response_*` provide idempotency and forensics — dedupe redeliveries, reconstruct what happened without guessing.
+5. **Root:** async external I/O needs a ledger like pipelines need executions — `webhook_deliveries` makes every crossing of the trust boundary durable, retryable, and inspectable. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 
@@ -26,7 +38,7 @@ source_files:
 
 **Downstream effects**
 
-- A `failed` row means the endpoint rejected or timed out and `attempt_count` reached `max_attempts` — fix the endpoint or credentials, then retry via the API (`deliveries?action=retry`, outbound only) or re-fire the event.
+- A `failed` row means the endpoint rejected or timed out and `attempt_count` reached `max_attempts` — fix the endpoint or credentials, then retry via the API (`deliveries?action=retry`, outbound only; system principals may retry any account's delivery, others only their own) or re-fire the event.
 - Retries reuse the same row: `attempt_count` increments and `next_attempt_at` follows exponential backoff (30s × 2^attempt, capped at 1h, +20% jitter). `system-cron` sweeps due `pending` rows each tick.
 - Deliveries are produced by `integration-outbound` (outbound) and `integration-routes` (inbound) — an empty list with active webhooks usually means no events matched, not a broken delivery layer.
 - Rows are append-only diagnostics; there is nothing to create or edit on this page.

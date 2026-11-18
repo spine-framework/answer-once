@@ -97,12 +97,16 @@ describe('spine-* skill files', () => {
       'spine-add-integration',
       'spine-architect',
       'spine-decision-capture',
+      'spine-docs-sync',
+      'spine-install',
       'spine-install-app',
       'spine-migration',
       'spine-new-app',
       'spine-new-function',
       'spine-new-type',
+      'spine-operate',
       'spine-schema',
+      'spine-ship',
       'spine-test',
       'spine-troubleshoot',
       'spine-upgrade',
@@ -150,14 +154,14 @@ describe('syncAgentFiles — init path (real package templates)', () => {
       version: '9.9.9',
     })
 
-    expect(actions.map((a) => a.rel).sort()).toEqual(['.devin/skills', 'AGENTS.md'])
+    expect(actions.map((a) => a.rel).sort()).toEqual(['.devin/skills', '.github/workflows', 'AGENTS.md'])
 
     const agents = readFileSync(join(workdir, 'AGENTS.md'), 'utf8')
     expect(agents).toContain('<!-- spine-framework:begin version=9.9.9 -->')
     expect(agents).not.toContain('{{SPINE_VERSION}}')
 
     const skills = readdirSync(join(workdir, '.devin/skills')).sort()
-    expect(skills.length).toBe(14)
+    expect(skills.length).toBe(18)
     for (const name of skills) {
       expect(name.startsWith('spine-')).toBe(true)
       expect(existsSync(join(workdir, '.devin/skills', name, 'SKILL.md'))).toBe(true)
@@ -176,7 +180,7 @@ describe('syncAgentFiles — init path (real package templates)', () => {
 
     expect(hashes['AGENTS.md']).toMatch(/^sha256:[0-9a-f]{64}$/)
     const skillEntries = Object.keys(hashes).filter((k) => k.startsWith('.devin/skills/spine-'))
-    expect(skillEntries.length).toBe(14)
+    expect(skillEntries.length).toBe(18)
 
     mkdirSync(join(workdir, '.framework/cli'), { recursive: true })
     writeFileSync(join(workdir, '.framework/cli/x.ts'), 'export {}\n')
@@ -191,7 +195,7 @@ describe('syncAgentFiles — init path (real package templates)', () => {
     expect(manifest.files['AGENTS.md']).toBeUndefined()
     expect(Object.keys(manifest.files).every((k) => !k.startsWith('.devin/'))).toBe(true)
     expect(manifest.agent_files['AGENTS.md']).toMatch(/^sha256:/)
-    expect(Object.keys(manifest.agent_files).filter((k) => k.startsWith('.devin/skills/')).length).toBe(14)
+    expect(Object.keys(manifest.agent_files).filter((k) => k.startsWith('.devin/skills/')).length).toBe(18)
   })
 })
 
@@ -226,6 +230,33 @@ describe('mergeAgentsFile / upgrade block refresh', () => {
     expect((merged.text.match(/spine-framework:begin/g) ?? []).length).toBe(1)
   })
 
+  it('keeps the customer region byte-identical across a syncAgentFiles rerun', () => {
+    // The developer-declared environment ladder (docs/plans/developer-lifecycle.md,
+    // decision S4) lives below the end marker — an upgrade must leave it untouched.
+    const profile = loadProjectProfile(REPO_ROOT)
+    const ladder = [
+      '',
+      '## Environments',
+      '',
+      '- local: gate=npm run test; promote=commit',
+      '- staging: gate=system health; promote=developer instruction',
+      '',
+    ].join('\n')
+    const oldRendered = renderAgentTemplate(readFileSync(TEMPLATE_PATH, 'utf8'), '0.0.1')
+    const before = `${oldRendered}${ladder}`
+    writeFileSync(join(workdir, 'AGENTS.md'), before)
+
+    syncAgentFiles({ pkgRoot: REPO_ROOT, projectRoot: workdir, entries: profile.agent_files ?? [], version: '9.9.9' })
+
+    const text = readFileSync(join(workdir, 'AGENTS.md'), 'utf8')
+    const END = '<!-- spine-framework:end -->'
+    const tailBefore = before.slice(before.indexOf(END) + END.length)
+    const tailAfter = text.slice(text.indexOf(END) + END.length)
+    expect(tailAfter).toBe(tailBefore)
+    expect(text).toContain('## Environments')
+    expect(agentsBlockVersion(text)).toBe('9.9.9')
+  })
+
   it('preserves CRLF line endings in the merged file', () => {
     const existing = agentsWithVersion('0.0.1', '\nuser tail\n').replace(/\n/g, '\r\n')
     const merged = mergeAgentsFile(existing, renderedNew)
@@ -258,6 +289,10 @@ describe('mergeAgentsFile / upgrade block refresh', () => {
     writeFileSync(join(workdir, '.devin/skills/spine-removed/SKILL.md'), 'stale\n')
     mkdirSync(join(workdir, '.devin/skills/my-own'), { recursive: true })
     writeFileSync(join(workdir, '.devin/skills/my-own/SKILL.md'), 'customer-owned\n')
+    // spine-* files are framework-owned too; non-spine-* files are customer's.
+    mkdirSync(join(workdir, '.github/workflows'), { recursive: true })
+    writeFileSync(join(workdir, '.github/workflows/spine-stale.yml'), 'stale\n')
+    writeFileSync(join(workdir, '.github/workflows/my-ci.yml'), 'customer-owned\n')
 
     const actions = syncAgentFiles({
       pkgRoot: REPO_ROOT,
@@ -274,6 +309,10 @@ describe('mergeAgentsFile / upgrade block refresh', () => {
     expect(existsSync(join(workdir, '.devin/skills/spine-removed'))).toBe(false)
     expect(readFileSync(join(workdir, '.devin/skills/my-own/SKILL.md'), 'utf8')).toBe('customer-owned\n')
     expect(existsSync(join(workdir, '.devin/skills/spine-architect/SKILL.md'))).toBe(true)
+
+    expect(existsSync(join(workdir, '.github/workflows/spine-stale.yml'))).toBe(false)
+    expect(readFileSync(join(workdir, '.github/workflows/my-ci.yml'), 'utf8')).toBe('customer-owned\n')
+    expect(existsSync(join(workdir, '.github/workflows/spine-ci.yml'))).toBe(true)
   })
 
   it('dry-run reports actions without writing', () => {
@@ -310,7 +349,7 @@ const MIN_SCHEMA = {
       sections: [{ title: 'Details', fields: { title: { display_type: 'input' } } }],
     },
   },
-  record_permissions: { 'system-admin': ['create', 'read', 'update', 'delete'] },
+  record_permissions: { system_admin: ['create', 'read', 'update', 'delete'] },
 }
 
 describe('validateDesignSchema', () => {
@@ -322,7 +361,7 @@ describe('validateDesignSchema', () => {
 
   it('rejects non-object roots, missing fields, and missing record_permissions', () => {
     expect(validateDesignSchema(null).errors).toContain('design_schema must be an object')
-    const noFields = validateDesignSchema({ record_permissions: { 'system-admin': ['read'] } })
+    const noFields = validateDesignSchema({ record_permissions: { system_admin: ['read'] } })
     expect(noFields.errors.some((e) => e.startsWith('fields is required'))).toBe(true)
     const noPerms = validateDesignSchema({ fields: MIN_SCHEMA.fields })
     expect(noPerms.errors.some((e) => e.startsWith('record_permissions'))).toBe(true)

@@ -2,8 +2,8 @@
 title: "Ticket lifecycle & KB loop"
 audience: developers, agents
 kind: task
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: bc8b7a2
+verified_on: 2026-11-15
 source_files:
   - custom/apps/answer-once/functions/custom_answeronce-journey.ts
   - custom/apps/answer-once/functions/custom_answeronce-autoresolve-cron.ts

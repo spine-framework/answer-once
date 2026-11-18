@@ -472,12 +472,13 @@ export function syncAgentFiles(opts: {
         out.push({ rel: entry.dest, action: 'skipped', detail: 'source dir absent from package' })
         continue
       }
-      // Framework owns only the spine-* subdirs of dest — remove them, then
-      // copy the source tree in. Sibling dirs with any other name are
-      // customer-owned and untouched.
+      // Framework owns only the spine-* namespace under dest — remove it,
+      // then copy the source tree in. Sibling entries with any other name
+      // are customer-owned and untouched. spine-* covers both dirs
+      // (.devin/skills/spine-*/) and files (.github/workflows/spine-*.yml).
       const removed = fs.existsSync(destAbs)
         ? fs.readdirSync(destAbs, { withFileTypes: true })
-            .filter((d) => d.isDirectory() && d.name.startsWith('spine-'))
+            .filter((d) => d.name.startsWith('spine-'))
             .map((d) => d.name)
         : []
       if (!opts.dryRun) {
@@ -516,11 +517,15 @@ export function collectAgentFileHashes(
     } else if (entry.merge === 'dir-replace') {
       if (!fs.existsSync(destAbs)) continue
       const managed = fs.readdirSync(destAbs, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && d.name.startsWith('spine-'))
-      for (const dir of managed) {
-        const dirAbs = path.join(destAbs, dir.name)
-        for (const f of walkDir(dirAbs, projectRoot, [])) {
-          hashes[f.rel] = sha256File(f.abs)
+        .filter((d) => d.name.startsWith('spine-'))
+      for (const entry2 of managed) {
+        const entryAbs = path.join(destAbs, entry2.name)
+        if (entry2.isDirectory()) {
+          for (const f of walkDir(entryAbs, projectRoot, [])) {
+            hashes[f.rel] = sha256File(f.abs)
+          }
+        } else if (entry2.isFile()) {
+          hashes[path.join(entry.dest, entry2.name).split(path.sep).join('/')] = sha256File(entryAbs)
         }
       }
     }

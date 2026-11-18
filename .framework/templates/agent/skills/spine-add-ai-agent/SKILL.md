@@ -8,6 +8,18 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/ai-agents.md
+    - .framework/src/instructions/api-keys.md
+    - .framework/src/instructions/concepts/ai-and-prompts.md
+    - .framework/src/instructions/concepts/observability.md
+    - .framework/src/instructions/operations/
+    - .framework/src/instructions/prompts.md
+    - .framework/src/instructions/tasks/
+    - .framework/src/instructions/tasks/add-an-ai-agent.md
+  commands:
+    []
 ---
 
 You configure Spine AI agents and their prompt configs.

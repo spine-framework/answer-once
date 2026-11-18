@@ -2,8 +2,8 @@
 title: invites
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/invites.ts
   - .framework/functions/_shared/middleware.ts
@@ -90,7 +90,9 @@ from the app's `invitation.allowed_roles`/`registration.roles` allowlist
 (body): `person_id` (+ `base_url` for `reinvite`).
 
 **`list-invites`** (query): `account_id` (system users may pass any;
-others are scoped to their own), `role_slugs` (comma-separated).
+non-system callers are forced to their own account and must hold an
+`*_admin`/`system_admin` role or `system` permission on it),
+`role_slugs` (comma-separated).
 
 **`list-members`** (query/body): `account_id` (defaults to the caller's).
 **`update-member`** (body): `person_id`, `full_name`, `role_slug`.
@@ -101,7 +103,9 @@ others are scoped to their own), `role_slugs` (comma-separated).
 Standard `{ data, error, meta }` envelope.
 
 - `check-first-user` → `{ is_first_user: boolean }`.
-- `check-domain` → `{ match, account_id? }`.
+- `check-domain` → `{ match }` — the boolean only; returning
+  `account_id` powered cross-tenant IDOR and was removed (wildcard
+  metachars in `domain` are also rejected).
 - `validate-token` → `{ email, full_name, account_name, role_name,
   kind }`.
 - `complete-registration` → `{ status, account_slug, role_slug?, next? }`
@@ -175,8 +179,11 @@ Standard `{ data, error, meta }` envelope.
 - `update-member` can only assign roles allowed by the target account's
   owned apps (`invitation.allowed_roles`/`registration.roles` in
   `apps.config`), and never `system_admin` or `is_system` roles.
-- `list-invites` does **not** verify membership in the queried account —
-  it scopes by `account_id` for non-system callers but accepts any
-  `account_id` they pass. Don't treat it as an authorization boundary.
+- `list-invites` is an authorization boundary: non-system callers are
+  pinned to their own `ctx.accountId` (a caller-supplied `account_id` is
+  ignored) and must pass `requireAccountAdmin` — a `system` permission,
+  `system_admin`, or any `*_admin`-suffixed role on that account.
+  `revoke-invite`, `reinvite`, `block-invite`, `approve`, and `deny`
+  require the same admin check on the target person's account.
 - Registration never trusts client claims: the placement RPC derives
   account and role server-side from the app's registration config.

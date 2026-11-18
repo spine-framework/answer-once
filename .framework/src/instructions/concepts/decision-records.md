@@ -2,6 +2,8 @@
 title: Decision Records
 audience: developers, agents
 kind: concept
+skills:
+  - spine-decision-capture
 verified_against: main
 verified_on: 2026-11-06
 source_files:
@@ -52,3 +54,8 @@ Markdown files with YAML frontmatter. They complement this book: the book is
   `exceptions.yaml` entry in the same dir approves it for exactly that
   release (`record`, `release`, `approved_by`, `reason`). Exceptions expire
   automatically — a stale release or an adjudicated record fails validation.
+
+## Related
+
+- [Team conventions](team-conventions.md) — who owns `custom/decisions/`
+  vs package-owned decision dirs, and where team rules live.

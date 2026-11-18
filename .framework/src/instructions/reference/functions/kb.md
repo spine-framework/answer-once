@@ -2,7 +2,7 @@
 title: kb
 audience: both
 kind: reference
-verified_against: f69c37d
+verified_against: 15b5f8b
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/kb.ts
@@ -73,7 +73,7 @@ re-ingested.
 |---|---|---|
 | `query` | — | Required. |
 | `type_slugs` | `[]` | The caller's pick — intersected with the app envelope; picks outside it deny the call. |
-| `sources` | `['kb']` | `'kb'` for knowledge items, `'code'` for legacy `cil_chunk` vectors — the CIL corpus is retired (079) but preserved rows remain readable. |
+| `sources` | `['kb']` | `'kb'` for knowledge items, `'code'` for legacy `cil_*` chunk vectors — the CIL corpus is retired (079) but preserved rows remain readable. |
 | `app_id` | `null` | Post-filter on `metadata.app_id`. |
 | `vector_fields` | `[]` | Restrict to specific `metadata.vector_type` values. |
 | `limit` / `offset` | `10` / `0` | Page over best-match documents. |

@@ -6,6 +6,20 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/reference/cli.md
+    - custom/apps/<slug>/
+    - custom/decisions/
+    - .framework/src/instructions/operations/upgrade.md
+  commands:
+    - "npm run test"
+    - "npm run typecheck"
+    - "npm run verify"
+    - "npx spine-framework migrate"
+    - "npx spine-framework update-app"
+    - "npx spine-framework upgrade"
+    - "npx spine-framework --version"
 ---
 
 You run and explain `spine-framework upgrade` — the command that syncs a

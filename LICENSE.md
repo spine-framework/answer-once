@@ -1,43 +1,215 @@
-# Answer Once Perpetual License 1.0
+# Apache License 2.0
 
-**Buy a license for your organization. Keep using the versions you receive. Upgrades and services are optional.**
+Copyright 2026 Dahl Ventures Inc.
 
-Version 1.0 — Effective Date: November 9, 2026
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-Required Notice: Copyright © 2026 Dahl Ventures Inc. All rights reserved.
+    http://www.apache.org/licenses/LICENSE-2.0
 
-Unpaid installations are licensed for evaluation, testing, and due diligence only — see section 1. Releases supplied under an earlier license remain governed by that license. The current license text, pricing, and the historical license archive are maintained at https://answer-once.com/license.html.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-## 1. Purchase and scope
+---
 
-This license is between Dahl Ventures Inc. and the organization identified in the accepted order. On payment of the agreed license fee, we grant that organization a non-exclusive license to install, run, make necessary backup copies of, and customize the supplied Answer Once software for its own use. The purchase includes one production deployment plus development and staging, unlimited support agents and customers within that deployment, source access, and the underlying Spine permissions needed to operate Answer Once. "Production deployment" means one operational installation serving a single organization's production use, including the redundancy, failover, and disaster-recovery replicas that serve that same installation. Authorized employees and contractors may work on your installation on your behalf; they receive no independent right to resell or distribute it. Preserve supplied copyright and license notices. This license applies only to releases and purchases expressly supplied under it.
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
 
-Before purchase, you may install, run, copy, and modify the Software solely to evaluate, test, and perform due diligence — including running it against non-production data and environments. Evaluation use does not include operating the Software in production, serving real users or customers, handling live support traffic, or distributing the Software. A purchase under an accepted order converts that installation to the perpetual license described above.
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-## 2. Perpetual use and updates
+   1. Definitions.
 
-You may continue using the purchased version and updates supplied to you under this license, subject to compliance with its terms. The purchase includes twelve months of released updates. After that, an optional upgrade costs 50% of the then-current new-license price and includes another twelve months of updates. There is no automatic upgrade purchase or renewal. We do not promise a particular release schedule, lifetime support, lifetime updates, or compatibility with future third-party changes. Ending optional maintenance or DevOps does not itself end your license.
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
 
-## 3. What requires a separate agreement
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
 
-Obtain our written agreement for additional production deployments, group-wide or multi-entity use, resale, redistribution, sublicensing, OEM/embedded distribution, or operating Answer Once as a hosted offering for other organizations. Ordinary access by your own customers to obtain support from your organization is included. Do not confuse customer support access with selling a hosted software service to other organizations.
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with the acting entity, where control means (i) the power,
+      direct or indirect, to cause the direction or management of such
+      entity, whether by contract or otherwise, or (ii) ownership of fifty
+      percent (50%) or more of the outstanding shares, or (iii) beneficial
+      ownership of such entity.
 
-## 4. Ownership and restrictions
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
 
-You retain your data, knowledge content, branding, and independently created application work. We retain Answer Once, our pre-existing components, and our trademarks. Source access and customization rights do not transfer ownership of our intellectual property or grant distribution rights. Customizing, renaming, or modifying our software does not create resale, redistribution, OEM, or hosted-service rights. Do not repackage or rebrand our software for resale, remove required notices, or bypass license controls to exceed the granted rights. Third-party components retain their own licenses. Rights not expressly granted are reserved. You may not transfer this license without our written agreement.
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
 
-## 5. Operations and AI
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including, but not
+      limited to, compiled object code, generated code, or conversions to
+      other forms.
 
-Installation, customization, hosting, AI usage, support, and operational services are separate unless an accepted order says otherwise. You are responsible for your infrastructure, access controls, lawful data use, backups, and third-party accounts except to the extent we expressly undertake that work. Review AI answers, generated knowledge, and automated actions as appropriate; AI can make mistakes. We do not guarantee correct answers, a particular automation rate, savings, uninterrupted availability, or an uptime SLA.
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
 
-## 6. Breach
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
 
-For an ordinary material license breach, we will give written notice and 30 days to cure before terminating the affected license. Deliberate unauthorized resale, redistribution, or circumvention may result in immediate termination on written notice. If the license ends, stop using and distributing our software under that license. You retain your own data and independently owned content. Existing payment obligations, ownership, warranty exclusions, and liability limitations survive as applicable. We cannot end your valid perpetual license merely because you decline optional upgrades or services.
+      "Contribution" shall mean any work of authorship, including Source
+      and Object forms, that is based on (or derived from) the Work and for
+      which the editorial revisions, annotations, elaborations, or other
+      modifications represent, as a whole, an original work of authorship,
+      and that is intentionally submitted to Licensor for inclusion in the
+      Work by the copyright owner or by an individual or entity authorized
+      to submit on behalf of the copyright owner. For the purposes of this
+      definition, "submitted" means any form of electronic, verbal, or
+      written communication sent to the Licensor or its representatives,
+      including but not limited to communication on electronic mailing
+      lists, source code control systems, and issue tracking systems that
+      are managed by, or on behalf of, the Licensor for the purpose of
+      discussing and improving the Work, but excluding communication that
+      is conspicuously marked or otherwise designated by the copyright
+      owner as "Not a Contribution."
 
-## 7. Warranty and liability
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated into the Work.
 
-TO THE EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS," WITHOUT IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, OR NON-INFRINGEMENT. WE EXCLUDE INDIRECT, INCIDENTAL, CONSEQUENTIAL, SPECIAL, EXEMPLARY, AND PUNITIVE DAMAGES, INCLUDING LOST PROFITS, REVENUE, DATA, OR GOODWILL. OUR AGGREGATE LIABILITY UNDER THIS LICENSE IS LIMITED TO THE GREATER OF US $100 OR THE SOFTWARE LICENSE AND UPGRADE FEES YOU PAID US FOR ANSWER ONCE DURING THE TWELVE MONTHS BEFORE THE EVENT GIVING RISE TO THE CLAIM. Separate service agreements govern liability for their work. Nothing excludes rights, liability, or express commitments that cannot lawfully be excluded.
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
 
-## 8. Existing releases and general terms
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) is/are necessarily
+      infringed. If You institute patent litigation against any entity
+      (including a cross-claim or counterclaim in a lawsuit) alleging that
+      the Work or a Contribution incorporated within the Work constitutes
+      direct or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate as of
+      the date such litigation was filed.
 
-Releases previously supplied under another license remain governed by that license; publishing this license does not replace their terms. See the historical license archive at https://answer-once.com/license-1.0.0.html. An accepted order or signed agreement controls where it expressly changes these terms. Use the software lawfully, including applicable export and sanctions requirements. If a provision cannot be enforced, the rest continues. A failure to enforce a term is not a waiver. No additional software rights arise from website marketing alone. Contact us through https://support.answer-once.com for licensing questions.
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You meet
+      the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work, excluding
+          those notices that do not pertain to any part of the Derivative
+          Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute
+          must include a readable copy of the attribution notices
+          contained within such NOTICE file, excluding those notices
+          that do not pertain to any part of the Derivative Works, in at
+          least one of the following places: within a NOTICE text file
+          distributed with the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are informational only and do not modify the
+          License. You may add Your own copyright statement to Your
+          modifications and alongside or as an addendum to the Derivative
+          Works, as long as it is conspicuously marked, and the terms of
+          the license are included therein.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement You may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing
+      the origin of the Work and reproducing the content of the Work.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or agreed
+      to in writing, Licensor provides the Work (and each Contributor
+      provides its Contributions to You) on an "AS IS" BASIS, WITHOUT
+      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied,
+      including, without limitation, any warranties or conditions of TITLE,
+      NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR
+      PURPOSE. You are solely responsible for determining the
+      appropriateness, conditions, and limitations of Your use of the Work,
+      and for any costs associated with Your use of the Work.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including breach of contract or otherwise),
+      or otherwise, unless required by applicable law (such as deliberate
+      and grossly negligent acts) or agreed to in writing, shall any
+      Contributor be liable to You for damages, including any direct,
+      indirect, special, incidental, or consequential damages of any
+      character arising out of the use of or inability to use the Work
+      (including but not limited to damages for loss of use, data, or
+      profits; or for business interruption), however caused and on any
+      theory of liability, whether in contract, strict liability, or tort
+      (including negligence or otherwise) arising in any way out of the
+      use of the Work, even if You have been advised of the possibility of
+      such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.

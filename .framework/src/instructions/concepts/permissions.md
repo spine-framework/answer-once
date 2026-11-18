@@ -2,17 +2,26 @@
 title: Permission Model
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/_shared/permissions.ts
   - .framework/functions/_shared/principal.ts
   - .framework/functions/_shared/db.ts
   - .framework/functions/_shared/middleware.ts
   - .framework/functions/admin-data.ts
+  - .framework/functions/timers.ts
+  - .framework/functions/triggers.ts
+  - .framework/functions/types.ts
+  - .framework/functions/pipelines.ts
+  - .framework/functions/ai-agents.ts
+  - .framework/functions/prompt-configs.ts
+  - .framework/functions/embeddings.ts
+  - .framework/functions/integrations.ts
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/002_core_rls_and_functions.sql
   - .framework/migrations/003_core_system_data.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
 ---
 
 # Permission Model
@@ -48,6 +57,28 @@ target by table name:
 | First (default) | runtime records — items, threads, messages, people, accounts, … | `record_permissions` on the record's stamped `design_schema` |
 | Second | config objects — `apps`, `pipelines`, `triggers`, `ai_agents`, `embeddings`, `timers`, `integrations`, `roles`, `types`, `prompt_configs` | `system_admin` full access; machine principals read-only; everyone else denied |
 | Third | system metadata — `logs`, `pipeline_executions`, `trigger_executions`, `link_types`, `links` | `system_admin`/machine full; humans read only their own/account rows |
+
+The second-surface row is the engine's **policy** — what `detectSurface`
+produces where the engine is consulted. **Endpoint enforcement is uneven**
+and is the contract that actually binds:
+
+- `roles` writes are system-admin-only at RLS itself (migration `045`), so
+  the table holds regardless of the endpoint.
+- `timers` and `triggers` mutations are enforced end-to-end (decision
+  `0026`): every mutating handler calls `canAccessConfigObject`
+  (`triggers` `create` via the equivalent grant path), and migration
+  `081` replaces their account-scoped `FOR ALL` policies with
+  account-scoped read + system-admin write — direct PostgREST now
+  matches the API.
+- `types` mutations are `isSystemAdmin`-gated at the handler.
+- `pipelines`, `ai_agents`, `prompt_configs`, and `embeddings` mutations
+  still have no engine gate — an account member writes through `ctx.db`,
+  bounded only by account-scoped RLS. Same shape the `0026` fix closed
+  for timers/triggers, not yet adjudicated for these tables.
+- `integrations` deliberately uses `account_admin`, not `system_admin`.
+- Machine principals skip all of this: `ctx.db` = service role → RLS
+  bypass (see the [security checklist](../operations/security-checklist.md)
+  "Known ungated surfaces" for the full list).
 
 ## First-surface evaluation
 

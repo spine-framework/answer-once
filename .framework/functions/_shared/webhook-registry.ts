@@ -91,8 +91,6 @@ const INBOUND_MODULE_LOADERS: Record<string, () => Promise<any>> = {
   'generic-webhook-inbound': () => import('../adapters/generic-webhook-inbound'),
   // @ts-ignore — resolved against the assembled flat functions dir
   'custom_make-inbound': () => import('../custom_make-inbound'),
-  // @ts-ignore — resolved against the assembled flat functions dir
-  'custom_portal-signals': () => import('../custom_portal-signals'),
 }
 
 export async function loadHandler(functionName: string): Promise<Function | null> {

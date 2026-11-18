@@ -2,10 +2,34 @@
 title: Spine Instruction Book
 audience: developers, agents
 kind: index
-verified_against: 5239575
-verified_on: 2026-11-04
+verified_against: 1ceeac5
+verified_on: 2026-11-17
 source_files:
-  - .framework/src/instructions/
+  - .framework/src/instructions/accounts.md
+  - .framework/src/instructions/ai-agents.md
+  - .framework/src/instructions/alerts.md
+  - .framework/src/instructions/api-keys.md
+  - .framework/src/instructions/apps.md
+  - .framework/src/instructions/deliveries.md
+  - .framework/src/instructions/integrations.md
+  - .framework/src/instructions/invites.md
+  - .framework/src/instructions/kb.md
+  - .framework/src/instructions/logs.md
+  - .framework/src/instructions/notifications.md
+  - .framework/src/instructions/observability.md
+  - .framework/src/instructions/people.md
+  - .framework/src/instructions/pipeline-executions.md
+  - .framework/src/instructions/pipelines.md
+  - .framework/src/instructions/prompts.md
+  - .framework/src/instructions/roles.md
+  - .framework/src/instructions/runtime-collaboration.md
+  - .framework/src/instructions/runtime-detail.md
+  - .framework/src/instructions/runtime-list.md
+  - .framework/src/instructions/security.md
+  - .framework/src/instructions/testing.md
+  - .framework/src/instructions/timers.md
+  - .framework/src/instructions/triggers.md
+  - .framework/src/instructions/types.md
 ---
 
 # Spine Instruction Book
@@ -54,7 +78,9 @@ Every `entity` or `ui` doc uses the same seven `##` sections, in order:
 6. `## Core files`
 7. `## Agent notes`
 
-`docs-lint` enforces the heading set verbatim.
+`docs-lint` enforces the heading set verbatim. `entity` pages also carry
+`## Why it exists` — the primitive's 5-whys rationale, migrated from the
+archived reference tree at 0.6.1 (long-form narrative: `docs/articles/`).
 
 ## Key pages
 
@@ -64,6 +90,15 @@ Every `entity` or `ui` doc uses the same seven `##` sections, in order:
   [tasks/register-an-app](tasks/register-an-app.md) +
   [Mounting](concepts/apps-and-renderers.md#mounting-directory-or-root).
 - App-shipped docs/skills: [tasks/document-your-app](tasks/document-your-app.md).
+- Shipping/promoting: [tasks/declare-your-environments](tasks/declare-your-environments.md)
+  (the `## Environments` ladder) + the `spine-ship` skill.
+- Operating a deployment: `spine-operate` skill +
+  [tasks/set-up-monitoring](tasks/set-up-monitoring.md),
+  [tasks/rotate-an-api-key](tasks/rotate-an-api-key.md),
+  [operations/recovery](operations/recovery.md).
+- Upgrading across many projects: [tasks/upgrade-many-projects](tasks/upgrade-many-projects.md)
+  + [operations/versioning](operations/versioning.md). Support:
+  support.spine-framework.com (+ `doctor --ticket` for diagnostics).
 
 ## `internal/` — the doctrine
 

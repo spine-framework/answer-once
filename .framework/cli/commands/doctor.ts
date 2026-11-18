@@ -62,11 +62,14 @@ async function checkEnvironment(): Promise<CheckResult> {
     }
   }
 
-  if (!/^https:\/\/[a-z0-9-]+\.supabase\.co/.test(process.env.SUPABASE_URL || '')) {
+  const supabaseUrl = process.env.SUPABASE_URL || ''
+  const hostedOk = /^https:\/\/[a-z0-9-]+\.supabase\.co/.test(supabaseUrl)
+  const localOk = /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(supabaseUrl)
+  if (!hostedOk && !localOk) {
     return {
       name: 'environment',
       status: 'fail',
-      message: 'SUPABASE_URL must look like https://<project-ref>.supabase.co',
+      message: 'SUPABASE_URL must look like https://<project-ref>.supabase.co (or http://127.0.0.1:<port> for a local supabase stack)',
       details: {},
       fixable: true
     }

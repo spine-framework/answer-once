@@ -8,6 +8,17 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/concepts/concurrency-and-idempotency.md
+    - .framework/src/instructions/concepts/permissions.md
+    - .framework/src/instructions/reference/database.md
+    - .framework/src/instructions/roles.md
+    - custom/migrations/
+    - .framework/src/instructions/tasks/write-a-migration.md
+  commands:
+    - "npx spine-framework doctor"
+    - "npx spine-framework migrate"
 ---
 
 You write database migrations that run safely across fresh installs and

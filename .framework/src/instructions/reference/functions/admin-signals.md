@@ -2,8 +2,8 @@
 title: admin-signals
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/admin-signals.ts
   - .framework/functions/_shared/middleware.ts
@@ -34,8 +34,8 @@ module pending a dispatch handler, not a live endpoint.
 
 ## Authentication
 
-If wired: `createHandler` requires any non-anonymous principal — no role
-check in either export. All queries run on `adminDb` across **all
+If wired: `requireSystemContextWithAudit` runs first — anonymous → 401,
+non-`system_admin` → 403. All queries run on `adminDb` across **all
 accounts** (see Agent notes).
 
 ## Request contract
@@ -87,11 +87,12 @@ None — read-only.
 ## Agent notes
 
 - **Verify before use** — no `handler` export means no routed endpoint.
-- **Cross-account PII, caller-steered.** `audit` accepts an arbitrary
-  `account_id` filter and returns `people.email`, `accounts.name`,
-  anonymous IDs, session IDs, and UTM attribution across all accounts via
-  `adminDb`. If a dispatch handler is ever added, it needs a
-  `system_admin` gate before this surface is exposed.
+- **Cross-account PII, caller-steered, system-gated.** `audit` accepts an
+  arbitrary `account_id` filter and returns `people.email`,
+  `accounts.name`, anonymous IDs, session IDs, and UTM attribution across
+  all accounts via `adminDb`. Both exports already run
+  `requireSystemContextWithAudit`, so only `system_admin` reaches them if
+  wired.
 - `export` mode drops the range limit — it returns the entire filtered
   set, so combined with the joins it is the heaviest call in the file.
 - Rating comparisons are string comparisons on `data->>rating`

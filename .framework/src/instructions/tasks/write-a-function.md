@@ -2,8 +2,10 @@
 title: Write a function
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-new-function
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/_shared/middleware.ts
   - .framework/functions/_shared/db.ts

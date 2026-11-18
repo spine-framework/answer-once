@@ -1,3 +1,13 @@
+---
+title: "Answer Once"
+kind: index
+verified_against: 77e98dc
+verified_on: 2026-11-15
+source_files:
+  - custom/apps/answer-once/manifest.json
+  - custom/apps/answer-once/seed/types.json
+---
+
 # Answer Once
 
 > A person should not have to answer the same organizational question twice.
@@ -49,7 +59,7 @@ analyze → publish → reuse).
 # Framework (app-agnostic; owns .framework/, config/, scripts/, bin/)
 npm i spine-framework@latest && npx spine-framework upgrade
 
-# This app (owns custom/apps/answer-once/ and its custom/migrations/062_* files)
+# This app (owns custom/apps/answer-once/ and its custom/migrations/062_*–070_* files)
 npm i @spine-framework/answer-once@latest && npx answer-once upgrade
 ```
 
@@ -71,6 +81,5 @@ change between minor versions.
 
 ## License
 
-See LICENSE.md — Answer Once Perpetual License. Unpaid installs are licensed
-for evaluation, testing, and due diligence only; production use requires a
-purchased license (see answer-once.com/license.html).
+See LICENSE.md — Apache License 2.0. Free for any use, including commercial
+software products (see spine-framework.com/software-license.html).

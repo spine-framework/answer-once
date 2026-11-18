@@ -2,8 +2,8 @@
 title: "Automation: pipelines, triggers, and timers"
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/pipeline-executions.ts
@@ -19,6 +19,7 @@ source_files:
   - .framework/migrations/018_runtime_tables.sql
   - .framework/migrations/020_schema_reconciliation.sql
   - .framework/migrations/068_cron_schedule_timer_rpcs.sql
+  - .framework/migrations/071_timer_interval_keys.sql
   - netlify.toml
 ---
 
@@ -122,7 +123,8 @@ A timer row carries `timer_type`, `pipeline_id`, `config`, and
 `pipeline_id` is set and `next_execution <= now()`; `update_timer_after_run`
 stamps `last_execution`, increments `execution_count`/`success_count`/
 `failure_count`, and reschedules `next_execution` from
-`config.interval_minutes` — a timer with no positive `interval_minutes` gets
+`config.interval_minutes`, then `config.interval_seconds` (seconds ÷ 60) —
+a timer whose `config` resolves to no positive interval gets
 `next_execution = NULL` and never runs again.
 
 The clock is `trigger-scheduler`, a Netlify scheduled function configured for
@@ -175,9 +177,21 @@ in `running` means the runner died — same sweeper, same outcome.
    `queued` execution, and dispatches to `pipeline-runner-background`.
 3. Independently, Netlify Clockwork invokes `trigger-scheduler` every minute;
    `system-cron` runs due timers and schedules through the same `runPipeline`,
-   sweeps dead executions, retries deliveries, and evaluates alert thresholds.
+   sweeps dead executions, and retries deliveries.
 4. `runPipeline` resolves each `stage_type` through `public.actions` and runs
    the stage handlers — which is also where outbound integrations, AI agent
    calls, and embedding jobs enter the system.
 5. Every step lands in `pipeline_executions`, `logs`, and the audit trail,
    which is what the admin UI and `pipeline-executions` API read.
+
+## Why it exists
+
+Pipelines and AI agents need a catalog of available operations without hardcoding function paths in every pipeline stage or tool call.
+
+**Why it exists (5-whys):**
+
+1. Pipelines (`pipeline-runner.ts:289`), agents (`agent-runner.ts:1387` — tool calls), and schedules all *invoke* operations — hardcoded handler paths per caller mean no validation, no discovery, no permission surface.
+2. `input_schema`/`output_schema` give an invocable operation a contract — callers (including agents picking tools) can't validate arguments or render results without declared shapes.
+3. `required_scopes` + `default_machine_principal_id` declare *who* an autonomous run is — without a machine identity, "the system did it" is unauditable and unscoped.
+4. `timeout_seconds` + `retry_count` per row make failure policy config — a sync lookup and an outbound integration need different retry semantics.
+5. **Root:** anything the platform invokes on its own must exist as governed data first — `actions` is the catalog where "things that can run" get schemas, identities, and failure policies. *(confirmed 2026-11-13)*

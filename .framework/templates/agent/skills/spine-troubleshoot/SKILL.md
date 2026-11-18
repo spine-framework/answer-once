@@ -6,6 +6,24 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/concepts/observability.md
+    - .framework/src/instructions/concepts/permissions.md
+    - .framework/src/instructions/deliveries.md
+    - .framework/src/instructions/operations/
+    - .framework/src/instructions/reference/cli.md
+    - .framework/src/instructions/reference/functions/logs.md
+    - .framework/src/instructions/reference/functions/pipeline-executions.md
+    - .framework/src/instructions/roles.md
+    - .framework/src/instructions/triggers.md
+    - .framework/src/instructions/operations/troubleshooting.md
+  commands:
+    - "npm run test"
+    - "npm run typecheck"
+    - "npm run verify"
+    - "npx spine-framework doctor"
+    - "npx spine-framework upgrade"
 ---
 
 You debug Spine projects: form a hypothesis, check the observability surfaces,
@@ -65,6 +83,10 @@ assets. Warnings name the broken reference — start there.
 2. Check deliveries/executions for the failing run's error text.
 3. Compare config against the entity doc's field reference.
 4. If the fault is inside `.framework/`, report it — do not patch core.
+   The channel is **support.spine-framework.com**;
+   `npx spine-framework doctor --ticket <id>` attaches a sanitized
+   diagnostic bundle to a ticket `items` row in the project DB (it does
+   not contact the support site — reference the ticket in your report).
 5. Verify the fix: rerun the failing path + `npm run test` / doctor.
 
 ## Rules

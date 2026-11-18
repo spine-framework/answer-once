@@ -2,8 +2,8 @@
 title: Environment Variables
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 1485758
+verified_on: 2026-11-15
 source_files:
   - .env.example
   - .framework/functions/_shared/principal.ts
@@ -60,7 +60,7 @@ calls then fail at query time.
 | Variable | Read by | Required for |
 |---|---|---|
 | `SUPABASE_DB_PASSWORD` | `.framework/cli/commands/migrate.ts`, `install-app.ts` | Direct Postgres connection for `migrate`/`install-app` (from Supabase Dashboard → Database) |
-| `SUPABASE_DB_URL` | `.framework/cli/commands/migrate.ts` | Optional full connection string overriding host/user/port — use the **Session Pooler** (`postgres://postgres.<ref>:<pw>@aws-0-<region>.pooler.supabase.com:5432/postgres`) when `db.<ref>.supabase.co:5432` is unreachable (direct connections are IPv6-only on most Supabase projects) |
+| `SUPABASE_DB_URL` | `.framework/cli/commands/migrate.ts` | Optional full connection string overriding host/user/port — use the **Session Pooler** (`postgres://postgres.<ref>:<pw>@aws-0-<region>.pooler.supabase.com:5432/postgres`) when `db.<ref>.supabase.co:5432` is unreachable (direct connections are IPv6-only on most Supabase projects), or any local URI (e.g. `postgresql://postgres:postgres@127.0.0.1:54322/postgres`) for `supabase start` stacks |
 | `INTERNAL_INVOKE_SECRET` | `.framework/functions/_shared/principal.ts` (`isInternalInvokeAuthorized`), `.framework/functions/_shared/trigger-engine.ts`, `.framework/functions/pipeline-runner-background.ts` | Authenticates function-to-function invocation via `x-internal-secret`. **Required for trigger dispatch** — without it, `dispatchTriggerPipeline` cannot invoke `pipeline-runner-background` and `x-cron-id`/`x-trigger-id`/`x-internal-secret` headers are never honored. Generate with `openssl rand -hex 32` |
 | `SCHEDULER_API_KEY` | `.framework/functions/system-cron.ts` | `?api_key=`/`?scheduler_key=` on the scheduler endpoint; unset disables key-gated scheduling |
 | `APP_BASE_URL` | `.framework/functions/invites.ts` | Base URL for invite links, auth redirects, and the allowlist for client-supplied `base_url` params |
@@ -84,6 +84,8 @@ permitted there.
 | `URL` | `.framework/functions/_shared/middleware.ts`, `.framework/mcp/` | Netlify auto-set site URL; CORS and MCP base-URL fallback |
 | `ALLOWED_ORIGINS` | `.framework/functions/invites.ts` | extra CORS origins for invite endpoints |
 | `SPINE_IP_RATE_LIMIT` | `.framework/functions/_shared/principal.ts` | per-IP request ceiling for API-key auth; default `300`/60s |
+| `SPINE_ALLOW_PRIVATE_OUTBOUND` | `.framework/functions/_shared/access.ts` | `1`/`true` disables the private-IP/loopback denylist on outbound adapter URLs — local dev only (e.g. Ollama `base_url`); never set in production |
+| `SPINE_TRUST_SCHEDULE_HEADERS` | `.framework/functions/trigger-scheduler.ts` | `1`/`true` lets `trigger-scheduler` trust Clockwork headers off-Netlify — set automatically on Netlify deploys |
 | `REPO_PATH` | `.framework/functions/_shared/app-manifest.ts`, `.framework/mcp/` | project root for manifest discovery; defaults to `process.cwd()` |
 | `DB_SCHEMA` | `.framework/functions/_shared/db.ts` | PostgREST schema; default `public` (multi-instance installs only) |
 | `EMAIL_WEBHOOK_URL` | outbound adapters | optional inbound-email relay endpoint |

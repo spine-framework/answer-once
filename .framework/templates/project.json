@@ -10,7 +10,6 @@
     ".framework/seeds",
     ".framework/src",
     ".framework/tests",
-    ".framework/docs",
     ".framework/templates"
   ],
   "framework_files": [
@@ -52,7 +51,8 @@
   ],
   "agent_files": [
     { "source": ".framework/templates/agent/AGENTS.md", "dest": "AGENTS.md", "merge": "framework-block" },
-    { "source": ".framework/templates/agent/skills", "dest": ".devin/skills", "merge": "dir-replace" }
+    { "source": ".framework/templates/agent/skills", "dest": ".devin/skills", "merge": "dir-replace" },
+    { "source": ".framework/templates/agent/workflows", "dest": ".github/workflows", "merge": "dir-replace" }
   ],
   "exclude_globs": [
     "**/.env",
@@ -73,7 +73,8 @@
     ".framework/public/spine.config.json"
   ],
   "package_scripts": {
-    "dev": "vite --config config/vite.config.ts",
+    "dev": "npm run dev:netlify",
+    "dev:vite": "vite --config config/vite.config.ts",
     "dev:netlify": "bash scripts/dev-netlify.sh",
     "dev:stop": "bash scripts/dev-clean.sh",
     "predev:netlify": "npm run assemble",

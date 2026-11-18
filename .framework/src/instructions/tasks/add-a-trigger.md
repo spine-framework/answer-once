@@ -2,14 +2,17 @@
 title: Add a trigger
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-add-automation
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/triggers.ts
   - .framework/functions/_shared/trigger-engine.ts
   - .framework/functions/admin-data.ts
   - .framework/functions/pipeline-runner-background.ts
   - .framework/src/pages/admin/TriggerDetailPage.tsx
+  - .framework/migrations/081_second_surface_write_rls.sql
 ---
 
 # Add a trigger
@@ -21,6 +24,9 @@ Create a `public.triggers` row so a record event (`item_created`,
 
 ## Prerequisites
 
+- The `system_admin` role — trigger mutations are second-surface gated
+  (decision `0026`, migration `081`); account members read but cannot
+  write.
 - The pipeline the trigger will point at ([Add a pipeline](./add-a-pipeline.md)).
 - `INTERNAL_INVOKE_SECRET` set on the deployed functions — dispatch POSTs to
   `pipeline-runner-background` with an `X-Internal-Secret` header and logs

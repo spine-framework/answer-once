@@ -2,8 +2,8 @@
 title: Shared Modules Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 1485758
+verified_on: 2026-11-15
 source_files:
   - .framework/functions/_shared/index.ts
   - .framework/functions/_shared/middleware.ts

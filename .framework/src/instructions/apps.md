@@ -2,8 +2,8 @@
 title: Apps
 audience: both
 kind: entity
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/apps.ts
   - .framework/src/pages/admin/AppsPage.tsx
@@ -15,6 +15,18 @@ source_files:
 ## What this is for
 
 An **app** is a registered application in Spine. The registry controls navigation visibility, who can open the app (min role), how it renders (generic vs custom), and the JSON configuration the app or its types consume at runtime.
+
+## Why it exists
+
+Apps need to declare routes, navigation, required roles, dependencies, and seed files so the framework can load them, render their shell, and enforce access control.
+
+**Why it exists (5-whys):**
+
+1. Hardcoding each app into core makes core depend on custom code — violating the boundary that makes upgrades safe.
+2. Apps can't just be folders of files: a folder has no runtime identity — nothing to check roles against, no route prefix to mount, no dependency list to validate, no seed to replay.
+3. The app must exist as *both* a `manifest.json` (install-time declaration) and an `apps` row (runtime truth): install binds the two, and the platform queries the row at boot and per-request (`get_account_apps`, `required_roles` envelopes) — a file on disk can't participate in RLS, joins, or account-scoped checks.
+4. Registration happens via install, not migrations alone, because install binds code (manifest) to data (app row + seeded types/roles/pipelines) — the app only exists once both halves are in place.
+5. **Root:** apps must be data, not just code, because access control, routing, and lifecycle are platform responsibilities — a platform can't govern what it can't query. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

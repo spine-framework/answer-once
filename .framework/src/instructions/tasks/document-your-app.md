@@ -2,8 +2,10 @@
 title: Document your app
 audience: developers, agents
 kind: task
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+skills:
+  - spine-new-app
+verified_against: 9df54f8
+verified_on: 2026-11-17
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts

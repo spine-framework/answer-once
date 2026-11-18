@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react'
 import { Sidebar, SidebarContent } from './Sidebar'
-import { useAuth } from '../../contexts/AuthContext'
 import { useBranding } from '../../hooks/useBranding'
-import { useLocation } from 'react-router-dom'
 interface LayoutProps {
   children: React.ReactNode
 }
@@ -11,12 +9,8 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { user, logout } = useAuth()
   const branding = useBranding()
-  const location = useLocation()
 
-  const isActive = (href: string) =>
-    location.pathname === href || location.pathname.startsWith(href + '/')
 
   return (
     <div className="min-h-screen bg-[#F2F3F8] flex lg:top-0">
@@ -31,12 +25,7 @@ export function Layout({ children }: LayoutProps) {
       )}
 
       <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:w-60 lg:flex-col lg:shrink-0 bg-white border-r border-slate-200 lg:top-0">
-        <SidebarContent
-          isActive={isActive}
-          user={user}
-          logout={logout}
-          onClose={() => {}}
-        />
+        <SidebarContent />
       </aside>
 
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200">

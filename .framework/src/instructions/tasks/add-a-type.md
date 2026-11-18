@@ -2,8 +2,11 @@
 title: Add a type
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-new-type
+  - spine-schema
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/types.ts
   - .framework/functions/_shared/schema-utils.ts

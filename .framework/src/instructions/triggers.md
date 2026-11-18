@@ -2,8 +2,8 @@
 title: Triggers
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/triggers.ts
   - .framework/functions/_shared/trigger-engine.ts
@@ -11,11 +11,24 @@ source_files:
   - .framework/src/pages/admin/TriggersPage.tsx
   - .framework/src/pages/admin/TriggerDetailPage.tsx
   - .framework/migrations/064_episode_leases.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
 ---
 
 ## What this is for
 
 A **trigger** listens for a Spine event and, when active, hands the event payload to a pipeline for processing. It is the link between emitted platform events (e.g. `item_created`) and the workflows that react to them.
+
+## Why it exists
+
+Pipelines are reusable, but you need a separate mechanism to decide which pipeline runs for each event.
+
+**Why it exists (5-whys):**
+
+1. "What runs" (pipeline) and "when it runs" (trigger) change independently — rebinding shouldn't mean editing the workflow.
+2. Event routing per app in code means platform edits per app — declared triggers make reactivity config. `admin-data` fires `fireCreate/UpdateTriggers` on the governed write path (the delete path fires nothing today), so every write is a potential event.
+3. `event_type` + `pipeline_id` columns (reconciled in migration `020`) plus `config` conditions make the trigger a declarable rule: fire *this* pipeline when *this* event on *this* type matches.
+4. `trigger_executions` records which rule matched — "why did that pipeline run?" is unanswerable without it.
+5. **Root:** reactivity needs a seam between event and action — `triggers` is that seam as data, so apps get event-driven behavior without platform code changes. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 
@@ -27,12 +40,14 @@ A **trigger** listens for a Spine event and, when active, hands the event payloa
 - **Description** — string, optional.
 - **Config (JSON)** — trigger-engine configuration, e.g. filters or payload mapping.
 - **Metadata (JSON)** — optional metadata.
+- **Trigger Type** — `trigger_type` column, NOT NULL since migration `020`; the API defaults it to `'event'` when omitted, so it is not a form field.
 
 **Downstream effects**
 
-- The trigger engine (`admin-data` writes → `_shared/trigger-engine`) matches emitted events to active triggers by `event_type`; real event names use underscores — `item_created`, `item_updated`, `item_deleted`, `thread_created`, `message_created`, etc. (see the `EventType` union in `_shared/trigger-engine.ts`).
+- The trigger engine (`admin-data` writes → `_shared/trigger-engine`) matches emitted events to active triggers by `event_type`; real event names use underscores — `item_created`, `item_updated`, `thread_created`, `message_created`, etc. (see the `EventType` union in `_shared/trigger-engine.ts`). `*_deleted` names exist in the union but nothing emits them — `admin-data`'s remove path never calls `fireDeleteTriggers`.
 - `config` filters narrow which matching events actually invoke the pipeline.
 - A wrong or stale `pipeline_id` means the trigger fires, queues an execution row, and the run fails — check Pipeline Executions, not just the trigger, when "nothing happened".
+- Mutations are permission-gated: `create` uses the first-surface grant path; `update`/`remove`/`toggle` call `canAccessConfigObject` — in practice every mutation resolves to `system_admin` only (decision `0026`), and migration `081` makes direct PostgREST agree.
 
 ## Minimal configuration
 
@@ -63,7 +78,8 @@ A support app fires `item_created` filtered to `type_slug = "ticket"`; the trigg
 
 ## Agent notes
 
-- Event names are `<entity>_<past tense>` (`item_created`, `message_deleted`, ...) — the Event Type input's own placeholder still shows the stale `item.created` form; use underscores.
+- Event names are `<entity>_<past tense>` (`item_created`, `message_created`, ...) — the Event Type input's own placeholder still shows the stale `item.created` form; use underscores.
+- `*_deleted` triggers never fire: `fireDeleteTriggers` exists in `trigger-engine.ts` but `admin-data`'s remove path imports it without calling it. Don't register delete-driven automations expecting them to run.
 - `config` filters (`entity_type`, `type_slug`, `filters` with `$eq`/`$ne`/`$gt`/etc.) narrow which matching events actually invoke the pipeline.
 - The list's "Total Fires" stat and "Fires"/"Last Fired" columns count trigger firings (the `record_trigger_fire` RPC), not successful pipeline runs — a trigger can fire while its pipeline fails.
 - `config` must be a JSON **object**, not a string — the second most common save failure after event-type typos.

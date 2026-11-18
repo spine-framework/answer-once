@@ -96,7 +96,7 @@ function getPostRegistrationRedirect(
   isInvite: boolean,
   effectiveRole?: string,
   inviteAccountId?: string
-): string {
+): { path: string; appSlug: string | null } {
   if (isInvite) {
     return { path: '/', appSlug: null }
   }

@@ -2,8 +2,8 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/_shared/schema-utils.ts
@@ -38,8 +38,9 @@ lookup table. The TypeScript source of truth is `DesignSchema`,
 | `display_field` | `string` | no | Field used for record titles in detail pages |
 
 `validate-schema` enforces: `fields` non-empty; every field has `data_type`,
-`label`, `required`; `record_permissions` grants at least `system-admin` or
-`system_admin`; `scope` is `account` or `platform`
+`label`, `required`; `record_permissions` grants at least `system_admin`
+(and rejects the dead `system-admin` slug — permission keys must match
+`roles.slug` verbatim); `scope` is `account` or `platform`
 (`.framework/cli/commands/validate-schema.ts`).
 
 ## `fields.<name>` — FieldDefinition

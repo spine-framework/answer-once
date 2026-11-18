@@ -2,8 +2,8 @@
 title: "Answer Once — instruction book"
 audience: developers, agents
 kind: index
-verified_against: b3b3ae0
-verified_on: 2026-11-01
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - custom/apps/answer-once/manifest.json
   - custom/apps/answer-once/index.tsx

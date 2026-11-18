@@ -2,7 +2,7 @@
 title: Apps and Renderers
 audience: developers, agents
 kind: concept
-verified_against: b3b3ae0
+verified_against: 8a0dc59
 verified_on: 2026-11-01
 source_files:
   - .framework/migrations/001_core_schema.sql
@@ -46,7 +46,7 @@ migration 014), `nav_items`, `config`, `integration_deps`, `metadata`,
 (`route_prefix != null`, `renderer !== 'none'`) becomes a
 `<Route path="<prefix>/*">` in `.framework/src/App.tsx`:
 
-- **Directory mount** — `"/portal"` → the app owns `/portal/*`.
+- **Directory mount** — `"/answer-once"` → the app owns `/answer-once/*`.
 - **Root mount** — `"/"` → the app owns `/*` and renders directly at `/` for
   non-admin users.
 - **Nested mount** — `"/crm/sales"` works mechanically (`/crm/sales/*`);

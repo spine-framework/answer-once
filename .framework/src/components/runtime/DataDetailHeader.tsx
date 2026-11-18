@@ -29,7 +29,7 @@ export function DataDetailHeader({
   saving,
   deleting
 }: DataDetailHeaderProps) {
-  const IconComponent = (Icons as Record<string, React.ComponentType<{ className?: string }>>)[icon] || Icons.Box
+  const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[icon] || Icons.Box
   
   return (
     <div className="flex justify-between items-start">

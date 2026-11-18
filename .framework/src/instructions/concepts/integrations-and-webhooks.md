@@ -2,8 +2,8 @@
 title: "Integrations and webhooks"
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: bc8b7a2
+verified_on: 2026-11-15
 source_files:
   - .framework/functions/integrations.ts
   - .framework/functions/integration-outbound.ts

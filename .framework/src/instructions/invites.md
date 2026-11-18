@@ -2,8 +2,8 @@
 title: Invites & Access
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/InvitesPage.tsx
   - .framework/src/components/shared/InviteManager.tsx
@@ -13,6 +13,18 @@ source_files:
 ## What this is for
 
 **Invites & Access** (`/spine-framework/admin/access/invites`) manages how people join the account: generating invite links, tracking their status, re-sending or revoking them, and approving access requests. The admin page is scoped to the `system_admin` role; the shared `InviteManager` component underneath supports other role sets.
+
+## Why it exists
+
+You need to add someone to an account with a specific role before they sign up — and the row that eventually becomes their identity should already exist so nothing re-binds at acceptance time.
+
+**Why it exists (5-whys):**
+
+1. Invites need a pre-auth identity — the account, role, and email must be bound *before* the person authenticates, or acceptance becomes a placement problem.
+2. Reusing `people` for pending invites means acceptance is a status transition, not a row migration — the person record, its `account_id`, and `role_id` are already correct; only `auth_uid` is missing.
+3. `data.invite_token` (looked up via `data->>invite_token`) keeps the secret on the row it activates — no separate token table to keep in sync with people.
+4. Placement runs through the service-role-only `complete_registration_placement` RPC (migration 052) because client-supplied email/role/account previously steered placement — an identity-spoofing vector. Server-resolved placement closes it.
+5. **Root:** an invite is a person who hasn't authenticated yet — modeling it as a `people` row keeps the identity lifecycle single-table and makes "who can join, as what role" governed data rather than an auth-side channel. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

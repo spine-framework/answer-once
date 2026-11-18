@@ -2,8 +2,8 @@
 title: Anatomy of an installed project
 audience: developers, agents
 kind: guide
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/init.ts
@@ -95,7 +95,11 @@ Everything in it is yours: not integrity-tracked, never touched by upgrade.
 - **Packaged apps** installed via `npx spine-framework install-app <pkg>` also
   land under `custom/apps/<slug>/`; their `manifest.json` can seed types,
   roles, pipelines, and registration policy into the database
-  (`.framework/cli/commands/install-app.ts`).
+  (`.framework/cli/commands/install-app.ts`). Unlike a hand-written app, a
+  packaged app's files are publisher-owned: `install-app`/`update-app`
+  re-copy the package's entries (reinstall keeps only your local
+  `manifest.json`), `uninstall-app` removes the whole directory — so an
+  "untouched `custom/`" promise applies to `upgrade`, not to app updates.
 
 ## `.assembled/` — build output
 

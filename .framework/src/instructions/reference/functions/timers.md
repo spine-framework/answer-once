@@ -2,14 +2,15 @@
 title: timers
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/timers.ts
   - .framework/functions/_shared/middleware.ts
   - .framework/functions/system-cron.ts
   - .framework/migrations/020_schema_reconciliation.sql
   - .framework/migrations/068_cron_schedule_timer_rpcs.sql
+  - .framework/migrations/081_second_surface_write_rls.sql
   - .framework/public/_redirects
 ---
 
@@ -52,8 +53,12 @@ anonymous → 401.
 
 - `list`/`create` require `ctx.accountId`; `create`/`update`/`remove`/
   `toggle` additionally require a person+account context.
-- No role gate — system admins use `adminDb`, other humans use
-  JWT-scoped `ctx.db` (RLS); machines run service-role.
+- Mutations are second-surface gated (`canAccessConfigObject`, decision
+  `0026`): `create`/`update`/`remove`/`toggle` require `system_admin` —
+  everyone else gets `Insufficient permissions to … timers`. RLS agrees:
+  migration `081` splits `timers_access` into an account-scoped
+  `timers_read` plus a system-admin `timers_write`, so direct PostgREST
+  matches the API.
 - Reads are sanitized: non-admins get `{ id }` per row (timer rows carry
   no `design_schema`).
 
@@ -65,14 +70,15 @@ anonymous → 401.
 **get** (query): `id`.
 
 **create** (body): `name`, `timer_type` required. Optional: `app_id`,
-`description`, `config` `{}`, `pipeline_id`, `metadata` `{}`.
-`account_id` and `created_by` stamped from context. (Columns
+`description`, `config` `{}`, `pipeline_id`, `metadata` `{}`,
+`is_active`, `next_execution` (explicit value wins over the computed
+arming). `account_id` and `created_by` stamped from context. (Columns
 `timer_type`, `pipeline_id`, `next_execution`, `execution_count` were
 added by `.framework/migrations/020_schema_reconciliation.sql`.)
 
 **update** (`id` in body or query + body): allowlist — `name`,
 `description`, `config`, `pipeline_id`, `metadata`, `is_active`,
-`timer_type`, `app_id`.
+`timer_type`, `app_id`, `next_execution`.
 
 **remove** (`id` in body or query): **hard delete**.
 
@@ -90,8 +96,12 @@ Standard `{ data, error, meta }` envelope. `list`/`get`/`create`/
   `get_due_timers` gates on (plus `next_execution <= now`).
 - `emitLog` writes `timer.created` / `.updated` / `.deleted` /
   `.toggled` audit rows to `public.logs`.
-- No schedule recomputation happens here — `next_execution` is only
-  advanced by `update_timer_after_run` during `system-cron` ticks.
+- `next_execution` is armed here: `create` computes it from
+  `config.interval_minutes` (or `interval_seconds` fallback) when the row
+  will be active; `update`/`toggle` recompute it when `config` or
+  `is_active` change without an explicit `next_execution`. After firing,
+  `update_timer_after_run` reschedules (recurring) or nulls it
+  (one-shot/exhausted).
 
 ## Errors
 
@@ -100,15 +110,17 @@ Standard `{ data, error, meta }` envelope. `list`/`get`/`create`/
 | No account context (list, create) | 500 | `Account context required` |
 | Missing create fields | 500 | `name and timer_type are required` |
 | No person+account context | 500 | `User context (person and account) required` |
+| Non-admin on any mutation | 500 | `Insufficient permissions to create/update/delete/toggle timers` |
 | Missing `id` | 500 | `Timer ID is required` |
 | Missing row (remove/toggle) | 500 | `Timer not found` |
 | Missing/unknown action | 500 | `Unsupported action: <action>` |
 
 ## Agent notes
 
-- `next_execution` is a real column (migration 020) but is not in the
-  create/update allowlists — it is only read by `get_due_timers` and
-  advanced by `update_timer_after_run` on `system-cron` ticks.
+- `next_execution` is a real column (migration 020) and IS in the
+  create/update allowlists — pass it explicitly to override the computed
+  arm time. `get_due_timers` reads it; `update_timer_after_run` advances
+  it on `system-cron` ticks.
 - `toggle` flips blindly — read the row first if you need a target
   state; concurrent toggles can cancel each other.
 - `remove` is a hard delete (unlike `triggers`, which soft-deletes).

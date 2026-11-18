@@ -44,6 +44,11 @@ export async function callOpenAIEmbeddings(
   inputs: string[],
   model = 'text-embedding-3-small'
 ): Promise<any> {
+  // ctx.integration is populated by no caller today — this precedence branch is
+  // reserved for callers that pre-resolve an integration into ctx. The real
+  // chain is the caller's `model` param (agent model_config.model →
+  // LLM_DEFAULT_MODEL → default). Do not "fix" docs to claim an integration
+  // models override without first giving a caller that sets ctx.integration.
   const integration = ctx?.integration
   const resolvedModel = integration?.config?.models?.embedding || model
   return callOpenAI(ctx, '/embeddings', {

@@ -2,7 +2,7 @@
 title: Knowledge Base
 audience: both
 kind: entity
-verified_against: e13127d
+verified_against: bc4b9e9
 verified_on: 2026-10-30
 source_files:
   - .framework/src/pages/admin/kb/KBAdminPage.tsx
@@ -22,6 +22,18 @@ The **KB** section (`/spine-framework/admin/kb/*`) covers three surfaces that sh
 - `kb/:typeSlug` — the article admin list/editor (`KBAdminPage`) for the KB item types `kb-spine-admin`, `kb-spine-internal`, `kb-spine-public`, `kb-account`. Articles are `items` records created/edited via `admin-data` and published via `kb`.
 - `kb/embeddings` — the embedding record browser (`EmbeddingsPage`): every generated embedding row with its approval state.
 - `kb/embeddings/:id` — single embedding detail (`EmbeddingDetailPage`): content, vector type, chunk index, model, approval/revocation timestamps, optional raw vector.
+
+## Why it exists
+
+Semantic search over dynamic content (KB articles, support tickets) without an external vector store.
+
+**Why it exists (5-whys):**
+
+1. Retrieval must scope to `account_id` and join to governed records — an external vector store re-implements tenant isolation and can't RLS.
+2. `approved_at`/`revoked_at` soft states beat deletion: embedding lifecycle is content lifecycle — unpublish an article and its embeddings stop matching *without* erasing the history of what was indexed.
+3. `content_hash` is the dedup key — re-ingesting unchanged content shouldn't re-embed (`kbIngest` skips unchanged documents).
+4. `document_id` + `chunk_index` store content as chunks — retrieval returns the relevant fragment with provenance back to the source record.
+5. **Root:** retrieval is a platform capability like files or notifications — `embeddings` is the governed vector index where searchable content lives account-scoped, lifecycle-managed, and provider-swappable. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

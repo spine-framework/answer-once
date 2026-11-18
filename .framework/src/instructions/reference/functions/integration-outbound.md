@@ -2,7 +2,7 @@
 title: integration-outbound
 audience: both
 kind: reference
-verified_against: f69c37d
+verified_against: 15b5f8b
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/integration-outbound.ts
@@ -74,12 +74,14 @@ retry-deliveries.ts`), and manual retry in `deliveries.ts`.
 so any authenticated caller works (human JWT or `x-api-key` machine principal).
 Internal callers import `execute` directly and pass their own `CoreContext`.
 
-The `delivery_id` (retry) path additionally requires
-`ctx.principal.isInternal` — true for the internal-invoke secret,
-`is_internal` API keys, and `SYSTEM_PRINCIPAL`. A non-internal caller passing
-`delivery_id` is *not* rejected: the stored-payload retry branch is skipped,
-but the row id is still reused for status bookkeeping instead of inserting a
-new delivery. See Agent notes.
+The `delivery_id` path first checks account ownership: a non-system
+caller (not `system_admin`, not an unbound internal machine) gets
+`Delivery belongs to a different account` (403) when the row's
+`account_id` differs from theirs. For the *stored-payload retry* branch
+the caller must additionally be `ctx.principal.isInternal` — true for the
+internal-invoke secret, `is_internal` API keys, and `SYSTEM_PRINCIPAL`.
+A non-internal same-account caller keeps the row id for bookkeeping but
+skips the stored-payload replay. See Agent notes.
 
 ## Request contract
 
@@ -97,7 +99,7 @@ Top-level body fields:
 | Key | Notes |
 |---|---|
 | `adapter` | Adapter name; falls back to `integration.config.outbound_adapter`. |
-| `credential_field` | `integrations.credentials` field to resolve; default `api_token`. |
+| `credential_field` | `integrations.credentials` field to resolve; default `api_token`. Honored only for system principals — non-system callers are pinned to `api_token` so a scoped key can't name another credential field. |
 | `max_attempts` | Overrides `config.retry_policy.max_attempts` and the default 3. |
 | `action_slug` | Stored on the delivery row for traceability. |
 | `update_record` / `update_fields` | On success, stamps `last_outbound_status`, `last_outbound_at`, plus `update_fields` onto `record_id` via admin-data `update`. |

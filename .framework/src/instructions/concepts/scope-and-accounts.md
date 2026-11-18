@@ -2,8 +2,8 @@
 title: Scope and Accounts
 audience: developers, agents
 kind: concept
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/002_core_rls_and_functions.sql
@@ -110,3 +110,14 @@ given — new accounts are born as *children* of the account that created them.
   `kind + slug` must be unique across every app installed in the deployment.
 - Account-scoped tests and seeds must set `account_id` on every record or RLS
   will make them invisible to human-scoped queries.
+
+## Why it exists
+
+Recursive queries on `accounts.parent_id` are slow and error-prone. A closure table makes queries such as "all descendants of X" and "all ancestors of Y" simple, constant-time lookups.
+
+Its full reasoning lives with its parent — see accounts `## Problem it solves` (why 3) and the accounts article.
+
+## Related
+
+- [Choosing a tenancy model](tenancy.md) — project-per-client vs
+  accounts-as-tenants, for agencies.

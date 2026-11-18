@@ -2,8 +2,8 @@
 title: The Spine domain model
 audience: developers, agents
 kind: guide
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/003_core_system_data.sql
@@ -174,8 +174,10 @@ An **app** (`public.apps`) is a registered application: `slug`,
   dispatches to the `pipeline-runner-background` function over HTTP — which
   requires `INTERNAL_INVOKE_SECRET` to be set
   (`.framework/functions/_shared/trigger-engine.ts`).
-- **Timer** (`public.timers`) — `timer_type` (`interval` | `cron` | `once`) +
-  `pipeline_id` + schedule in `config`. The scheduled function
+- **Timer** (`public.timers`) — `timer_type` (`interval` | `cron` | `once` —
+  a label the scheduler never reads) + `pipeline_id` + interval in `config`
+  (`interval_minutes`/`interval_seconds`; there is no cron-expression
+  evaluator — true cron lives on `public.schedules`). The scheduled function
   `trigger-scheduler` (every minute, `netlify.toml`) runs `system-cron`,
   which calls the `get_due_timers` RPC and executes each due timer's pipeline
   under a `timer:*` machine principal

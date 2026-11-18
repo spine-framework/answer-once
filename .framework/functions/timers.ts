@@ -30,7 +30,7 @@
 import { createHandler } from './_shared/middleware'
 import { joins, adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
-import { sanitizeRecordData } from './_shared/permissions'
+import { sanitizeRecordData, canAccessRecord } from './_shared/permissions'
 import { isSystemAdmin } from './_shared/principal'
 
 // Interval resolution mirrors public.update_timer_after_run (migration
@@ -196,6 +196,12 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('User context (person and account) required')
   }
 
+  // Second-surface write gate (decision 0026): system_admin only —
+  // canAccessConfigObject denies everyone else, machines included.
+  if (!(await canAccessRecord(ctx, { type: 'timers' }, 'create'))) {
+    throw new Error('Insufficient permissions to create timers')
+  }
+
   const effectiveConfig = config || {}
   // Omitted is_active falls through to the column DEFAULT (true); the
   // arming computation mirrors that assumption.
@@ -257,6 +263,11 @@ export const create = createHandler(async (ctx, body) => {
  * @cil-generated
  */
 export const update = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): system_admin only.
+  if (!(await canAccessRecord(ctx, { type: 'timers' }, 'update'))) {
+    throw new Error('Insufficient permissions to update timers')
+  }
+
   const id = body?.id || ctx.query?.id
   const { id: _bodyId, ...updates } = body || {}
 
@@ -332,6 +343,11 @@ export const update = createHandler(async (ctx, body) => {
  * @cil-generated
  */
 export const remove = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): system_admin only.
+  if (!(await canAccessRecord(ctx, { type: 'timers' }, 'delete'))) {
+    throw new Error('Insufficient permissions to delete timers')
+  }
+
   const id = body?.id || ctx.query?.id
 
   if (!id) {
@@ -388,6 +404,12 @@ export const remove = createHandler(async (ctx, body) => {
  * @cil-generated
  */
 export const toggle = createHandler(async (ctx, body) => {
+  // Second-surface write gate (decision 0026): toggling is a write —
+  // system_admin only.
+  if (!(await canAccessRecord(ctx, { type: 'timers' }, 'update'))) {
+    throw new Error('Insufficient permissions to toggle timers')
+  }
+
   const id = body?.id || ctx.query?.id
 
   if (!id) {

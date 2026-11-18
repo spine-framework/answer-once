@@ -2,8 +2,8 @@
 title: api-keys
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 761dfb9
+verified_on: 2026-11-17
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts
@@ -47,10 +47,12 @@ additionally require `ctx.accountId` ("Account context required").
 
 - System admins read via `adminDb` (all accounts); other principals use
   `ctx.db` — JWT-scoped (RLS) for humans, service role for machines.
-- There is **no machine-scope check** in this file. A machine principal
-  with an `account_id` can create/revoke/read keys within what its
-  service-role client reaches — treat key management as a trusted-surface
-  operation.
+- `create` is scope-gated for non-system callers (S-011): requesting
+  `is_internal` or `*:*` throws 403, other requested scopes are clipped to
+  the caller's own, and an omitted `scopes` inherits the caller's scopes.
+  `revoke`/`get` have no equivalent machine-scope check — a machine
+  principal with an `account_id` revokes within what its service-role
+  client reaches; treat revocation as a trusted-surface operation.
 
 ## Request contract
 
@@ -108,6 +110,7 @@ Standard `{ data, error, meta }` envelope.
 |---|---|---|
 | Missing `name` / `id` / `key_value` | 500 | `name is required` / `API key ID is required` / `key_value is required` |
 | No account context | 500 | `Account context required` |
+| `is_internal`/` *:*` for non-system | 403 | `Insufficient permissions to create an internal/wildcard-scoped API key` |
 | Unknown action/method | 500 | `Invalid action or method` |
 | DB failures | 500 | PostgREST message |
 

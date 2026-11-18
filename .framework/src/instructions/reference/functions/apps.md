@@ -2,8 +2,8 @@
 title: apps
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/apps.ts
   - .framework/functions/_shared/middleware.ts
@@ -46,7 +46,10 @@ Standard `createHandler` auth: `x-api-key` → machine principal,
 anonymous → 401.
 
 - `list` requires an account context (`ctx.accountId` or an explicit
-  `account_id` query param).
+  `account_id` query param). A non-system caller asking for another
+  `account_id` must have it inside their `get_accessible_accounts` set
+  (own account plus descendants) — otherwise `Account not accessible`
+  (403).
 - `create` allows non-system-admins only when
   `resolveFirstSurfacePermissions(principal.id, accountId, 'app',
   'create')` grants `canCreate`.
@@ -110,6 +113,7 @@ Standard `{ data, error, meta }` envelope.
 | Condition | HTTP | Message |
 |---|---|---|
 | No account context (list, available) | 500 | `Account context required` |
+| Foreign `account_id` on list | 403 | `Account not accessible` |
 | Missing slug/id | 500 | `App ID or slug is required` / `App slug is required` / `App ID is required` |
 | Missing create fields | 500 | `slug and name are required` |
 | Non-admin without create grant | 500 | `Insufficient permissions to create apps` |

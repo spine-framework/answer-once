@@ -2,7 +2,7 @@
 title: ai-agents
 audience: both
 kind: reference
-verified_against: f69c37d
+verified_against: 1485758
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/ai-agents.ts
@@ -87,7 +87,17 @@ Standard `{ data, error, meta }` envelope.
 - `run` → `{ ok, thread_id, message_id, status, turn_count, content,
   message_type, data, agent_id, prompt_config_id }` where `status` comes
   from the thread's `data.research_state` (`complete`,
-  `awaiting_input`, `failed`, …).
+  `awaiting_input`, `failed`, …). `turn_count` counts turns in the
+  *current episode* — each `run` starts a fresh episode, so it returns
+  `1` even on the thread's Nth message; it is not a cumulative thread
+  counter.
+- The thread a `run` binds to still needs `target_type`/`target_id`
+  (both NOT NULL) — a standalone agent-chat thread has no natural
+  target; attach any record (e.g. the task/item it concerns).
+- `messages` includes internal `plan`-phase progress rows (`sender:
+  'internal'`, e.g. "Reviewing your question…") alongside real replies —
+  customer surfaces should filter by `data.message_type` /
+  `CUSTOMER_STEP_TYPES` (`.framework/functions/_shared/access.ts`).
 - Lease-refused runs return HTTP 200 with `{ ok: true, status:
   'running', driver_id }` (plus `already_running: true` in episode
   mode) — callers poll the thread rather than interleave writes. A

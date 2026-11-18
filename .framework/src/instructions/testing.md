@@ -2,8 +2,8 @@
 title: Testing
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/TestingDashboard.tsx
   - .framework/src/pages/admin/TestRunDetailPage.tsx
@@ -14,6 +14,32 @@ source_files:
 ## What this is for
 
 The **Testing** page (`/spine-framework/admin/testing`) is a dashboard over `test_runs`/`test_results` — rows written by external test harnesses (e.g. suite runs triggered from the IDE). It summarizes per-suite health and lists recent runs so you can spot a red suite without opening the CI output.
+
+## Why it exists
+
+### test-cases
+
+You need stored ground-truth questions with expected answers, tiers, and source IDs so that evaluation harnesses can score embedding, search, and agent pipelines.
+
+**Why it exists (5-whys):**
+
+1. Evaluating search, embeddings, and agents needs stored ground truth — questions, expected answers, tiers — seeded and versioned like other config, not hardcoded in test files.
+2. Typed (`type_id`) + `UNIQUE(app_id, slug)` make test suites domain vocabulary — each app's evals travel with its seeds.
+3. `test_runs` and `test_results` are separate because a run is an event (suite, counts, duration) while results are per-case detail — the summary exists without a thousand rows; the detail exists only when needed.
+4. Results live in-database rather than CI artifacts because "is this agent improving" is a trend query — CI logs expire; rows don't.
+5. **Root:** quality is data too — test definitions and outcomes live in the governed schema so evaluation is seedable, auditable, and trendable per app/account. *(confirmed 2026-11-13)*
+
+### test-results
+
+A test run summary is not enough to debug a failure; you need per-test status, duration, and the failure message for each individual test case.
+
+Companion of `test_cases` — its full reasoning is level 3 of the chain in test-cases `## Problem it solves` and the test-cases article.
+
+### test-runs
+
+You need historical visibility into whether the test suite passed, when it ran, how long it took, and who/what triggered it — without digging through CI logs.
+
+Companion of `test_cases` — its full reasoning is level 3 of the chain in test-cases `## Problem it solves` and the test-cases article.
 
 ## Fields and settings
 

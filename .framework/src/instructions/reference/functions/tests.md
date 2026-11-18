@@ -2,8 +2,8 @@
 title: tests
 audience: both
 kind: reference
-verified_against: f69c37d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/functions/tests.ts
   - .framework/functions/_shared/middleware.ts
@@ -80,16 +80,16 @@ Embedded under `data` (HTTP 200):
 | `{ error: "Test run not found: …", status: 404 }` | unknown run id |
 | `{ error: "<postgrest msg>", status: 500 }` | query failure |
 
-Non-system-admin callers get the `requireSystemContextWithAudit` denial,
-which — like the other responses — is returned as the handler result and
-lands inside `data` (a `{ statusCode, headers, body }` response object)
-with HTTP 200, not as a real 403.
+Non-system-admin callers get a real HTTP 403 — `requireSystemContextWithAudit`
+throws `{ statusCode: 401 | 403 }` (F-051 fix), which `createHandler` maps to
+the HTTP status.
 
 ## Agent notes
 
 - Always unwrap twice: `body.data.data` is the payload, `body.data.error`
-  is where this endpoint reports failures. Do not rely on HTTP status
-  codes here.
+  is where this endpoint reports *handler-level* failures — those still
+  come back under HTTP 200. The auth denial is different: a real 401/403
+  thrown before the handler runs.
 - `stats` only covers the four hard-coded suites (`unit`, `integration`,
   `api`, `ui`); other suite names appear in `list` but never in `stats`.
 - To record runs, write `test_runs`/`test_results` through

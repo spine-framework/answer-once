@@ -16,7 +16,7 @@ import { DataTable } from './DataTable'
 import { ItemCard, ItemGrid } from './ItemCard'
 import { Badge } from './badge'
 import { Button } from './button'
-import { Squares2X2Icon, List, Plus } from 'lucide-react';
+import { LayoutGrid, List, Plus } from 'lucide-react';
 import { formatDateTime } from '../../lib/utils'
 
 interface ItemListViewProps {
@@ -156,7 +156,7 @@ export function ItemListView({
                 }
               `}
             >
-              <Squares2X2Icon className="h-4 w-4" />
+              <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('table')}

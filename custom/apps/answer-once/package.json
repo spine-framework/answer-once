@@ -4,7 +4,7 @@
   "private": false,
   "description": "Answer Once — focused customer-support and knowledge-loop app for Spine Framework",
   "type": "module",
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
   },

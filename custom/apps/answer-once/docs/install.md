@@ -1,3 +1,15 @@
+---
+title: "Answer Once — standalone install"
+kind: task
+verified_against: 1ceeac5
+verified_on: 2026-11-17
+source_files:
+  - custom/npm/create-answer-once/
+  - custom/apps/answer-once/manifest.json
+  - custom/apps/answer-once/package.json
+  - custom/apps/answer-once/standalone.config.json
+---
+
 # Answer Once — Standalone Install
 
 How to install the Spine Framework + Answer Once app into a virgin project directory and Supabase database. The install creates **configuration only** — no tickets, no KB articles, no CIL data. Knowledge is earned through real support work.
@@ -15,7 +27,7 @@ How to install the Spine Framework + Answer Once app into a virgin project direc
 npm create @spine-framework/answer-once@latest ~/my-answer-once
 ```
 
-This runs `spine-framework init` (framework-owned scaffold: `.framework/`, `config/`, `scripts/`, `bin/`, `package.json`, `package-lock.json`, `.env.example`, `netlify.toml`, neutral `spine.config.json`, frozen `.spine-manifest.json`) then `answer-once install` (app files into `custom/apps/answer-once/`, its `custom/migrations/062_*` migration, `spine.config.json` registration, the scheduled-function section in `netlify.toml`, and the `.spine/apps/answer-once.json` install record).
+This runs `spine-framework init` (framework-owned scaffold: `.framework/`, `config/`, `scripts/`, `bin/`, `package.json`, `package-lock.json`, `.env.example`, `netlify.toml`, neutral `spine.config.json`, frozen `.spine-manifest.json`) then `answer-once install` (app files into `custom/apps/answer-once/`, its `custom/migrations/062_*`–`070_*` app migrations, `spine.config.json` registration, the scheduled-function section in `netlify.toml`, and the `.spine/apps/answer-once.json` install record).
 
 The create command only scaffolds — it does not run `npm install` or touch a database.
 
@@ -133,7 +145,7 @@ npm run spine-framework -- seed-app answer-once --reconcile-owned-types
 `spine-framework upgrade` only touches framework-owned files
 (`.framework/`, `config/`, `scripts/`, `bin/`, `package.json` framework
 deps/scripts, `netlify.toml` framework blocks). `answer-once upgrade` only
-touches `custom/apps/answer-once/`, its `custom/migrations/062_*` files, and its
+touches `custom/apps/answer-once/`, its `custom/migrations/062_*`–`070_*` files, and its
 own `netlify.toml`/`spine.config.json` keys. Both refuse to overwrite files you
 modified locally (`--force` accepts the overwrite), and both list new
 migrations without running them.
@@ -165,7 +177,7 @@ One Netlify site can serve multiple branded domains — `support.answer-once.com
 
 - No KB articles, embeddings, tickets, or CIL data are seeded — ever. The knowledge base starts empty.
 - No CIL service, project, or credentials are required at runtime.
-- No sibling apps (demo, portal, cortex, workbench) are shipped or installed.
+- No sibling apps are shipped or installed (demo is vendored separately in this monorepo).
 - No manual SQL is part of the procedure — a repair step means an upstream defect, not a workaround to document.
 
 ## Purging an existing project for a re-test

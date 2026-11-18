@@ -2,8 +2,8 @@
 title: Netlify Deployment
 audience: both
 kind: reference
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 1485758
+verified_on: 2026-11-15
 source_files:
   - netlify.toml
   - .framework/public/_redirects
@@ -110,6 +110,8 @@ The full annotated list is [Environment Variables](../reference/env-vars.md);
 
 ## Related
 
+- [Declare your environments](../tasks/declare-your-environments.md) — the
+  `## Environments` ladder this deploy becomes a rung of
 - [Migrations](migrations.md) · [Upgrade](upgrade.md) · [Troubleshooting](troubleshooting.md)
 - [Environment Variables](../reference/env-vars.md) · [CLI Reference](../reference/cli.md)
 - [Anatomy of an installed project](../guide/02-project-map.md) — sealed vs customer trees

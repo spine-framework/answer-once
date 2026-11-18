@@ -20,7 +20,7 @@ const demoApp: AnalyticsAppFields = {
   config: { analytics: { ga4: { 'demo.answer-once.com': 'G-WT2NR4N8SN' } } },
 }
 
-const bareApp: AnalyticsAppFields = { slug: 'workbench', route_prefix: '/workbench', config: {} }
+const bareApp: AnalyticsAppFields = { slug: 'test-app', route_prefix: '/test-app', config: {} }
 
 describe('matchAppForPath', () => {
   it("'/' prefix matches every path but loses to longer prefixes", () => {

@@ -8,6 +8,19 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/concepts/automation.md
+    - .framework/src/instructions/deliveries.md
+    - .framework/src/instructions/pipelines.md
+    - .framework/src/instructions/tasks/
+    - .framework/src/instructions/timers.md
+    - .framework/src/instructions/triggers.md
+    - .framework/src/instructions/tasks/add-a-trigger.md
+    - .framework/src/instructions/tasks/add-a-pipeline.md
+    - .framework/src/instructions/tasks/add-a-timer.md
+  commands:
+    - "npx spine-framework doctor"
 ---
 
 You add automation to a Spine project: pipelines (the workflow), triggers

@@ -36,7 +36,7 @@ describe('Core Isolation', () => {
     })
 
     it('should load valid manifest if exists', () => {
-      const manifest = loadManifest('custom/apps/cortex/manifest.json')
+      const manifest = loadManifest('custom/apps/demo/manifest.json')
       if (manifest) {
         expect(manifest.slug).toBeDefined()
         expect(manifest.name).toBeDefined()

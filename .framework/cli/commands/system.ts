@@ -14,12 +14,18 @@ async function fetchSystemEndpoint(ctx: any, action: string): Promise<any> {
   const localUrl = 'http://localhost:8888/.netlify/functions/system'
   const url = `${localUrl}?action=${action}`
 
+  const apiKey = process.env.SPINE_CLI_API_KEY || process.env.SPINE_API_KEY
+  if (!apiKey) {
+    throw new Error('SPINE_CLI_API_KEY (or SPINE_API_KEY) not set — the system endpoint requires an API key')
+  }
+
   try {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'x-app-id': 'cli-system'
+        'x-app-id': 'cli-system',
+        'x-api-key': apiKey
       }
     })
 
@@ -61,8 +67,8 @@ export function registerSystemCommands(program: Command) {
           console.log('\n📋 Spine System Manifest')
           console.log('─'.repeat(50))
 
-          if (result.data) {
-            const m = result.data
+          const m = result.data?.data ?? result.data
+          if (m) {
             console.log(`Version:     ${m.version}`)
             console.log(`Schema:      ${m.schema}`)
             console.log(`Migrations:  ${m.migrations?.applied || 0} applied` +
@@ -104,8 +110,8 @@ export function registerSystemCommands(program: Command) {
           console.log('\n🏥 Spine Health Check')
           console.log('─'.repeat(50))
 
-          if (result.data) {
-            const h = result.data
+          const h = result.data?.data ?? result.data
+          if (h) {
             const statusIcon = h.status === 'healthy' ? '✓' :
                               h.status === 'degraded' ? '⚠' : '✗'
             console.log(`Status: ${statusIcon} ${h.status.toUpperCase()}`)

@@ -5,6 +5,11 @@ allowed-tools:
   - exec
   - read
   - grep
+depends_on:
+  files:
+    []
+  commands:
+    []
 ---
 
 You operate the **answer-once** KB review surface.

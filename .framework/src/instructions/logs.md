@@ -2,8 +2,8 @@
 title: Logs
 audience: both
 kind: entity
-verified_against: e13127d
-verified_on: 2026-10-30
+verified_against: 9f90999
+verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/LogsPage.tsx
   - .framework/functions/logs.ts
@@ -15,6 +15,18 @@ source_files:
 ## What this is for
 
 **Logs** (`/spine-framework/admin/observability/logs`) is the account's audit-trail and event-history viewer — every `emitLog`/`emitAudit`/`emitSpan`/`emitActivity` write lands in the `logs` table and shows up here. Use it to trace a request end-to-end (via `trace_id`), answer "who did what when", and debug trigger/pipeline/delivery failures.
+
+## Why it exists
+
+You need a single, queryable, account-scoped audit trail across every function in the framework, instead of scattered `console.log` calls or per-feature log tables.
+
+**Why it exists (5-whys):**
+
+1. Scattered logs aren't queryable — "what happened to this record in this account" needs structured rows, not stdout.
+2. One table instead of per-feature log tables because cross-cutting questions (everything in account X around time T) are impossible when each feature logs differently.
+3. `level` + `context`/`metadata` JSONB make logs filterable and forensically rich — severity for noise control, structured context for "what exactly happened."
+4. `account_id` + `created_by` on every row make audit attributable — the account boundary applies to observability data too.
+5. **Root:** a governed platform can't have unobserved writes — `logs` is the single append-only trail (`emitAudit`/`emitLog` in `_shared/audit.ts`) that makes every action attributable and queryable. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 

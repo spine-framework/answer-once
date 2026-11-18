@@ -9,37 +9,10 @@
 
 import type { Command } from 'commander'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 import { adminDb } from '../../functions/_shared/index.ts'
 
-/**
- * __filename is a constant that holds the resolved file path of the current module, allowing for accurate file system operations and references. It exists to provide a reliable way to access the file's location in the context of ES modules.
- *
- * @sideEffects none
- * @stability   stable
- * @calls       fileURLToPath
- * @cil-generated
- */
-const __filename = fileURLToPath(import.meta.url)
-/**
- * __dirname is a constant that holds the directory name of the current module, allowing for relative file path resolution. It exists to facilitate file operations within the module's directory context.
- *
- * @sideEffects none
- * @stability   stable
- * @calls       dirname
- * @cil-generated
- */
-const __dirname = dirname(__filename)
-/**
- * PROJECT_ROOT defines the root directory of the project, allowing for relative path resolution. It exists to facilitate file operations within the project structure.
- *
- * @sideEffects none
- * @stability   stable
- * @calls       resolve
- * @cil-generated
- */
-const PROJECT_ROOT = resolve(__dirname, '../../../')
+const PROJECT_ROOT = process.cwd()
 
 /**
  * Converts a slug string formatted with hyphens into title case by capitalizing the first letter of each word. This function is useful for generating user-friendly titles from URL slugs.
@@ -75,6 +48,8 @@ function generateManifest(slug: string, name: string, role: string): string {
     slug,
     description: `${name} app`,
     version: "1.0.0",
+    app_type: "ui",
+    route_prefix: `/${slug}`,
     required_roles: [role],
     routes: [
       `/${slug}`,
@@ -91,6 +66,19 @@ function generateManifest(slug: string, name: string, role: string): string {
     features: [],
     dependencies: [],
     entry_point: "./index.tsx"
+  }, null, 2) + '\n'
+}
+
+function generatePackageJson(slug: string): string {
+  return JSON.stringify({
+    name: `spine-app-${slug}`,
+    version: "1.0.0",
+    private: true,
+    spine: {
+      type: "app",
+      slug,
+      manifestPath: "manifest.json"
+    }
   }, null, 2) + '\n'
 }
 
@@ -150,8 +138,10 @@ async function createApp(slug: string, options: { name?: string; role: string; f
 
   
   mkdirSync(resolve(appDir, 'components'), { recursive: true })
+  mkdirSync(resolve(appDir, 'pages'), { recursive: true })
   console.log(`  ✓ Created custom/apps/${slug}/`)
   console.log(`  ✓ Created custom/apps/${slug}/components/`)
+  console.log(`  ✓ Created custom/apps/${slug}/pages/`)
 
   
   writeFileSync(
@@ -162,6 +152,13 @@ async function createApp(slug: string, options: { name?: string; role: string; f
 
   
   writeFileSync(
+    resolve(appDir, 'package.json'),
+    generatePackageJson(slug)
+  )
+  console.log(`  ✓ Created custom/apps/${slug}/package.json`)
+
+  
+  writeFileSync(
     resolve(appDir, 'index.tsx'),
     generateIndexTsx(slug, name)
   )
@@ -169,6 +166,7 @@ async function createApp(slug: string, options: { name?: string; role: string; f
 
   
   writeFileSync(resolve(appDir, 'components', '.gitkeep'), '')
+  writeFileSync(resolve(appDir, 'pages', '.gitkeep'), '')
 
   
   console.log(`  Registering app in database...`)

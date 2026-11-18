@@ -2,8 +2,8 @@
 title: Glossary
 audience: developers, agents
 kind: guide
-verified_against: f69c37d
-verified_on: 2026-10-29
+verified_against: de75df4
+verified_on: 2026-11-17
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/004_core_rpc_and_broker.sql
@@ -119,7 +119,8 @@ triggers enqueue an execution and dispatch the pipeline via the
 `pipeline-runner-background` function (requires `INTERNAL_INVOKE_SECRET`).
 
 **timer** — a schedule (`public.timers`): `timer_type`
-(`interval` | `cron` | `once`) + `pipeline_id`. The `trigger-scheduler`
+(`interval` | `cron` | `once` — a label, not an engine) + `pipeline_id`
++ `config` interval (`interval_minutes`/`interval_seconds`). The `trigger-scheduler`
 Netlify scheduled function (every minute, `netlify.toml`) runs `system-cron`,
 which runs due timers through `runPipeline` under a `timer:*` principal.
 

@@ -8,6 +8,18 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+depends_on:
+  files:
+    - .framework/src/instructions/api-keys.md
+    - .framework/src/instructions/concepts/integrations-and-webhooks.md
+    - .framework/src/instructions/deliveries.md
+    - .framework/src/instructions/integrations.md
+    - .framework/src/instructions/reference/functions/integration-outbound.md
+    - .framework/src/instructions/reference/functions/integration-routes.md
+    - .framework/src/instructions/tasks/add-an-integration.md
+    - .framework/src/instructions/tasks/add-a-webhook.md
+  commands:
+    - "npx spine-framework doctor"
 ---
 
 You connect a Spine project to external services: outbound integrations

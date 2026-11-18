@@ -2,7 +2,7 @@
 title: admin-data
 audience: both
 kind: reference
-verified_against: f69c37d
+verified_against: 1485758
 verified_on: 2026-11-01
 source_files:
   - .framework/functions/admin-data.ts

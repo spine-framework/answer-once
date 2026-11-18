@@ -2,8 +2,10 @@
 title: Add a webhook
 audience: developers, agents
 kind: task
-verified_against: e13127d
-verified_on: 2026-10-30
+skills:
+  - spine-add-integration
+verified_against: bc8b7a2
+verified_on: 2026-11-15
 source_files:
   - .framework/functions/integration-routes.ts
   - .framework/functions/_shared/webhook-registry.ts

@@ -2,7 +2,7 @@
 title: AI Agents
 audience: both
 kind: entity
-verified_against: e13127d
+verified_against: 1485758
 verified_on: 2026-10-30
 source_files:
   - .framework/functions/ai-agents.ts
@@ -15,11 +15,23 @@ source_files:
 
 An **AI agent** is a reusable model + prompt + tool configuration that Spine invokes from pipelines, triggers, and chat interfaces. It defines how an LLM behaves, which tools it can call, and its guardrails.
 
+## Why it exists
+
+You want reusable AI personas (support triage, solution assistant) whose prompts and models can be edited in admin without redeploying code.
+
+**Why it exists (5-whys):**
+
+1. Personas, models, and tool envelopes change per app and per deployment — code-bound agents mean redeploys for prompt tuning.
+2. `config` JSONB (model, tools, retrieval policy, behavior knobs) beats a column per possible knob — agent configuration is open-ended.
+3. `UNIQUE(app_id, slug)` + `type_id` make agents domain vocabulary — "triage agent" vs "solution agent" are app-declared, seeded, and upgradable like every other config primitive.
+4. The agent runner is generic — it resolves agent row → prompt config → tool envelope per episode. One runner, many personas, zero per-agent code.
+5. **Root:** AI behavior is the newest layer of "domain as data" — `ai_agents` makes the agent itself a governed declaration so what runs autonomously is seeded, scoped, and editable in admin. *(confirmed 2026-11-13)*
+
 ## Fields and settings
 
 - **Name** — string. Display name used in lists and by callers; required.
 - **Type** — select: `chat`, `analysis`, `automation`, `custom`. Categorizes and routes the agent; defaults to `chat`.
-- **Model** — string. Stored in `model_config.model`. Blank falls back to `LLM_DEFAULT_MODEL` env then `gpt-4o` at inference time — set it explicitly so the behavior isn't env-dependent.
+- **Model** — string. Stored in `model_config.model`. Blank falls back to `LLM_DEFAULT_MODEL` env then `gpt-4o` at inference time — set it explicitly so the behavior isn't env-dependent. (The seeded `openai` integration's `config.models.chat` is adapter configuration, not part of this chain — editing it does not change the agent's model.)
 - **Max Tokens** — number. Maximum response length; empty values can cause provider errors.
 - **Temperature** — number 0–2. Lower = deterministic, higher = random; out-of-range values may be rejected by the provider.
 - **Description** — string, optional.

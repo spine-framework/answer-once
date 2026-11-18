@@ -2,7 +2,9 @@
 title: Build a custom page
 audience: developers, agents
 kind: task
-verified_against: e13127d
+skills:
+  - spine-new-app
+verified_against: 8a0dc59
 verified_on: 2026-10-30
 source_files:
   - .framework/src/components/CustomAppLoader.tsx
@@ -39,8 +41,9 @@ nav items carrying `type_slug`
    npx spine-framework create-app <slug> --role <role-slug>
    ```
 
-   Writes `custom/apps/<slug>/` with `manifest.json`, `index.tsx`, and
-   `components/`, and inserts the `apps` row with `renderer: 'custom'`
+   Writes `custom/apps/<slug>/` with `manifest.json`, `package.json`,
+   `index.tsx`, `components/`, and `pages/` (validates clean against
+   `validate-app`), and inserts the `apps` row with `renderer: 'custom'`
    (`.framework/cli/commands/create-app.ts`). Pass `--role` a slug
    that exists in `roles` — the default `member` is seeded by
    `073_seed_member_roles.sql`.

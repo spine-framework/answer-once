@@ -2,7 +2,7 @@
 title: People
 audience: both
 kind: entity
-verified_against: bc17374
+verified_against: bc4b9e9
 verified_on: 2026-11-02
 source_files:
   - .framework/migrations/001_core_schema.sql
@@ -22,6 +22,18 @@ auth user. Every signed-in session resolves to exactly one person; that row
 carries the account placement, role, and status that gate everything the
 user can see and do. Watchers, messages, notification recipients, and
 pipeline "who did this" all reference `people.id`.
+
+## Why it exists
+
+You need a single identity table that works across accounts and integrates with Supabase Auth.
+
+**Why it exists (5-whys):**
+
+1. Supabase Auth proves *who* signed in; the platform needs *who they are to each account* — role, app membership, display identity.
+2. `auth_uid` + `account_id` + `role_id` on one row collapses the principal join: person → role → account → accessible accounts must be resolvable in one table read per request, not a multi-hop lookup.
+3. `email` unique + `auth_uid` nullable means identity precedes authentication — invites create the person row before auth exists (pending invites are `people` rows carrying `data.invite_token`, per `invites.ts`).
+4. People are typed (`type_id`) because person records are domain-shaped too — customer vs staff vs agent personas.
+5. **Root:** the principal is the unit every security decision flows through — `people` fuses auth identity, account membership, and role into the row `current_actor_id` and every RLS policy resolve first. *(confirmed 2026-11-13)*
 
 ## Fields and settings
 
