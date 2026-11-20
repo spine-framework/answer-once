@@ -2,8 +2,8 @@
 title: Security Checklist
 audience: both
 kind: guide
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts

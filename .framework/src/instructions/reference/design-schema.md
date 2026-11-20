@@ -2,8 +2,8 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 35992a9
+verified_on: 2026-11-20
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/_shared/schema-utils.ts

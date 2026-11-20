@@ -26,7 +26,7 @@ import { createHandler } from './_shared/middleware'
 import { sanitizeRecordData, resolveFirstSurfacePermissions, validateUpdatePermissions } from './_shared/permissions'
 import { adminDb } from './_shared/db'
 import { isSystemAdmin, isSystemPrincipal, resolveAccessibleAccountIds } from './_shared/principal'
-import { applyAccountScope, assertRecordAccess, canAccessAccount, ENTITY_ACCOUNT_KEY } from './_shared/account-scope'
+import { applyAccountScope, assertRecordAccess, canAccessAccount, resolvePlatformAccountId, ENTITY_ACCOUNT_KEY } from './_shared/account-scope'
 import { isAccountAdmin } from './_shared/access'
 import { resolveTypeId, resolveTypeIds, resolveTypeRecord } from './_shared/resolve-ids'
 import { fireCreateTriggers, fireUpdateTriggers, fireDeleteTriggers } from './_shared/trigger-engine'
@@ -114,8 +114,9 @@ export const list = createHandler(async (ctx, _body) => {
 
       const db = isSystemPrincipal(ctx) ? adminDb : ctx.db
       const accountIds = await resolveAccessibleAccountIds(ctx)
+      const platformAccountId = await resolvePlatformAccountId(ctx)
       let query = db.from(entity).select('*')
-      query = applyAccountScope(query, entity, accountIds)
+      query = applyAccountScope(query, entity, accountIds, platformAccountId)
 
       // Customer-scoped principals never receive internal threads.
       const internalAudience = hasInternalAudience(ctx.principal)
@@ -416,7 +417,7 @@ export const get = createHandler(async (ctx, _body) => {
         throw new Error('Record not found')
       }
 
-      await assertRecordAccess(ctx, entity, data)
+      await assertRecordAccess(ctx, entity, data, await resolvePlatformAccountId(ctx))
 
       let sanitizedRecord = await sanitizeRecordData(ctx, data, entity)
 
@@ -941,9 +942,10 @@ export const stats = createHandler(async (ctx, _body) => {
 
       const db = isSystemPrincipal(ctx) ? adminDb : ctx.db
       const accountIds = await resolveAccessibleAccountIds(ctx)
+      const platformAccountId = await resolvePlatformAccountId(ctx)
       let query = db.from(entity)
         .select('*', { count: 'exact', head: true })
-      query = applyAccountScope(query, entity, accountIds)
+      query = applyAccountScope(query, entity, accountIds, platformAccountId)
       const { count, error: err } = await query
 
       if (err) throw err

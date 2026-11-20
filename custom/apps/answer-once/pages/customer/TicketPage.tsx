@@ -75,8 +75,8 @@ export default function TicketPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="max-w-2xl mx-auto space-y-3">
+        <div className="flex-1 overflow-auto px-4 py-3">
+          <div className="space-y-4">
             {createError && (
               <div className="text-sm text-destructive">{createError}</div>
             )}

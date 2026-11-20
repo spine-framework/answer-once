@@ -1,4 +1,9 @@
 /api/*              /.netlify/functions/:splat    200
 /v2/*               /.netlify/v2/functions/:splat  200
 /spine.config.json  /spine.config.json             200
+# AO mounts at "/" on its own prod hosts (prod_route_prefix + prod_domains) —
+# legacy /answer-once/* deep links 301 to the same path at root. Host-qualified,
+# so no-ops on any other domain. _redirects rules process BEFORE netlify.toml.
+https://support.spine-framework.com/answer-once/*  https://support.spine-framework.com/:splat  301
+https://support.answer-once.com/answer-once/*      https://support.answer-once.com/:splat      301
 /*                  /index.html                    200

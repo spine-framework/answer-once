@@ -26,6 +26,17 @@ interface Directive {
   updated_at: string
 }
 
+interface ArticleLink {
+  id: string
+  source_id: string
+  target_id: string
+}
+
+interface KbArticle {
+  id: string
+  title: string
+}
+
 export default function DirectivesPage() {
   const location = useLocation()
   const [directives, setDirectives] = useState<Directive[]>([])
@@ -35,6 +46,10 @@ export default function DirectivesPage() {
   const [drafts, setDrafts] = useState<Record<string, any>>({})
   const [creating, setCreating] = useState(false)
   const [savingNew, setSavingNew] = useState(false)
+  const [links, setLinks] = useState<ArticleLink[]>([])
+  const [articles, setArticles] = useState<KbArticle[]>([])
+  const [linkTypeId, setLinkTypeId] = useState<string | null>(null)
+  const [pickFor, setPickFor] = useState<Record<string, string>>({})
   const [newDraft, setNewDraft] = useState<any>({
     title: '', match_description: '', reply_template: '', mode: 'suggest', priority: 100, actions: '{}',
   })
@@ -53,8 +68,21 @@ export default function DirectivesPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const rows = await fetchJSON('/api/admin-data?entity=items&type_slug=ao_triage_directive&limit=200')
+      const [rows, linkRows, articleRows, linkTypeRows] = await Promise.all([
+        fetchJSON('/api/admin-data?entity=items&type_slug=ao_triage_directive&limit=200'),
+        fetchJSON('/api/admin-data?entity=links&link_type=ao_article_directive&limit=200'),
+        fetchJSON('/api/admin-data?entity=items&type_slug=ao_kb_article&limit=200'),
+        fetchJSON('/api/admin-data?entity=link_types&slug=ao_article_directive&limit=1'),
+      ])
       setDirectives(Array.isArray(rows) ? rows : (Array.isArray(rows?.data) ? rows.data : []))
+      setLinks(Array.isArray(linkRows) ? linkRows : (Array.isArray(linkRows?.data) ? linkRows.data : []))
+      setArticles(
+        (Array.isArray(articleRows) ? articleRows : (Array.isArray(articleRows?.data) ? articleRows.data : []))
+          .filter((a: any) => a.is_active !== false && (a.data?.status === 'published' || a.status === 'published'))
+          .map((a: any) => ({ id: a.id, title: a.title }))
+      )
+      const lt = Array.isArray(linkTypeRows) ? linkTypeRows[0] : linkTypeRows
+      setLinkTypeId(lt?.id || null)
       setError(null)
     } catch (e: any) {
       setError(e.message || 'Failed to load directives')
@@ -103,6 +131,30 @@ export default function DirectivesPage() {
 
   const setDraft = (id: string, patch: any) =>
     setDrafts(prev => ({ ...prev, [id]: { ...draftFor(directives.find(x => x.id === id)!), ...patch } }))
+
+  const linkArticle = async (d: Directive, articleId: string) => {
+    await fetchJSON('/api/admin-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity: 'links',
+        type_slug: 'link',
+        link_type: 'ao_article_directive',
+        ...(linkTypeId ? { link_type_id: linkTypeId } : {}),
+        source_type: 'items',
+        source_id: articleId,
+        target_type: 'items',
+        target_id: d.id,
+        data: { source: 'directives_page' },
+      }),
+    })
+    await load()
+  }
+
+  const unlinkArticle = async (linkId: string) => {
+    await fetchJSON(`/api/admin-data?entity=links&id=${linkId}`, { method: 'DELETE' })
+    await load()
+  }
 
   const create = async () => {
     if (!newDraft.title.trim() || !newDraft.match_description.trim()) {
@@ -262,6 +314,42 @@ export default function DirectivesPage() {
                         onChange={e => setDraft(d.id, { actions: e.target.value })} />
                     </label>
                     <button className="text-sm border rounded px-3 py-1" onClick={() => void save(d)}>Save</button>
+                    <div className="space-y-2 pt-3 border-t">
+                      <p className="text-xs font-medium">
+                        Linked articles <span className="font-normal text-muted-foreground">— when one of these KB articles is retrieved, this directive is offered to the agent</span>
+                      </p>
+                      {links.filter(l => l.target_id === d.id).map(l => {
+                        const a = articles.find(x => x.id === l.source_id)
+                        return (
+                          <div key={l.id} className="flex items-center justify-between text-sm">
+                            <span className="truncate">{a?.title || l.source_id}</span>
+                            <button className="text-xs underline shrink-0" onClick={() => void unlinkArticle(l.id)}>Unlink</button>
+                          </div>
+                        )
+                      })}
+                      {links.filter(l => l.target_id === d.id).length === 0 && (
+                        <p className="text-xs text-muted-foreground">No linked articles.</p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <select
+                          className="border rounded p-1 text-sm flex-1 min-w-0"
+                          value={pickFor[d.id] || ''}
+                          onChange={e => setPickFor(p => ({ ...p, [d.id]: e.target.value }))}
+                        >
+                          <option value="">Choose an article to link…</option>
+                          {articles
+                            .filter(a => !links.some(l => l.target_id === d.id && l.source_id === a.id))
+                            .map(a => <option key={a.id} value={a.id}>{a.title}</option>)}
+                        </select>
+                        <button
+                          className="text-xs border rounded px-2 py-1 shrink-0"
+                          disabled={!pickFor[d.id]}
+                          onClick={() => void linkArticle(d, pickFor[d.id]).then(() => setPickFor(p => ({ ...p, [d.id]: '' })))}
+                        >
+                          Link
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

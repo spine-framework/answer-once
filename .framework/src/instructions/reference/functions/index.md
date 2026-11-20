@@ -2,8 +2,8 @@
 title: Functions index
 audience: both
 kind: index
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/
   - .framework/public/_redirects

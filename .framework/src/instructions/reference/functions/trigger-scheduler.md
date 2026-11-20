@@ -2,8 +2,8 @@
 title: trigger-scheduler
 audience: developers, agents
 kind: reference
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/trigger-scheduler.ts
   - .framework/functions/system-cron.ts

@@ -2,8 +2,8 @@
 title: admin-data
 audience: both
 kind: reference
-verified_against: 1485758
-verified_on: 2026-11-01
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -58,7 +58,11 @@ requests are rejected with 401 before the handler runs.
 
 - Humans query through a JWT-scoped client (`ctx.db`), so row-level security
   applies. Machines, anonymous, and system principals get the service-role
-  client — endpoint-level checks carry the weight.
+  client — endpoint-level checks carry the weight. Reads additionally apply
+  an explicit `account_id` filter (`_shared/account-scope.ts`) — the sole
+  tenancy guard on `adminDb` — which ORs in platform-scope `items` on
+  spine-system to match the `items_access` RLS branch; writes stay confined
+  to the caller's accounts.
 - `list` switches to `adminDb` when `principal.isInternal` or the principal
   is a system admin; otherwise it uses `ctx.db`.
 - `create` calls `resolveFirstSurfacePermissions(personId, accountId,

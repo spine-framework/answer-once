@@ -2,8 +2,8 @@
 title: "How do I upgrade the framework vs. the app"
 audience: developers, agents
 kind: qa
-verified_against: 4dea482
-verified_on: 2026-11-17
+verified_against: 6ef8265
+verified_on: 2026-11-20
 suggested_kb_tag: how-to
 source_files:
   - custom/apps/answer-once/docs/install.md

@@ -2,8 +2,8 @@
 title: Scope and Accounts
 audience: developers, agents
 kind: concept
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/002_core_rls_and_functions.sql
@@ -80,11 +80,15 @@ given — new accounts are born as *children* of the account that created them.
 - **Machine callers** (API keys) use `adminDb`, which bypasses RLS; tenancy is
   enforced only by the key's `account_id` and `scopes` — see
   [Permissions](permissions.md). A `*:*` key reads every tenant.
-- **Platform-scoped rows** carry the `spine-system` `account_id`, so under
-  account-based RLS they are visible to the spine-system account subtree and
-  to `system_admin` (who sees all accounts) — not to ordinary tenant users
-  querying through `ctx.db`. Machine principals on `adminDb` reach them
-  regardless, subject to key scopes.
+- **Platform-scoped `items`** on `spine-system` are readable by **every**
+  actor: the `items_access` RLS policy has a platform branch
+  (`.framework/migrations/076_tenant_isolation.sql`), and `admin-data` mirrors
+  it inside its explicit `account_id` filter on `list`/`stats`/`get` reads so
+  machine principals on `adminDb` reach them too
+  (`.framework/functions/_shared/account-scope.ts`). Writes stay confined to
+  the caller's accounts. Platform-scope rows on **other** tables have no such
+  branch — they remain visible only to the spine-system subtree and
+  `system_admin`.
 
 ## What is *not* scoped by account
 

@@ -2,8 +2,8 @@
 title: Choosing a tenancy model
 audience: developers, agents
 kind: concept
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 35992a9
+verified_on: 2026-11-20
 source_files:
   - .framework/src/instructions/concepts/scope-and-accounts.md
   - .framework/src/instructions/accounts.md

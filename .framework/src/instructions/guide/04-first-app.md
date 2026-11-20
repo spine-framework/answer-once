@@ -2,8 +2,8 @@
 title: Build your first app
 audience: developers, agents
 kind: guide
-verified_against: 8a0dc59
-verified_on: 2026-10-29
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/types.ts
   - .framework/functions/apps.ts

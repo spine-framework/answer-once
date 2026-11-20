@@ -1,8 +1,8 @@
 ---
 title: "Answer Once — standalone readme"
 kind: index
-verified_against: 4dea482
-verified_on: 2026-11-17
+verified_against: 6ef8265
+verified_on: 2026-11-20
 source_files:
   - custom/apps/answer-once/manifest.json
   - custom/apps/answer-once/docs/install.md
@@ -69,7 +69,7 @@ npm run spine-framework -- migrate
 npm run spine-framework -- seed-app answer-once
 ```
 
-Requires `spine-framework` `>=0.4.0 <0.6.0`.
+Requires `spine-framework` `>=0.7.0-rc.1 <0.8.0`.
 
 ### First signups and roles
 
@@ -105,7 +105,7 @@ hand-edit exported files.
 |---|---|
 | `.framework/` | Spine Framework core — managed snapshot; **do not edit** (integrity-checked by `.spine-manifest.json`) |
 | `custom/apps/answer-once/` | The Answer Once app (pages, components, functions, seeds) |
-| `custom/migrations/` | App database migrations (`062_*`, `063_*`) |
+| `custom/migrations/` | App database migrations (`062_*`–`070_*`) |
 | `custom/tests/` | App test suite |
 | `config/` | Vite/TypeScript/Tailwind config |
 | `bin/`, `scripts/` | CLI (`spine-framework`) and build/verify scripts |

@@ -2,8 +2,8 @@
 title: Netlify Deployment
 audience: both
 kind: reference
-verified_against: 1485758
-verified_on: 2026-11-15
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - netlify.toml
   - .framework/public/_redirects
@@ -34,8 +34,8 @@ The root `netlify.toml` is partly framework-owned (regenerated on
 | `[functions]` | `directory = ".assembled/netlify/functions"`, `included_files` for `_shared/**`, `node_bundler = "esbuild"`, `external_node_modules = ["typescript"]` (the esbuild printer panic workaround — typescript.js ships unbundled) |
 | `[dev]` | `netlify dev` runs `scripts/netlify-dev-wrapper.sh`, site on `8888`, Vite `targetPort` `3001`, `startTimeout 300` |
 | `[functions."<name>"]` | per-function config: `trigger-scheduler` gets `schedule = "* * * * *"`; `ai-agents`, `kb` get `timeout` overrides |
-| `[[redirects]]` | `/* → /index.html` with status `200` (SPA fallback) |
-| `[[headers]]` | `X-Frame-Options DENY`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy`, and a CSP that allows `*.supabase.co` (https+wss) and `challenges.cloudflare.com` (Turnstile) |
+| `[[redirects]]` | `/* → /index.html` with status `200` (SPA fallback). Path/host redirect rules go in `.framework/public/_redirects` instead — Netlify processes `_redirects` before `netlify.toml`, so the file's own catch-all would shadow anything here |
+| `[[headers]]` | `X-Frame-Options DENY`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy`, and a CSP that allows `*.supabase.co` (https+wss), `challenges.cloudflare.com` (Turnstile), and the googletagmanager/google-analytics hosts (GA4 — apps opt in per-host via `config.analytics.ga4`) |
 
 Dispatched trigger pipelines run as Netlify **background functions**
 (`pipeline-runner-background`): the dispatcher gets a `202` immediately and

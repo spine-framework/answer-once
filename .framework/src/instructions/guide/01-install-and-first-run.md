@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: de75df4
-verified_on: 2026-11-17
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -51,9 +51,9 @@ Tarball/pre-release installs work the same way: `npm i
 `init` (`.framework/cli/commands/init.ts`) copies the framework-owned file set
 declared by `.framework/templates/project.json` into the target directory:
 
-- **`.framework/`** — `cli`, `functions`, `migrations`, `public`, `schemas`,
-  `scripts`, `seeds`, `src`, `tests`, `docs`, `templates`, plus `index.html`
-  and `README.md`.
+- **`.framework/`** — `cli`, `decisions`, `functions`, `migrations`, `public`,
+  `schemas`, `scripts`, `seeds`, `src`, `tests`, `templates`, plus
+  `index.html` and `README.md`.
 - **`config/`** — `vite.config.ts`, the tsconfig family, `tailwind.config.cjs`,
   `postcss.config.cjs`, `components.json`.
 - **Root files** — the shipped `scripts/*.sh` / `*.mts` / `verify-install.ts`
@@ -225,8 +225,9 @@ Two URL spaces matter:
   `_redirects` rule in `.framework/public/_redirects`.
 - Everything else → the React SPA.
 
-`npm run dev` alone starts *only* Vite on 3001 — fine for frontend work, but
+`npm run dev:vite` starts *only* Vite on 3001 — fine for frontend work, but
 `/api/*` calls still proxy to 8888, so functions need `netlify dev` running.
+(`npm run dev` is an alias for `dev:netlify`.)
 
 ## First admin — browser-free bootstrap (recommended for automation)
 
@@ -296,10 +297,11 @@ the auth user with `email_confirm: true` through the service role.
 
 ## Gaps
 
-- **`npx spine-framework dev` runs the same flow as the package scripts** —
-  `scripts/assemble.sh`, then Vite via `config/vite.config.ts` (`--netlify`
-  for the full `netlify dev` stack on :8888). `npm run dev` /
-  `npm run dev:netlify` remain the canonical entry points.
+- **`npx spine-framework dev` is the Vite-only path** — `scripts/assemble.sh`,
+  then Vite via `config/vite.config.ts`, equivalent to `npm run dev:vite`
+  (`--netlify` for the full `netlify dev` stack on :8888, equivalent to
+  `npm run dev:netlify`). `npm run dev` itself is an alias for
+  `dev:netlify`.
 - **`bootstrap` covers first-run provisioning only.** Subsequent admins are
   added through the invite flow in the admin app (or another `bootstrap`
   run, which skips person creation and only mints a new key).

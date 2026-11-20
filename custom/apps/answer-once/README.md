@@ -1,7 +1,7 @@
 ---
 title: "Answer Once"
 kind: index
-verified_against: 77e98dc
+verified_against: 82bf57e
 verified_on: 2026-11-15
 source_files:
   - custom/apps/answer-once/manifest.json
@@ -69,13 +69,13 @@ Both upgrade commands refuse to overwrite files you modified locally; pass
 ## Requirements
 
 - Node.js 22+
-- `spine-framework` `>=0.4.0 <0.6.0` (peer dependency)
+- `spine-framework` `>=0.7.0-rc.1 <0.8.0` (peer dependency)
 - A [Supabase](https://supabase.com) project; [Netlify](https://netlify.com)
   for deployment (`npm run dev:netlify` for local — CLI pinned as a devDependency)
 
 ## Status
 
-`0.2.x` — the npm install/upgrade path is the primary distribution. The public
+`0.3.x` — the npm install/upgrade path is the primary distribution. The public
 API surface is the app manifest and its runtime record types; internals may
 change between minor versions.
 

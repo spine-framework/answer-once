@@ -2,8 +2,8 @@
 title: ai-agents
 audience: both
 kind: reference
-verified_against: 1485758
-verified_on: 2026-10-30
+verified_against: a812c8e
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/ai-agents.ts
   - .framework/functions/_shared/middleware.ts

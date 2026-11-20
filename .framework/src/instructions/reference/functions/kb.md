@@ -2,8 +2,8 @@
 title: kb
 audience: both
 kind: reference
-verified_against: 15b5f8b
-verified_on: 2026-10-30
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/kb.ts
   - .framework/functions/_shared/kb.ts

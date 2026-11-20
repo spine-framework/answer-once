@@ -204,6 +204,10 @@ export function useAgentSteps() {
         // POST would be lease-refused anyway, and stepping a completed
         // episode would burn a duplicate turn. When the lease goes stale the
         // loop falls through and takes over with step mode, as before.
+        // The marker must belong to a DIFFERENT driver to supervise: this
+        // loop's own nonterminal-step checkpoint also looks fresh, and
+        // treating it as a live foreign driver stalls every multi-step
+        // episode for the whole quiet-watch window.
         const threadRow = await fetchJSON(`/api/admin-data?entity=threads&id=${threadId}`).catch(() => null)
         if (threadRow === null) {
           await new Promise((r) => setTimeout(r, 1500))
@@ -218,6 +222,7 @@ export function useAgentSteps() {
         const rs = threadRow?.data?.research_state
         const leaseFresh =
           !!rs?.driver_id &&
+          rs.driver_id !== driverToken &&
           Number.isFinite(Date.parse(rs?.driver_heartbeat_at || '')) &&
           Date.now() - Date.parse(rs.driver_heartbeat_at) < 60000
         // Terminal episodes end the loop for a bare supervise call ('' = a

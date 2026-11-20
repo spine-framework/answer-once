@@ -2,8 +2,8 @@
 title: admin-data API
 audience: developers, agents
 kind: reference
-verified_against: de75df4
-verified_on: 2026-11-17
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -85,7 +85,11 @@ principal cannot read are stripped before the row is returned.
 4. `remove` → `resolveFirstSurfacePermissions(..., 'delete',
    existing.design_schema)`; `system_admin` bypasses.
 5. `list`/`get` run under `ctx.db` (RLS-scoped for humans, `adminDb` for
-   internal/system-admin), then per-record sanitization.
+   internal/system-admin), then per-record sanitization. An explicit
+   `account_id IN <accessible>` filter is applied on top — it is the sole
+   tenancy guard for machines on `adminDb` — and for `items` it mirrors the
+   `items_access` platform branch so `scope: 'platform'` rows on spine-system
+   stay readable by every actor (reads only; writes stay account-confined).
 
 ## Stamping & account resolution on create
 

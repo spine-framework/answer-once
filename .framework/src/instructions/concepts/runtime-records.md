@@ -2,8 +2,8 @@
 title: Runtime Records
 audience: developers, agents
 kind: concept
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/resolve-ids.ts

@@ -2,8 +2,8 @@
 title: "Docs contract — how the instruction book is written, tested, and kept true"
 audience: developers, agents
 kind: reference
-verified_against: d4f74cf
-verified_on: 2026-11-17
+verified_against: 24eb144
+verified_on: 2026-11-20
 source_files:
   - scripts/docs-lint.mts
   - scripts/docs-release-check.mts

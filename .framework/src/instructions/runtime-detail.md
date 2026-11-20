@@ -2,8 +2,8 @@
 title: Runtime Record (detail)
 audience: both
 kind: ui
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/src/components/runtime/DataDetailPage.tsx
   - .framework/src/hooks/useEntityRecord.ts

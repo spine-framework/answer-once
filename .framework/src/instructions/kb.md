@@ -2,8 +2,8 @@
 title: Knowledge Base
 audience: both
 kind: entity
-verified_against: bc4b9e9
-verified_on: 2026-10-30
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/src/pages/admin/kb/KBAdminPage.tsx
   - .framework/src/components/kb/KBArticleList.tsx

@@ -57,3 +57,6 @@ custom/npm/create-answer-once/LICENSE.md
 # Stage 2 db-fixtures scratch (docker supabase stack, baseline archives)
 .fixtures/
 docs-manifest.json
+
+# Local stray copy of the app asset (source of truth: custom/apps/answer-once/public/) — untracked twice already
+public/spine-logo-lockup.svg

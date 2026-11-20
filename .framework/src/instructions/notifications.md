@@ -2,8 +2,8 @@
 title: Notifications
 audience: both
 kind: entity
-verified_against: 1485758
-verified_on: 2026-11-01
+verified_against: a812c8e
+verified_on: 2026-11-20
 source_files:
   - .framework/migrations/050_notifications.sql
   - .framework/functions/_shared/notify.ts

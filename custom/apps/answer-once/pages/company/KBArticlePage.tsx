@@ -105,6 +105,11 @@ export default function KBArticlePage() {
   const [pendingWarnings, setPendingWarnings] = useState<string[] | null>(null)
   const [flavor, setFlavor] = useState<'private' | 'internal' | 'shared'>('private')
   const [form, setForm] = useState({ title: '', content: '', tags: '', resolution_mode: '', est_minutes: '', automation_score: '' })
+  const [dirLinks, setDirLinks] = useState<any[]>([])
+  const [directives, setDirectives] = useState<any[]>([])
+  const [linkTypeId, setLinkTypeId] = useState<string | null>(null)
+  const [dirPick, setDirPick] = useState('')
+  const [newDir, setNewDir] = useState({ title: '', match_description: '' })
   const { accountName } = useDirectory()
   const acctName = accountName(article?.account_id)
 
@@ -132,6 +137,17 @@ export default function KBArticlePage() {
       if (a?.data?.target_flavor && ['private', 'internal', 'shared'].includes(a.data.target_flavor)) {
         setFlavor(a.data.target_flavor)
       }
+      // Directive links hang off the record retrieval actually returns — for
+      // shared articles that's the ao_kb_shared artifact, same as reembed.
+      const linkSourceId = a?.data?.shared_article_id || id
+      const [l, dirs, lt] = await Promise.all([
+        fetchJSON(`/api/admin-data?entity=links&link_type=ao_article_directive&source_id=${linkSourceId}&limit=50`).catch(() => []),
+        fetchJSON('/api/admin-data?entity=items&type_slugs=ao_triage_directive&limit=200').catch(() => []),
+        fetchJSON('/api/admin-data?entity=link_types&slug=ao_article_directive&limit=1').catch(() => []),
+      ])
+      setDirLinks(l || [])
+      setDirectives(dirs || [])
+      setLinkTypeId(lt?.[0]?.id || null)
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -253,6 +269,60 @@ export default function KBArticlePage() {
     } finally {
       setActing(false)
     }
+  }
+
+  // Same resolution as the link fetch: links live on the retrieved record
+  const linkSourceId = d.shared_article_id || id
+
+  const linkDirective = async (directiveId: string) => {
+    await fetchJSON('/api/admin-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity: 'links',
+        type_slug: 'link',
+        link_type: 'ao_article_directive',
+        ...(linkTypeId ? { link_type_id: linkTypeId } : {}),
+        source_type: 'items',
+        source_id: linkSourceId,
+        target_type: 'items',
+        target_id: directiveId,
+        data: { source: 'kb_article_page' },
+      }),
+    })
+    await load()
+  }
+
+  const unlinkDirective = async (linkId: string) => {
+    await fetchJSON(`/api/admin-data?entity=links&id=${linkId}`, { method: 'DELETE' })
+    await load()
+  }
+
+  const createDirective = async () => {
+    if (!newDir.title.trim() || !newDir.match_description.trim()) {
+      setError('Directive title and match description are required')
+      return
+    }
+    const created = await fetchJSON('/api/admin-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entity: 'items',
+        type_slug: 'ao_triage_directive',
+        title: newDir.title.trim(),
+        status: 'draft',
+        data: {
+          status: 'draft',
+          match_description: newDir.match_description.trim(),
+          mode: 'suggest',
+          priority: 100,
+          actions: {},
+        },
+      }),
+    })
+    setNewDir({ title: '', match_description: '' })
+    if (created?.id) await linkDirective(created.id)
+    else await load()
   }
 
   const reembed = async () => {
@@ -506,6 +576,55 @@ export default function KBArticlePage() {
             {embedData.embedding_error && (
               <p className="text-destructive border-t border-border pt-3">{embedData.embedding_error}</p>
             )}
+            </div>
+
+            <div className="rounded-lg border border-border p-4 space-y-3 text-sm">
+              <h2 className="text-sm font-medium">Linked directives</h2>
+              <p className="text-xs text-muted-foreground">
+                When this article is retrieved during triage, linked directives are offered to the agent.
+                {d.shared_article_id ? ' Links attach to the shared artifact, which is what retrieval returns.' : ''}
+              </p>
+              {dirLinks.map((l) => {
+                const dir = directives.find((x) => x.id === l.target_id)
+                return (
+                  <div key={l.id} className="flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-2 min-w-0">
+                      <StatusBadge status={dir?.status || dir?.data?.status || 'draft'} />
+                      <span className="truncate">{dir?.title || l.target_id}</span>
+                    </span>
+                    <button className="text-xs underline shrink-0" onClick={() => void unlinkDirective(l.id)}>Unlink</button>
+                  </div>
+                )
+              })}
+              {dirLinks.length === 0 && <p className="text-xs text-muted-foreground">No linked directives.</p>}
+              <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <Select value={dirPick} onValueChange={setDirPick}>
+                  <SelectTrigger className="h-8 text-xs flex-1 min-w-0">
+                    <SelectValue placeholder="Choose a directive to link…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {directives
+                      .filter((x) => !dirLinks.some((l) => l.target_id === x.id))
+                      .map((x) => <SelectItem key={x.id} value={x.id}>{x.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Button size="sm" variant="outline" disabled={!dirPick}
+                  onClick={() => void linkDirective(dirPick).then(() => setDirPick(''))}>
+                  Link
+                </Button>
+              </div>
+              <div className="space-y-2 pt-2 border-t border-border">
+                <span className="text-xs font-medium text-muted-foreground">New directive</span>
+                <Input className="h-8 text-xs" placeholder="Title — e.g. Sales contact request"
+                  value={newDir.title} onChange={(e) => setNewDir(p => ({ ...p, title: e.target.value }))} />
+                <Input className="h-8 text-xs" placeholder="Match description — when should this fire?"
+                  value={newDir.match_description} onChange={(e) => setNewDir(p => ({ ...p, match_description: e.target.value }))} />
+                <Button size="sm" variant="outline" className="w-full"
+                  disabled={!newDir.title.trim() || !newDir.match_description.trim()}
+                  onClick={() => void createDirective()}>
+                  Create & link (draft — activate on Directives page)
+                </Button>
+              </div>
             </div>
             </div>
 

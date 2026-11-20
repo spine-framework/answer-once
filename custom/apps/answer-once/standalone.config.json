@@ -31,7 +31,8 @@
       "067",
       "068",
       "069",
-      "070"
+      "070",
+      "072"
     ],
     "custom_tests": [
       "custom/tests/answer-once-export.test.ts",
@@ -153,7 +154,7 @@
           "name": "Spine",
           "title": "Spine Framework",
           "site_url": "https://support.spine-framework.com",
-          "logo_url": "/spine-logo.svg",
+          "logo_url": "/spine-logo-lockup.svg",
           "favicon_url": "/spine-logo.svg",
           "email_logo_url": "https://support.spine-framework.com/spine-logo.jpg",
           "email_from": "Spine Framework Support <noreply@notifications.answer-once.com>"

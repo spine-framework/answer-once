@@ -9,6 +9,7 @@ import { checkRateLimit } from './_shared/rate-limit'
 import { detectInjection, emitSecurityEvent, getAppSecurityConfig } from './_shared/security'
 import { kickAgentEpisode } from './_shared/agent-runner'
 import { insertMessageSequenced } from './_shared/message-sequence'
+import { getBrandsConfig } from './_shared/site-brand'
 import { createHash } from 'crypto'
 
 function adminDataUpdate(ctx: CoreContext, entity: string, id: string, fields: Record<string, any>) {
@@ -85,6 +86,27 @@ async function createTicket(ctx: any, body: any) {
 
   const ids = await resolveIds()
 
+  // Stamp requester identity + origin on the record at creation so downstream
+  // consumers (pipeline templates, integrations, reporting) read them via
+  // {{record.*}} without joining people/accounts.
+  const { data: accountRow } = await adminDb
+    .from('accounts')
+    .select('display_name')
+    .eq('id', ctx.accountId)
+    .maybeSingle()
+  // referring_site: brand-canonical site_url when the request host is
+  // registered in the brands map (support.spine-framework.com etc.);
+  // the raw host otherwise — an unmapped host IS the true origin, so
+  // deliberately no cfg.default fallback.
+  const host = (ctx.headers?.['x-forwarded-host'] || ctx.headers?.['host'] || '')
+    .split(',')[0].split(':')[0].trim().toLowerCase()
+  let referringSite = host || null
+  if (host) {
+    const brands = await getBrandsConfig()
+    const brandSlug = brands.by_host?.[host]
+    referringSite = (brandSlug && brands.definitions?.[brandSlug]?.site_url) || host
+  }
+
   const ticket = await create(ctx, {
     entity: 'items',
     type_id: ids.ticket,
@@ -94,6 +116,10 @@ async function createTicket(ctx: any, body: any) {
     data: {
       aim_triage_agent_id: ids.triageAgentId,
       last_activity_at: new Date().toISOString(),
+      requester_name: ctx.principal.displayName ?? null,
+      requester_email: ctx.principal.email ?? null,
+      account_name: accountRow?.display_name ?? null,
+      referring_site: referringSite || null,
       ...(injectionHit ? {
         injection_detected: true,
         injection_pattern: injectionHit,

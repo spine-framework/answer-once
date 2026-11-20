@@ -2,8 +2,8 @@
 title: Frontend SDK Reference (@core)
 audience: developers, agents
 kind: reference
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: a812c8e
+verified_on: 2026-11-20
 source_files:
   - config/vite.config.ts
   - config/tsconfig.json

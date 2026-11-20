@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-operate
-verified_against: de75df4
-verified_on: 2026-11-17
+verified_against: 35992a9
+verified_on: 2026-11-20
 source_files:
   - .framework/functions/system.ts
   - .framework/functions/logs.ts

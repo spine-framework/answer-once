@@ -62,6 +62,22 @@
             }
           ]
         },
+        "requester_name": {
+          "data_type": "text",
+          "required": false
+        },
+        "requester_email": {
+          "data_type": "text",
+          "required": false
+        },
+        "account_name": {
+          "data_type": "text",
+          "required": false
+        },
+        "referring_site": {
+          "data_type": "text",
+          "required": false
+        },
         "priority": {
           "data_type": "select",
           "required": false,
@@ -495,7 +511,11 @@
                 "description": {},
                 "status": {},
                 "priority": {},
-                "context": {}
+                "context": {},
+                "requester_name": {},
+                "requester_email": {},
+                "account_name": {},
+                "referring_site": {}
               }
             },
             {
@@ -609,6 +629,26 @@
               "value": "support"
             }
           ]
+        },
+        "requester_name": {
+          "label": "Requester Name",
+          "data_type": "text",
+          "required": false
+        },
+        "requester_email": {
+          "label": "Requester Email",
+          "data_type": "text",
+          "required": false
+        },
+        "account_name": {
+          "label": "Company",
+          "data_type": "text",
+          "required": false
+        },
+        "referring_site": {
+          "label": "Referring Site",
+          "data_type": "text",
+          "required": false
         },
         "priority": {
           "label": "Priority",

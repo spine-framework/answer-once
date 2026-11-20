@@ -2,8 +2,8 @@
 title: "Answer Once — Q&A corpus"
 audience: developers, agents
 kind: index
-verified_against: 4dea482
-verified_on: 2026-11-17
+verified_against: 6ef8265
+verified_on: 2026-11-20
 source_files:
   - custom/apps/answer-once/manifest.json
   - custom/apps/answer-once/docs/install.md

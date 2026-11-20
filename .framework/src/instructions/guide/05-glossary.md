@@ -2,8 +2,8 @@
 title: Glossary
 audience: developers, agents
 kind: guide
-verified_against: de75df4
-verified_on: 2026-11-17
+verified_against: 666f107
+verified_on: 2026-11-20
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/004_core_rpc_and_broker.sql

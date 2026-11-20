@@ -1,8 +1,8 @@
 ---
 title: ".framework/ — managed framework core"
 kind: index
-verified_against: 6d4c39b
-verified_on: 2026-11-15
+verified_against: 82bf57e
+verified_on: 2026-11-17
 source_files:
   - scripts/verify-integrity.sh
 ---
@@ -32,8 +32,7 @@ framework assembles into `src/` at dev/build time.
 | `schemas/` | Shared schemas (design-schema, manifests) |
 | `templates/` | `init` templates — project files and `spine-*` agent skills |
 | `scripts/` | Framework tooling scripts |
-| `tests/` | Framework unit tests (`npm run test:unit`) |
-| `docs/` | Framework-internal documentation |
+| `tests/` | Framework unit tests (`npm test`) |
 | `public/` | Static assets served by the frontend |
 
 ## Documentation

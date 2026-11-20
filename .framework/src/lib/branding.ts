@@ -31,7 +31,7 @@ export const DEFAULT_BRANDING: SpineBranding = {
   slug: null,
   app_name: 'Spine',
   title: 'Spine Framework',
-  logo_url: '/spine-logo.svg',
+  logo_url: '/spine-logo-lockup.svg',
   favicon_url: '/spine-logo.svg',
   site_url: null,
 }

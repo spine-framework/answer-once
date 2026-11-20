@@ -2,8 +2,8 @@
 title: spine.config.json Reference
 audience: developers, agents
 kind: reference
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: a812c8e
+verified_on: 2026-11-20
 source_files:
   - .framework/schemas/spine.config.schema.json
   - .framework/templates/spine.config.neutral.json
@@ -60,7 +60,7 @@ an absent block falls back to Spine defaults.
 |---|---|---|
 | `app_name` | `"Spine"` | display name in headings and logo alt text |
 | `title` | `app_name` (or `"Spine Framework"`) | `document.title` and sidebar wordmark |
-| `logo_url` | `"/spine-logo.svg"` | public asset path for the brand logo |
+| `logo_url` | `"/spine-logo-lockup.svg"` | public asset path for the brand logo (lockup — the default asset carries the wordmark) |
 | `favicon_url` | `"/spine-logo.svg"` | swapped into `link[rel=icon]` at runtime |
 
 ## `brands`

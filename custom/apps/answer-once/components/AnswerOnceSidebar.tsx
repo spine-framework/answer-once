@@ -115,7 +115,7 @@ export function AnswerOnceSidebar({ ...props }: React.ComponentProps<typeof Side
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" onClick={() => navigate(appPath("/"))}>
               <a href={appPath("/")}>
-                <img src={branding.logo_url} alt={branding.app_name} className="h-11 w-auto" />
+                <img src={branding.logo_url} alt={branding.app_name} className="h-14 w-auto" />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

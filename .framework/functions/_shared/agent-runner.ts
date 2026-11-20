@@ -2241,6 +2241,8 @@ export async function executeApplyDirective(
   dataPatch.matched_directive_at = new Date().toISOString()
   dataPatch.directive_scope = directiveScope
   dataPatch.directive_account_id = directive.account_id || null
+  const directiveProvenance = (runCtx?.config as any)?.matched_directive_provenance?.[directive.id] || null
+  if (directiveProvenance) dataPatch.directive_provenance = directiveProvenance
   if (typeof matchConfidence === 'number') dataPatch.directive_match_confidence = matchConfidence
   await adminDb
     .from('items')
