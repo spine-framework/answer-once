@@ -2,8 +2,8 @@
 title: pipeline-runner-background
 audience: developers, agents
 kind: reference
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/pipeline-runner-background.ts
   - .framework/functions/_shared/pipeline-runner.ts

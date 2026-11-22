@@ -56,6 +56,10 @@ npm install spine-framework          # or: npm i ./spine-framework-<ver>.tgz
 npx spine-framework init             # refuses if .framework/ already exists
 ```
 
+`npm create spine-framework@latest <dir>` is the same sequence wrapped —
+it scaffolds the directory and runs `init` inside it. If the project
+arrived that way, start at step 1 below.
+
 1. **Write `.env`.** `cp .env.example .env`, then fill the required vars
    (`.framework/src/instructions/reference/env-vars.md`):
    `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`,
@@ -99,7 +103,10 @@ npx spine-framework init             # refuses if .framework/ already exists
    npx spine-framework doctor
    ```
 
-   Must come back clean — env, files, DB reachability.
+   "Clean" means exit 0 — 0 healthy, 2 degraded (warnings only), 1
+   unhealthy. On a brand-new project the `test_runs` check warns until a
+   suite has run once: `npm run test` writes the first row, then rerun
+   doctor.
 
 6. **Run** (optional, needs the Netlify CLI — already a devDependency):
 

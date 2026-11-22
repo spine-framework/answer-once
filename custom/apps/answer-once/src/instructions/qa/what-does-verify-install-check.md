@@ -2,8 +2,8 @@
 title: "What does `verify:install` check"
 audience: developers, agents
 kind: qa
-verified_against: 6ef8265
-verified_on: 2026-11-20
+verified_against: 4196635
+verified_on: 2026-11-22
 suggested_kb_tag: faq
 source_files:
   - custom/apps/answer-once/docs/install.md

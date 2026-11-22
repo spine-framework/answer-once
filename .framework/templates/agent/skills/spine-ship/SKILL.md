@@ -1,6 +1,8 @@
 ---
 name: spine-ship
 description: "Ship a green commit up the project's ## Environments ladder in AGENTS.md — pre-flight checks, per-rung gate/migrate/promote/post-landing — stopping GREEN or RED at the hand-off rung."
+verified_against: 0f2687a
+verified_on: 2026-11-22
 allowed-tools:
   - read
   - exec

@@ -1,16 +1,19 @@
 import type { Command } from 'commander'
 import { spawn } from 'child_process'
 import { resolve } from 'path'
+import { existsSync } from 'fs'
 
 const PROJECT_ROOT = process.cwd()
 
-// Keeps suite names as a single source of truth for CLI validation
+// Keeps suite names as a single source of truth for CLI validation.
+// integration/api/ui ship only in the dev repo — installed projects get
+// unit + custom/tests, so missing dirs are skipped rather than failed.
 type TestSuite = 'unit' | 'integration' | 'api' | 'ui' | 'all'
 const SUITES: Record<string, { pattern: string; runner: 'vitest' | 'playwright' | 'node' }> = {
-  unit: { pattern: 'v2-core/tests/unit', runner: 'vitest' },
-  integration: { pattern: 'v2-core/tests/integration', runner: 'vitest' },
-  api: { pattern: 'v2-core/tests/api', runner: 'vitest' },
-  ui: { pattern: 'v2-core/tests/ui', runner: 'playwright' }
+  unit: { pattern: '.framework/tests/unit', runner: 'vitest' },
+  integration: { pattern: '.framework/tests/integration', runner: 'vitest' },
+  api: { pattern: '.framework/tests/api', runner: 'vitest' },
+  ui: { pattern: '.framework/tests/ui', runner: 'playwright' }
 }
 
 export function registerTestCommands(program: Command) {
@@ -35,10 +38,17 @@ export function registerTestCommands(program: Command) {
 
       console.log(`\n🧪 Running Spine test suites: ${suitesToRun.join(', ')}\n`)
 
-      const results: Array<{ suite: string; exitCode: number; passed: boolean }> = []
+      const results: Array<{ suite: string; exitCode: number; passed: boolean; skipped?: boolean }> = []
 
       for (const s of suitesToRun) {
         const config = SUITES[s]
+
+        if (!suiteInstalled(s, config)) {
+          console.log(`\n▶️  ${s.toUpperCase()} tests — suite not installed, skipping`)
+          results.push({ suite: s, exitCode: 0, passed: true, skipped: true })
+          continue
+        }
+
         console.log(`\n▶️  ${s.toUpperCase()} tests (${config.runner})`)
         console.log('-'.repeat(40))
 
@@ -76,7 +86,7 @@ export function registerTestCommands(program: Command) {
 
       for (const r of results) {
         const icon = r.passed ? '✓' : '✗'
-        const status = r.passed ? 'PASSED' : 'FAILED'
+        const status = r.skipped ? 'SKIPPED' : r.passed ? 'PASSED' : 'FAILED'
         console.log(`${icon} ${r.suite.padEnd(12)} ${status}`)
       }
 
@@ -103,6 +113,17 @@ export function registerTestCommands(program: Command) {
     })
 }
 
+function suiteInstalled(suite: string, config: { pattern: string; runner: string }): boolean {
+  if (!existsSync(resolve(PROJECT_ROOT, config.pattern))) return false
+  // The ui suite needs a playwright config; its dir ships a sweep script,
+  // not specs, and playwright isn't guaranteed to be configured.
+  if (config.runner === 'playwright') {
+    return ['playwright.config.ts', 'playwright.config.js', 'playwright.config.mjs']
+      .some(f => existsSync(resolve(PROJECT_ROOT, f)))
+  }
+  return true
+}
+
 async function runVitest(suite: string, opts: any): Promise<number> {
   const config = SUITES[suite]
   const args = [
@@ -117,7 +138,7 @@ async function runVitest(suite: string, opts: any): Promise<number> {
 
   if (opts.reporter === 'default') {
     args.push('--reporter=default')
-    args.push('--reporter=' + resolve(PROJECT_ROOT, 'v2-core/tests/reporter.ts'))
+    args.push('--reporter=' + resolve(PROJECT_ROOT, '.framework/tests/reporter.ts'))
   } else {
     args.push(`--reporter=${opts.reporter}`)
   }
@@ -142,12 +163,31 @@ async function runNode(suite: string, opts: any): Promise<number> {
   return runCommand('node', args, PROJECT_ROOT)
 }
 
+// The CLI's env-loader has already read the project `.env` into process.env;
+// inherited into a spawned test run it overrides setup.ts's stubs and flips
+// env-sensitive unit tests from stubbed to live behavior. Tests get real
+// credentials only through `.env.test` (read by vitest.config + setup.ts),
+// so project env is scrubbed here.
+const TEST_ENV_SCRUB = [
+  'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
+  'SUPABASE_DB_URL', 'SUPABASE_DB_PASSWORD',
+  'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY',
+  'DB_SCHEMA', 'VITE_DB_SCHEMA', 'INTERNAL_INVOKE_SECRET',
+  'SPINE_API_KEY', 'SPINE_CLI_API_KEY',
+]
+
+function testEnv(): NodeJS.ProcessEnv {
+  const env = { ...process.env }
+  for (const k of TEST_ENV_SCRUB) delete env[k]
+  return env
+}
+
 function runCommand(command: string, args: string[], cwd: string): Promise<number> {
   return new Promise((resolve, reject) => {
     const proc = spawn(command, args, {
       cwd,
       stdio: 'inherit',
-      env: process.env,
+      env: testEnv(),
       shell: true
     })
 

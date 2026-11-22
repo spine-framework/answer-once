@@ -75,14 +75,14 @@ async function checkEnvironment(): Promise<CheckResult> {
     }
   }
 
-  const xenvPath = resolve(__dirname, '../../.xenv')
-  const hasXenv = existsSync(xenvPath)
+  const envPath = resolve(process.cwd(), '.env')
+  const hasEnv = existsSync(envPath)
 
   return {
     name: 'environment',
     status: 'pass',
     message: 'All required environment variables present',
-    details: { has_xenv: hasXenv, vars_present: required.length }
+    details: { has_env: hasEnv, vars_present: required.length }
   }
 }
 
@@ -329,7 +329,7 @@ async function checkTestRuns(): Promise<CheckResult> {
       return {
         name: 'test_runs',
         status: 'warn',
-        message: 'No test runs found - run `spine test` to populate',
+        message: 'No test runs found — run `npm run test` to populate',
         fixable: true
       }
     }
@@ -440,7 +440,7 @@ export async function checkRuntimeWiring(): Promise<CheckResult> {
 async function tryFix(check: CheckResult): Promise<string> {
   switch (check.name) {
     case 'environment':
-      return 'Please set missing environment variables in .xenv or export them'
+      return 'Please set missing environment variables in .env or export them'
 
     case 'migrations':
       return 'Run `npx spine-framework migrate` to apply pending migrations'

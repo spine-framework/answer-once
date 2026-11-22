@@ -17,7 +17,7 @@ How to install the Spine Framework + Answer Once app into a virgin project direc
 ## Prerequisites
 
 - Node 22+, npm 10+
-- A **brand-new Supabase project** (virgin `public` schema AND empty `auth.users`). A new project needs no purge — do not reuse the spine-ia dev project or the demo project.
+- A **brand-new Supabase project** (virgin `public` schema AND empty `auth.users`). A new project needs no purge — do not reuse an existing dev or demo project.
 - `OPENAI_API_KEY` for live AI triage/case-analysis (the app installs without it, but the learning journey will not)
 - Netlify CLI for local dev (`netlify dev` via `npm run dev:netlify`)
 

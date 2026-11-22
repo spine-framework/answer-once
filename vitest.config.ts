@@ -2,11 +2,11 @@ import { defineConfig } from 'vitest/config'
 import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
-// Load .xenv.test so integration tests get real DB credentials before any
+// Load .env.test so integration tests get real DB credentials before any
 // worker module graph (db.ts, principal.ts) evaluates createClient() calls.
-const xenvTest = resolve(__dirname, '.env.test')
-if (existsSync(xenvTest)) {
-  for (const line of readFileSync(xenvTest, 'utf8').split('\n')) {
+const envTest = resolve(__dirname, '.env.test')
+if (existsSync(envTest)) {
+  for (const line of readFileSync(envTest, 'utf8').split('\n')) {
     const t = line.trim()
     if (!t || t.startsWith('#')) continue
     const eq = t.indexOf('=')
@@ -36,8 +36,9 @@ export default defineConfig({
     testTimeout: 20000,
     // Don't fail the suite on integration tests if env isn't configured
     passWithNoTests: true,
-    // Persist results to public.test_runs after every run
-    reporters: ['default']
+    // Persist results to public.test_runs after every run — the reporter
+    // no-ops with a warning when no real Supabase credentials are present.
+    reporters: ['default', './.framework/tests/reporter.ts']
   },
   resolve: {
     // Allow bare .ts imports (the CLI + shared code uses these)

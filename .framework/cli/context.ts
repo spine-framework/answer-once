@@ -102,7 +102,7 @@ const __dirname = dirname(__filename)
  * @cil-generated
  */
 function loadEnv() {
-  const envPath = resolve(__dirname, '../.xenv')
+  const envPath = resolve(process.cwd(), '.env')
   if (existsSync(envPath)) {
     const lines = readFileSync(envPath, 'utf8').split('\n')
     for (const line of lines) {
@@ -180,7 +180,7 @@ export async function buildCliContext(opts: CliOptions = {}): Promise<CoreContex
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error(
       'Missing required env vars: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.\n' +
-      'Set them in v2-core/.xenv or export them before running spine commands.'
+      'Set them in .env or export them before running spine commands.'
     )
   }
 

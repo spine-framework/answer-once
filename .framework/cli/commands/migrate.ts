@@ -269,7 +269,7 @@ async function migrateCommand(options: MigrateOptions): Promise<void> {
 
   console.log('\n✅ All migrations applied successfully!\n')
   console.log('Next steps:')
-  console.log('  npm install && npm run dev:netlify')
+  console.log('  npm run dev:netlify')
   console.log('  (optional) npx spine-framework install-app <app-package> — only for')
   console.log('  additional app packs; core/admin apps are already seeded\n')
 }

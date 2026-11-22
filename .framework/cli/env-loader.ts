@@ -22,6 +22,7 @@ function loadEnvFile(envPath: string) {
   }
 }
 
+// `.env` at the project root is the single documented env file — the
+// framework-internal `.xenv` name was undocumented drift (env-vars.md,
+// .env.example, and the install skill all say `.env`).
 loadEnvFile(resolve(process.cwd(), '.env'))
-
-loadEnvFile(resolve(__dirname, '../.xenv'))

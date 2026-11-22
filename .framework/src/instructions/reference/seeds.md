@@ -2,8 +2,8 @@
 title: Seeds Reference
 audience: developers, agents
 kind: reference
-verified_against: 71dae29
-verified_on: 2026-11-15
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/migrate.ts

@@ -10,9 +10,13 @@
  * use by non-Vitest runners (API tests, UI sweep).
  *
  * Registered in vitest.config.ts via:
- *   reporters: ['default', './v2-core/tests/reporter.ts']
+ *   reporters: ['default', './.framework/tests/reporter.ts']
  *
- * Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in env.
+ * Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY — from the process env
+ * or from a root .env.test/.env file read into a LOCAL map. Values are
+ * deliberately NOT assigned to process.env: reporters run in the vitest
+ * main thread, and real credentials leaking into test workers would
+ * override setup.ts's stubs and break env-sensitive unit tests.
  *
  * @seeAlso migrations_dayzero/008_test_runs.sql
  * @seeAlso tests/ui/ui-sweep.ts (calls writeRunResults directly)
@@ -27,10 +31,11 @@ import type { Reporter, File, Task } from 'vitest'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-function loadEnv() {
-  for (const name of ['.xenv.test', '.xenv']) {
-    const p = resolve(__dirname, '../', name)
+function loadEnv(): Record<string, string> {
+  for (const name of ['.env.test', '.env']) {
+    const p = resolve(__dirname, '../../', name)
     if (existsSync(p)) {
+      const vars: Record<string, string> = {}
       const lines = readFileSync(p, 'utf8').split('\n')
       for (const line of lines) {
         const t = line.trim()
@@ -39,13 +44,14 @@ function loadEnv() {
         if (eq === -1) continue
         const k = t.slice(0, eq).trim()
         const v = t.slice(eq + 1).trim().replace(/^["']|["']$/g, '')
-        if (!process.env[k]) process.env[k] = v
+        vars[k] = v
       }
-      break
+      return vars
     }
   }
+  return {}
 }
-loadEnv()
+const envFile = loadEnv()
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────
 
@@ -74,9 +80,12 @@ export async function writeRunResults(
   results: TestCaseResult[],
   durationMs: number
 ): Promise<string | null> {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
+  const url = process.env.SUPABASE_URL || envFile.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || envFile.SUPABASE_SERVICE_ROLE_KEY
+  // Also skip the stub values setup.ts injects for unit tests — a test run
+  // against placeholder credentials would produce a fetch failure, not a row.
+  const isStub = !url || !key || /test\.supabase\.co|test-service-key|placeholder|your-project/i.test(url + key)
+  if (isStub) {
     console.warn('[reporter] Skipping DB write — SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set')
     return null
   }
@@ -92,8 +101,10 @@ export async function writeRunResults(
   const { data: run, error: runErr } = await db
     .from('test_runs')
     .insert({
+      name: `${suite} run ${new Date().toISOString()}`,
       suite,
       status,
+      started_at: new Date(Date.now() - durationMs).toISOString(),
       duration_ms: durationMs,
       total: results.length,
       passed,
@@ -165,9 +176,11 @@ class SpineReporter implements Reporter {
             collectTasks(nested, describePath ? `${describePath} > ${task.name}` : task.name)
           } else {
             const result = (task as any).result
+            // Skipped/todo tasks carry mode 'skip' — their result may be
+            // absent or a non-skip state, so check mode first.
             const status: TestCaseResult['status'] =
-              result?.state === 'pass' ? 'passed'
-              : result?.state === 'skip' ? 'skipped'
+              (task as any).mode === 'skip' || result?.state === 'skip' ? 'skipped'
+              : result?.state === 'pass' ? 'passed'
               : 'failed'
 
             const errorMsg = result?.errors?.[0]
@@ -190,8 +203,13 @@ class SpineReporter implements Reporter {
       collectTasks((file as any).tasks ?? [], '')
     }
 
+    // A run may span suites (unit + api files in one invocation) — label the
+    // run with the suite that produced the most results, not the last file's.
+    const counts = new Map<string, number>()
+    for (const r of results) counts.set(r.suite, (counts.get(r.suite) ?? 0) + 1)
+    const dominant = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
     const durationMs = Date.now() - this.startTime
-    await writeRunResults(this.suite, results, durationMs)
+    await writeRunResults(dominant ?? this.suite, results, durationMs)
   }
 }
 

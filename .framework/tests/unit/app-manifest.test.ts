@@ -1,13 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, relative } from 'node:path'
+import { join, relative, resolve } from 'node:path'
 import * as runtimeMod from '../../functions/_shared/app-manifest.ts'
-import * as mcpMod from '../../../.framework/mcp/shared/app-manifest.ts'
+
+// .framework/mcp ships only in the framework dev repo — installed projects
+// get the runtime module alone, so the parity leg is conditional.
+const MCP_MANIFEST = resolve(__dirname, '../../../.framework/mcp/shared/app-manifest.ts')
+const mcpMod = existsSync(MCP_MANIFEST)
+  ? await import('../../../.framework/mcp/shared/app-manifest.ts')
+  : null
 
 const modules = [
   ['runtime .framework/functions/_shared/app-manifest.ts', runtimeMod],
-  ['mcp .framework/mcp/shared/app-manifest.ts', mcpMod],
+  ...(mcpMod ? [['mcp .framework/mcp/shared/app-manifest.ts', mcpMod]] : []),
 ] as const
 
 let root: string

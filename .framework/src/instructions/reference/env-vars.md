@@ -2,8 +2,8 @@
 title: Environment Variables
 audience: developers, agents
 kind: reference
-verified_against: 1485758
-verified_on: 2026-11-15
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - .env.example
   - .framework/functions/_shared/principal.ts
@@ -29,7 +29,13 @@ Every variable read across `.framework/` — where it's read, whether it's
 required, and whether it is browser-exposed. `VITE_*` vars are compiled into
 the frontend bundle and are **public by definition**; all others are
 server-only (Netlify functions, CLI, MCP tooling). `.env` at the project root
-is preloaded by the CLI and dev tooling.
+is preloaded by the CLI and dev tooling. `.env.test` at the project root is
+the opt-in channel for real credentials inside `vitest` runs — read by
+`vitest.config.ts`, `tests/setup.ts`, and `tests/integration/helpers.ts`.
+Do **not** `export` `.env` into a test shell: unit tests stub
+`SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` (tests/setup.ts) and several
+suites read env at module load, so exported real credentials flip them from
+stubbed to live behavior and break them.
 
 > **Security rule:** never set `VITE_SUPABASE_SERVICE_ROLE_KEY` or put any
 > secret behind a `VITE_*` name. The service-role key bypasses RLS entirely;

@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll } from 'vitest'
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -64,7 +64,10 @@ function write(root: string, rel: string, content: string) {
 }
 afterAll(() => roots.forEach((r) => rmSync(r, { recursive: true, force: true })))
 
-describe('docs-lint', () => {
+// scripts/docs-lint.mts ships only in the framework dev repo — installed
+// projects have neither the script nor a docs:lint npm script, so this
+// whole suite is dev-repo-only.
+describe.runIf(existsSync(LINT))('docs-lint', () => {
   it('passes a clean fixture', () => {
     const r = lint(root())
     expect(r.code).toBe(0)

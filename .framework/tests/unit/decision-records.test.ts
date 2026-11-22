@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -235,7 +235,10 @@ describe('release exceptions', () => {
   })
 })
 
-describe('release gate wiring (evidence: source)', () => {
+// The gate script and check-decisions.ts ship only in the framework dev
+// repo — installed projects get no `gate` script, so this wiring check is
+// dev-repo-only.
+describe.runIf(existsSync(join(REPO, 'scripts/check-decisions.ts')))('release gate wiring (evidence: source)', () => {
   // Testing strictProposed alone is not enforcement — the gate must invoke it.
   it('npm run gate includes verify:decisions', () => {
     const pkg = JSON.parse(readFileSync(join(REPO, 'package.json'), 'utf8'))
@@ -268,7 +271,13 @@ describe('refToPath', () => {
 describe('framework decision corpus (evidence: source)', () => {
   it('all .framework/decisions records validate against the current tree', () => {
     const { problems } = validateDecisions(REPO)
-    const errors = problems.filter(p => p.level === 'error')
+    let errors = problems.filter(p => p.level === 'error')
+    // Shipped records' applies_to/enforced_by refs point at dev-repo files
+    // (custom/, scripts/, docs/) that don't exist in installed projects —
+    // path resolution is only meaningful against the complete dev tree.
+    if (!existsSync(join(REPO, 'scripts/check-decisions.ts'))) {
+      errors = errors.filter(e => !/path does not exist/.test(e.message))
+    }
     expect(errors.map(e => `${e.file}: ${e.message}`)).toEqual([])
   })
 })

@@ -13,8 +13,8 @@
  * `createClient()` at import time (`principal.ts`, `db.ts`) don't crash
  * with "supabaseUrl is required" in unit test runs.
  *
- * Integration tests load real values from `.xenv.test` via
- * `tests/integration/helpers.ts` and override these stubs.
+ * Integration tests load real values from `.env.test` at the project root
+ * via `tests/integration/helpers.ts` and override these stubs.
  */
 
 import { readFileSync, existsSync } from 'fs'
@@ -24,11 +24,14 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-// Load .xenv.test before stubs so integration tests get real DB credentials
-// before db.ts evaluates its createClient() calls at module load time.
-const xenvTestPath = resolve(__dirname, '../.xenv.test')
-if (existsSync(xenvTestPath)) {
-  for (const line of readFileSync(xenvTestPath, 'utf8').split('\n')) {
+// Load .env.test (project root) before stubs so integration tests get real
+// DB credentials before db.ts evaluates its createClient() calls at module
+// load time. `.env` is deliberately NOT read here — real credentials in
+// workers would override the stubs below and break env-sensitive unit
+// tests; `.env.test` is the opt-in channel for real test credentials.
+const envTestPath = resolve(__dirname, '../../.env.test')
+if (existsSync(envTestPath)) {
+  for (const line of readFileSync(envTestPath, 'utf8').split('\n')) {
     const trimmed = line.trim()
     if (!trimmed || trimmed.startsWith('#')) continue
     const eqIdx = trimmed.indexOf('=')

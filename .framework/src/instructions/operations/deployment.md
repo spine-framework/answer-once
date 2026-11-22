@@ -2,8 +2,8 @@
 title: Netlify Deployment
 audience: both
 kind: reference
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - netlify.toml
   - .framework/public/_redirects
@@ -30,7 +30,7 @@ The root `netlify.toml` is partly framework-owned (regenerated on
 | Block | Contents |
 |---|---|
 | `[build]` | `command = "npm run assemble && npm run build"`, `publish = "dist"`, `functions = ".assembled/netlify/functions"` |
-| `[build.environment]` | `SECRETS_SCAN_OMIT_KEYS` whitelists the intentionally-public vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `APP_BASE_URL`, `SITE_URL`, …) so Netlify's secrets scanner does not flag them; `SECRETS_SCAN_OMIT_PATHS` covers `.framework/.xenv*` |
+| `[build.environment]` | `SECRETS_SCAN_OMIT_KEYS` whitelists the intentionally-public vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `APP_BASE_URL`, `SITE_URL`, …) so Netlify's secrets scanner does not flag them; `SECRETS_SCAN_OMIT_PATHS` covers `.env*` |
 | `[functions]` | `directory = ".assembled/netlify/functions"`, `included_files` for `_shared/**`, `node_bundler = "esbuild"`, `external_node_modules = ["typescript"]` (the esbuild printer panic workaround — typescript.js ships unbundled) |
 | `[dev]` | `netlify dev` runs `scripts/netlify-dev-wrapper.sh`, site on `8888`, Vite `targetPort` `3001`, `startTimeout 300` |
 | `[functions."<name>"]` | per-function config: `trigger-scheduler` gets `schedule = "* * * * *"`; `ai-agents`, `kb` get `timeout` overrides |

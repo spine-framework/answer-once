@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-migration
-verified_against: 71dae29
-verified_on: 2026-11-15
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - .framework/cli/commands/migrate.ts
   - .framework/migrations/068_cron_schedule_timer_rpcs.sql

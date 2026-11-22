@@ -22,8 +22,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 function loadEnv() {
-  for (const name of ['.xenv.test', '.xenv']) {
-    const p = resolve(__dirname, '../../', name)
+  for (const name of ['.env.test', '.env']) {
+    const p = resolve(__dirname, '../../../', name)
     if (existsSync(p)) {
       const lines = readFileSync(p, 'utf8').split('\n')
       for (const line of lines) {

@@ -19,6 +19,7 @@ depends_on:
     - .framework/src/instructions/tasks/package-and-install-an-app.md
   commands:
     - "npm run verify"
+    - "npm run verify:install"
     - "npx spine-framework doctor"
     - "npx spine-framework install-app"
     - "npx spine-framework migrate"
@@ -86,6 +87,7 @@ npx spine-framework uninstall-app spine-framework-<slug>
 npx spine-framework validate-app custom/apps/<slug>
 npx spine-framework doctor          # runtime_wiring + health
 npm run verify                      # frozen integrity intact
+npm run verify:install -- --app <slug>   # post-install DB checks
 ```
 
 Report what was installed, which seeds ran, and any conflicts needing manual

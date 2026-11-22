@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-test
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 4196635
+verified_on: 2026-11-22
 source_files:
   - vitest.config.ts
   - .framework/tests/setup.ts
@@ -77,11 +77,11 @@ the runner picks them up.
 
 ## Verify
 
-- `npm run test` exits 0; `vitest` prints per-file pass counts. A custom
-  reporter that persists runs to `public.test_runs` exists at
-  `.framework/tests/reporter.ts` but is **not** registered — the config
-  uses `reporters: ['default']`, so opt in with `--reporter` if you want
-  persisted runs.
+- `npm run test` exits 0; `vitest` prints per-file pass counts. The custom
+  reporter at `.framework/tests/reporter.ts` is registered in
+  `vitest.config.ts` and persists every run to `public.test_runs` when real
+  Supabase credentials are present (`.env.test`, then `.env`); with stub
+  credentials it no-ops with a warning.
 - `npm run typecheck` and
   `npx tsc --noEmit -p config/tsconfig.functions.json` are both clean.
 - `npx spine-framework doctor` sanity-checks the environment when tests
