@@ -2,7 +2,7 @@
 title: Team conventions
 audience: developers, agents
 kind: concept
-verified_against: b4b0e10
+verified_against: 781dcbd
 verified_on: 2026-11-22
 source_files:
   - .framework/cli/lib/project-files.ts

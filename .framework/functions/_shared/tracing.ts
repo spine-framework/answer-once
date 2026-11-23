@@ -1,5 +1,6 @@
 
 import { randomUUID } from 'crypto'
+import type { CoreContext } from './middleware'
 
 
 export interface TraceContext {
@@ -22,7 +23,12 @@ export interface Span extends TraceContext {
 }
 
 
-export interface CoreContextWithTrace {
+export interface CoreContextWithTrace extends CoreContext {}
+
+// Minimal shape the span constructors need — just a trace carrier. Request
+// bootstrap calls startSpan before principal/db exist, so it can't demand a
+// full CoreContext.
+export interface SpanCarrier {
   trace?: TraceContext
   [key: string]: any
 }
@@ -186,7 +192,7 @@ export function traceDb(
 
 
 export function startSpan(
-  ctx: CoreContextWithTrace,
+  ctx: SpanCarrier,
   spanName: string,
   options?: {
     attributes?: Record<string, any>

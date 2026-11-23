@@ -2,7 +2,7 @@
 title: API Keys
 audience: both
 kind: entity
-verified_against: 761dfb9
+verified_against: 3ff4b85
 verified_on: 2026-11-17
 source_files:
   - .framework/functions/api-keys.ts

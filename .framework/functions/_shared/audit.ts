@@ -27,7 +27,7 @@ export async function emitAudit(
   target: { type: string; id?: string; account_id?: string },
   metadata?: {
     changes?: { before?: any; after?: any }
-    result?: 'success' | 'failure' | 'denied'
+    result?: 'success' | 'failure' | 'denied' | 'partial'
     error?: string
     [key: string]: any
   }
@@ -35,7 +35,7 @@ export async function emitAudit(
   try {
     const logDb = ctx.db || adminDb
     const result = metadata?.result
-    const level = result === 'failure' || result === 'denied' ? 'warning' : 'info'
+    const level = result === 'failure' || result === 'denied' || result === 'partial' ? 'warning' : 'info'
 
     await logDb.from('logs').insert({
       level,
@@ -44,7 +44,7 @@ export async function emitAudit(
       message: `${action} by ${ctx.principal?.type || 'unknown'}:${ctx.principal?.id || 'anonymous'}`,
       span_name: action,
       kind: 'event',
-      outcome: result === 'failure' ? 'failure' : result === 'denied' ? 'failure' : result === 'success' ? 'success' : null,
+      outcome: result === 'failure' ? 'failure' : result === 'denied' ? 'failure' : result === 'success' ? 'success' : result === 'partial' ? 'partial' : null,
       event_category: result ? 'business_outcome' : 'audit',
       started_at: new Date().toISOString(),
       ...traceFields(ctx),

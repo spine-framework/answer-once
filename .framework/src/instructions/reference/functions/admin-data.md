@@ -24,6 +24,15 @@ field-level sanitization, type-schema stamping, and trigger firing built in.
 Custom apps are expected to use this endpoint for all runtime-record CRUD
 rather than wrapping it.
 
+The allowlist (`VALID_ENTITIES` in the function source) is `accounts`,
+`people`, `items`, `threads`, `messages`, `links`, `attachments`,
+`watchers`, `item_progress`, `logs`, `test_runs`, `observability`,
+`test_cases`, `types`, `link_types`, `ai_agents`, and `prompt_configs`.
+Tables not on it are deliberately elsewhere: `roles` is managed by the
+dedicated `/api/roles` endpoint, and `notifications` is written by
+pipeline/agent-runner notification actions and read by the signed-in
+recipient under RLS — neither is an admin-data entity.
+
 ## Route and methods
 
 `/.netlify/functions/admin-data`, reachable publicly as `/api/admin-data`
@@ -106,7 +115,13 @@ parent/child lineage is attached unless `lineage=0`.
 
 **create** (body): `entity` (or `?entity=`), `type_slug` or `type_id` —
 required for every non-raw entity; `account_id` (optional override);
-arbitrary record fields. `design_schema`, `validation_schema`, and `id` in
+arbitrary record fields. Field placement follows the type's `system` flag:
+`system: true` fields are sent as top-level keys (`title`, `status`),
+everything else goes inside a `data` object — a non-system field sent
+top-level is stored but invisible to schema-driven readers, and a system
+field sent inside `data` never reaches its column (the split is documented
+in `concepts/runtime-records.md`). `design_schema`, `validation_schema`,
+and `id` in
 the body are stripped. `thread_id`, `target_id`, or `parent_id` in the body
 pull account and `scope` from the parent record. For `entity=attachments`,
 create is the commit step of the upload flow: tenant callers must supply

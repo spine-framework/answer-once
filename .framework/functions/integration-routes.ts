@@ -1,5 +1,5 @@
 
-import { createPublicHandler, CoreContext } from './_shared/middleware'
+import { createPublicHandler, RequestContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { resolveHandler } from './_shared/webhook-registry'
@@ -55,7 +55,7 @@ function extractEvent(payload: any, eventHeader?: string | null, eventPath?: str
   return null
 }
 
-export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
+export async function execute(ctx: RequestContext, body: any = {}): Promise<any> {
   const slug = ctx.query?.slug || body?.slug
 
   if (!slug) {

@@ -113,7 +113,7 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
   let record: any = null
   if (record_id) {
     const getCtx = { ...ctx, query: { entity: 'items', id: record_id } } as any
-    record = await adminDataGet(getCtx)
+    record = await adminDataGet(getCtx, {})
   }
 
   const logStarted = (id: string) =>
@@ -146,18 +146,18 @@ export async function execute(ctx: CoreContext, body: any = {}): Promise<any> {
       updated_at: new Date().toISOString()
     }
 
-    insertPromise = adminDb
-      .from('webhook_deliveries')
-      .insert(deliveryPayload)
-      .select('id')
-      .single()
-      .then(({ data: deliveryRow, error: deliveryInsertError }) => {
-        if (deliveryInsertError || !deliveryRow) {
-          throw new Error('Failed to create outbound delivery record')
-        }
-        void logStarted(deliveryRow.id)
-        return deliveryRow.id as string
-      })
+    insertPromise = (async () => {
+      const { data: deliveryRow, error: deliveryInsertError } = await adminDb
+        .from('webhook_deliveries')
+        .insert(deliveryPayload)
+        .select('id')
+        .single()
+      if (deliveryInsertError || !deliveryRow) {
+        throw new Error('Failed to create outbound delivery record')
+      }
+      void logStarted(deliveryRow.id)
+      return deliveryRow.id as string
+    })()
     insertPromise.catch(() => {}) // rejection is surfaced where it is awaited
   } else {
     await adminDb

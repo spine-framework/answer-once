@@ -13,6 +13,11 @@
 
 import { adminDb } from './db'
 
+// These helpers run under vitest, whose `expect` is a test-runner global —
+// declared ambiently so the file stays import-free (a real vitest import
+// would land in deployed function bundles).
+declare const expect: typeof import('vitest').expect
+
 export interface TestContext {
   db: typeof adminDb
   principal: TestPrincipal

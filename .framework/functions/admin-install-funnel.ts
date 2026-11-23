@@ -42,7 +42,7 @@ export const metrics = createHandler(async (ctx, body) => {
     .eq('data->>source', 'inst')
     .not('data->>serial', 'is', null)
 
-  const uniqueInstallers = new Set(installerData?.map(item => item.data?.serial)).size
+  const uniqueInstallers = new Set(installerData?.map(item => item.serial)).size
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
   const { count: activeInstances } = await adminDb
@@ -78,6 +78,7 @@ export const metrics = createHandler(async (ctx, body) => {
     .from('items')
     .select(`
       id,
+      created_at,
       data->>serial,
       data->>version,
       data->>environment,
@@ -95,29 +96,33 @@ export const metrics = createHandler(async (ctx, body) => {
     .order('created_at', { ascending: false })
     .limit(20)
 
-  const formattedInstalls = recentInstalls?.map(instance => ({
-    id: instance.id,
-    serial: instance.data?.serial || 'unknown',
-    app_version: instance.data?.version || 'unknown',
-    environment: instance.data?.environment || 'unknown',
-    first_seen_at: instance.data?.first_seen_at || instance.created_at,
-    last_signal_at: instance.data?.last_signal_at || instance.created_at,
-    claimed_by: instance.data?.claimed_by_person_id,
-    claimed_at: instance.data?.claimed_at,
-    account_name: instance.accounts?.name,
-    person_email: instance.people?.email
-  }))
+  const formattedInstalls = recentInstalls?.map(instance => {
+    const account = Array.isArray(instance.accounts) ? instance.accounts[0] : instance.accounts
+    const person = Array.isArray(instance.people) ? instance.people[0] : instance.people
+    return {
+      id: instance.id,
+      serial: instance.serial || 'unknown',
+      app_version: instance.version || 'unknown',
+      environment: instance.environment || 'unknown',
+      first_seen_at: instance.first_seen_at || instance.created_at,
+      last_signal_at: instance.last_signal_at || instance.created_at,
+      claimed_by: instance.claimed_by_person_id,
+      claimed_at: instance.claimed_at,
+      account_name: account?.name,
+      person_email: person?.email
+    }
+  })
 
   const { data: versionData } = instanceTypeId ? await adminDb
     .from('items')
     .select('data->>version')
     .eq('type_id', instanceTypeId) : { data: [] }
 
-  const versionCounts = versionData?.reduce((acc, item) => {
-    const version = item.data?.version || 'unknown'
+  const versionCounts = (versionData ?? []).reduce<Record<string, number>>((acc, item) => {
+    const version = item.version || 'unknown'
     acc[version] = (acc[version] || 0) + 1
     return acc
-  }, {} as Record<string, number>)
+  }, {})
 
   const totalVersions = Object.values(versionCounts).reduce((sum, count) => sum + count, 0)
   const topVersions = Object.entries(versionCounts)

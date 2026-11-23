@@ -51,11 +51,11 @@ export const metrics = createHandler(async (ctx, body) => {
     .eq('type_id', signalType.id)
     .gte('created_at', weekAgo)
 
-  const sourceCounts = sourceData?.reduce((acc, item) => {
-    const source = item.data?.source || 'unknown'
+  const sourceCounts = (sourceData ?? []).reduce<Record<string, number>>((acc, item) => {
+    const source = item.source || 'unknown'
     acc[source] = (acc[source] || 0) + 1
     return acc
-  }, {} as Record<string, number>)
+  }, {})
 
   const topSources = Object.entries(sourceCounts)
     .sort(([, a], [, b]) => b - a)
@@ -78,15 +78,18 @@ export const metrics = createHandler(async (ctx, body) => {
     .order('created_at', { ascending: false })
     .limit(20)
 
-  const formattedSignals = recentSignals?.map(signal => ({
-    id: signal.id,
-    action_type: signal.data?.action_type || 'unknown',
-    source: signal.data?.source || 'unknown',
-    stage: signal.data?.stage || 'unknown',
-    created_at: signal.created_at,
-    account_name: signal.accounts?.name,
-    rating: parseInt(signal.data?.rating || '1')
-  }))
+  const formattedSignals = recentSignals?.map(signal => {
+    const account = Array.isArray(signal.accounts) ? signal.accounts[0] : signal.accounts
+    return {
+      id: signal.id,
+      action_type: signal.action_type || 'unknown',
+      source: signal.source || 'unknown',
+      stage: signal.stage || 'unknown',
+      created_at: signal.created_at,
+      account_name: account?.name,
+      rating: parseInt(signal.rating || '1')
+    }
+  })
 
   const { count: highValueSignals } = await adminDb
     .from('items')
@@ -201,24 +204,28 @@ export const audit = createHandler(async (ctx, body) => {
     throw new Error(`Failed to fetch signals: ${error.message}`)
   }
 
-  const formattedSignals = data?.map(signal => ({
-    id: signal.id,
-    action_type: signal.data?.action_type || 'unknown',
-    action_value: parseInt(signal.data?.action_value || '1'),
-    stage: signal.data?.stage || 'unknown',
-    source: signal.data?.source || 'unknown',
-    created_at: signal.created_at,
-    account_name: signal.accounts?.name,
-    person_email: signal.people?.email,
-    anonymous_id: signal.data?.identity?.anonymous_id,
-    session_id: signal.data?.identity?.session_id,
-    rating: parseInt(signal.data?.rating || '1'),
-    raw_score: parseFloat(signal.data?.raw_score || '0'),
-    referrer_domain: signal.data?.attribution?.first_touch_referrer_domain,
-    utm_source: signal.data?.attribution?.utm_source,
-    utm_medium: signal.data?.attribution?.utm_medium,
-    utm_campaign: signal.data?.attribution?.utm_campaign
-  }))
+  const formattedSignals = data?.map(signal => {
+    const account = Array.isArray(signal.accounts) ? signal.accounts[0] : signal.accounts
+    const person = Array.isArray(signal.people) ? signal.people[0] : signal.people
+    return {
+      id: signal.id,
+      action_type: signal.action_type || 'unknown',
+      action_value: parseInt(signal.action_value || '1'),
+      stage: signal.stage || 'unknown',
+      source: signal.source || 'unknown',
+      created_at: signal.created_at,
+      account_name: account?.name,
+      person_email: person?.email,
+      anonymous_id: signal.anonymous_id,
+      session_id: signal.session_id,
+      rating: parseInt(signal.rating || '1'),
+      raw_score: parseFloat(signal.raw_score || '0'),
+      referrer_domain: signal.first_touch_referrer_domain,
+      utm_source: signal.utm_source,
+      utm_medium: signal.utm_medium,
+      utm_campaign: signal.utm_campaign
+    }
+  })
 
   if (exportData) {
     return formattedSignals

@@ -668,7 +668,7 @@ const stageHandlers: Record<string, Function> = {
     // Optional idempotency — skip the insert when a matching record exists.
     if (config.dedupe?.field) {
       const value = resolveTemplates(config.dedupe.value, triggerData)
-      let q = adminDb.from(entity).select('*').eq(config.dedupe.field, value)
+      let q: any = (adminDb.from(entity) as any).select('*').eq(config.dedupe.field, value)
       if (config.dedupe.account_scoped !== false) q = q.eq('account_id', accountId)
       const { data: found } = await q.limit(1)
       if (found?.length) return { success: true, record: found[0], deduped: true }

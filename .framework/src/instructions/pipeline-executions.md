@@ -2,7 +2,7 @@
 title: Pipeline Executions
 audience: both
 kind: entity
-verified_against: 9f90999
+verified_against: 3ff4b85
 verified_on: 2026-11-16
 source_files:
   - .framework/src/pages/admin/PipelineExecutionsPage.tsx

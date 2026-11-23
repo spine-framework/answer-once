@@ -2,7 +2,7 @@
 title: "What environment variables does Answer Once need"
 audience: developers, agents
 kind: qa
-verified_against: 4c2f472
+verified_against: dc1d7f1
 verified_on: 2026-11-22
 suggested_kb_tag: tutorial
 source_files:

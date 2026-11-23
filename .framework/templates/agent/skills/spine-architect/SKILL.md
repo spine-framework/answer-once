@@ -1,7 +1,7 @@
 ---
 name: spine-architect
 description: "Orient on the Spine Way before building or changing anything in a Spine project; evaluate proposals and advise core-vs-custom placement."
-verified_against: 6c7c604
+verified_against: 3ff4b85
 verified_on: 2026-11-22
 allowed-tools:
   - read

@@ -36,13 +36,13 @@ export const metrics = createHandler(async (ctx, body) => {
     .eq('type_id', signalTypeId)
     .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) : { data: [] }
 
-  const stageCounts = stageData?.reduce((acc, item) => {
-    const stage = item.data?.stage || 'unknown'
+  const stageCounts = (stageData ?? []).reduce<Record<string, number>>((acc, item) => {
+    const stage = item.stage || 'unknown'
     if (item.account_id) {
       acc[stage] = (acc[stage] || 0) + 1
     }
     return acc
-  }, {} as Record<string, number>)
+  }, {})
 
   const totalStageSignals = Object.values(stageCounts).reduce((sum, count) => sum + count, 0)
 
@@ -74,8 +74,8 @@ export const metrics = createHandler(async (ctx, body) => {
     percentage: totalStageSignals > 0 ? (count / totalStageSignals) * 100 : 0
   }))
 
-  const anonymousToIdentified = anonymousSessions > 0 ? (uniqueAccounts / anonymousSessions) * 100 : 0
-  const identifiedToInstalled = uniqueAccounts > 0 ? (installedInstances / uniqueAccounts) * 100 : 0
+  const anonymousToIdentified = (anonymousSessions ?? 0) > 0 ? (uniqueAccounts / (anonymousSessions ?? 0)) * 100 : 0
+  const identifiedToInstalled = uniqueAccounts > 0 ? ((installedInstances ?? 0) / uniqueAccounts) * 100 : 0
 
   return {
     anonymous_visitors: anonymousSessions || 0,

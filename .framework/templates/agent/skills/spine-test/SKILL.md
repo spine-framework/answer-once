@@ -1,7 +1,7 @@
 ---
 name: spine-test
 description: "Run and write tests in a Spine project — vitest suites, typecheck, integrity verify, and where test files belong."
-verified_against: 97bd83d
+verified_against: 9d16176
 verified_on: 2026-11-22
 allowed-tools:
   - read

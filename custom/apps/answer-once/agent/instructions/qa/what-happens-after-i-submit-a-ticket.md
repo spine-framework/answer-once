@@ -2,7 +2,7 @@
 title: "What happens after I submit a ticket"
 audience: developers, agents
 kind: qa
-verified_against: 6c7c604
+verified_against: 9d16176
 verified_on: 2026-11-22
 suggested_kb_tag: support
 source_files:

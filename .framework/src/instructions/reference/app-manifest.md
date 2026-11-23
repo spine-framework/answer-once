@@ -2,7 +2,7 @@
 title: App Manifest Reference
 audience: developers, agents
 kind: reference
-verified_against: 9f90999
+verified_against: 3ff4b85
 verified_on: 2026-11-16
 source_files:
   - .framework/functions/_shared/app-manifest.ts
@@ -49,10 +49,10 @@ Read by `.framework/functions/_shared/app-manifest.ts` and mirrored onto the
 | `description` | string | `''` |
 | `version` | string | `'1.0.0'` |
 | `required_roles` | string[] | `[]`; `min_role` column becomes `required_roles[0]` (or legacy `min_role`) |
-| `route_prefix` | string | `'/' + slug` — the SPA mount point. `"/"` mounts at the site root (**one app only**; its `/*` shadows the global not-found, so root apps must render their own not-found); nested prefixes (`/crm/sales`) sort longest-first; `/spine-framework/*` is reserved. Change post-install via `update-db-app` or admin — see [Mounting](../concepts/apps-and-renderers.md#mounting-directory-or-root) |
-| `renderer` | `'generic' \| 'custom' \| 'none'` | `'custom'` — matches the `apps.renderer` CHECK constraint |
+| `route_prefix` | string | `'/' + slug` — the SPA mount point. `"/"` mounts at the site root (**one app only**; its `/*` shadows the global not-found, so root apps must render their own not-found); nested prefixes (`/crm/sales`) sort longest-first; `/spine-framework/*` is reserved. Avoid first segments Vite can resolve to project files (`/app`, `/src`, `/api`, `/assets`…) — on case-insensitive filesystems `/app` collides with `App.tsx` and the request never reaches the SPA; `validate-app` warns. Change post-install via `update-db-app` or admin — see [Mounting](../concepts/apps-and-renderers.md#mounting-directory-or-root) |
+| `renderer` | `'generic' \| 'custom' \| 'none'` | `'custom'` — matches the `apps.renderer` CHECK constraint. Also sets the `nav_items` path convention enforced by `validate-app` |
 | `routes` | string[] | app route paths; `:param` segments supported |
-| `nav_items` | `NavItem[]` | `[]` — `{title, path, icon?, order?, type_slug?, view?, children?}`. **`path` must include the `route_prefix`** (e.g. `/taskboard/tasks`, not `/tasks`) — the app index navigates to `path` verbatim, so a bare path escapes the app and 404s. `view` is **one slug consumed by both the list and the detail page** — naming `default_list` makes the detail page resolve a list view (which has `fields`, not `sections`) and render empty. Omit `view` to get `default_list` + `default_detail`; a nav item cannot pick list and detail views independently |
+| `nav_items` | `NavItem[]` | `[]` — `{title, path, icon?, order?, type_slug?, view?, children?}`. **`path` convention depends on `renderer`** (`validate-app` enforces): with `generic`, absolute paths must include `route_prefix` (`/taskboard/tasks`, not `/tasks`) — the shell navigates absolute paths verbatim, so a bare path escapes the app and 404s; relative paths (`tasks`) are prefixed automatically. With `custom` (default) or `none`, paths are root-relative and must NOT include `route_prefix`. `view` is **one slug consumed by both the list and the detail page** — naming `default_list` makes the detail page resolve a list view (which has `fields`, not `sections`) and render empty. Omit `view` to get `default_list` + `default_detail`; a nav item cannot pick list and detail views independently |
 | `features` | string[] | `[]` |
 | `dependencies` | string[] | `[]` |
 | `entry_point` | string | e.g. `"./index.tsx"` |

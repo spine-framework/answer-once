@@ -20,6 +20,7 @@ depends_on:
     - "npx spine-framework doctor"
     - "npx spine-framework init"
     - "npx spine-framework migrate"
+verified_against: 9d16176
 ---
 
 You install Spine into an empty directory and bring it to a working,

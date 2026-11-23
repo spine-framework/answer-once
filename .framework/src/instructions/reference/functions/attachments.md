@@ -2,7 +2,7 @@
 title: attachments
 audience: both
 kind: reference
-verified_against: 6c7c604
+verified_against: 90d68d2
 verified_on: 2026-11-22
 source_files:
   - .framework/functions/attachments.ts
@@ -152,3 +152,8 @@ orphan).
   past the image set in v1 (SVG is active content, not an image).
 - Tmp uploads are single-shot: a consumed tmp_path is deleted at commit;
   retry the whole upload on commit failure.
+- Known gap: the byte path has fixture coverage and anonymous-gate smokes
+  (401 on unauthed calls), but no live authenticated end-to-end upload has
+  been exercised yet (member → upload-url → PUT → commit → GPS-strip →
+  read-url). Run that once against spine-dev before relying on
+  member-facing uploads.

@@ -894,6 +894,7 @@ export async function retrieveKnowledge(
       stable_id: item?.data?.stable_id || null,
       source_file: item?.data?.source_file || item?.data?.file_path || null,
       chunk_name: item?.data?.chunk_name || null,
+      full_document: false,
     }
   })
   // Top KB hits often hold a complete article (e.g. a full JSON example) that
@@ -3358,6 +3359,7 @@ export interface ToolResult {
   result: any
   error?: string
   id: string
+  params?: any
 }
 
 

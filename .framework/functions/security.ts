@@ -37,7 +37,7 @@ async function netlifyEdgeSync(ipsToAdd: string[], ipsToRemove: string[] = []): 
     const base = `${NETLIFY_API}/api/v1/sites/${siteId}/firewall_rule_set`
     const getRes = await fetch(base, { headers: { Authorization: `Bearer ${token}` } })
     if (!getRes.ok) return { synced: false, error: `Netlify GET ${getRes.status}` }
-    const payload = await getRes.json().catch(() => ({}))
+    const payload: any = await getRes.json().catch(() => ({}))
     const ruleset = payload?.published ?? payload ?? { default: 'allow', rules: [] }
     const rules: any[] = Array.isArray(ruleset.rules) ? ruleset.rules : []
 

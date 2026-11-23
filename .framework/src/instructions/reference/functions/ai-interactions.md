@@ -2,7 +2,7 @@
 title: ai-interactions
 audience: both
 kind: reference
-verified_against: a812c8e
+verified_against: 3ff4b85
 verified_on: 2026-11-20
 source_files:
   - .framework/functions/ai-interactions.ts

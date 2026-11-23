@@ -20,6 +20,7 @@ depends_on:
     - .framework/src/instructions/tasks/add-a-webhook.md
   commands:
     - "npx spine-framework doctor"
+verified_against: 9d16176
 ---
 
 You connect a Spine project to external services: outbound integrations

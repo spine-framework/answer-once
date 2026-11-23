@@ -157,6 +157,62 @@ describe('validateAppStructure — manifest rules', () => {
   })
 })
 
+describe('validateAppStructure — nav_items + route_prefix', () => {
+  it('rejects an absolute nav_item path without route_prefix under the generic renderer', () => {
+    makeApp({
+      manifest: baseManifest({
+        renderer: 'generic',
+        nav_items: [{ label: 'Tasks', path: '/tasks' }],
+      }),
+    })
+    expect(() => validateAppStructure(app)).toThrowError(/must include route_prefix/)
+  })
+
+  it('accepts prefix-scoped and relative nav_item paths under the generic renderer', () => {
+    makeApp({
+      manifest: baseManifest({
+        renderer: 'generic',
+        nav_items: [
+          { label: 'Tasks', path: '/test-app/tasks' },
+          { label: 'Home', path: 'home', children: [{ label: 'Sub', path: '/test-app/sub' }] },
+        ],
+      }),
+    })
+    expect(() => validateAppStructure(app)).not.toThrow()
+  })
+
+  it('rejects a prefix-scoped nav_item path under the default custom renderer', () => {
+    makeApp({
+      manifest: baseManifest({
+        nav_items: [{ label: 'Tasks', path: '/test-app/tasks' }],
+      }),
+    })
+    expect(() => validateAppStructure(app)).toThrowError(/must be root-relative/)
+  })
+
+  it('does not flag a similarly-prefixed path that only shares the first characters', () => {
+    makeApp({
+      manifest: baseManifest({
+        route_prefix: '/test',
+        nav_items: [{ label: 'App', path: '/test-app/tasks' }],
+      }),
+    })
+    expect(() => validateAppStructure(app)).not.toThrow()
+  })
+
+  it('warns when route_prefix collides with a resolvable root segment', () => {
+    makeApp({ manifest: baseManifest({ route_prefix: '/app' }) })
+    validateAppStructure(app)
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('resolvable root path'))
+  })
+
+  it('does not warn for an ordinary route_prefix', () => {
+    makeApp()
+    validateAppStructure(app)
+    expect(console.warn).not.toHaveBeenCalledWith(expect.stringContaining('resolvable root path'))
+  })
+})
+
 describe('validateAppStructure — directory rules', () => {
   it('rejects unknown directories', () => {
     makeApp({ dirs: ['junk-drawer'] })

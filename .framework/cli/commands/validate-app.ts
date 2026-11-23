@@ -56,6 +56,7 @@ interface Manifest {
     default_workspace_name?: boolean
   }
   route_prefix?: string
+  renderer?: 'generic' | 'custom' | 'none'
   preview_domain?: string
   prod_domain?: string
   prod_domains?: string[]
@@ -257,27 +258,54 @@ function validateRoutes(appPath: string, manifest: Manifest): void {
 
   const prefix = manifest.route_prefix === '/' ? null : manifest.route_prefix
 
-  if (!Array.isArray((manifest as any).routes)) return
-
-  for (const route of (manifest as any).routes as string[]) {
-    if (prefix && route.startsWith(prefix)) {
-      throw new ValidationError(
-        `❌ manifest.json route "${route}" must be root-relative (should not include route_prefix "${prefix}"). Use "${route.replace(prefix, '') || '/'}" instead.`
-      )
-    }
-    if (!route.startsWith('/')) {
-      throw new ValidationError(
-        `❌ manifest.json route "${route}" must start with /`
+  if (prefix) {
+    const firstSegment = prefix.split('/').filter(Boolean)[0]?.toLowerCase()
+    const RESOLVABLE_ROOT_SEGMENTS = ['app', 'src', 'api', 'assets', 'public', 'static', 'pages', 'components', 'node_modules']
+    if (firstSegment && RESOLVABLE_ROOT_SEGMENTS.includes(firstSegment)) {
+      console.warn(
+        `⚠️  manifest.json route_prefix "${prefix}" starts with "${firstSegment}" — a name Vite can resolve to a project file/module before the SPA route is reached (on case-insensitive filesystems even "/app" collides with "App.tsx"). Pick a prefix that isn't a resolvable root path.`
       )
     }
   }
 
-  if (Array.isArray((manifest as any).nav_items)) {
-    const checkNavItem = (item: any) => {
-      if (item.path && prefix && item.path.startsWith(prefix)) {
+  const hasPrefix = (p: string) => prefix !== null && (p === prefix || p.startsWith(prefix + '/'))
+
+  if (Array.isArray((manifest as any).routes)) {
+    for (const route of (manifest as any).routes as string[]) {
+      if (hasPrefix(route)) {
         throw new ValidationError(
-          `❌ manifest.json nav_items path "${item.path}" must be root-relative (should not include route_prefix "${prefix}"). Use "${item.path.replace(prefix, '') || '/'}" instead.`
+          `❌ manifest.json route "${route}" must be root-relative (should not include route_prefix "${prefix}"). Use "${route.slice(prefix!.length) || '/'}" instead.`
         )
+      }
+      if (!route.startsWith('/')) {
+        throw new ValidationError(
+          `❌ manifest.json route "${route}" must start with /`
+        )
+      }
+    }
+  }
+
+  if (Array.isArray((manifest as any).nav_items)) {
+    // nav_items path conventions differ by renderer. GenericAppShell
+    // navigates absolute paths verbatim, so an absolute path without the
+    // prefix escapes the app's mount and 404s — absolute paths must be
+    // prefix-scoped (relative paths are prefixed at navigate time and are
+    // fine). Custom renderers resolve their own links and use root-relative
+    // paths, so a prefix there is wrong.
+    const renderer = manifest.renderer ?? 'custom'
+    const checkNavItem = (item: any) => {
+      if (item.path && prefix) {
+        if (renderer === 'generic') {
+          if (item.path.startsWith('/') && !hasPrefix(item.path)) {
+            throw new ValidationError(
+              `❌ manifest.json nav_items path "${item.path}" must include route_prefix "${prefix}" — the generic renderer navigates absolute paths verbatim. Use "${prefix}${item.path}" instead.`
+            )
+          }
+        } else if (hasPrefix(item.path)) {
+          throw new ValidationError(
+            `❌ manifest.json nav_items path "${item.path}" must be root-relative (should not include route_prefix "${prefix}"). Use "${item.path.slice(prefix!.length) || '/'}" instead.`
+          )
+        }
       }
       if (Array.isArray(item.children)) {
         for (const child of item.children) checkNavItem(child)

@@ -538,7 +538,7 @@ export function humanHasRole(principal: Principal, roleSlug: string): boolean {
 }
 
 export function isSystemAdmin(principal: Principal): boolean {
-  return principal?.roles?.some(r => r === 'system_admin' || r?.slug === 'system_admin') || false
+  return principal?.roles?.some(r => r === 'system_admin' || (r as any)?.slug === 'system_admin') || false
 }
 
 // Account-bound machines (API keys) are NOT system principals — handlers must scope their queries even though getPrincipalDb gives them adminDb

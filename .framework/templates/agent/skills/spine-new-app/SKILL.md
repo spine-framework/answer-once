@@ -1,7 +1,7 @@
 ---
 name: spine-new-app
 description: "Scaffold a new Spine app — types + design_schema, app package skeleton, manifest.json, seed files, and registration."
-verified_against: 97bd83d
+verified_against: 3ff4b85
 verified_on: 2026-11-22
 allowed-tools:
   - read

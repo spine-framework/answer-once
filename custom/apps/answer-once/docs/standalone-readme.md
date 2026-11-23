@@ -1,7 +1,7 @@
 ---
 title: "Answer Once — standalone readme"
 kind: index
-verified_against: 4c2f472
+verified_against: dc1d7f1
 verified_on: 2026-11-22
 source_files:
   - custom/apps/answer-once/manifest.json

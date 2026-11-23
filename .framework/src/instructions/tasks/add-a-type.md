@@ -5,7 +5,7 @@ kind: task
 skills:
   - spine-new-type
   - spine-schema
-verified_against: 9f90999
+verified_against: 3ff4b85
 verified_on: 2026-11-16
 source_files:
   - .framework/functions/types.ts

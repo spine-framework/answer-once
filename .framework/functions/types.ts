@@ -186,11 +186,10 @@ export const create = createHandler(async (ctx, body) => {
 
   if (error) throw error
 
-  await emitLog(ctx, 'type.created', {
-    type_id: data.id,
-    type_slug: data.slug,
-    type_kind: data.kind
-  })
+  await emitLog(ctx, 'type.created',
+    { type: 'type', id: data.id },
+    { after: { slug: data.slug, kind: data.kind } }
+  )
 
   return data
 })
@@ -267,11 +266,10 @@ export const update = createHandler(async (ctx, body) => {
 
   if (error) throw error
 
-  await emitLog(ctx, 'type.updated', {
-    type_id: data.id,
-    type_slug: data.slug,
-    type_kind: data.kind
-  })
+  await emitLog(ctx, 'type.updated',
+    { type: 'type', id: data.id },
+    { after: { slug: data.slug, kind: data.kind } }
+  )
 
   return data
 })
@@ -310,11 +308,10 @@ export const remove = createHandler(async (ctx, body) => {
 
   if (error) throw error
 
-  await emitLog(ctx, 'type.deleted', {
-    type_id: existing.id,
-    type_slug: existing.slug,
-    type_kind: existing.kind
-  })
+  await emitLog(ctx, 'type.deleted',
+    { type: 'type', id: existing.id },
+    { before: { slug: existing.slug, kind: existing.kind } }
+  )
 
   return { success: true }
 })

@@ -37,7 +37,17 @@
 
 
 
-import { FieldDefinition } from '../../src/types/types'
+// Structural shape of a design_schema field definition — duplicated rather
+// than imported from ../../src because _shared is copied verbatim into the
+// assembled functions tree, where ../../src does not resolve.
+interface FieldDefinition {
+  data_type?: string
+  required?: boolean
+  system?: boolean
+  validation?: Record<string, any>
+  options?: any[]
+  [key: string]: any
+}
 
 
 export interface ValidationSchema {

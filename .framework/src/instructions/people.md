@@ -2,7 +2,7 @@
 title: People
 audience: both
 kind: entity
-verified_against: bc4b9e9
+verified_against: 3ff4b85
 verified_on: 2026-11-02
 source_files:
   - .framework/migrations/001_core_schema.sql

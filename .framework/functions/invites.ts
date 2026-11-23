@@ -274,7 +274,7 @@ export const validateToken = createPublicHandler(async (_ctx, _body) => {
 
   const { data: person } = await adminDb
     .from('people')
-    .select('id, email, account_id, role_id, status, data, account:accounts!people_account_id_fkey(display_name), role:roles!people_role_id_fkey(slug, name)')
+    .select('id, email, full_name, account_id, role_id, status, data, account:accounts!people_account_id_fkey(display_name), role:roles!people_role_id_fkey(slug, name)')
     .filter('data->>invite_token', 'eq', token)
     .in('status', ['invited', 'pending'])
     .single()
@@ -594,7 +594,7 @@ export const listInvites = createHandler(async (ctx, _body) => {
     throw new Error('Authentication required')
   }
 
-  const isSystemAdmin = ctx.principal.permissions?.includes('system')
+  const isSystemAdmin = (ctx.principal.roles || []).includes('system_admin')
   const { account_id: queryAccountId, role_slugs: queryRoleSlugs } = ctx.query || {}
 
   const roleSlugsFilter: string[] | null = queryRoleSlugs

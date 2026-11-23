@@ -1,7 +1,7 @@
 ---
 title: "Answer Once — standalone install"
 kind: task
-verified_against: 6a89fdd
+verified_against: df5241c
 verified_on: 2026-11-22
 source_files:
   - custom/npm/create-answer-once/

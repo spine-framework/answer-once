@@ -2,7 +2,7 @@
 title: Orientation — what Spine Framework is
 audience: developers, agents
 kind: guide
-verified_against: a9a122e
+verified_against: df5241c
 verified_on: 2026-11-22
 source_files:
   - package.json

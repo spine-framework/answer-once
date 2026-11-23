@@ -4,7 +4,7 @@ audience: developers, agents
 kind: task
 skills:
   - spine-add-integration
-verified_against: bc8b7a2
+verified_against: 3ff4b85
 verified_on: 2026-11-15
 source_files:
   - .framework/functions/integration-routes.ts

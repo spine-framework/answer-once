@@ -2,7 +2,7 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: 6c7c604
+verified_against: 3ff4b85
 verified_on: 2026-11-22
 source_files:
   - .framework/cli/commands/init.ts

@@ -2,7 +2,7 @@
 title: Environment Variables
 audience: developers, agents
 kind: reference
-verified_against: 6c7c604
+verified_against: 3ff4b85
 verified_on: 2026-11-22
 source_files:
   - .env.example

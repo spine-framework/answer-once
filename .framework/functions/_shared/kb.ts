@@ -2,7 +2,7 @@
 import { createHash } from 'crypto'
 import { adminDb } from './db'
 import { isSystemPrincipal, resolveAccessibleAccountIds } from './principal'
-import type { CoreContext } from './middleware'
+import type { CoreContext, RequestContext } from './middleware'
 import { sanitizeRecordData } from './permissions'
 import { callOpenAIEmbeddings } from './llm'
 // admin-data is imported lazily — a static edge closes the cycle
@@ -200,7 +200,7 @@ export function knowledgeRowAllowed(scope: KnowledgeScope, row: { account_id?: s
 
 // deny-by-default; violations are surfaced for visible failure rather than silently clamped
 export async function resolveKnowledgeScope(
-  ctx: { accountId?: string | null; appId?: string | null; principal?: { id?: string } },
+  ctx: { accountId?: string | null; appId?: string | null; principal?: { id?: string; roles?: string[] } },
   appRef?: string | null,
   pick: { item_types?: string[]; project_ids?: string[] } = {}
 ): Promise<KnowledgeScope> {
@@ -828,7 +828,7 @@ export async function kbSearch(ctx: CoreContext, body: any): Promise<{ results: 
 
 
 // Publish goes through admin-data rather than adminDb so field-level permissions and triggers apply
-export async function kbPublish(ctx: CoreContext, body: { id: string }) {
+export async function kbPublish(ctx: RequestContext, body: { id: string }) {
   const { id } = body
   if (!id) throw new Error('id is required')
   const updateCtx = { ...ctx, query: { ...ctx.query, entity: 'items', id, method: 'PATCH' } }

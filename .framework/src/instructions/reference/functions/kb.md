@@ -2,7 +2,7 @@
 title: kb
 audience: both
 kind: reference
-verified_against: 4196635
+verified_against: 3ff4b85
 verified_on: 2026-11-22
 source_files:
   - .framework/functions/kb.ts
