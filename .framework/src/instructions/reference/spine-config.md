@@ -2,8 +2,8 @@
 title: spine.config.json Reference
 audience: developers, agents
 kind: reference
-verified_against: a812c8e
-verified_on: 2026-11-20
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/schemas/spine.config.schema.json
   - .framework/templates/spine.config.neutral.json

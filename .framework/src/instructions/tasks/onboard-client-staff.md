@@ -2,8 +2,8 @@
 title: Onboard client staff
 audience: developers, agents
 kind: task
-verified_against: 9d16176
-verified_on: 2026-11-17
+verified_against: e0b6dc5
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/invites.ts
   - .framework/src/instructions/invites.md

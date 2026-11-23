@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-ship
-verified_against: 781dcbd
-verified_on: 2026-11-22
+verified_against: 59afa86
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/system.ts
   - .framework/src/instructions/tasks/declare-your-environments.md

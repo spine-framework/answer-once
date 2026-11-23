@@ -6,8 +6,8 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 15faf83
+verified_on: 2026-11-23
 depends_on:
   files:
     - .framework/src/instructions/reference/app-manifest.md
@@ -46,6 +46,7 @@ You install Spine app packages into the project's `custom/apps/` workspace.
 # Install an app from npm (first time)
 npx spine-framework install-app spine-framework-<slug>
 npx spine-framework install-app spine-framework-<slug>@<tag>   # pre-release
+npx spine-framework install-app <pkg> --yes                    # non-interactive: auto-accept seed prompts
 
 # Update app code from npm (local manifest.json is preserved)
 npx spine-framework update-app spine-framework-<slug>

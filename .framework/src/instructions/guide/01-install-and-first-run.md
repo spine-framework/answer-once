@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -123,7 +123,13 @@ supabase init && supabase start    # run inside the project dir
 `supabase init` may ask about VS Code/IntelliJ Deno settings — either
 answer is fine and it completes non-interactively.
 
-`supabase start` prints the API URL and JWTs. Point the env vars at it:
+`supabase start` prints more than you need. **Use only** the API URL, the
+`anon key` JWT, the `service_role key` JWT, and the DB URL/port — ignore
+the JWT secret, S3 access/secret keys, and the Studio/Inbucket URLs, which
+nothing in `.framework/` reads. Two warnings in its output are benign: a
+`supabase/seed.sql` no-match notice (Spine seeds via `spine-framework
+migrate`, not the CLI's seed file) and a docker-socket analytics warning.
+Point the env vars at it:
 
 | Variable | Local value |
 |---|---|
@@ -134,7 +140,10 @@ answer is fine and it completes non-interactively.
 
 `SUPABASE_DB_URL` is **required** on a local stack — `migrate` only derives
 the database host from `SUPABASE_URL` when it is absent, and the hosted-URL
-check rejects `127.0.0.1` (see `reference/env-vars.md`).
+check rejects `127.0.0.1` (see `reference/env-vars.md`). Set
+`SUPABASE_DB_PASSWORD=postgres` too — the local stack's postgres password is
+`postgres` by default, and any future direct-DB path that prefers the
+password over the URL will find it.
 
 Three local-only adjustments the installer can't make for you:
 
@@ -207,7 +216,12 @@ npm run dev:netlify
 
 `dev:netlify` runs `npm run assemble` first (via `predev:netlify`) and then
 `scripts/dev-netlify.sh`, which cleans stale processes and launches the pinned
-`netlify dev`. Netlify serves the site on **http://localhost:8888** and starts
+`netlify dev`. On a bare install, assemble may print `Stubbed missing import
+target: custom_make-inbound` — expected: the inbound-webhook registry
+(`_shared/webhook-registry.ts`) lazily imports the Make.com adapter, which
+lives in an app package, so the bundler emits a stub for the absent module.
+The stub throws only if invoked, which can't happen without a registered
+handler. Netlify serves the site on **http://localhost:8888** and starts
 the Vite dev server on 3001 via `scripts/netlify-dev-wrapper.sh`.
 **Wait for the "Local dev server ready" banner** — the first `dev:netlify`
 run bundles ~80 functions and can take a couple of minutes before the banner
@@ -245,7 +259,7 @@ Two URL spaces matter:
 ## First admin — browser-free bootstrap (recommended for automation)
 
 ```bash
-npx spine-framework bootstrap --email you@example.com --password '<pick-one>'
+npx spine-framework bootstrap --email you@example.com --password '<pick-one>' --write-env
 ```
 
 This is the scriptable path (`S-002`): it creates the first `system_admin`
@@ -253,7 +267,9 @@ person bound to the `spine-system` account — the same row shape the
 `handle_new_auth_user` trigger writes on registration — creates a confirmed
 auth user through `auth.admin.createUser(email_confirm: true)`, and mints a
 `sk_` API key, all without a browser. The raw key is printed **once**; only
-its PBKDF2 hash is stored. `--scope <scope>` (repeatable) narrows the key —
+its PBKDF2 hash is stored. `--write-env` instead upserts it into `.env` as
+`SPINE_API_KEY` without printing it — the recommended path for agents, who
+would otherwise have to scrape a one-time secret out of scrollback. `--scope <scope>` (repeatable) narrows the key —
 the default `*:*` resolves to the `system_admin` role on the machine
 principal. Omit `--email`/`--password` and the person record is created
 DB-only (no UI login; the minted key still works for `x-api-key` callers).
@@ -293,7 +309,8 @@ runtime API:
 
 1. **Bootstrap an admin + key** — one step, no browser: `npx
    spine-framework bootstrap` (see "First admin" above) both creates the
-   `system_admin` and prints a `sk_` key. The browser alternative: register
+   `system_admin` and mints a `sk_` key — `--write-env` lands it in `.env`
+   as `SPINE_API_KEY` with no copy step. The browser alternative: register
    at `/register` (first user becomes `system_admin`), then create a scoped
    key under **Admin → Configs → API Keys**. Either way the raw key is shown
    **once** — copy it immediately (`.framework/functions/api-keys.ts`).

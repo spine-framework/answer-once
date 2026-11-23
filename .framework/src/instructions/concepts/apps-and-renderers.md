@@ -2,8 +2,8 @@
 title: Apps and Renderers
 audience: developers, agents
 kind: concept
-verified_against: 8a0dc59
-verified_on: 2026-11-01
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/013_get_account_apps_role_filter.sql
@@ -18,6 +18,7 @@ source_files:
   - .framework/functions/apps.ts
   - .framework/cli/commands/create-app.ts
   - .framework/cli/commands/install-app.ts
+  - .framework/cli/commands/validate-app.ts
 ---
 
 # Apps and Renderers
@@ -96,11 +97,22 @@ Rules that are easy to get wrong:
   resolved to `/taskboard/tasks`). The broken form is absolute *without*
   the prefix (`/tasks` escapes the app). For a root-mounted app the
   absolute form is simply `/…`.
-- **`/spine-framework/*` is reserved** (admin, API docs, CLI pages mount
-  there ahead of app routes). Never pick a colliding prefix.
+- **Routes the framework claims before apps get a turn:** `/admin` (the
+  seeded core admin app), `/login`, `/register`, `/forgot-password`,
+  `/auth/*`, `/spine-framework/*` (admin, API docs, CLI pages mount
+  there ahead of app routes), and `/api` (the Netlify functions path).
+  `validate-app` rejects a `route_prefix` that claims one — never pick a
+  colliding prefix.
 - **Apps are always behind login.** `is_public`/`auth_required` exist on
   the manifest, but the unauthenticated router only serves auth pages —
-  a root-mounted app is not a public site mechanism.
+  a root-mounted app is not a public site mechanism. The supported
+  anonymous pattern is static `public/` files + `createPublicHandler`
+  reads: [tasks/serve-public-content](../tasks/serve-public-content.md).
+- **`system_admin` is routed to the framework console.** On login a
+  `system_admin` is sent to `/spine-framework/admin` rather than the
+  app at `/` (`App.tsx`) — even for a root-mounted app, `/` is not a
+  member-home for them. Give admins an in-app alias route (e.g. `/home`)
+  when they need the community-facing view.
 
 Change the mount point via `manifest.route_prefix` + `update-db-app <slug>`
 (or the admin app detail page). On package reinstall the local

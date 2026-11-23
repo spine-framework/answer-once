@@ -1,8 +1,8 @@
 ---
 name: spine-new-app
 description: "Scaffold a new Spine app — types + design_schema, app package skeleton, manifest.json, seed files, and registration."
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 699d419
+verified_on: 2026-11-23
 allowed-tools:
   - read
   - write
@@ -71,11 +71,14 @@ package contract.
      them). Every file declared in the `seed` block with `file`, `table`,
      `conflict`.
 
-3. **Nav paths accept two forms.** `nav_items[].path` may be absolute
-   *including* `route_prefix` (`/my-app/tasks`) or relative (`tasks` —
-   the shell prefixes it). The broken form is absolute *without* the
-   prefix (`/tasks` escapes the app). `routes` is declarative
-   root-relative. Links inside the app use `useAppPath()`.
+3. **Nav paths depend on `renderer`.** `generic` renderers: absolute
+   `nav_items[].path` must *include* `route_prefix` (`/my-app/tasks`);
+   relative (`tasks`) is prefixed automatically. `custom`/`none`
+   renderers: paths are root-relative and must NOT include the prefix.
+   `routes` is declarative root-relative. Links inside the app use
+   `useAppPath()`. `route_prefix` cannot claim framework-reserved routes
+   (`/admin`, `/login`, `/register`, `/forgot-password`, `/auth/*`,
+   `/api`, `/spine-framework/*`) — `validate-app` errors.
 
 4. **Validate:** `npx spine-framework validate-app custom/apps/<slug>` —
    fix every error before publishing or installing.

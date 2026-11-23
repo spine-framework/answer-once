@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-install-app
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts
@@ -94,7 +94,9 @@ seeds applied. Field-level manifest semantics are in
      `manifest.json` and syncs registration; no npm, no file changes.
    - `seed-app <slug>` — re-runs just the seed block for a local app;
      `--reconcile-owned-types` interactively updates `manifest.owned_types`
-     slugs whose DB `design_schema` drifted from the seed.
+     slugs whose DB `design_schema` drifted from the seed; `-y`/`--yes`
+     auto-accepts prompts — required for non-interactive (agent/CI) runs,
+     which otherwise hang on the permission-patch prompt.
 
 6. **Uninstall.** `uninstall-app <package>` removes
    `custom/apps/<slug>/`, removes the app's skills

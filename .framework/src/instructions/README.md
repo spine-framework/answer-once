@@ -2,8 +2,8 @@
 title: Spine Instruction Book
 audience: developers, agents
 kind: index
-verified_against: 9d16176
-verified_on: 2026-11-22
+verified_against: e0b6dc5
+verified_on: 2026-11-23
 source_files:
   - .framework/src/instructions/accounts.md
   - .framework/src/instructions/ai-agents.md
@@ -90,6 +90,10 @@ archived reference tree at 0.6.1 (long-form narrative: `docs/articles/`).
   [tasks/register-an-app](tasks/register-an-app.md) +
   [Mounting](concepts/apps-and-renderers.md#mounting-directory-or-root).
 - App-shipped docs/skills: [tasks/document-your-app](tasks/document-your-app.md).
+- Anonymous/public visitors:
+  [tasks/serve-public-content](tasks/serve-public-content.md) — apps are
+  login-gated; the public pattern is static `public/` files +
+  `createPublicHandler` reads.
 - Shipping/promoting: [tasks/declare-your-environments](tasks/declare-your-environments.md)
   (the `## Environments` ladder) + the `spine-ship` skill.
 - Operating a deployment: `spine-operate` skill +

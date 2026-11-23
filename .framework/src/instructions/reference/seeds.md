@@ -2,8 +2,8 @@
 title: Seeds Reference
 audience: developers, agents
 kind: reference
-verified_against: 4196635
-verified_on: 2026-11-22
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/migrate.ts
@@ -88,6 +88,9 @@ Each record is upserted into `entry.table` with `onConflict: entry.conflict`.
   `[R]eplace / [K]eep` prompt; grant lists may only contain
   `create`/`read`/`update`/`delete`. A `seed/type_permissions.json` file is
   auto-declared when no patch entry exists.
+- **`-y`/`--yes` auto-accepts both prompts** on `install-app` and
+  `seed-app` — required for non-interactive (agent/CI) runs, which
+  otherwise hang waiting for input.
 - **`types` seeds get a fresh `validation_schema`** generated from
   `design_schema` at apply time — author `design_schema` only.
 - **`pipelines` seeds** are validated before upsert: every `stages[].stage_type`

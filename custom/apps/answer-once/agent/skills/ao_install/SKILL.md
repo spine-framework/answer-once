@@ -1,8 +1,8 @@
 ---
 name: ao_install
 description: "Install Answer Once into a fresh Spine project — run its npm-create installer, configure env, migrate, seed, verify."
-verified_against: df5241c
-verified_on: 2026-11-22
+verified_against: a9a7b8c
+verified_on: 2026-11-23
 allowed-tools:
   - exec
   - read

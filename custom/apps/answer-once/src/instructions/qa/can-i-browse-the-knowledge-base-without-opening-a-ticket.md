@@ -2,8 +2,8 @@
 title: "Can I browse the knowledge base without opening a ticket"
 audience: developers, agents
 kind: qa
-verified_against: 9d16176
-verified_on: 2026-11-22
+verified_against: 15faf83
+verified_on: 2026-11-23
 suggested_kb_tag: how-to
 source_files:
   - custom/apps/answer-once/manifest.json

@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-test
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 15faf83
+verified_on: 2026-11-23
 source_files:
   - vitest.config.ts
   - .framework/tests/setup.ts
@@ -34,11 +34,13 @@ the runner picks them up.
    - `npm run test:integration` — the integration suite (needs real env,
      see below).
    - `npm run test:core` — the core-isolation suite.
-   - `npm run typecheck` → `tsc -b config/tsconfig.json` — frontend +
-     CLI. Functions are **not** covered here: check them separately with
-     `npx tsc --noEmit -p config/tsconfig.functions.json` after
-     `npm run assemble` (it typechecks the assembled layout) — or just
-     `npm run typecheck:functions`, which is what `gate` runs.
+   - `npm run typecheck` → `tsc -b config/tsconfig.json` — frontend only
+     (`.framework/src`, `.assembled/src`, `custom/apps`). Functions and
+     the CLI are **not** covered here: check them separately with
+     `npm run typecheck:functions` (assembled function layout, after
+     `npm run assemble`) and `npm run typecheck:cli`
+     (`config/tsconfig.cli.json` — `.framework/cli` + shared function
+     code). `gate` runs both.
    - `npx spine-framework test [suite]` — the CLI wrapper
      (`--watch`, `--reporter`, `--json`; see [CLI reference](../reference/cli.md)).
 
@@ -83,8 +85,8 @@ the runner picks them up.
   `vitest.config.ts` and persists every run to `public.test_runs` when real
   Supabase credentials are present (`.env.test`, then `.env`); with stub
   credentials it no-ops with a warning.
-- `npm run typecheck` and `npm run typecheck:functions` (or
-  `npx tsc --noEmit -p config/tsconfig.functions.json`) are both clean.
+- `npm run typecheck`, `npm run typecheck:functions`, and
+  `npm run typecheck:cli` are all clean.
 - `npx spine-framework doctor` sanity-checks the environment when tests
   behave oddly ([CLI reference](../reference/cli.md)).
 

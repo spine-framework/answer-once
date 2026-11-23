@@ -4,8 +4,8 @@ audience: both
 kind: reference
 skills:
   - spine-upgrade
-verified_against: 4196635
-verified_on: 2026-11-22
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/upgrade.ts
   - .framework/cli/lib/project-files.ts

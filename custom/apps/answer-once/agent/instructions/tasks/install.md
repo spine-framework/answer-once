@@ -2,8 +2,8 @@
 title: "Install Answer Once"
 audience: developers, agents
 kind: task
-verified_against: dc1d7f1
-verified_on: 2026-11-22
+verified_against: a9a7b8c
+verified_on: 2026-11-23
 source_files:
   - custom/apps/answer-once/installer/index.mjs
   - custom/apps/answer-once/docs/install.md

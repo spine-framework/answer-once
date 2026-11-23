@@ -1,8 +1,8 @@
 ---
 title: "Answer Once"
 kind: index
-verified_against: 9d16176
-verified_on: 2026-11-22
+verified_against: 15faf83
+verified_on: 2026-11-23
 source_files:
   - custom/apps/answer-once/manifest.json
   - custom/apps/answer-once/seed/types.json

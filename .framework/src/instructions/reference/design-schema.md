@@ -2,8 +2,8 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 7529771
+verified_on: 2026-11-23
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/_shared/schema-utils.ts
@@ -240,6 +240,11 @@ placeholders).
   (`.framework/functions/_shared/permissions.ts`).
 - Evaluation happens against the schema **stamped on the record**, not the
   type row — records created before a schema edit keep the old grant.
+- **Grants are role-level, not row-level.** There is no "own rows only"
+  concept in `design_schema` — `update` on `member` means *any* member can
+  update *any* row the caller can reach. Row-ownership rules live in RLS or
+  app-side checks; a UI that hides others' edit buttons is cosmetic — a
+  crafted request still succeeds.
 - If a type's `design_schema` omits `record_permissions`, `admin-data` create
   merges a permissive default `{all: [create,read,update,delete]}` before
   stamping (`.framework/functions/admin-data.ts`, `PERMISSIONS_ALL`). An

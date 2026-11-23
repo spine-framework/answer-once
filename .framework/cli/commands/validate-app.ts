@@ -258,6 +258,27 @@ function validateRoutes(appPath: string, manifest: Manifest): void {
 
   const prefix = manifest.route_prefix === '/' ? null : manifest.route_prefix
 
+  // Routes the sealed SPA router claims before app prefixes — an app can
+  // never own one of these. The seeded core `admin` app holds /admin;
+  // /login, /register, /forgot-password and /auth/* are literal routes in
+  // App.tsx; /spine-framework/* mounts the sealed AdminApp/APIPage/CLIPage;
+  // /api is the Netlify functions path via _redirects.
+  const RESERVED_ROUTES = ['/admin', '/login', '/register', '/forgot-password', '/auth', '/api', '/spine-framework']
+  const claimsReserved = (p: string) => RESERVED_ROUTES.some(r => p === r || p.startsWith(r + '/'))
+  if (prefix && claimsReserved(prefix)) {
+    throw new ValidationError(
+      `❌ manifest.json route_prefix "${prefix}" collides with a framework-reserved route (${RESERVED_ROUTES.join(', ')}). The core admin app owns /admin, auth pages own /login|/register|/forgot-password|/auth, /spine-framework/* is sealed, and /api is the Netlify functions path — pick another prefix.`
+    )
+  }
+  for (const variant of ['preview_route_prefix', 'prod_route_prefix'] as const) {
+    const v = manifest[variant]
+    if (typeof v === 'string' && v !== '/' && claimsReserved(v)) {
+      throw new ValidationError(
+        `❌ manifest.json ${variant} "${v}" collides with a framework-reserved route (${RESERVED_ROUTES.join(', ')}).`
+      )
+    }
+  }
+
   if (prefix) {
     const firstSegment = prefix.split('/').filter(Boolean)[0]?.toLowerCase()
     const RESOLVABLE_ROOT_SEGMENTS = ['app', 'src', 'api', 'assets', 'public', 'static', 'pages', 'components', 'node_modules']
@@ -280,6 +301,11 @@ function validateRoutes(appPath: string, manifest: Manifest): void {
       if (!route.startsWith('/')) {
         throw new ValidationError(
           `❌ manifest.json route "${route}" must start with /`
+        )
+      }
+      if (prefix === null && claimsReserved(route)) {
+        console.warn(
+          `⚠️  manifest.json route "${route}" collides with a framework-reserved route — a root-mounted app's page there is shadowed by the sealed router (/admin, auth pages, /spine-framework/*, /api) and will never render.`
         )
       }
     }

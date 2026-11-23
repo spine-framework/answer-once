@@ -2,8 +2,8 @@
 title: Notifications
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-20
+verified_against: 7529771
+verified_on: 2026-11-23
 source_files:
   - .framework/migrations/050_notifications.sql
   - .framework/functions/_shared/notify.ts
@@ -38,7 +38,7 @@ Automation needs a way to reach humans that survives the request — a send rece
 
 | Column | Notes |
 |---|---|
-| `person_id` | required — the recipient (`people.id`). RLS scopes reads to `person_id = current_actor_id()`; users see only their own. |
+| `person_id` | required — the recipient (`people.id`). RLS has **two** SELECT policies: `notifications_recipient_read` scopes to `person_id = current_actor_id()`, but `notifications_account_read` additionally grants every member `account_id IN get_accessible_accounts(...)` — **account members can read each other's notifications**. The account-wide grant exists for admin/audit surfaces; app UIs must filter `person_id = <caller>` in the query — relying on RLS alone leaks everyone's inbox. Tightening this to a dedicated admin/audit policy is an open follow-up. |
 | `account_id` | required — tenant scope; service role writes across accounts. |
 | `source_type` / `source_id` | what produced it — default `'pipeline_execution'`; `source_id` is a text request/execution id (not always a uuid). |
 | `target_type` / `target_id` | the record the notification concerns — the deep link. |
@@ -69,7 +69,18 @@ deep-linking, and a `data` payload.
 
 A pipeline `send_notification` stage with `recipients: ["role:support_admin"]`
 inserts one row per support_admin in the account; each sees it in their
-inbox, scoped to their `person_id` by RLS.
+inbox when the app filters on `person_id`.
+
+Two behaviors to design around:
+
+- **The actor is not excluded.** Recipients resolve purely from the stage's
+  `recipients` list — if the person who triggered the pipeline matches a
+  handle (`owner`, `self`, a role they hold, `watchers` they belong to),
+  they receive a notification for their own action. There is no
+  `exclude_actor` option on this stage (`send_email` handles this
+  separately); filter in the stage config or accept the self-notification.
+- **RLS doesn't hide a recipient's rows from peers** — see the `person_id`
+  note above; person-scoping is the app's query responsibility today.
 
 ## Core files
 

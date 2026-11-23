@@ -26,23 +26,25 @@ interface RegistrationConfig {
  * @stability   stable
  * @cil-generated
  */
+interface AppRegistrationEntry {
+  roles: string[]
+  default_role: string
+  path: string
+  enabled: boolean
+  account_strategy: 'existing' | 'new' | 'choice'
+  target_account?: string
+  parent_account?: string
+  default_workspace_name?: boolean
+  allow_domain_join?: boolean
+}
+
 interface SpineConfig {
   registration?: {
     default_app?: string
     default_role?: string
     allow_url_override?: boolean
     default_app_by_role?: Record<string, string>
-    apps?: Record<string, {
-      roles: string[]
-      default_role: string
-      path: string
-      enabled: boolean
-      account_strategy: 'existing' | 'new' | 'choice'
-      target_account?: string
-      parent_account?: string
-      default_workspace_name?: boolean
-      allow_domain_join?: boolean
-    }>
+    apps?: Record<string, AppRegistrationEntry>
   }
 }
 /**
@@ -257,6 +259,7 @@ export function registerInstallAppCommands(program: Command) {
     .description('Install a Spine Framework app from npm')
     .option('--no-seed', 'Skip seeding types and roles into the database')
     .option('--reconcile-owned-types', 'Prompt to update manifest-owned types whose DB design_schema differs from the seed')
+    .option('-y, --yes', 'Auto-accept seed prompts (non-interactive)')
     .action(async (packageName: string, opts) => {
       console.log(`\nInstalling app: ${packageName}\n`)
 
@@ -332,7 +335,7 @@ export function registerInstallAppCommands(program: Command) {
 
         
         if (opts.seed !== false) {
-          await seedApp(appDest, appSlug, SPINE_CONFIG_PATH, { reconcileOwnedTypes: opts.reconcileOwnedTypes === true })
+          await seedApp(appDest, appSlug, SPINE_CONFIG_PATH, { reconcileOwnedTypes: opts.reconcileOwnedTypes === true, assumeYes: opts.yes === true })
         } else {
           console.log('  ○ Seed skipped (--no-seed)')
         }
@@ -548,6 +551,7 @@ export function registerInstallAppCommands(program: Command) {
     .command('seed-app <slug>')
     .description('Run the manifest seed block for a local app (no npm, no file changes)')
     .option('--reconcile-owned-types', 'Prompt to update manifest-owned types whose DB design_schema differs from the seed')
+    .option('-y, --yes', 'Auto-accept seed prompts (non-interactive)')
     .action(async (slug: string, opts) => {
       console.log(`\nSeeding app: ${slug}\n`)
       loadEnv()
@@ -559,7 +563,7 @@ export function registerInstallAppCommands(program: Command) {
       }
 
       try {
-        await seedApp(appDir, slug, SPINE_CONFIG_PATH, { reconcileOwnedTypes: opts.reconcileOwnedTypes === true })
+        await seedApp(appDir, slug, SPINE_CONFIG_PATH, { reconcileOwnedTypes: opts.reconcileOwnedTypes === true, assumeYes: opts.yes === true })
       } catch (err: any) {
         console.error(`\n❌ Seed failed: ${err.message}`)
         if (process.env.SPINE_CLI_DEBUG) console.error(err.stack)
@@ -912,7 +916,7 @@ export async function seedApp(
     console.log(`  Seeding ${records.length} record(s) from ${entry.file} → ${entry.table}...`)
 
     for (const record of records) {
-      const row = injectAppId ? { ...record, app_id: appId } : { ...record }
+      const row: Record<string, any> = injectAppId ? { ...record, app_id: appId } : { ...record }
 
       // Types are global (conflict kind,slug) — fetch the existing row first so
       // a drifted design_schema fails loudly instead of being silently skipped
@@ -1249,7 +1253,7 @@ function registrationEntry(
   requiredRoles: string[],
   previous?: Record<string, any>,
   fallbackPath: string = '/',
-) {
+): AppRegistrationEntry {
   if (regConfig.enabled !== true) {
     const prev = previous ?? {}
     const defaultRole = regConfig.default_role ?? prev.default_role ?? 'member'
@@ -1404,7 +1408,7 @@ function saveSpineConfig(config: SpineConfig, configPath: string = SPINE_CONFIG_
  * @calls       loadSpineConfig, saveSpineConfig
  * @cil-generated
  */
-function updateRegistrationConfig(appSlug: string, regConfig: RegistrationConfig, requiredRoles: string[] = [], configPath: string = SPINE_CONFIG_PATH, fallbackPath: string = '/', resolvedEntry?: Record<string, any>): void {
+function updateRegistrationConfig(appSlug: string, regConfig: RegistrationConfig, requiredRoles: string[] = [], configPath: string = SPINE_CONFIG_PATH, fallbackPath: string = '/', resolvedEntry?: AppRegistrationEntry): void {
   const config = loadSpineConfig(configPath)
 
   

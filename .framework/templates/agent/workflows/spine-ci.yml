@@ -29,7 +29,7 @@ jobs:
         run: npm run verify
 
       - name: Type check
-        run: npm run typecheck && npm run typecheck:functions
+        run: npm run typecheck && npm run typecheck:functions && npm run typecheck:cli
 
       - name: Unit tests
         run: npm run test

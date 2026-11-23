@@ -2,8 +2,8 @@
 title: "How do notifications and email work"
 audience: developers, agents
 kind: qa
-verified_against: dc1d7f1
-verified_on: 2026-11-22
+verified_against: a9a7b8c
+verified_on: 2026-11-23
 suggested_kb_tag: tutorial
 source_files:
   - custom/apps/answer-once/seed/pipelines.json

@@ -2,8 +2,8 @@
 title: Types
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-16
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/types.ts
   - .framework/src/pages/admin/TypesPage.tsx

@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-new-app
-verified_against: cdac696
-verified_on: 2026-11-22
+verified_against: 8a578a0
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts

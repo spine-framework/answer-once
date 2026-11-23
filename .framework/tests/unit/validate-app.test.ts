@@ -211,6 +211,33 @@ describe('validateAppStructure — nav_items + route_prefix', () => {
     validateAppStructure(app)
     expect(console.warn).not.toHaveBeenCalledWith(expect.stringContaining('resolvable root path'))
   })
+
+  it('rejects a route_prefix that claims a reserved framework route', () => {
+    makeApp({ manifest: baseManifest({ route_prefix: '/admin' }) })
+    expect(() => validateAppStructure(app)).toThrowError(/framework-reserved route/)
+  })
+
+  it('rejects a route_prefix nested under a reserved framework route', () => {
+    makeApp({ manifest: baseManifest({ route_prefix: '/spine-framework/tools' }) })
+    expect(() => validateAppStructure(app)).toThrowError(/framework-reserved route/)
+  })
+
+  it('rejects a preview_route_prefix that claims a reserved framework route', () => {
+    makeApp({ manifest: baseManifest({ preview_route_prefix: '/login' }) })
+    expect(() => validateAppStructure(app)).toThrowError(/preview_route_prefix/)
+  })
+
+  it('warns when a root-mounted app route claims a reserved framework route', () => {
+    makeApp({ manifest: baseManifest({ route_prefix: '/', routes: ['/community-admin', '/admin/members'] }) })
+    validateAppStructure(app)
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('framework-reserved route'))
+  })
+
+  it('does not warn for root-mounted app routes outside the reserved set', () => {
+    makeApp({ manifest: baseManifest({ route_prefix: '/', routes: ['/community-admin', '/members'] }) })
+    validateAppStructure(app)
+    expect(console.warn).not.toHaveBeenCalledWith(expect.stringContaining('framework-reserved route'))
+  })
 })
 
 describe('validateAppStructure — directory rules', () => {

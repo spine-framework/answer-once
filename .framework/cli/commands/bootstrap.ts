@@ -18,7 +18,7 @@
  */
 
 import type { Command } from 'commander'
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { hashApiKey } from '../../functions/_shared/hash-api-key.ts'
@@ -295,6 +295,23 @@ export async function runBootstrap(db: any, options: BootstrapOptions = {}): Pro
   }
 }
 
+/** Upserts `KEY=value` in `.env` — replaces an existing assignment,
+    uncomments a `# KEY=` placeholder, or appends. Returns the line's fate. */
+function writeEnvVar(envPath: string, key: string, value: string): 'updated' | 'uncommented' | 'appended' {
+  const lines = existsSync(envPath) ? readFileSync(envPath, 'utf8').split('\n') : []
+  const assignment = new RegExp(`^${key}=`)
+  const placeholder = new RegExp(`^#\\s*${key}=`)
+  let fate: 'updated' | 'uncommented' | 'appended' = 'appended'
+  const out = lines.map(line => {
+    if (assignment.test(line)) { fate = 'updated'; return `${key}=${value}` }
+    if (placeholder.test(line)) { fate = 'uncommented'; return `${key}=${value}` }
+    return line
+  })
+  if (fate === 'appended') out.push(`${key}=${value}`)
+  writeFileSync(envPath, out.join('\n'))
+  return fate
+}
+
 async function bootstrapCommand(options: {
   email?: string
   password?: string
@@ -302,6 +319,7 @@ async function bootstrapCommand(options: {
   name?: string
   scope?: string[]
   json?: boolean
+  writeEnv?: boolean
 }): Promise<void> {
   console.log('\nBootstrapping Spine instance...\n')
 
@@ -324,6 +342,17 @@ async function bootstrapCommand(options: {
     scopes: options.scope,
   })
 
+  // --write-env applies under --json too — the flag must never be silently
+  // ignored, or an agent believes the key landed in .env when it didn't.
+  if (options.writeEnv) {
+    const fate = writeEnvVar(join(PROJECT_ROOT, '.env'), 'SPINE_API_KEY', result.apiKey.raw_key)
+    if (options.json) {
+      ;(result.apiKey as any).env_write = `SPINE_API_KEY ${fate} in .env`
+    } else {
+      console.log(`  ✓ Wrote SPINE_API_KEY to .env (${fate}) — raw key not printed`)
+    }
+  }
+
   if (options.json) {
     console.log(JSON.stringify(result, null, 2))
     return
@@ -343,10 +372,12 @@ async function bootstrapCommand(options: {
   }
 
   console.log(`\n  ✓ Minted API key "${result.apiKey.name}" (scopes: ${result.apiKey.scopes.join(', ')})`)
-  console.log('\n  ' + '─'.repeat(52))
-  console.log(`  API key (shown once — store it now):  ${result.apiKey.raw_key}`)
-  console.log('  ' + '─'.repeat(52))
-  console.log('\n  Use it as:  SPINE_CLI_API_KEY / x-api-key header / SPINE_API_KEY')
+  if (!options.writeEnv) {
+    console.log('\n  ' + '─'.repeat(52))
+    console.log(`  API key (shown once — store it now):  ${result.apiKey.raw_key}`)
+    console.log('  ' + '─'.repeat(52))
+    console.log('\n  Use it as:  SPINE_CLI_API_KEY / x-api-key header / SPINE_API_KEY')
+  }
   console.log('\n✅ Bootstrap complete.\n')
 }
 
@@ -362,6 +393,7 @@ export function registerBootstrapCommands(program: Command) {
     .option('--name <name>', 'API key name', 'bootstrap-admin')
     .option('--scope <scope>', 'API key scope, repeatable (default: system_admin i.e. *:*)', collect, [] as string[])
     .option('--json', 'Output as JSON (includes the raw key — capture it now)')
+    .option('--write-env', 'Write the minted key to .env as SPINE_API_KEY instead of printing it')
     .action(async (opts) => {
       try {
         await bootstrapCommand(opts)

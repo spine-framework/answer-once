@@ -2,8 +2,8 @@
 title: CLI Reference
 audience: developers, agents
 kind: reference
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: a672d6b
+verified_on: 2026-11-23
 source_files:
   - .framework/cli/index.ts
   - .framework/cli/context.ts
@@ -50,7 +50,7 @@ Global behaviors:
 | Command | What it does |
 |---|---|
 | `init [dir]` | Scaffolds a Spine project: copies framework files, creates `custom/` workspace dirs (`apps`, `functions`, `components`, `migrations`, `tests`), writes `package.json`/`package-lock.json`, agent files. Refuses to run over an existing `.framework/` |
-| `bootstrap` | Provisions the first `system_admin` (person bound to `spine-system`, same columns the `handle_new_auth_user` trigger writes) and mints the first `sk_` API key — fully scriptable, no browser. `--email`/`--password` also creates a confirmed auth user via `auth.admin.createUser` (UI-login capable); without them the person row is DB-only. `--scope <scope>` is repeatable (default `*:*` = system_admin), `--name`, `--full-name`, `--json`. Idempotent: an existing `system_admin` skips person creation; each run mints one new key (hash stored, raw key printed once) |
+| `bootstrap` | Provisions the first `system_admin` (person bound to `spine-system`, same columns the `handle_new_auth_user` trigger writes) and mints the first `sk_` API key — fully scriptable, no browser. `--email`/`--password` also creates a confirmed auth user via `auth.admin.createUser` (UI-login capable); without them the person row is DB-only. `--scope <scope>` is repeatable (default `*:*` = system_admin), `--name`, `--full-name`, `--json`, `--write-env` (upserts the minted key into `.env` as `SPINE_API_KEY` instead of printing it — works under `--json` too). Idempotent: an existing `system_admin` skips person creation; each run mints one new key (hash stored, raw key printed once) |
 | `upgrade` | Syncs project files to the `spine-framework` version in `node_modules`. `--dry-run` reports without writing; `--force` overwrites locally modified framework files |
 | `status` | Shows installed apps and framework version (`--json`) |
 | `doctor` | Validates installation health (env, files, DB reachability). `--fix` prints repair instructions; `--ticket <id>` attaches a sanitized diagnostic report to a support ticket |
@@ -69,11 +69,11 @@ Global behaviors:
 
 | Command | What it does |
 |---|---|
-| `install-app <package>` | `npm install`s the package, copies `index.tsx`, `manifest.json`, `package.json`, `pages`, `components`, `hooks`, `utils`, `functions`, `seed`, `public` into `custom/apps/<slug>/` (on reinstall `manifest.json` is preserved — use `update-db-app` to sync it), runs migrations, then seeds and syncs registration. `--no-seed` installs files only; `--reconcile-owned-types` prompts to update manifest-owned types whose DB `design_schema` drifted |
+| `install-app <package>` | `npm install`s the package, copies `index.tsx`, `manifest.json`, `package.json`, `pages`, `components`, `hooks`, `utils`, `functions`, `seed`, `public` into `custom/apps/<slug>/` (on reinstall `manifest.json` is preserved — use `update-db-app` to sync it), runs migrations, then seeds and syncs registration. `--no-seed` installs files only; `--reconcile-owned-types` prompts to update manifest-owned types whose DB `design_schema` drifted; `-y`/`--yes` auto-accepts seed prompts (non-interactive runs) |
 | `uninstall-app <package>` | Removes `custom/apps/<slug>/` and `npm uninstall`s the package. **`--keep-data` is currently a no-op — the command never deletes seeded DB rows** |
 | `update-app <package>` | `npm install <pkg>@latest`, re-copies app files into `custom/apps/<slug>/`, re-syncs registration config |
 | `update-db-app <slug>` | Upserts the `apps` row and registration from local `manifest.json` — no npm, no file copies |
-| `seed-app <slug>` | Runs only the manifest `seed` block (plus registration sync). `--reconcile-owned-types` as above |
+| `seed-app <slug>` | Runs only the manifest `seed` block (plus registration sync). `--reconcile-owned-types` as above; `-y`/`--yes` auto-accepts seed prompts (non-interactive runs) |
 | `validate-app [path]` | Validates app structure and `manifest.json`. `--fix` is declared but **not implemented** |
 | `create-app <slug>` | Scaffolds a new custom app in `custom/apps/<slug>/` (index, manifest, starter pages). `--name`, `--role`, `--force` |
 | `validate-schema <file>` | Validates a `design_schema` JSON file against the field/view/permission/`file_policy` rules. `--no-views` skips `default_list`/`default_detail` requirements (for custom apps); `--json` |

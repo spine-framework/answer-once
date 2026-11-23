@@ -86,6 +86,7 @@
     "verify:install": "tsx scripts/verify-install.ts",
     "typecheck": "tsc -b config/tsconfig.json",
     "typecheck:functions": "tsc --noEmit -p config/tsconfig.functions.json",
+    "typecheck:cli": "tsc --noEmit -p config/tsconfig.cli.json",
     "test": "vitest run",
     "test:unit": "vitest run .framework/tests/unit",
     "test:core": "vitest run .framework/tests/unit/core-isolation.test.ts",

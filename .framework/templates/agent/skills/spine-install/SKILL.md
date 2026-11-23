@@ -20,7 +20,7 @@ depends_on:
     - "npx spine-framework doctor"
     - "npx spine-framework init"
     - "npx spine-framework migrate"
-verified_against: 9d16176
+verified_against: 699d419
 ---
 
 You install Spine into an empty directory and bring it to a working,
@@ -91,13 +91,15 @@ arrived that way, start at step 1 below.
 4. **Bootstrap** (no browser — this is the agent path):
 
    ```bash
-   npx spine-framework bootstrap --email <you@example.com> --password '<pick-one>'
+   npx spine-framework bootstrap --email <you@example.com> --password '<pick-one>' --write-env
    ```
 
-   Creates the first `system_admin` + confirmed auth user and prints one
-   `sk_` API key — **copy it now**, it's shown once. Omit email/password
-   for a DB-only person (the key still works). For your own access,
-   store the key as `SPINE_API_KEY` and send it as `x-api-key:` on
+   Creates the first `system_admin` + confirmed auth user and mints one
+   `sk_` API key. Add `--write-env` to write it straight into `.env` as
+   `SPINE_API_KEY` without printing it — the right move for agents,
+   since the raw key is shown exactly once otherwise. Without the flag,
+   copy it from the output immediately. Omit email/password for a
+   DB-only person (the key still works). Send the key as `x-api-key:` on
    `/api/*`.
 
 5. **Doctor:**
@@ -106,10 +108,10 @@ arrived that way, start at step 1 below.
    npx spine-framework doctor
    ```
 
-   "Clean" means exit 0 — 0 healthy, 2 degraded (warnings only), 1
-   unhealthy. On a brand-new project the `test_runs` check warns until a
-   suite has run once: `npm run test` writes the first row, then rerun
-   doctor.
+   Exit codes: **0 = healthy**, **2 = degraded** (warnings only — usable),
+   **1 = unhealthy**. "Clean" is exit 0. On a brand-new project the
+   `test_runs` check warns until a suite has run once: `npm run test`
+   writes the first row, then rerun doctor.
 
 6. **Run** (optional, needs the Netlify CLI — already a devDependency):
 

@@ -1,8 +1,8 @@
 ---
 name: spine-docs-sync
 description: "Re-verify the docs your change touches — find pages and skills citing the files you edited, re-check their claims against current code, and bump verified_against only for pages actually checked."
-verified_against: 9d16176
-verified_on: 2026-11-22
+verified_against: 15faf83
+verified_on: 2026-11-23
 allowed-tools:
   - exec
   - read
