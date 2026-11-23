@@ -1,9 +1,10 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import { FieldDefinition } from '../../types/types'
 import { RichTextEditor } from '../ui/RichTextEditor'
+import { uploadAttachment, resolveAttachmentUrl } from '../../lib/attachments'
 
 
 
@@ -411,27 +412,13 @@ export function FieldRenderer({ field, value, onChange, readonly = false, error,
         )
 
       case 'file':
-        return readonly ? (
-          value ? (
-            <div className="text-sm">
-              <a href={value} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                View File
-              </a>
-            </div>
-          ) : (
-            <span className="text-slate-500">No file</span>
-          )
-        ) : (
-          <input
-            type="file"
-            onChange={(e) => {
-
-
-              const file = e.target.files?.[0]
-
-              if (file) onChange?.(file.name)
-            }}
-            className={`input ${error ? 'border-red-500' : ''}`}
+        return (
+          <FileField
+            field={field}
+            value={value}
+            onChange={onChange}
+            readonly={readonly}
+            isImage={field.data_type === 'image' || displayType === 'image_upload'}
           />
         )
 
@@ -508,6 +495,96 @@ export function FieldRenderer({ field, value, onChange, readonly = false, error,
       {error && (
         <p className="text-xs text-red-600">{error}</p>
       )}
+    </div>
+  )
+}
+
+/**
+ * Attachment-backed file/image field. The value is the attachment row id —
+ * upload mints a tmp-bucket URL, PUTs the file, then commits through
+ * admin-data so the stored bytes are validated and GPS-stripped. Readonly
+ * resolves a read-url at render time (signed for private, permanent for
+ * public attachments).
+ *
+ * `field.attachment_type` selects the attachment-kind type (default
+ * 'attachment') whose file_policy governs the upload; `field.visibility`
+ * picks private (default) or public.
+ */
+function FileField({ field, value, onChange, readonly, isImage }: {
+  field: FieldDefinition
+  value: any
+  onChange?: (value: any) => void
+  readonly?: boolean
+  isImage?: boolean
+}) {
+  const [url, setUrl] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let alive = true
+    setUrl(null)
+    if (value && typeof value === 'string') {
+      resolveAttachmentUrl(value)
+        .then((u) => { if (alive) setUrl(u) })
+        .catch(() => {})
+    }
+    return () => { alive = false }
+  }, [value])
+
+  if (readonly) {
+    if (!value) return <span className="text-slate-500">No file</span>
+    if (!url) return <span className="text-slate-400 text-sm">Loading…</span>
+    if (isImage) {
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          <img src={url} alt={field.label || 'attachment'} className="max-h-48 rounded-lg border border-slate-200" />
+        </a>
+      )
+    }
+    return (
+      <div className="text-sm">
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+          View File
+        </a>
+      </div>
+    )
+  }
+
+  const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setBusy(true)
+    setUploadError(null)
+    try {
+      const row = await uploadAttachment(file, {
+        type_slug: field.attachment_type || 'attachment',
+        visibility: field.visibility || 'private',
+      })
+      onChange?.(row.id)
+    } catch (err: any) {
+      setUploadError(err?.message || 'upload failed')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {isImage && url && (
+        <img src={url} alt={field.label || 'attachment'} className="max-h-48 rounded-lg border border-slate-200" />
+      )}
+      <input
+        type="file"
+        accept={isImage ? 'image/jpeg,image/png,image/webp,image/gif' : undefined}
+        onChange={pick}
+        disabled={busy}
+        className="input"
+      />
+      {busy && <p className="text-xs text-slate-500">Uploading…</p>}
+      {uploadError && <p className="text-xs text-red-600">{uploadError}</p>}
+      {value && !busy && <p className="text-xs text-slate-400">Attached</p>}
     </div>
   )
 }

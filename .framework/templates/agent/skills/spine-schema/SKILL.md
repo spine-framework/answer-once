@@ -8,6 +8,8 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
+verified_against: 6c7c604
+verified_on: 2026-11-22
 depends_on:
   files:
     - .framework/src/instructions/concepts/design-schema.md
@@ -49,6 +51,7 @@ or unwriteable records.
    - `views.default_list` — `type: "list"`, `fields`, `default_sort`.
    - `views.default_detail` — `type: "detail"`, `sections[].fields`.
    - `record_permissions` — base grant per role; at least `system_admin`.
+   - `file_policy` — optional, attachment-kind types only (upload mime/size/visibility limits).
    - `functionality` — `null` until automation bindings are confirmed.
 3. Apply the permission rule: `record_permissions` is the most restrictive
    grant. Use `fields.<name>.permissions` **only** to loosen a field beyond the

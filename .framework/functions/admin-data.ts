@@ -30,6 +30,7 @@ import { applyAccountScope, assertRecordAccess, canAccessAccount, resolvePlatfor
 import { isAccountAdmin } from './_shared/access'
 import { resolveTypeId, resolveTypeIds, resolveTypeRecord } from './_shared/resolve-ids'
 import { fireCreateTriggers, fireUpdateTriggers, fireDeleteTriggers } from './_shared/trigger-engine'
+import { commitUpload, removeAttachmentBytes, httpError } from './_shared/attachments'
 import { withAdminLogging } from './_shared/logging'
 import { hasInternalAudience, projectMessageForCustomer } from './_shared/access'
 import { checkTypeSlugRateLimit } from './_shared/security'
@@ -647,6 +648,44 @@ export const create = createHandler(async (ctx, body) => {
         throw e
       }
 
+      // Attachments: bytes arrive through a tmp quarantine upload — the
+      // client supplies tmp_path and the commit validates actual bytes,
+      // strips GPS per the type's file_policy, writes final storage, and
+      // stamps the verified columns. storage_path is never client input.
+      // Rows without bytes are reserved for system principals.
+      if (entity === 'attachments') {
+        const tmpPath = recordData.tmp_path
+        const visibility = recordData.visibility
+        delete dataToInsert.tmp_path
+        delete dataToInsert.visibility
+        if (tmpPath) {
+          // tmp objects are minted under the caller's account namespace —
+          // refuse paths outside it so one account can't commit another's
+          // quarantined bytes into its row.
+          const expectedPrefix = `${ctx.accountId || 'shared'}/`
+          if (typeof tmpPath !== 'string' || !tmpPath.startsWith(expectedPrefix)) {
+            throw httpError(403, 'tmp_path is outside the caller\'s upload namespace')
+          }
+          const committed = await commitUpload({
+            tmpPath,
+            typeRecord,
+            accountId: recordAccountId,
+            filename: dataToInsert.filename,
+            visibility,
+            uploadedBy: ctx.principal?.type === 'human' ? ctx.principal.id : null,
+          })
+          Object.assign(dataToInsert, committed.fields)
+          // Client metadata keys that commit owns are stripped first —
+          // otherwise a forged public_url/bucket would ride the merge into
+          // the row and be served verbatim by read-url.
+          const clientMeta = { ...(dataToInsert.metadata || {}) }
+          for (const k of ['bucket', 'visibility', 'sha256', 'public_url']) delete clientMeta[k]
+          dataToInsert.metadata = { ...clientMeta, ...committed.metadata }
+        } else if (!isSystemPrincipal(ctx)) {
+          throw httpError(400, 'tmp_path is required — upload bytes first via /api/attachments?action=upload-url')
+        }
+      }
+
       // Function-side permission check already ran — write via service role.
       // ctx.db is PostgREST `authenticated` for humans, which holds SELECT only.
       const insertDb = adminDb
@@ -716,6 +755,23 @@ export const update = createHandler(async (ctx, body) => {
         // must be dropped here (mass-assignment prevention).
         for (const k of ['account_id', 'auth_uid', 'app_id', 'type_id', 'created_by', 'design_schema', 'validation_schema']) {
           delete recordData[k]
+        }
+        if (entity === 'attachments') {
+          // Server-stamped storage columns are never client-writable —
+          // repointing a row at another upload's bytes would leak them
+          // through read-url. filename and data stay editable.
+          for (const k of ['storage_path', 'storage_provider', 'file_size', 'mime_type', 'uploaded_by', 'tmp_path', 'visibility']) {
+            delete recordData[k]
+          }
+          if (recordData.metadata && typeof recordData.metadata === 'object' && !Array.isArray(recordData.metadata)) {
+            for (const k of ['bucket', 'visibility', 'sha256', 'public_url']) {
+              delete recordData.metadata[k]
+            }
+            // metadata replaces the whole column on update — merge over the
+            // stamped keys so an update can't silently drop bucket/public_url
+            // (which would orphan the object or break reads).
+            recordData.metadata = { ...(existing.metadata || {}), ...recordData.metadata }
+          }
         }
         if (entity === 'people') {
           const admin = isAccountAdmin(ctx, existing.account_id)
@@ -868,6 +924,12 @@ export const remove = createHandler(async (ctx, _body) => {
           .eq('id', id)
 
         if (err) throw err
+        // Cascade: the row is gone, its stored bytes should be too. A failed
+        // cleanup leaves an orphan object — logged, not fatal.
+        if (entity === 'attachments' && existing.storage_path) {
+          await removeAttachmentBytes(existing).catch((e: any) =>
+            console.warn(`attachment byte cleanup failed for ${id}:`, e?.message || e))
+        }
         return { deleted: true, soft: false }
       }
     }

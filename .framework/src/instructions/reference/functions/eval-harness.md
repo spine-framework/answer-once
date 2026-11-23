@@ -2,8 +2,8 @@
 title: eval-harness
 audience: both
 kind: reference
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/eval-harness.ts
   - .framework/functions/_shared/llm.ts

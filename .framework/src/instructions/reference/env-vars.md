@@ -2,7 +2,7 @@
 title: Environment Variables
 audience: developers, agents
 kind: reference
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - .env.example
@@ -69,6 +69,7 @@ calls then fail at query time.
 | `SUPABASE_DB_URL` | `.framework/cli/commands/migrate.ts` | Optional full connection string overriding host/user/port — use the **Session Pooler** (`postgres://postgres.<ref>:<pw>@aws-0-<region>.pooler.supabase.com:5432/postgres`) when `db.<ref>.supabase.co:5432` is unreachable (direct connections are IPv6-only on most Supabase projects), or any local URI (e.g. `postgresql://postgres:postgres@127.0.0.1:54322/postgres`) for `supabase start` stacks |
 | `INTERNAL_INVOKE_SECRET` | `.framework/functions/_shared/principal.ts` (`isInternalInvokeAuthorized`), `.framework/functions/_shared/trigger-engine.ts`, `.framework/functions/pipeline-runner-background.ts` | Authenticates function-to-function invocation via `x-internal-secret`. **Required for trigger dispatch** — without it, `dispatchTriggerPipeline` cannot invoke `pipeline-runner-background` and `x-cron-id`/`x-trigger-id`/`x-internal-secret` headers are never honored. Generate with `openssl rand -hex 32` |
 | `SCHEDULER_API_KEY` | `.framework/functions/system-cron.ts` | `?api_key=`/`?scheduler_key=` on the scheduler endpoint; unset disables key-gated scheduling |
+| `SPINE_API_KEY` | `.env.example` slot for a bootstrap-minted `sk_` key; sent as `x-api-key` by functions/scripts | Optional — lets `netlify dev` inject a machine key for agent/service calls to `/api/*` |
 | `APP_BASE_URL` | `.framework/functions/invites.ts` | Base URL for invite links, auth redirects, and the allowlist for client-supplied `base_url` params |
 | `RESEND_API_KEY` | resolved via `env_var` credentials on the `transactional-email`/`resend` integration (`.framework/functions/_shared/resolve-credentials.ts`) | Outbound email (invites, notification stages). Unset → invites fall back to copyable links, email stages skip |
 | `EMAIL_FROM` | `.framework/functions/adapters/resend-outbound.ts` | Sender identity for outbound email |

@@ -2,7 +2,7 @@
 title: "Automation: pipelines, triggers, and timers"
 audience: developers, agents
 kind: concept
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - .framework/functions/pipelines.ts
@@ -150,6 +150,8 @@ Each tick, `system-cron` does all of the following:
   `update_timer_after_run` reschedules it.
 - **Retries webhook deliveries** — `retryPendingDeliveries` runs every tick.
 - **Cleans logs** — `cleanup_old_logs` runs on the 00:00 UTC tick.
+- **Sweeps quarantined uploads** — `sweepTmpUploads` removes
+  `attachments-tmp` objects older than 24 h, also on the 00:00 UTC tick.
 
 ## Observing executions
 

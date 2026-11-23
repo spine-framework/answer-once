@@ -1,8 +1,8 @@
 ---
 title: "Answer Once"
 kind: index
-verified_against: 82bf57e
-verified_on: 2026-11-15
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - custom/apps/answer-once/manifest.json
   - custom/apps/answer-once/seed/types.json
@@ -75,7 +75,7 @@ Both upgrade commands refuse to overwrite files you modified locally; pass
 
 ## Status
 
-`0.3.x` — the npm install/upgrade path is the primary distribution. The public
+`0.4.x` — the npm install/upgrade path is the primary distribution. The public
 API surface is the app manifest and its runtime record types; internals may
 change between minor versions.
 

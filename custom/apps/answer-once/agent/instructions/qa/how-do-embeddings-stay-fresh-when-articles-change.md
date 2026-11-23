@@ -2,8 +2,8 @@
 title: "How do embeddings stay fresh when articles change"
 audience: developers, agents
 kind: qa
-verified_against: a01bd7b
-verified_on: 2026-11-15
+verified_against: 6c7c604
+verified_on: 2026-11-22
 suggested_kb_tag: faq
 source_files:
   - custom/apps/answer-once/seed/triggers.json

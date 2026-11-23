@@ -2,7 +2,7 @@
 title: Netlify Deployment
 audience: both
 kind: reference
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - netlify.toml
@@ -91,6 +91,7 @@ The full annotated list is [Environment Variables](../reference/env-vars.md);
 | `INTERNAL_INVOKE_SECRET` | trigger-dispatched pipelines — unset means `queued` rows that never run |
 | `APP_BASE_URL` | invite links, auth redirects, `base_url` allowlist |
 | `SCHEDULER_API_KEY` | key-gated `system-cron`/`trigger-scheduler` invocation |
+| `SPINE_API_KEY` | optional — bootstrap-minted `sk_` key for machine calls to `/api/*` |
 | `SITE_URL` | CORS `Access-Control-Allow-Origin`; falls back to Netlify's auto-set `URL` |
 | `RESEND_API_KEY`, `EMAIL_FROM` | outbound email (invites, notification stages) |
 | `OPENAI_API_KEY` | AI stage types, agents, embeddings |

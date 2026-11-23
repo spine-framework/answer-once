@@ -42,6 +42,32 @@ interface HealthCheck {
 }
 const PROJECT_ROOT = resolve(process.cwd(), '.')
 
+function localMigrations(): string[] {
+  const dirs = [
+    resolve(PROJECT_ROOT, '.framework/migrations'),
+    resolve(PROJECT_ROOT, 'custom/migrations')
+  ]
+  const files: string[] = []
+  for (const dir of dirs) {
+    if (existsSync(dir)) {
+      files.push(...readdirSync(dir).filter(f => f.endsWith('.sql') && !f.startsWith('.')))
+    }
+  }
+  return files.sort()
+}
+
+async function appliedMigrationNames(): Promise<string[]> {
+  try {
+    const { data } = await adminDb
+      .from('_spine_migrations' as any)
+      .select('filename')
+      .order('filename', { ascending: true })
+    return (data || []).map((r: any) => r.filename)
+  } catch {
+    return []
+  }
+}
+
 function loadManifest(): { version: string; integrity: { core_hash: string | null; verified: boolean } } {
   try {
     const manifestPath = resolve(PROJECT_ROOT, '.spine-manifest.json')
@@ -62,17 +88,32 @@ function loadManifest(): { version: string; integrity: { core_hash: string | nul
   }
 }
 
+function functionDirs(): string[] {
+  const dirs = [
+    resolve(PROJECT_ROOT, '.framework/functions'),
+    resolve(PROJECT_ROOT, 'custom/functions')
+  ]
+  const appsDir = resolve(PROJECT_ROOT, 'custom/apps')
+  if (existsSync(appsDir)) {
+    for (const app of readdirSync(appsDir)) {
+      dirs.push(resolve(appsDir, app, 'functions'))
+    }
+  }
+  return dirs
+}
+
 async function discoverFunctions(): Promise<FunctionInfo[]> {
-  const functionsDir = resolve(PROJECT_ROOT, 'v2-core/functions')
-  if (!existsSync(functionsDir)) {
-    return []
+  const names = new Set<string>()
+  for (const dir of functionDirs()) {
+    if (!existsSync(dir)) continue
+    for (const f of readdirSync(dir)) {
+      if (f.endsWith('.ts') && !f.startsWith('_') && !f.endsWith('.test.ts') && !f.endsWith('-test.ts')) {
+        names.add(f)
+      }
+    }
   }
 
-  const files = readdirSync(functionsDir)
-    .filter(f => f.endsWith('.ts') && !f.startsWith('_'))
-    .sort()
-
-  return files.map(f => {
+  return [...names].sort().map(f => {
     const name = f.replace('.ts', '')
     const methods = ['GET']
     if (!['logs', 'tests', 'system-cron', 'debug-auth'].includes(name)) {
@@ -95,28 +136,10 @@ async function discoverFunctions(): Promise<FunctionInfo[]> {
 }
 async function getManifest(): Promise<{ data: SystemManifest }> {
   const manifest = loadManifest()
-
-  const migrationsDir = resolve(PROJECT_ROOT, 'v2-core/migrations_dayzero')
-  let localMigrations: string[] = []
-  if (existsSync(migrationsDir)) {
-    localMigrations = readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
-      .sort()
-  }
-
-  let appliedMigrations: string[] = []
-  try {
-    const { data } = await adminDb
-      .schema('public' as any)
-      .from('schema_migrations' as any)
-      .select('version')
-      .order('version', { ascending: true })
-    appliedMigrations = (data || []).map((r: any) => r.version)
-  } catch {
-  }
-
+  const local = localMigrations()
+  const appliedMigrations = await appliedMigrationNames()
   const appliedSet = new Set(appliedMigrations)
-  const pendingCount = localMigrations.filter(m => !appliedSet.has(m.replace('.sql', ''))).length
+  const pendingCount = local.filter(m => !appliedSet.has(m)).length
 
   const functions = await discoverFunctions()
 
@@ -150,28 +173,12 @@ async function getHealth(): Promise<{ data: HealthCheck }> {
     checks.database.connected = false
   }
 
-  const migrationsDir = resolve(PROJECT_ROOT, 'v2-core/migrations_dayzero')
-  let localMigrations: string[] = []
-  if (existsSync(migrationsDir)) {
-    localMigrations = readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
-      .sort()
-  }
-
-  try {
-    const { data } = await adminDb
-      .schema('public' as any)
-      .from('schema_migrations' as any)
-      .select('version')
-    const applied = (data || []).map((r: any) => r.version)
-    checks.migrations.applied = applied.length
-    const appliedSet = new Set(applied)
-    checks.migrations.pending = localMigrations.filter(m => !appliedSet.has(m.replace('.sql', ''))).length
-    checks.migrations.current = checks.migrations.pending === 0
-  } catch {
-    checks.migrations.pending = localMigrations.length
-    checks.migrations.current = false
-  }
+  const local = localMigrations()
+  const applied = await appliedMigrationNames()
+  checks.migrations.applied = applied.length
+  const appliedSet = new Set(applied)
+  checks.migrations.pending = local.filter(m => !appliedSet.has(m)).length
+  checks.migrations.current = checks.migrations.pending === 0
 
   const manifest = loadManifest()
   checks.integrity.verified = manifest.integrity.verified

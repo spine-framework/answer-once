@@ -2,8 +2,8 @@
 title: Shared Modules Reference
 audience: developers, agents
 kind: reference
-verified_against: a812c8e
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/_shared/index.ts
   - .framework/functions/_shared/middleware.ts
@@ -25,6 +25,9 @@ source_files:
   - .framework/functions/_shared/webhook-registry.ts
   - .framework/functions/_shared/message-sequence.ts
   - .framework/functions/_shared/security.ts
+  - .framework/functions/_shared/storage.ts
+  - .framework/functions/_shared/attachments.ts
+  - .framework/functions/_shared/image-meta.ts
 ---
 
 # Shared Modules Reference
@@ -98,6 +101,14 @@ types). Import a sibling as `from './_shared/<module>'`.
 | `llm.ts` | `callOpenAI`, `callOpenAIChat`, `callOpenAIEmbeddings`, `callEmbeddingApi`, `LlmContext` | thin wrappers over the `openai` outbound integration |
 | `funnel.ts` | `emitSignal`, `accountDataFlag`, `SignalInput` | emitting typed funnel/signal events that can fire triggers |
 | `access.ts` | `hasInternalAudience`, `projectMessageForCustomer`, `INTERNAL_AUDIENCE_ROLES`, `CUSTOMER_STEP_TYPES` | deciding whether a principal may read `visibility: 'internal'` rows and projecting customer-safe message shapes |
+
+## Files & storage
+
+| Module | Exports | Import when |
+|---|---|---|
+| `storage.ts` | `TMP_BUCKET`, `PRIVATE_BUCKET`, `PUBLIC_BUCKET`, `BUCKET_MAX_BYTES`, `ensureAttachmentBuckets`, `mintUploadUrl`, `downloadBytes`, `uploadBytes`, `removeBytes`, `signedReadUrl`, `publicReadUrl`, `sweepTmpUploads` | attachment bucket provisioning, signed upload/read URLs, byte IO, the cron tmp sweep |
+| `attachments.ts` | `DEFAULT_IMAGE_POLICY`, `resolveFilePolicy`, `assertUploadAllowed`, `sanitizeFilename`, `commitUpload` | resolving a type's `file_policy` and the quarantine→final commit used by `admin-data` create |
+| `image-meta.ts` | `IMAGE_MIMES`, `sniffImageMime`, `stripGps` | magic-byte image verification and GPS EXIF removal (fail-closed) |
 
 ## Framework internals
 

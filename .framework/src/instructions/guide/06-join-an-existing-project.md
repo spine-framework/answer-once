@@ -2,7 +2,7 @@
 title: Join an existing project
 audience: developers, agents
 kind: guide
-verified_against: 0f2687a
+verified_against: 97bd83d
 verified_on: 2026-11-22
 source_files:
   - .framework/cli/commands/doctor.ts

@@ -2,8 +2,8 @@
 title: Runtime Records (list)
 audience: both
 kind: ui
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/src/components/runtime/DataListPage.tsx
   - .framework/src/hooks/useListSchema.ts

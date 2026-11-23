@@ -47,6 +47,11 @@ export interface FieldDefinition {
   permissions?: {
     [role: string]: string[] 
   }
+  
+  // file/image fields — the attachment-kind type_slug governing the upload
+  // (its file_policy + record_permissions) and the storage visibility.
+  attachment_type?: string
+  visibility?: 'private' | 'public'
 }
 
 

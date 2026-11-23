@@ -2,7 +2,7 @@
 title: CLI Reference
 audience: developers, agents
 kind: reference
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - .framework/cli/index.ts
@@ -76,7 +76,7 @@ Global behaviors:
 | `seed-app <slug>` | Runs only the manifest `seed` block (plus registration sync). `--reconcile-owned-types` as above |
 | `validate-app [path]` | Validates app structure and `manifest.json`. `--fix` is declared but **not implemented** |
 | `create-app <slug>` | Scaffolds a new custom app in `custom/apps/<slug>/` (index, manifest, starter pages). `--name`, `--role`, `--force` |
-| `validate-schema <file>` | Validates a `design_schema` JSON file against the field/view/permission rules. `--no-views` skips `default_list`/`default_detail` requirements (for custom apps); `--json` |
+| `validate-schema <file>` | Validates a `design_schema` JSON file against the field/view/permission/`file_policy` rules. `--no-views` skips `default_list`/`default_detail` requirements (for custom apps); `--json` |
 
 ## Runtime data
 

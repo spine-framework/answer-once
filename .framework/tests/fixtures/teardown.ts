@@ -8,7 +8,7 @@
  * Deletes all test fixtures from the public schema. Removes every row whose
  * slug starts with `test-` under SPINE_TEST_ACCOUNT_ID, in FK-safe order.
  *
- * Run after integration tests: `tsx v2-core/tests/fixtures/teardown.ts`
+ * Run after integration tests: `tsx .framework/tests/fixtures/teardown.ts`
  *
  * @seeAlso tests/fixtures/seed.ts
  */

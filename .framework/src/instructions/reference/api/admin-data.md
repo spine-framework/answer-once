@@ -2,8 +2,8 @@
 title: admin-data API
 audience: developers, agents
 kind: reference
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -39,7 +39,7 @@ HTTP method picks the verb (`GET`+`id` → get, `GET` → list, `POST` → creat
 | `list` | GET | `entity` (required), `search`, `type_slug`, `type_slugs` (csv), `sort_field` (default `created_at`), `sort_direction` (`asc`/`desc`, default `desc`), `limit` (default 50), `offset`, `view`, `flag_only`, `exclude_flag`, plus any other `key=value` as `eq` filters (`is_active`/`is_verified`/`is_primary` coerce `'true'` → boolean) |
 | `get` | GET | `entity`, `id`, `view`, `lineage=0` (items only — skips lineage attach) |
 | `stats` | GET | `entity` → `{entity, count}` |
-| `create` | POST | `entity` (query or body), `type_slug` **or** `type_id` (required for non-raw entities), record fields |
+| `create` | POST | `entity` (query or body), `type_slug` **or** `type_id` (required for non-raw entities), record fields; `tmp_path` required for `entity=attachments` |
 | `update` | PATCH | `entity`, `id`, record fields (partial) |
 | `remove` | DELETE | `entity`, `id`, `soft` (default `'true'`) |
 
@@ -53,6 +53,13 @@ create takes a per-entity field allowlist, requires specific fields
 (`logs`: `level`+`message`; `test_runs`: `suite`; `observability`:
 `metric_name`+`metric_value`; `test_cases`: `slug`+`name`), and needs no
 `type_id`.
+
+**Attachments:** `entity=attachments` create is the commit step of the
+upload flow — `tmp_path` must name a quarantined `attachments-tmp` object
+minted by `POST /api/attachments?action=upload-url`; the server verifies
+the actual bytes against the type's `file_policy`, strips GPS metadata,
+and stamps all storage columns (client-supplied values are ignored).
+Remove always hard-deletes and removes the stored object best-effort.
 
 ## Response shapes
 

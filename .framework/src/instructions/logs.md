@@ -2,8 +2,8 @@
 title: Logs
 audience: both
 kind: entity
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/src/pages/admin/LogsPage.tsx
   - .framework/functions/logs.ts

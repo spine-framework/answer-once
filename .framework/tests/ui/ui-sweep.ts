@@ -8,7 +8,7 @@
  * the page to settle, asserts zero console errors, and checks for expected
  * landmark elements. Writes results to public.test_runs via reporter.ts.
  *
- * Run via: tsx v2-core/tests/ui/ui-sweep.ts
+ * Run via: tsx .framework/tests/ui/ui-sweep.ts
  * Requires: Netlify dev server running at SPINE_DEV_URL (default http://localhost:8888)
  *
  * Exit codes:

@@ -2,8 +2,8 @@
 title: admin-data
 audience: both
 kind: reference
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -108,13 +108,27 @@ parent/child lineage is attached unless `lineage=0`.
 required for every non-raw entity; `account_id` (optional override);
 arbitrary record fields. `design_schema`, `validation_schema`, and `id` in
 the body are stripped. `thread_id`, `target_id`, or `parent_id` in the body
-pull account and `scope` from the parent record.
+pull account and `scope` from the parent record. For `entity=attachments`,
+create is the commit step of the upload flow: tenant callers must supply
+`tmp_path` (an `attachments-tmp` quarantine object minted by `attachments`
+`upload-url`); the handler downloads it, verifies the actual size and
+magic-byte mime against the type's `file_policy`, strips GPS metadata,
+writes the final object, and stamps `storage_path`, `storage_provider`,
+`file_size`, `mime_type`, `uploaded_by` plus `sha256`/`public_url`
+metadata. Client-supplied storage columns and reserved metadata keys are
+ignored.
 
 **update** (query `entity` + `id`; body): record fields; `design_schema`,
 `validation_schema`, `type_id`, `type_slug`, `id`, `entity` are stripped.
-`account_id` is honored only for `entity=people`.
+`account_id` is honored only for `entity=people`. For `attachments`,
+non-system callers additionally lose `storage_path`, `storage_provider`,
+`file_size`, `mime_type`, `uploaded_by`, and `visibility`, and submitted
+`metadata` merges over the existing map with commit-stamped keys
+preserved.
 
 **remove** (query params): `entity`, `id`, `soft` (default `'true'`).
+`attachments` always hard-deletes and also removes the stored object
+(best-effort — a storage failure does not fail the row delete).
 
 ## Response contract
 

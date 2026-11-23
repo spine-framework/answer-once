@@ -85,6 +85,39 @@ export function validateDesignSchema(
     }
   }
 
+  // file_policy — optional on attachment-kind types; governs the upload
+  // quarantine/commit path (_shared/attachments.ts). Validated for shape;
+  // the runtime additionally clamps allowed_mime to supported image types.
+  if (schema.file_policy !== undefined) {
+    const fp = schema.file_policy
+    if (!fp || typeof fp !== 'object' || Array.isArray(fp)) {
+      errors.push('file_policy must be an object')
+    } else {
+      if (fp.allowed_mime !== undefined) {
+        if (!Array.isArray(fp.allowed_mime) || fp.allowed_mime.length === 0 || !fp.allowed_mime.every((m: any) => typeof m === 'string')) {
+          errors.push('file_policy.allowed_mime must be a non-empty array of mime strings')
+        } else if (fp.allowed_mime.some((m: string) => !/^image\//.test(m))) {
+          errors.push('file_policy.allowed_mime may only contain image/* types — v1 is images-only')
+        }
+      }
+      if (fp.max_bytes !== undefined && (!Number.isFinite(fp.max_bytes) || fp.max_bytes <= 0)) {
+        errors.push('file_policy.max_bytes must be a positive number')
+      }
+      if (fp.visibility !== undefined) {
+        const vis = Array.isArray(fp.visibility) ? fp.visibility : [fp.visibility]
+        if (!vis.every((v: any) => ['private', 'public'].includes(v))) {
+          errors.push('file_policy.visibility may only contain "private" and/or "public"')
+        }
+      }
+      if (fp.default_visibility !== undefined && !['private', 'public'].includes(fp.default_visibility)) {
+        errors.push('file_policy.default_visibility must be "private" or "public"')
+      }
+      if (fp.strip_gps !== undefined && typeof fp.strip_gps !== 'boolean') {
+        errors.push('file_policy.strip_gps must be a boolean')
+      }
+    }
+  }
+
   if (checkViews && !schema.views) {
     errors.push('views is required when check_views is true')
   }

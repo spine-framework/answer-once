@@ -2,11 +2,14 @@
 title: Collaboration records (threads, messages, links, attachments, watchers)
 audience: both
 kind: entity
-verified_against: e0c2dc7
+verified_against: 97bd83d
 verified_on: 2026-11-22
 source_files:
   - .framework/migrations/001_core_schema.sql
+  - .framework/migrations/083_attachment_link_type.sql
   - .framework/functions/admin-data.ts
+  - .framework/functions/attachments.ts
+  - .framework/functions/_shared/attachments.ts
   - .framework/functions/_shared/notify.ts
   - .framework/src/instructions/reference/database.md
 ---
@@ -131,6 +134,20 @@ You need to know who cares about a record change without embedding a watchers li
 `filename`, `file_size`, `mime_type`, `storage_path`, `storage_provider`,
 `uploaded_by`. The file bytes live in storage; the row is metadata.
 
+**Byte path** (v1: images only): uploads are a three-step contract —
+`POST /api/attachments?action=upload-url` mints a signed URL into the
+`attachments-tmp` quarantine bucket (the only place clients may write),
+the client PUTs bytes to it, then `admin-data` create with `tmp_path`
+commits: actual size + magic-byte mime verified, GPS EXIF stripped per the
+type's `file_policy`, bytes written to `attachments` (private, signed
+reads) or `attachments-public` (stable public URL) at
+`{account_id}/{uuid}/{filename}`, and the verified columns stamped — the
+client never supplies `storage_path`. `read-url` resolves an id through
+row RLS to a signed or public URL. Row delete cascades to the object.
+Association to a record is a `links` edge — seeded `has_attachment`
+(link type; source = record, target = attachment) — or a `file`/`image`
+field storing the attachment id. See [attachments](reference/functions/attachments.md).
+
 ### `watchers` — subscriptions
 
 | Column | Notes |
@@ -177,4 +194,7 @@ the pipeline stage.
   against it.
 - All five kinds take `type_id` — seed a `kind: 'thread'`, `'message'`,
   `'link'`, `'attachment'`, `'watcher'` type for each your app uses
-  (`conflict: "kind,slug"`, `inject_app_id: false`).
+  (`conflict: "kind,slug"`, `inject_app_id: false`). For attachment types,
+  declare `file_policy` in the `design_schema` — allowed mimes, max bytes,
+  visibility, `strip_gps` — and grant `create` to the roles that may
+  upload (the seeded `attachment` type grants `system_admin` only).

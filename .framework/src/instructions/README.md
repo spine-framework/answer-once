@@ -2,7 +2,7 @@
 title: Spine Instruction Book
 audience: developers, agents
 kind: index
-verified_against: 657ef61
+verified_against: f14a202
 verified_on: 2026-11-22
 source_files:
   - .framework/src/instructions/accounts.md

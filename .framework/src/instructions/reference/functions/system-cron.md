@@ -2,7 +2,7 @@
 title: system-cron
 audience: developers, agents
 kind: reference
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - .framework/functions/system-cron.ts
@@ -21,7 +21,8 @@ source_files:
 The worker behind every `trigger-scheduler` tick. Each authenticated run
 performs, in order: a stale-execution sweep, due-schedule execution, due-
 timer pipelines, webhook-delivery retries, and
-— on the 00:00 UTC tick — log cleanup. It is also directly invocable over
+— on the 00:00 UTC tick — log cleanup and quarantined-upload
+sweeping. It is also directly invocable over
 HTTP for manual runs.
 
 ## Route and methods
@@ -75,8 +76,10 @@ log files — headers do not.
    principal `timer:<timer_id>` with scope `pipelines:execute`, then
    `update_timer_after_run` reschedules it. Timers without `pipeline_id`
    fail that item only.
-4. **Log cleanup** — only when the tick lands on UTC 00:00:
-   `cleanup_old_logs` RPC with `p_retention_days: 30`.
+4. **Daily cleanup** — only when the tick lands on UTC 00:00:
+   `cleanup_old_logs` RPC with `p_retention_days: 30`, and
+   `sweepTmpUploads()` deletes `attachments-tmp` quarantine objects
+   older than 24 h.
 5. **Delivery retries** — `retryPendingDeliveries(ctx)` sweeps due
    outbound webhook deliveries.
 
@@ -92,7 +95,8 @@ log files — headers do not.
 ## Response contract
 
 - 200 — `{ message, schedules_due, executed, success, failed, skipped,
-  logs_cleaned, deliveries_retried, results }` where `results[]` carries
+  logs_cleaned,
+  tmp_uploads_swept, deliveries_retried, results }` where `results[]` carries
   `{ scheduleId, actionId, status: success|failed|skipped, error?,
   durationMs }` per schedule/timer item. An empty `get_due_schedules`
   result does not short-circuit the tick — timers, retries, and cleanup
@@ -105,7 +109,8 @@ log files — headers do not.
 Writes `pipeline_executions` (via `runPipeline` and the sweep),
 `schedule_executions`, schedule/timer bookkeeping via RPC, `logs` audit
 events (`system_cron.unauthorized_access`, `system_cron.error`,
-`schedule.execute`), deletes old `logs` rows at
+`schedule.execute`), deletes old `logs` rows and `attachments-tmp` objects older
+than 24 h at
 00:00 UTC, and mutates `webhook_deliveries` through the retry sweep.
 
 ## Errors

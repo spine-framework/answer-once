@@ -1,7 +1,7 @@
 ---
 title: "Spine Framework — agent rules (template)"
 kind: index
-verified_against: 7aa0f61
+verified_against: 842c31d
 verified_on: 2026-11-22
 source_files:
   - .framework/src/instructions/internal/docs-contract.md

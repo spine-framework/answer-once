@@ -2,8 +2,8 @@
 title: system
 audience: developers, agents
 kind: reference
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: 799904c
+verified_on: 2026-11-21
 source_files:
   - .framework/functions/system.ts
   - .framework/functions/_shared/middleware.ts
@@ -52,8 +52,11 @@ return `{ data: … }` objects which are wrapped again by `createHandler`.
     directory (default `'2.0.0'` when missing or unparseable).
   - `integrity.core_hash` is `manifest.integrity.src`; `verified` is true
     only when the file exists and parses.
-  - `functions` is built by scanning a `v2-core/functions` directory for
-    `.ts` files and assigning methods from blocklists (see Agent notes).
+  - `functions` is built by scanning the assembly sources —
+    `.framework/functions`, `custom/functions`, and
+    `custom/apps/*/functions` — for `.ts` handler files (excluding
+    `_`-prefixed shared helpers and `*.test.ts`/`*-test.ts`), and
+    assigning methods from blocklists (see Agent notes).
 - `health` → `{ status: 'healthy' | 'degraded' | 'unhealthy', checks:
   { database: { connected, latency_ms }, migrations: { current, pending,
   applied }, integrity: { verified }, test_runs? } }`.
@@ -74,9 +77,10 @@ return `{ data: … }` objects which are wrapped again by `createHandler`.
 ## Side effects
 
 None on the database. The filesystem reads are: `.spine-manifest.json`,
-and the `v2-core/functions` + `v2-core/migrations_dayzero` directories
-under `process.cwd()`. Database reads: `accounts` (health probe),
-`public.schema_migrations`, `test_runs` — all via `adminDb`.
+`.framework/functions`, `custom/functions`, `custom/apps/*/functions`,
+`.framework/migrations`, and `custom/migrations` under `process.cwd()`.
+Database reads: `accounts` (health probe), `public._spine_migrations`,
+`test_runs` — all via `adminDb`.
 
 ## Errors
 
@@ -87,20 +91,21 @@ errors (401 unauthenticated, 400 invalid JSON body).
 
 ## Agent notes
 
-- **Stale paths:** `discoverFunctions` scans `v2-core/functions` and the
-  migration checks scan `v2-core/migrations_dayzero` — `v2-core` is the
-  pre-monorepo layout name; the live code lives under
-  `.framework/functions` and `.framework/migrations`. In the current
-  layout those directories do not exist, so `functions` returns `[]` and
-  `migrations.pending` is always `0` (making `migrations.current` always
-  true and `health` never degraded on migrations). Treat the manifest's
-  `functions` list and pending count as unpopulated until this is fixed.
-- The migration table queried is `schema_migrations`; the CLI migrator
-  records to `_spine_migrations`, so `applied`/`latest` may also read
-  empty — the query failure is swallowed silently.
-- Because `verified` requires a readable `.spine-manifest.json` at the
-  function's working directory, `health` reports `degraded` on deploys
-  where the file is absent from the bundle.
+- **cwd-dependent filesystem data:** the function and migration lists
+  and `.spine-manifest.json` are read from `process.cwd()`. Under
+  `netlify dev` that is the project root and all lists populate; in a
+  deployed Netlify function the project tree is not bundled (only
+  `_shared/**` is included via `netlify.toml`), so `functions` returns
+  `[]`, `version` falls back to `'2.0.0'`, `integrity.verified` is
+  `false` (reporting `degraded`), and `migrations.pending` counts only
+  DB truth — `applied`/`latest` still read correctly from
+  `_spine_migrations` anywhere.
+- `pending` compares local `.sql` filenames against
+  `_spine_migrations.filename` — the ledger the CLI migrator writes.
+  Method assignment is a blocklist heuristic (read-only-ish names like
+  `logs`, `tests`, `system-cron`, `debug-auth`, `auth` get fewer
+  methods); it approximates, it does not enforce.
 - This endpoint answers "what is deployed" questions for agents: prefer
-  `health` for a liveness signal and `manifest` for version/integrity; do
-  not rely on `functions` or `openapi` path lists being complete.
+  `health` for a liveness signal and `manifest` for version/integrity;
+  expect `functions`/`openapi` path lists to be complete only when the
+  project tree is visible (local dev).

@@ -2,8 +2,8 @@
 title: Design Schema
 audience: developers, agents
 kind: concept
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/types.ts
@@ -72,7 +72,8 @@ A flat map of `snake_case` field names to `FieldDefinition`
 (`.framework/src/types/types.ts`): `data_type`, `label`, `required`, plus
 optional `system`, `placeholder`, `validation` (pattern, min/max, lengths,
 `reference_kind`/`reference_type`, `currency_code`), `options` (required for
-`select`/`multiselect`/`radio`), and `permissions` (per-role `read`/`write`
+`select`/`multiselect`/`radio`), `attachment_type`/`visibility`
+(attachment-field hints — see `file_policy`), and `permissions` (per-role `read`/`write`
 overrides — see [Permissions](permissions.md)).
 
 The `system` flag controls storage: `system: true` fields are top-level record
@@ -129,6 +130,14 @@ Optional automation bindings the runtime interprets — e.g.
 `FunctionalityBindings` (`field_map` sync, `unique`/`conditional_required`/
 `immutable` constraints) in `.framework/src/types/types.ts`. Set it to `null`
 until the automation binding you need is confirmed live.
+
+### `file_policy`
+
+Optional — attachment-kind types only. Declares the upload constraints the
+`attachments` function and `admin-data` commit enforce: `allowed_mime`
+(clamped to the supported image set), `max_bytes` (capped by the bucket
+ceiling), `visibility`, `default_visibility`, `strip_gps`. Full shape:
+[reference/design-schema.md](../reference/design-schema.md).
 
 ## What each consumer reads
 

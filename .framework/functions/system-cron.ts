@@ -26,6 +26,7 @@ import { createHandler, RequestContext } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitAudit } from './_shared/audit'
 import { runPipeline, sweepStaleExecutions } from './_shared/pipeline-runner'
+import { sweepTmpUploads } from './_shared/storage'
 import { retryPendingDeliveries } from './_shared/retry-deliveries'
 
 
@@ -344,15 +345,21 @@ export const handler = createHandler(async (ctx: RequestContext) => {
     }
     
     let logsCleaned = 0
+    let tmpUploadsSwept = 0
     const now = new Date()
     const currentHour = now.getUTCHours()
     const currentMinute = now.getUTCMinutes()
-    
+
     if (currentHour === 0 && currentMinute === 0) {
       try {
         logsCleaned = await cleanupOldLogs()
       } catch (cleanupError) {
         console.error('Log cleanup error:', cleanupError)
+      }
+      try {
+        tmpUploadsSwept = await sweepTmpUploads()
+      } catch (sweepError) {
+        console.error('Tmp upload sweep error:', sweepError)
       }
     }
     
@@ -377,6 +384,7 @@ export const handler = createHandler(async (ctx: RequestContext) => {
         failed: failedCount,
         skipped: skippedCount,
         logs_cleaned: logsCleaned,
+        tmp_uploads_swept: tmpUploadsSwept,
         deliveries_retried: retrySummary,
         results
       })

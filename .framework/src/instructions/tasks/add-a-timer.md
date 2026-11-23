@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-add-automation
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/timers.ts
   - .framework/functions/system-cron.ts

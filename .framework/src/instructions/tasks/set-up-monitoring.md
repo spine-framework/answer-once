@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-operate
-verified_against: 35992a9
-verified_on: 2026-11-20
+verified_against: 97bd83d
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/system.ts
   - .framework/functions/logs.ts
@@ -58,16 +58,15 @@ below are the real ones.
    `degraded`, or `unhealthy` as alert-worthy.
 
    **Reliability caveat** (`reference/functions/system.md`): `health`
-   effectively proves database connectivity — its `migrations` and
-   `functions` data come from stale `v2-core/` paths that don't exist,
-   so `migrations.pending` is always `0`/`current` always `true`, and
-   `integrity.verified` only means `.spine-manifest.json` was readable,
-   not that hashes were checked. `?action=manifest`'s `version` falls
-   back to `'2.0.0'` and its migration counts read
-   `schema_migrations`, not `_spine_migrations`. **Do not use the
-   manifest endpoint as a "did the deploy land" check or a release
-   gate** — use your deploy system or `npx spine-framework migrations
-   status` for that.
+   proves database connectivity plus migration state from
+   `_spine_migrations`, but its filesystem-sourced data is cwd-dependent
+   — in a deployed function the project tree isn't bundled, so
+   `functions` is empty, `integrity.verified` only means
+   `.spine-manifest.json` was readable (not that hashes were checked),
+   and `version` falls back to `'2.0.0'` (reporting `degraded`). **Do
+   not use the manifest endpoint as a "did the deploy land" check or a
+   release gate** — use your deploy system or `npx spine-framework
+   migrations status` for that.
 
 2. **Failure review on a schedule.** The runtime surfaces answer "is
    anything quietly failing":

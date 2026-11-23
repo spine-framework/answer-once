@@ -2,7 +2,7 @@
 title: The Spine Way
 audience: developers, agents
 kind: concept
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - scripts/boundary-check.sh

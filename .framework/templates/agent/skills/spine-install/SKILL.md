@@ -45,9 +45,11 @@ skill is the no-browser sequence.
   service-role keys, and DB password (Dashboard → Settings → API Keys /
   Database).
 - **Local Docker stack** — `supabase init && supabase start` inside the
-  project; the guide lists the printed values to use and the three
-  local-only adjustments (CSP, optional services, port rules). Choose
-  this only when the developer wants throwaway local data.
+  project; needs Docker running and the Supabase CLI installed. The
+  guide lists the printed values to use and the three local-only
+  adjustments (CSP, optional services, port rules) — including the fix
+  when `supabase start` fails on an unhealthy optional container.
+  Choose this only when the developer wants throwaway local data.
 
 ## Sequence
 

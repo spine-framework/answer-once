@@ -2,7 +2,7 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: 4196635
+verified_against: 6c7c604
 verified_on: 2026-11-22
 source_files:
   - .framework/cli/commands/init.ts
@@ -28,7 +28,9 @@ source_files:
 
 Prerequisites: Node ≥ 22.13 and npm ≥ 10 (recorded in `.spine-manifest.json`
 by init), a Supabase project, and (for local dev) the Netlify CLI — pinned as a
-devDependency, so `npm install` puts it in `node_modules`.
+devDependency, so `npm install` puts it in `node_modules`. The local-stack
+route additionally needs Docker running and the Supabase CLI
+(`brew install supabase/tap/supabase`).
 
 > **Joining a project that already exists?** This page is the from-scratch
 > install — see [Join an existing project](06-join-an-existing-project.md)
@@ -118,6 +120,9 @@ A local Supabase CLI stack covers the same surface with no hosted project:
 supabase init && supabase start    # run inside the project dir
 ```
 
+`supabase init` may ask about VS Code/IntelliJ Deno settings — either
+answer is fine and it completes non-interactively.
+
 `supabase start` prints the API URL and JWTs. Point the env vars at it:
 
 | Variable | Local value |
@@ -146,10 +151,18 @@ Three local-only adjustments the installer can't make for you:
   for `.env`: `netlify dev` injects env vars when each function process
   spawns — edits are not re-injected into already-loaded functions, so
   restart `dev:netlify` after changing `.env` too.
-- **Services.** The framework uses Postgres, GoTrue auth, PostgREST, and
-  Kong only — `storage`, `realtime`, `studio`, `inbucket`, `edge_runtime`,
-  and `analytics` may be disabled in `supabase/config.toml` when Docker
-  resources are tight (nothing in `.framework/` calls them).
+- **Services.** The framework uses Postgres, GoTrue auth, PostgREST,
+  Kong, and Storage — `storage` must stay **enabled** (the attachments
+  upload path creates its buckets lazily on first use; disabling it breaks
+  `/api/attachments` and `admin-data` attachment creates). `realtime`,
+  `studio`, `inbucket`, `edge_runtime`, and `analytics` may be disabled in
+  `supabase/config.toml` (nothing in `.framework/` calls them). Disabling
+  them isn't just a resource saving: if `supabase start` stalls or fails
+  on an unhealthy optional container, turn those services off and start
+  again. One caveat: `inbucket` is the local SMTP capture — with it off,
+  invite/registration emails go nowhere locally. Bootstrap still works
+  (`email_confirm: true`), but to exercise email flows keep `inbucket` on
+  or set `RESEND_API_KEY`.
 - **Email confirmation** is already off: the generated `config.toml` ships
   `[auth.email] enable_confirmations = false`.
 

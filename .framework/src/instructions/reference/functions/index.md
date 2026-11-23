@@ -2,8 +2,8 @@
 title: Functions index
 audience: both
 kind: index
-verified_against: 666f107
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/functions/
   - .framework/public/_redirects
@@ -11,7 +11,7 @@ source_files:
 
 # Functions index
 
-All 47 Netlify functions in `.framework/functions/`, grouped by domain.
+All 48 Netlify functions in `.framework/functions/`, grouped by domain.
 Every function is reachable publicly as `/api/<name>` (`/api/*` →
 `/.netlify/functions/:splat`, `.framework/public/_redirects`), and all
 JSON responses use the `{ data, error, meta }` envelope from
@@ -25,6 +25,7 @@ summary.
 | Function | What it does |
 |---|---|
 | [admin-data](./admin-data.md) | Generic CRUD + stats over the entity allowlist, with record permissions, schema stamping, and trigger firing. |
+| [attachments](./attachments.md) | Capability minting for the attachment byte path — tmp-quarantine `upload-url` + governed `read-url`; rows stay in admin-data. |
 | [account-nodes](./account-nodes.md) | One account plus its ancestors, children, and descendants for hierarchy views. |
 | [api-keys](./api-keys.md) | Mint, validate, revoke, and list `sk_…` machine API keys plus usage logs. |
 | [auth](./auth.md) | The caller's user context — person, role, permissions, accessible accounts — plus a health probe. |

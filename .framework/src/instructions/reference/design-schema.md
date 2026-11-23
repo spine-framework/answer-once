@@ -2,12 +2,13 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: 35992a9
-verified_on: 2026-11-20
+verified_against: 6c7c604
+verified_on: 2026-11-22
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/_shared/schema-utils.ts
   - .framework/functions/_shared/permissions.ts
+  - .framework/functions/_shared/attachments.ts
   - .framework/functions/admin-data.ts
   - .framework/functions/types.ts
   - .framework/cli/commands/validate-schema.ts
@@ -35,6 +36,7 @@ lookup table. The TypeScript source of truth is `DesignSchema`,
 | `record_permissions` | `Record<string, string[]>` | yes | Base CRUD grant per role slug |
 | `scope` | `"account" \| "platform"` | no (default `"account"`) | Which account owns records of this type at create |
 | `functionality` | `FunctionalityBindings` or extensions | no | Automation bindings; `null` until a binding is confirmed live |
+| `file_policy` | `FilePolicy` | no — attachment types only | Upload limits enforced by the attachment commit path (see below) |
 | `display_field` | `string` | no | Field used for record titles in detail pages |
 
 `validate-schema` enforces: `fields` non-empty; every field has `data_type`,
@@ -96,8 +98,8 @@ caller. The trust boundary is the client + field permissions, not
 | `multiselect` | string[] | accepts an array or comma-separated string; dedupes; each element must match an option; `validation.max` truncates the list |
 | `radio` | string | same sanitizer as `select` |
 | `color` | string | must match `#rgb`/`#rrggbb`; normalized to 6-digit uppercase hex |
-| `file` | object | must be an object with `.name`; `maxSize` and `allowedTypes` (MIME) enforced; filename sanitized to `[a-zA-Z0-9.-]` |
-| `image` | object | same sanitizer as `file` (`maxWidth`/`maxHeight` are declared but not enforced) |
+| `file` | attachment id (uuid) | field stores the attachment row id — `FieldRenderer` uploads via `/api/attachments` + admin-data commit; legacy sanitizer accepted `{name}` objects |
+| `image` | attachment id (uuid) | same as `file`; `maxWidth`/`maxHeight` are declared but not enforced |
 | `json` | any JSON value | string input is `JSON.parse`d; rejects script tags, `javascript:`, `eval(`/`function(`, `on*=` handlers, and `__proto__` keys; arbitrary nesting allowed under `data.<name>` |
 | `reference` | string (uuid) | must match the UUID regex; `validation.reference_kind`/`reference_type` describe the target |
 | `address` | object | must be an object; string values are text-sanitized |
@@ -243,6 +245,30 @@ placeholders).
   stamping (`.framework/functions/admin-data.ts`, `PERMISSIONS_ALL`). An
   explicit empty object denies everything downstream — always author
   deliberately.
+
+## `file_policy` — attachment types only
+
+Declared on a `kind: 'attachment'` type's `design_schema`; enforced by
+`.framework/functions/_shared/attachments.ts` at upload-url mint and again
+at commit (bytes are verified, never the client's declaration):
+
+```json
+"file_policy": {
+  "allowed_mime": ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  "max_bytes": 10485760,
+  "visibility": ["private", "public"],
+  "default_visibility": "private",
+  "strip_gps": true
+}
+```
+
+Absent → `DEFAULT_IMAGE_POLICY` (all four image types, 10MB, both
+visibilities, strip on). `allowed_mime` is clamped to the supported image
+set and `max_bytes` capped at the 50MB bucket ceiling — v1 is images-only
+regardless of policy. `field.attachment_type` on a `file`/`image` field
+selects which attachment type (and thus which policy/permissions) a field
+upload uses; `field.visibility` picks `private` (default) or `public`.
+Full contract: [attachments function](functions/attachments.md).
 
 ## `scope`
 

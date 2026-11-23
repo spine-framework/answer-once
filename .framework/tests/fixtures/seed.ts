@@ -9,7 +9,7 @@
  * into the public schema under SPINE_TEST_ACCOUNT_ID. All rows use slugs
  * prefixed with `test-` so teardown.ts can clean them up safely.
  *
- * Run before integration tests: `tsx v2-core/tests/fixtures/seed.ts`
+ * Run before integration tests: `tsx .framework/tests/fixtures/seed.ts`
  *
  * @seeAlso tests/fixtures/teardown.ts
  */

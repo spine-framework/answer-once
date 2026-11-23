@@ -1,8 +1,8 @@
 ---
 title: "Answer Once — standalone install"
 kind: task
-verified_against: a812c8e
-verified_on: 2026-11-20
+verified_against: 6a89fdd
+verified_on: 2026-11-22
 source_files:
   - custom/npm/create-answer-once/
   - custom/apps/answer-once/manifest.json
