@@ -2,7 +2,7 @@
 title: "Install Answer Once"
 audience: developers, agents
 kind: task
-verified_against: a9a7b8c
+verified_against: f3b5cef
 verified_on: 2026-11-23
 source_files:
   - custom/apps/answer-once/installer/index.mjs
@@ -21,7 +21,7 @@ npm create @spine-framework/answer-once@latest <dir>
 cd <dir> && cp .env.example .env   # new Supabase project's creds
 npm install && npm run verify
 npm run spine-framework -- migrate
-npm run spine-framework -- seed-app answer-once
+npm run spine-framework -- seed-app answer-once --yes
 npm run verify:install -- --app answer-once
 npm run dev:netlify
 ```

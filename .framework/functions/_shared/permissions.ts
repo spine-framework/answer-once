@@ -520,29 +520,18 @@ class _PermissionEngineInternal {
     // Clone record to avoid mutation
     const sanitized = { ...record }
 
-    // Filter and format data fields based on permissions
+    // Filter data fields by read permission. Values pass through raw —
+    // display formatting belongs to the renderer, not the API contract.
     if (sanitized.data && typeof sanitized.data === 'object') {
       const filteredData: any = {}
-      
+
       for (const [fieldName, fieldValue] of Object.entries(sanitized.data)) {
         const fieldPerms = perms.fieldPermissions[fieldName]
         if (fieldPerms && fieldPerms.read) {
-          // Apply data formatting using validation schema
-          const validationSchema = record.validation_schema || {}
-          const fieldValidation = validationSchema.fields?.[fieldName]
-          
-          if (fieldValidation) {
-            // Import formatFieldData function
-            const { formatFieldData } = await import('./schema-utils')
-            filteredData[fieldName] = formatFieldData(fieldValue, fieldValidation.data_type, {
-              currency_code: fieldValidation.currency_code
-            })
-          } else {
-            filteredData[fieldName] = fieldValue
-          }
+          filteredData[fieldName] = fieldValue
         }
       }
-      
+
       sanitized.data = filteredData
     }
 

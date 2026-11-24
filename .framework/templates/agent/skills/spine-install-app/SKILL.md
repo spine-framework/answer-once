@@ -6,7 +6,7 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
-verified_against: 15faf83
+verified_against: ba57738
 verified_on: 2026-11-23
 depends_on:
   files:

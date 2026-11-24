@@ -2,8 +2,8 @@
 title: apps
 audience: both
 kind: reference
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/apps.ts
   - .framework/functions/_shared/middleware.ts

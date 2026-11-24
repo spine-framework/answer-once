@@ -4,7 +4,7 @@ audience: developers, agents
 kind: task
 skills:
   - spine-ship
-verified_against: 59afa86
+verified_against: 3a67b9d
 verified_on: 2026-11-23
 source_files:
   - .framework/functions/system.ts

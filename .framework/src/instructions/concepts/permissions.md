@@ -2,8 +2,8 @@
 title: Permission Model
 audience: developers, agents
 kind: concept
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/_shared/permissions.ts
   - .framework/functions/_shared/principal.ts
@@ -109,8 +109,9 @@ and is the contract that actually binds:
 ## Enforcement points
 
 - **Read** (`sanitizeFirstSurfaceRecordData`): `canRead` gates the record;
-  `data` is filtered per field by `fieldPermissions[name].read`; values are
-  formatted through `validation_schema` (`formatFieldData`); legacy `metadata`
+  `data` is filtered per field by `fieldPermissions[name].read`; values pass
+  through canonical — display formatting is renderer-side
+  (decision `0031-admin-data-canonical-data`); legacy `metadata`
   is stripped from responses. Records with an empty `fields` map pass through
   whole at the record grant.
 - **Update** (`validateFirstSurfaceUpdatePermissions`): `canUpdate` gates the

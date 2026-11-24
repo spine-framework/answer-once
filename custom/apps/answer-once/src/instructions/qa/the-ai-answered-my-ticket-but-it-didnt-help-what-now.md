@@ -2,7 +2,7 @@
 title: "The AI answered my ticket but it didn't help — what now"
 audience: developers, agents
 kind: qa
-verified_against: 15faf83
+verified_against: fd571fc
 verified_on: 2026-11-23
 suggested_kb_tag: troubleshooting
 source_files:

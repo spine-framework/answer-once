@@ -2,8 +2,8 @@
 title: attachments
 audience: both
 kind: reference
-verified_against: 90d68d2
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/attachments.ts
   - .framework/functions/_shared/attachments.ts
@@ -105,6 +105,20 @@ the owning record, target = the attachment. Apps may seed their own link
 types for specific semantics (`jh-photo`-style). Field values on
 `file`/`image` fields store the attachment id directly — a field reference
 is implicit association and needs no link row.
+
+The link create goes through generic admin-data:
+
+```json
+POST /api/admin-data?action=create
+{"entity": "links", "type_slug": "link",
+ "source_type": "items", "source_id": "<record id>",
+ "target_type": "attachments", "target_id": "<attachment id>",
+ "link_type": "has_attachment"}
+```
+
+`target_type` accepts the table name or the kind spelling
+(`attachment`/`attachments` both resolve to the `attachments` table); the
+create validates the parent exists and inherits its account and scope.
 
 ## Client API (`.framework/src/lib/attachments.ts`)
 

@@ -2,7 +2,7 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: a672d6b
+verified_against: a65afb1
 verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/init.ts
@@ -120,8 +120,8 @@ A local Supabase CLI stack covers the same surface with no hosted project:
 supabase init && supabase start    # run inside the project dir
 ```
 
-`supabase init` may ask about VS Code/IntelliJ Deno settings — either
-answer is fine and it completes non-interactively.
+`supabase init` may print `[y/N]` prompts about VS Code/IntelliJ Deno
+settings — answer either way (or press Enter); the defaults are safe.
 
 `supabase start` prints more than you need. **Use only** the API URL, the
 `anon key` JWT, the `service_role key` JWT, and the DB URL/port — ignore
@@ -168,7 +168,12 @@ Three local-only adjustments the installer can't make for you:
   `supabase/config.toml` (nothing in `.framework/` calls them). Disabling
   them isn't just a resource saving: if `supabase start` stalls or fails
   on an unhealthy optional container, turn those services off and start
-  again. One caveat: `inbucket` is the local SMTP capture — with it off,
+  again. If a **required** container fails its healthcheck — e.g.
+  `supabase_storage` reporting unhealthy while its own logs read
+  "Started Successfully" — don't reconfigure anything: `supabase stop &&
+  supabase start` again. These flakes are a known Supabase CLI quirk
+  (more common on 2.x; `supabase --version` vs the latest 3.x). One
+  caveat: `inbucket` is the local SMTP capture — with it off,
   invite/registration emails go nowhere locally. Bootstrap still works
   (`email_confirm: true`), but to exercise email flows keep `inbucket` on
   or set `RESEND_API_KEY`.

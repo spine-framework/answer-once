@@ -8,7 +8,7 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
-verified_against: 699d419
+verified_against: ba57738
 verified_on: 2026-11-23
 depends_on:
   files:

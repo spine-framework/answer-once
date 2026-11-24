@@ -137,14 +137,20 @@ export function registerInitCommands(program: Command) {
         console.log('Next steps:')
         if (!existsSync(join(target, '.env'))) {
           console.log('  1. cp .env.example .env  — fill in your Supabase credentials')
+          console.log('     (local stack: `supabase start`, then use its printed keys)')
         } else {
           console.log('  1. Verify .env contains your Supabase credentials')
         }
         console.log('  2. npm install')
         console.log('  3. npm run verify')
-        console.log('  4. Install an app, e.g.: npx <app-package> install')
-        console.log('  5. npx spine-framework migrate')
-        console.log('  6. npm run dev:netlify')
+        console.log('  4. npx spine-framework migrate')
+        console.log('  5. npx spine-framework bootstrap --email <you@example.com> --password <pw> --write-env')
+        console.log('       # creates the system_admin + writes SPINE_API_KEY into .env')
+        console.log('  6. npm run test                   # seeds the test_runs row doctor checks')
+        console.log('  7. npx spine-framework doctor     # should report HEALTHY')
+        console.log('  8. npm run dev:netlify')
+        console.log()
+        console.log('Install an app later, e.g.: npx spine-framework install-app @spine-framework/answer-once')
         console.log()
         console.log('Docs + agent assets:')
         console.log('  - Instruction book: .framework/src/instructions/README.md')

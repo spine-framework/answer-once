@@ -1,8 +1,8 @@
 ---
 name: spine-decision-capture
 description: "Record a consequential engineering decision in custom/decisions/ — alternatives rejected, invariants discovered, workarounds added."
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 allowed-tools:
   - read
   - write

@@ -23,7 +23,7 @@ You install the **answer-once** app. Read
    path `npx tsx scripts/export-standalone.ts --app answer-once --output <dir>`.
 2. `.env` for a **virgin** Supabase project (empty public + auth.users).
 3. `npm install && npm run verify` → `migrate` →
-   `seed-app answer-once` → `verify:install -- --app answer-once` → `dev:netlify`.
+   `seed-app answer-once --yes` → `verify:install -- --app answer-once` → `dev:netlify`.
 
 ## Rules
 

@@ -2,8 +2,8 @@
 title: admin-data API
 audience: developers, agents
 kind: reference
-verified_against: 6c7c604
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -77,7 +77,10 @@ duration}}`. `data` is:
 - `stats` → `{entity, count}`
 
 Sanitization applies `design_schema.fields.*.permissions`: fields the
-principal cannot read are stripped before the row is returned.
+principal cannot read are stripped before the row is returned. Values pass
+through canonical — `data.<field>` is the stored value (boolean `true`, ISO
+datetime, parsed json), never a display-formatted string; renderers own
+formatting.
 
 ## Permission evaluation order
 
@@ -110,7 +113,11 @@ principal cannot read are stripped before the row is returned.
   target account when permitted; otherwise `ctx.accountId`.
 - `scope: 'platform'` types are stamped with the `spine-system` account;
   children created via `thread_id`/`target_id`/`parent_id` inherit the
-  parent's account and scope (missing parent → 403).
+  parent's account and scope (missing parent → 403). `target_type` accepts
+  either spelling — the table name (`items`, `attachments`) or the kind
+  (`item`, `attachment`) — and resolves to the parent table for
+  links/watchers/threads; an `attachments` target resolves the
+  `has_attachment` record→file association.
 - `created_by`/`updated_by` stamp `people.id` for human principals;
   `types`/`link_types` have no audit columns and skip the stamp.
 - `checkTypeSlugRateLimit` enforces per-type create policies from

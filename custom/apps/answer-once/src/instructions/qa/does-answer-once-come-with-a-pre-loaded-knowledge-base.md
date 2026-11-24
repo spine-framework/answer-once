@@ -2,7 +2,7 @@
 title: "Does Answer Once come with a pre-loaded knowledge base"
 audience: developers, agents
 kind: qa
-verified_against: a9a7b8c
+verified_against: f3b5cef
 verified_on: 2026-11-23
 suggested_kb_tag: faq
 source_files:

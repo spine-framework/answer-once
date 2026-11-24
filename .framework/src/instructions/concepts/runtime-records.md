@@ -2,8 +2,8 @@
 title: Runtime Records
 audience: developers, agents
 kind: concept
-verified_against: 6c7c604
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/resolve-ids.ts
@@ -92,9 +92,10 @@ column.
 ## Reading records back
 
 Reads pass through `sanitizeRecordData`: fields the caller can't read are
-dropped from `data`, the legacy `metadata` key is stripped from responses, and
-remaining values are formatted through `validation_schema`
-(`formatFieldData` — e.g. currency, multiselect, dates). A record the caller
+dropped from `data` and the legacy `metadata` key is stripped from responses.
+Values come back canonical — a `boolean` field is `true`/`false`, a `datetime`
+is the stored ISO string; formatting is renderer-side
+(decision `0031-admin-data-canonical-data`). A record the caller
 can't read at all collapses to `{id, created_at, updated_at}` — so "record
 exists but looks empty" is a permission answer, not missing data.
 

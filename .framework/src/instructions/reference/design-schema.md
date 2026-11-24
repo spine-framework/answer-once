@@ -2,7 +2,7 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: 7529771
+verified_against: ba57738
 verified_on: 2026-11-23
 source_files:
   - .framework/src/types/types.ts
@@ -106,7 +106,9 @@ caller. The trust boundary is the client + field permissions, not
 
 `formatFieldData` (display formatting) covers only `json`, `date`, `datetime`,
 `currency`, `phone`, `url`, `reference`, `address`, `multiselect`, `boolean` —
-all other types render raw.
+all other types render raw. admin-data does **not** apply it on reads;
+renderers format canonical values themselves
+(decision `0031-admin-data-canonical-data`).
 
 ### `validation.*` keys
 

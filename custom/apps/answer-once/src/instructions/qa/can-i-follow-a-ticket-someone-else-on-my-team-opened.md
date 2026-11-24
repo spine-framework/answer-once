@@ -2,7 +2,7 @@
 title: "Can I follow a ticket someone else on my team opened"
 audience: developers, agents
 kind: qa
-verified_against: 15faf83
+verified_against: fd571fc
 verified_on: 2026-11-23
 suggested_kb_tag: how-to
 source_files:

@@ -2,8 +2,8 @@
 title: Threshold Alerts
 audience: both
 kind: entity
-verified_against: 6c7c604
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/src/pages/admin/AlertsConfigPage.tsx
   - .framework/functions/admin-data.ts

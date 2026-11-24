@@ -161,3 +161,68 @@ describe('sanitizeRecordData — second surface (config objects)', () => {
     expect(result).not.toHaveProperty('slug')
   })
 })
+
+describe('sanitizeRecordData — first surface (runtime records)', () => {
+  const runtimeRecord = {
+    id: 'item-1',
+    account_id: 'account-123',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    design_schema: {
+      record_permissions: { member: ['read'] },
+      fields: {
+        is_rsvpd: { data_type: 'boolean' },
+        meta: { data_type: 'json' },
+        starts_at: { data_type: 'datetime' }
+      }
+    },
+    validation_schema: {
+      fields: {
+        is_rsvpd: { data_type: 'boolean' },
+        meta: { data_type: 'json' },
+        starts_at: { data_type: 'datetime' }
+      }
+    },
+    data: {
+      is_rsvpd: true,
+      meta: { spots: 12 },
+      starts_at: '2026-03-14T09:00:00Z',
+      secret: 'hidden'
+    }
+  }
+
+  it('member receives canonical data values, not display formatting', async () => {
+    const { adminDb } = await import('../../functions/_shared/db.ts')
+    ;(adminDb.single as any).mockResolvedValue({ data: { role: { slug: 'member' } } })
+
+    const { sanitizeRecordData } = await import('../../functions/_shared/permissions.ts')
+    const ctx = makeCtx(makePrincipal({ roles: ['member'] }))
+    const result = await sanitizeRecordData(ctx, runtimeRecord, 'jh_activity')
+    expect(result.data.is_rsvpd).toBe(true)
+    expect(result.data.meta).toEqual({ spots: 12 })
+    expect(result.data.starts_at).toBe('2026-03-14T09:00:00Z')
+  })
+
+  it('drops fields denied by field-level permissions and undeclared fields', async () => {
+    const { adminDb } = await import('../../functions/_shared/db.ts')
+    ;(adminDb.single as any).mockResolvedValue({ data: { role: { slug: 'member' } } })
+
+    const { sanitizeRecordData } = await import('../../functions/_shared/permissions.ts')
+    const record = {
+      ...runtimeRecord,
+      design_schema: {
+        record_permissions: { member: ['read'] },
+        fields: {
+          is_rsvpd: { data_type: 'boolean' },
+          secret: { data_type: 'text', permissions: { member: [] } }
+        }
+      },
+      data: { is_rsvpd: false, secret: 'hidden', undeclared: 'nope' }
+    }
+    const ctx = makeCtx(makePrincipal({ roles: ['member'] }))
+    const result = await sanitizeRecordData(ctx, record, 'jh_activity')
+    expect(result.data.is_rsvpd).toBe(false)
+    expect(result.data).not.toHaveProperty('secret')
+    expect(result.data).not.toHaveProperty('undeclared')
+  })
+})

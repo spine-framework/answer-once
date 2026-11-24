@@ -2,7 +2,7 @@
 title: CLI Reference
 audience: developers, agents
 kind: reference
-verified_against: a672d6b
+verified_against: a65afb1
 verified_on: 2026-11-23
 source_files:
   - .framework/cli/index.ts

@@ -87,6 +87,12 @@ const ENTITY_TO_KIND: Record<string, string> = {
   watchers: 'watcher',
   item_progress: 'item_progress'
 }
+
+// Polymorphic parent refs (links/watchers/threads target_type) arrive in both
+// table ('items') and kind ('item') spellings — resolve either to the table.
+export const TARGET_TYPE_TO_TABLE: Record<string, string> = Object.fromEntries(
+  Object.entries(ENTITY_TO_KIND).flatMap(([table, kind]) => [[table, table], [kind, table]])
+)
 /**
  * The 'list' constant defines an asynchronous handler for listing entities based on various query parameters. It validates input parameters and constructs a database query to retrieve the requested data.
  *
@@ -569,11 +575,7 @@ export const create = createHandler(async (ctx, body) => {
       if (parentRef) {
         const parentTable = recordData.thread_id
           ? 'threads'
-          : recordData.target_type === 'account'
-            ? 'accounts'
-            : recordData.target_type === 'person'
-              ? 'people'
-              : 'items'
+          : TARGET_TYPE_TO_TABLE[recordData.target_type] || 'items'
         const parentColumns = parentTable === 'accounts' ? 'id' : 'account_id, design_schema'
         const { data: parentRecord } = await ctx.db
           .from(parentTable)

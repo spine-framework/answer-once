@@ -2,7 +2,7 @@
 title: Upgrade many client projects
 audience: developers, agents
 kind: task
-verified_against: 59afa86
+verified_against: 3a67b9d
 verified_on: 2026-11-23
 source_files:
   - .framework/cli/commands/upgrade.ts

@@ -2,8 +2,8 @@
 title: "Answer Once functions"
 audience: developers, agents
 kind: reference
-verified_against: bc8b7a2
-verified_on: 2026-11-15
+verified_against: a65afb1
+verified_on: 2026-11-23
 source_files:
   - custom/apps/answer-once/functions/custom_answeronce-journey.ts
   - custom/apps/answer-once/functions/custom_answeronce-autoresolve-cron.ts

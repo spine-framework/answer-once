@@ -1,7 +1,7 @@
 ---
 title: "Answer Once — standalone install"
 kind: task
-verified_against: 15faf83
+verified_against: fd571fc
 verified_on: 2026-11-23
 source_files:
   - custom/npm/create-answer-once/index.mjs
@@ -76,7 +76,7 @@ cd ~/my-answer-once
 npm install
 npm run verify                                # frozen framework integrity
 npm run spine-framework -- migrate            # every shipped migration, 0 skipped on virgin DB
-npm run spine-framework -- seed-app answer-once
+npm run spine-framework -- seed-app answer-once --yes
 ```
 
 `seed-app` materializes **configuration**: the app registration, roles (`member`, `member_admin`, `support`, `support_admin` — `system_admin` comes from the framework), the five `ao_*` types + generated validation schemas, the `ao_source_ticket` link type, the two AI agents, the two prompt configs, and the `ao_ticket_reply_notify` trigger + pipeline. (The `transactional-email` Resend integration row is materialized by app migration `063`, not seed-app, so its insert stays idempotent across re-seeds.) It creates no tickets, threads, messages, KB articles, or CIL data.

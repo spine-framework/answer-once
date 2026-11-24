@@ -2,8 +2,8 @@
 title: Roles
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-16
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/roles.ts
   - .framework/functions/_shared/permissions.ts

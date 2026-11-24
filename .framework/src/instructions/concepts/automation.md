@@ -2,8 +2,8 @@
 title: "Automation: pipelines, triggers, and timers"
 audience: developers, agents
 kind: concept
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/pipeline-executions.ts

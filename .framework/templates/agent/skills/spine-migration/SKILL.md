@@ -1,8 +1,8 @@
 ---
 name: spine-migration
 description: "Write a Spine database migration — ordered naming, idempotent SQL, ledger-aware, and safe for upgrade."
-verified_against: 9d16176
-verified_on: 2026-11-22
+verified_against: ba57738
+verified_on: 2026-11-23
 allowed-tools:
   - read
   - write

@@ -1,7 +1,7 @@
 ---
 title: "Answer Once"
 kind: index
-verified_against: 15faf83
+verified_against: fd571fc
 verified_on: 2026-11-23
 source_files:
   - custom/apps/answer-once/manifest.json
