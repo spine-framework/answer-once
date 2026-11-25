@@ -1,8 +1,8 @@
 ---
 title: "Spine Framework — agent rules (template)"
 kind: index
-verified_against: 2b10c7e
-verified_on: 2026-11-24
+verified_against: 85b2802
+verified_on: 2026-11-25
 source_files:
   - .framework/src/instructions/internal/docs-contract.md
 ---
@@ -153,7 +153,10 @@ The package ships a markdown instruction book at
   `triggers.md`, `timers.md`, `ai-agents.md`, `prompts.md`,
   `integrations.md`, `api-keys.md`, `deliveries.md`.
 
-Project-level skills for common jobs live in `.devin/skills/spine-*/`.
+Project-level skills for common jobs live in `.devin/skills/spine-*/`. If
+your skill tool does not list repo skills (e.g. it was loaded before they
+existed), read `.devin/skills/<name>/SKILL.md` directly — the same
+procedure, minus the invocation wrapper.
 
 Installed apps may carry their own instruction book at
 `custom/apps/<slug>/src/instructions/` and ship skills to

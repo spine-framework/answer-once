@@ -3,6 +3,8 @@
 // a system principal or an explicit fields.<col>.permissions /
 // system_fields.<col> grant. `title` is exempt (required member-set field).
 import { describe, it, expect, vi } from 'vitest'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 vi.mock('../../functions/_shared/db.ts', () => ({
   adminDb: {
@@ -101,5 +103,25 @@ describe('validateUpdatePermissions — protected system columns', () => {
     const r = await PermissionEngine.validateUpdatePermissions(
       adminCtx, { status: 'live' }, recordWith(memberSchema), 'thing')
     expect(r.valid).toBe(true)
+  })
+})
+
+// Decision 0036 — the outer write bypasses must accept isSystemPrincipal
+// (system_admin roles OR an unbound internal machine principal), matching
+// the access checks. A bare internal machine principal — what
+// handler_module:'custom' handlers run as — previously passed access but
+// failed write validation as a misleading 'Authentication required'.
+describe('admin-data — internal machine principal write bypass (0036)', () => {
+  const src = readFileSync(
+    join(__dirname, '../../functions/admin-data.ts'), 'utf8')
+
+  it('no write-validation bypass uses the narrower role-only isSystemAdmin', () => {
+    expect(src).not.toMatch(/!validation\.valid && !isSystemAdmin\(ctx\.principal\)/)
+    expect(src).not.toMatch(/!perms\.canDelete && !isSystemAdmin\(ctx\.principal\)/)
+  })
+
+  it('update, delete, and atomic paths bypass for isSystemPrincipal', () => {
+    const bypasses = src.match(/!isSystemPrincipal\(ctx\)/g) || []
+    expect(bypasses.length).toBeGreaterThanOrEqual(4)
   })
 })

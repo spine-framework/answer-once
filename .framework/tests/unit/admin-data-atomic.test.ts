@@ -8,9 +8,11 @@ import { join, resolve } from 'path'
 
 const REPO = resolve(__dirname, '../../..')
 const MIGRATION = join(REPO, '.framework/migrations/086_atomic_record_ops.sql')
+const MIGRATION_FIX = join(REPO, '.framework/migrations/088_record_atomic_update_keys.sql')
 const ADMIN_DATA = join(REPO, '.framework/functions/admin-data.ts')
 
 const sql = existsSync(MIGRATION) ? readFileSync(MIGRATION, 'utf8') : ''
+const fixSql = existsSync(MIGRATION_FIX) ? readFileSync(MIGRATION_FIX, 'utf8') : ''
 const src = existsSync(ADMIN_DATA) ? readFileSync(ADMIN_DATA, 'utf8') : ''
 
 describe('migration 086 — record_atomic_update', () => {
@@ -40,6 +42,23 @@ describe('migration 086 — record_atomic_update', () => {
   it('creates the per-type dedupe index for insert_once', () => {
     expect(sql).toMatch(/CREATE UNIQUE INDEX IF NOT EXISTS items_dedupe_key\s+ON public\.items \(type_id, \(data->>'dedupe_key'\)\)/)
     expect(sql).toMatch(/WHERE data \? 'dedupe_key'/)
+  })
+})
+
+describe('migration 088 — record_atomic_update SRF alias fix', () => {
+  // 086 shipped `SELECT key FROM jsonb_object_keys(...)` — the SRF column is
+  // named after the function, so every call 42703'd on first invocation.
+  // The replacement body must alias the SRF output; db:fixtures also invokes
+  // the RPC for real (applied ≠ working).
+  it('aliases jsonb_object_keys output in both loops', () => {
+    expect(fixSql.match(/FOR v_key IN SELECT t\.key FROM jsonb_object_keys/g)?.length).toBe(2)
+    expect(fixSql).not.toMatch(/FOR v_key IN SELECT key FROM/)
+  })
+
+  it('keeps the whitelist grammar and service_role-only grants', () => {
+    expect(fixSql).toMatch(/SECURITY DEFINER/)
+    expect(fixSql).toMatch(/REVOKE ALL ON FUNCTION public\.record_atomic_update\([^)]*\)\s*FROM PUBLIC, anon, authenticated/i)
+    expect(fixSql).toMatch(/GRANT EXECUTE ON FUNCTION public\.record_atomic_update\([^)]*\)\s*TO service_role/i)
   })
 })
 

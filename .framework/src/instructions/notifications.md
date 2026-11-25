@@ -2,8 +2,8 @@
 title: Notifications
 audience: both
 kind: entity
-verified_against: 5f7c326
-verified_on: 2026-11-24
+verified_against: 85b2802
+verified_on: 2026-11-25
 source_files:
   - .framework/migrations/050_notifications.sql
   - .framework/functions/_shared/notify.ts
@@ -53,7 +53,10 @@ entries. `resolveNotificationRecipients`
 (`.framework/functions/_shared/notify.ts`) expands `role:slug` → all
 `people.id` in the account holding that role; unknown entries warn and are
 skipped. A role matching zero people produces a valid empty insert — not an
-error.
+error. Recipients are **literal** — `{{record.data.field}}` templates are
+not evaluated (seed validation rejects them); to notify a record-derived
+person, register them as a `watchers` row and use `watchers`, or resolve
+the id in function code and emit the notification directly.
 
 ## Minimal configuration
 

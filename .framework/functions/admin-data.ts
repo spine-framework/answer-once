@@ -861,7 +861,7 @@ export const update = createHandler(async (ctx, body) => {
         typeSlugForPermissions
       )
 
-      if (!validation.valid && !isSystemAdmin(ctx.principal)) {
+      if (!validation.valid && !isSystemPrincipal(ctx)) {
         const e: any = new Error(validation.error || 'Insufficient permissions to update this record')
         e.statusCode = 403
         throw e
@@ -943,7 +943,7 @@ export const remove = createHandler(async (ctx, _body) => {
         existing.design_schema
       )
 
-      if (!perms.canDelete && !isSystemAdmin(ctx.principal)) {
+      if (!perms.canDelete && !isSystemPrincipal(ctx)) {
         const e: any = new Error('Insufficient permissions to delete this record')
         e.statusCode = 403
         throw e
@@ -1138,14 +1138,14 @@ export const atomic = createHandler(async (ctx, body) => {
 
       const typeSlugForPermissions = ctx.query?.type_slug || ENTITY_TO_KIND[entity] || entity
       const validation = await validateUpdatePermissions(ctx, patch, existing, typeSlugForPermissions)
-      if (!validation.valid && !isSystemAdmin(ctx.principal)) {
+      if (!validation.valid && !isSystemPrincipal(ctx)) {
         const e: any = new Error(validation.error || 'Insufficient permissions to update this record')
         e.statusCode = 403; throw e
       }
       // delta fields ride the same field-write permission check as data writes
       if (Object.keys(delta).length) {
         const dv = await validateUpdatePermissions(ctx, { data: delta }, existing, typeSlugForPermissions)
-        if (!dv.valid && !isSystemAdmin(ctx.principal)) {
+        if (!dv.valid && !isSystemPrincipal(ctx)) {
           const e: any = new Error(dv.error || 'Insufficient permissions to update delta fields')
           e.statusCode = 403; throw e
         }

@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: 85b2802
+verified_on: 2026-11-25
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -149,6 +149,12 @@ check rejects `127.0.0.1` (see `reference/env-vars.md`). Set
 `postgres` by default, and any future direct-DB path that prefers the
 password over the URL will find it.
 
+If you wire `.env` from `supabase status -o env` output programmatically,
+filter for `KEY=VALUE` lines before `eval`'ing — the output can carry a
+human `Stopped services: [...]` line alongside the pairs. Preflight the
+full local port set in one `lsof`:
+`lsof -nP -iTCP:54321-54324 -iTCP:50050 -iTCP:8888 -iTCP:3001 -sTCP:LISTEN`.
+
 Three local-only adjustments the installer can't make for you:
 
 - **CSP.** `netlify.toml`'s `connect-src` allows `https://*.supabase.co`
@@ -252,8 +258,13 @@ handler. Netlify serves the site on **http://localhost:8888** and starts
 the Vite dev server on 3001 via `scripts/netlify-dev-wrapper.sh`.
 **Wait for the "Local dev server ready" banner** — the first `dev:netlify`
 run bundles ~80 functions and can take a couple of minutes before the banner
-appears; this is normal, not a hang. Early requests during function bundling
-can crash the dev server (noted in `scripts/dev-netlify.sh`).
+appears; this is normal, not a hang. The banner means the proxy is up, not
+the SPA — the **first `GET /` compiles the frontend** and can take 90s+ on
+slower machines; wait for a 200, not just the banner. Early requests during
+function bundling can crash the dev server (noted in
+`scripts/dev-netlify.sh`). A known-good liveness probe once it serves:
+`curl -H "x-api-key: $SPINE_API_KEY" http://localhost:8888/api/admin-data?action=stats&entity=items`
+— expect HTTP 200 with a count; there is no `/api/health` endpoint.
 
 Ports are **fixed**: `netlify dev` must bind 8888 and Vite 3001 — both are
 pinned by framework-owned config (`netlify.toml` `[dev]` port/targetPort,

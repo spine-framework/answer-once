@@ -186,7 +186,9 @@ async function checkMigrations(): Promise<CheckResult> {
 
 
 async function checkIntegrity(): Promise<CheckResult> {
-  const manifestPath = resolve(__dirname, '../../.spine-manifest.json')
+  // The manifest lives at the project root, not inside .framework/ —
+  // resolving relative to this file finds nothing on scaffolded installs.
+  const manifestPath = join(process.cwd(), '.spine-manifest.json')
 
   if (!existsSync(manifestPath)) {
     return {
@@ -315,11 +317,19 @@ function checkPublicSurface(): CheckResult {
   const problems: string[] = []
   if (existsSync(publicDir)) {
     const SUSPECT = /^(\.env|spine\.config\.|netlify\.toml|package(-lock)?\.json|tsconfig|secrets?\.|credentials?\.|.*\.(pem|key|p12|pfx))/
+    // assemble-frontend.sh stages the root spine.config.json into public/ by
+    // design (branding.ts fetches /spine.config.json). Exempt only the
+    // byte-identical staged copy — a divergent or extra spine.config.* file
+    // is still flagged.
+    const rootConfigPath = join(root, 'spine.config.json')
+    const stagedConfig = existsSync(rootConfigPath) ? readFileSync(rootConfigPath) : null
+    const isStagedCopy = (rel: string, abs: string): boolean =>
+      rel === 'spine.config.json' && stagedConfig !== null && readFileSync(abs).equals(stagedConfig)
     const walk = (dir: string, rel = ''): void => {
       for (const entry of readdirSync(dir, { withFileTypes: true })) {
         const p = rel ? `${rel}/${entry.name}` : entry.name
         if (entry.isDirectory()) walk(join(dir, entry.name), p)
-        else if (SUSPECT.test(entry.name)) problems.push(`public/${p}`)
+        else if (SUSPECT.test(entry.name) && !isStagedCopy(p, join(dir, entry.name))) problems.push(`public/${p}`)
       }
     }
     walk(publicDir)
