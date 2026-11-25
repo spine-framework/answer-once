@@ -1,8 +1,8 @@
 ---
 name: spine-upgrade
 description: "Explain and run spine-framework upgrade — what it rewrites, what it preserves, and the dry-run/force flags."
-verified_against: 1929705
-verified_on: 2026-11-23
+verified_against: eb49fb4
+verified_on: 2026-11-24
 allowed-tools:
   - read
   - exec

@@ -60,6 +60,26 @@ const Button = React.forwardRef<
 }, ref) {
   const Comp = asChild ? Slot.Root : "button"
 
+  // Slot requires exactly one element child — `{loading && <Loader2/>}`
+  // renders `false` as a second child when not loading, crashing every
+  // asChild usage. Inject the spinner into the child's own children
+  // instead so the Slot still receives a single element.
+  const content =
+    asChild && React.isValidElement(children)
+      ? React.cloneElement(
+          children as React.ReactElement<{ children?: React.ReactNode }>,
+          undefined,
+          loading ? (
+            <>
+              <Loader2 className="animate-spin" />
+              {children.props.children}
+            </>
+          ) : (
+            children.props.children
+          ),
+        )
+      : children
+
   return (
     <Comp
       data-slot="button"
@@ -70,8 +90,14 @@ const Button = React.forwardRef<
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="animate-spin" />}
-      {children}
+      {asChild ? (
+        content
+      ) : (
+        <>
+          {loading && <Loader2 className="animate-spin" />}
+          {children}
+        </>
+      )}
     </Comp>
   )
 })

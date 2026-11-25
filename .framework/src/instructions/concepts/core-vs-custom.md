@@ -2,8 +2,8 @@
 title: Core vs Custom Boundary
 audience: developers, agents
 kind: concept
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/upgrade.ts
@@ -93,7 +93,9 @@ re-hashes the tree and compares.
   configs agree by decision `0025` (`@custom/<slug>` = cross-app import).
   `config/tsconfig.functions.json` maps `@shared/*` to
   the assembled `_shared/` directory — custom functions import `./_shared/...`
-  at runtime.
+  at runtime. Pure domain code lives once in `custom/shared/`: the frontend
+  reaches it as `@domain/*`, functions as `./_shared/domain/*`
+  (decision `0035`).
 - **Assembly** — `scripts/assemble-frontend.sh` copies `.framework/src` as the
   base layer and each `custom/apps/<slug>` verbatim into `.assembled/src/<slug>/`;
   `scripts/assemble-functions.sh` flattens framework + custom handlers into

@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-add-automation
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/_shared/pipeline-runner.ts

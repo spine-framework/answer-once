@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-new-app
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/cli/commands/create-app.ts
   - .framework/cli/commands/install-app.ts
@@ -122,9 +122,10 @@ see [Package and install an app](package-and-install-an-app.md).
 - **`nav_items` absolute paths missing the prefix** — `/tasks` navigates
   outside the app and 404s. Use either `/taskboard/tasks` (absolute
   incl. prefix) or `tasks` (relative — the shell prefixes it).
-- **Expecting public access** — `is_public`/`auth_required` exist on the
-  manifest but are not wired into the unauthenticated router; every app is
-  behind login.
+- **Expecting public access without `is_public`** — apps mount behind
+  login by default; `is_public: true` (custom renderer) mounts the app
+  for anonymous visitors — rendering only, data still flows through
+  `createPublicHandler` endpoints ([serve public content](serve-public-content.md)).
 - **Generic app, thin schema** — `renderer: 'generic'` with types lacking
   `views.default_list`/`default_detail` renders "No schema available."
 

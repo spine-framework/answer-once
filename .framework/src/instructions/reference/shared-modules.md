@@ -2,8 +2,8 @@
 title: Shared Modules Reference
 audience: developers, agents
 kind: reference
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/_shared/index.ts
   - .framework/functions/_shared/middleware.ts
@@ -109,6 +109,24 @@ types). Import a sibling as `from './_shared/<module>'`.
 | `storage.ts` | `TMP_BUCKET`, `PRIVATE_BUCKET`, `PUBLIC_BUCKET`, `BUCKET_MAX_BYTES`, `ensureAttachmentBuckets`, `mintUploadUrl`, `downloadBytes`, `uploadBytes`, `removeBytes`, `signedReadUrl`, `publicReadUrl`, `sweepTmpUploads` | attachment bucket provisioning, signed upload/read URLs, byte IO, the cron tmp sweep |
 | `attachments.ts` | `DEFAULT_IMAGE_POLICY`, `resolveFilePolicy`, `assertUploadAllowed`, `sanitizeFilename`, `commitUpload` | resolving a type's `file_policy` and the quarantine→final commit used by `admin-data` create |
 | `image-meta.ts` | `IMAGE_MIMES`, `sniffImageMime`, `stripGps` | magic-byte image verification and GPS EXIF removal (fail-closed) |
+
+## Project domain modules (`custom/shared/`)
+
+Pure project code that **both** the frontend and functions need — a
+calculation engine, state machine, shared validators — lives in
+`custom/shared/`. One source, two import surfaces:
+
+- **Frontend:** `import { x } from '@domain/<module>'` — vite + tsconfig
+  alias `@domain/*` → `custom/shared/*`.
+- **Functions:** `import { x } from './_shared/domain/<module>'` — the
+  assemble script stages `custom/shared/` into
+  `.assembled/netlify/functions/_shared/domain/`.
+
+Keep these modules dependency-free and side-effect-free (no `adminDb`, no
+browser APIs, no env reads): they must run identically in a Vite bundle
+and a Netlify function. If a module needs secrets, DB, or fetch, it isn't
+shared-domain code — put it in `_shared/` on the function side or behind
+an API call on the frontend side.
 
 ## Framework internals
 

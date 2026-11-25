@@ -2,8 +2,8 @@
 title: Database Migrations
 audience: both
 kind: reference
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/cli/commands/migrate.ts
   - .framework/cli/commands/migrations.ts

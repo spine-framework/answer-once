@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: a65afb1
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -138,6 +138,10 @@ Point the env vars at it:
 | `SUPABASE_SERVICE_ROLE_KEY` | the printed `service_role key` JWT |
 | `SUPABASE_DB_URL` | `postgresql://postgres:postgres@127.0.0.1:54322/postgres` |
 
+The values above assume the default ports. If you change ports in
+`supabase/config.toml` (see the port note below), mirror them here — use the
+URLs `supabase status` reports, not this table.
+
 `SUPABASE_DB_URL` is **required** on a local stack — `migrate` only derives
 the database host from `SUPABASE_URL` when it is absent, and the hosted-URL
 check rejects `127.0.0.1` (see `reference/env-vars.md`). Set
@@ -179,6 +183,24 @@ Three local-only adjustments the installer can't make for you:
   or set `RESEND_API_KEY`.
 - **Email confirmation** is already off: the generated `config.toml` ships
   `[auth.email] enable_confirmations = false`.
+- **Ports — macOS ephemeral range.** Supabase's default ports
+  (54321–54329, plus shadow/kong neighbors) sit inside macOS's ephemeral
+  range (49152–65535, check `sysctl net.inet.ip.portrange.first`). Docker
+  and macOS apps grab ephemeral ports constantly, so the first
+  `supabase start` on a Mac can lose the race and report containers
+  unhealthy or "ports not available" with no usable logs. The durable fix:
+  move the published ports below 49152 in `supabase/config.toml`
+  (`api.port`, `db.port`, `studio.port`, `inbucket.port`,
+  `storage.port`, `auth.port`, `kong` ports) and mirror the new values in
+  `.env` per the table above.
+- **When `supabase start` fails**, capture logs before retrying — the CLI
+  deletes failed containers and their logs on teardown, so a retry loop
+  without `--debug` learns nothing. First move: `supabase stop && supabase
+  start --debug` (or `docker logs` a surviving container before the CLI
+  reaps it). Check `docker info | grep MemTotal` too — the CLI stack
+  cold-starts many containers and a marginal Docker Desktop allocation
+  (~6% VM overhead under the slider value) surfaces as flaky "unhealthy"
+  containers; give Docker ≥6 GiB.
 
 ## Step 3 — install deps and verify
 

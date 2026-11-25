@@ -2,8 +2,8 @@
 title: "Automation: pipelines, triggers, and timers"
 audience: developers, agents
 kind: concept
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/pipelines.ts
   - .framework/functions/pipeline-executions.ts
@@ -62,6 +62,11 @@ then routes on `handler_module`:
 - `integrations` — dispatch through `integration-outbound` (the same path
   outbound webhooks use).
 - `webhook` — POST/GET to `action.config.url` via `integration-outbound`.
+- `custom` — invoke a project function named `custom_<slug>` over
+  `x-internal-secret` at the site's own functions URL (≤55s, internal
+  machine principal, no published endpoint or config secret). Dispatched
+  by `system-cron`'s `executeAction` for scheduled project work — the
+  sanctioned path instead of timer → `http_request` loopback.
 
 Stage config strings support `{{trigger.*}}` and `{{record.*}}` placeholders,
 resolved recursively against the trigger envelope and the firing record's data

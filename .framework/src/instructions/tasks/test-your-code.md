@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-test
-verified_against: fd571fc
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - vitest.config.ts
   - .framework/tests/setup.ts

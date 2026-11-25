@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-new-app
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/roles.ts
   - .framework/functions/_shared/permissions.ts

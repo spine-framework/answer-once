@@ -1,8 +1,8 @@
 ---
 name: spine-add-automation
 description: "Add Spine automation — a pipeline with stages, wired to a trigger (event), timer (schedule), or webhook."
-verified_against: 1929705
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 allowed-tools:
   - read
   - write

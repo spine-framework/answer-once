@@ -2,8 +2,8 @@
 title: admin-data API
 audience: developers, agents
 kind: reference
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -36,23 +36,33 @@ HTTP method picks the verb (`GET`+`id` → get, `GET` → list, `POST` → creat
 
 | Action | Method | Params |
 |---|---|---|
-| `list` | GET | `entity` (required), `search`, `type_slug`, `type_slugs` (csv), `sort_field` (default `created_at`), `sort_direction` (`asc`/`desc`, default `desc`), `limit` (default 50), `offset`, `view`, `flag_only`, `exclude_flag`, plus any other `key=value` as `eq` filters (`is_active`/`is_verified`/`is_primary` coerce `'true'` → boolean) |
+| `list` | GET | `entity` (required), `search`, `type_slug`, `type_slugs` (csv), `sort_field` (default `created_at` — passed verbatim to PostgREST `order`, so it must be a real column; `data.*` jsonb paths are rejected — sort on a column and order client-side), `sort_direction` (`asc`/`desc`, default `desc`), `limit` (default 50), `offset`, `view`, `flag_only`, `exclude_flag`, plus any other `key=value` as `eq` filters (`is_active`/`is_verified`/`is_primary` coerce `'true'` → boolean) |
 | `get` | GET | `entity`, `id`, `view`, `lineage=0` (items only — skips lineage attach) |
 | `stats` | GET | `entity` → `{entity, count}` |
 | `create` | POST | `entity` (query or body), `type_slug` **or** `type_id` (required for non-raw entities), record fields; `tmp_path` required for `entity=attachments` |
 | `update` | PATCH | `entity`, `id`, record fields (partial) |
 | `remove` | DELETE | `entity`, `id`, `soft` (default `'true'`) |
+| `atomic` | PATCH | `entity`, `id`; body `conditions`/`patch`/`delta` or claim shorthand `{from, to}` — see [Atomic updates](#atomic-updates) |
+| `insert_once` | POST | `entity=items`, `type_slug`/`type_id`, `dedupe_key` + normal create fields — see [Idempotent create](#idempotent-create) |
 
 Valid entities: `accounts`, `people`, `items`, `threads`, `messages`,
 `links`, `attachments`, `watchers`, `item_progress`, `logs`, `test_runs`,
-`observability`, `test_cases`, `types`, `link_types`, `ai_agents`,
-`prompt_configs`.
+`observability`, `test_cases`, `notifications`, `types`, `link_types`,
+`ai_agents`, `prompt_configs`.
 
 `logs`, `test_runs`, `observability`, `test_cases` are **raw entities**:
 create takes a per-entity field allowlist, requires specific fields
 (`logs`: `level`+`message`; `test_runs`: `suite`; `observability`:
 `metric_name`+`metric_value`; `test_cases`: `slug`+`name`), and needs no
 `type_id`.
+
+`notifications` is a raw entity with a narrower surface: **read and
+mark-read only**. `list`/`get` work through the normal account scope plus
+RLS (recipients see their own deliveries; `system_admin` sees the account
+inbox). `update` accepts only `is_read`/`read_at` and only on the caller's
+own rows (`is_read: true` stamps `read_at` when omitted). `create` is
+rejected — deliveries are written by pipeline `send_notification` stages
+and agents, never client-side.
 
 **Attachments:** `entity=attachments` create is the commit step of the
 upload flow — `tmp_path` must name a quarantined `attachments-tmp` object
@@ -92,6 +102,15 @@ formatting.
    record's** stamped `design_schema` (no `record_permissions` → deny); each
    `data.<field>` written requires field `write`; sanitizes values through
    `validation_schema`. `system_admin` bypasses.
+   **Protected system columns:** `status` and `is_active` are *not* implied
+   by a record-level `update` grant — they drive record state machines, so
+   a bare `update` grant can never bypass transition rules. Writing them
+   requires a system principal or an explicit field grant on the type's
+   `design_schema`: `fields.<col>.permissions.<role>: ["write"]` or
+   `system_fields.<col>.<role>: ["write"]`. The same rule applies to
+   body-supplied `status`/`is_active` on `create`. `title` is exempt — it
+   is a required system field on nearly every type and member creates
+   legitimately set it. (Decision `spine-framework:0032`.)
 4. `remove` → `resolveFirstSurfacePermissions(..., 'delete',
    existing.design_schema)`; `system_admin` bypasses.
 5. `list`/`get` run under `ctx.db` (RLS-scoped for humans, `adminDb` for
@@ -137,6 +156,59 @@ Principals without internal-audience roles never see `visibility:
 to safe step summaries via `projectMessageForCustomer` — unless the parent
 thread is `external`/`public`.
 
+## Atomic updates
+
+`PATCH /api/admin-data?action=atomic&entity=items&id=<uuid>` executes a
+conditional UPDATE in a single statement — the database decides the race.
+Covers the shapes every app otherwise re-derives in bespoke SQL: inventory
+counters, allocation, claim-if-status. (Decision
+`spine-framework:0033`; `entities`: `items`, `threads`, `messages`,
+`watchers`, `item_progress`.)
+
+Body:
+
+- `conditions`: `[{path, op, value}]` — `path` is a system column
+  (`status`, `title`, `is_active`, `metadata`) or `data.<field>`; `op` is
+  `eq|neq|lt|lte|gt|gte` (ordered ops compare numerically)
+- `patch`: `{status, title, is_active, metadata, data:{...}}` — same
+  columns `update` may write, same permission check (a denied `status`
+  write denies the atomic call too)
+- `delta`: `{field: n}` — numeric increment applied inside the same
+  UPDATE; each field needs field `write` like a `data` write
+- `{from, to}` — claim shorthand: condition `status = <from>`, patch
+  `status = <to>` (+ optional `patch`/`delta`)
+
+```bash
+# Reserve 2 seats only if capacity remains — no oversell under concurrency
+PATCH /api/admin-data?action=atomic&entity=items&id=<event>
+{"conditions": [{"path": "data.reserved_qty", "op": "lte", "value": 8}],
+ "delta": {"reserved_qty": 2}}
+
+# Claim a task only if still unclaimed (lost race → 409)
+PATCH /api/admin-data?action=atomic&entity=items&id=<task>
+{"from": "open", "to": "claimed",
+ "patch": {"data": {"claimed_by": "<person>"}}}
+```
+
+`409` means the conditions didn't match — the row changed underneath you
+or the race was lost; re-read and decide. `conditions` never write; only
+`patch`/`delta` do, and each is permission-checked against the record's
+`design_schema` exactly like `update`.
+
+## Idempotent create
+
+`POST /api/admin-data?action=insert_once&entity=items` takes a normal
+create body plus `dedupe_key` (string ≤200 chars). The key is stamped into
+`data.dedupe_key` and a per-type unique index
+(`items (type_id, data->>'dedupe_key')`) makes check+insert atomic. On a
+collision the call returns the **existing** row with
+`deduplicated: true` instead of a 500 — safe to retry job submissions,
+checkout intents, webhook handlers.
+
+Any other `create` that supplies `data.dedupe_key` is also protected by
+the index — it just gets the unique-violation error rather than the
+existing row.
+
 ## Triggers
 
 `create`/`update` await `fireCreateTriggers` / `fireUpdateTriggers`
@@ -159,7 +231,9 @@ POST /api/admin-data?action=create
 {"entity": "items", "type_slug": "ticket", "title": "Login broken",
  "data": {"priority": "high"}}
 
-# Partial update — only listed data fields are written, each needs field 'write'
+# Partial update — data fields each need field 'write'; 'status' is a
+# protected system column (needs a system principal or an explicit
+# fields.status.permissions / system_fields.status grant on the type)
 PATCH /api/admin-data?action=update&entity=items&id=<uuid>
 {"data": {"priority": "low"}, "status": "resolved"}
 
@@ -180,3 +254,5 @@ call pattern through `apiFetch` (`.framework/src/lib/api.ts`), which attaches
 | 401 | no valid credential — see [Authentication](auth.md) |
 | 403 | record/field permission denied; parent record not found or not accessible |
 | 404-style | `get`/`update`/`remove` on an inaccessible row errors "Record not found or access denied" (RLS hides it) |
+| 405 | `create` on `entity=notifications` — deliveries are pipeline-written only |
+| 409 | `atomic` conditions unmet — record changed or race lost; `insert_once` never 409s, it returns the existing row |

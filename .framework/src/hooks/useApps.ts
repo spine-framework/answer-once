@@ -24,6 +24,8 @@ export interface AppRecord {
   required_roles?: string[]
   is_active: boolean
   is_system: boolean
+  is_public?: boolean
+  auth_required?: boolean
   route_prefix: string | null
   renderer: 'generic' | 'custom' | 'none'
   preview_domain?: string | null

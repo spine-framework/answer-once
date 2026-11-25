@@ -16,6 +16,7 @@ export const ENTITY_ACCOUNT_KEY: Record<string, string | null> = {
   test_runs: 'account_id',
   observability: 'account_id',
   test_cases: 'account_id',
+  notifications: 'account_id',
   ai_agents: 'account_id',
   prompt_configs: 'account_id',
   types: null,

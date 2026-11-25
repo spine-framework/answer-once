@@ -2,8 +2,8 @@
 title: Runtime Record (detail)
 audience: both
 kind: ui
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/src/components/runtime/DataDetailPage.tsx
   - .framework/src/hooks/useEntityRecord.ts
@@ -20,7 +20,7 @@ source_files:
 - **Header** — record title (`design_schema.display_field`, falling back through `full_name` → `display_name` → `name` → `title` → `slug` → `email` → "Untitled"), plus Edit / Save / Cancel / Delete buttons. `?edit=true` toggles edit mode; `new` starts in edit mode.
 - **Sections** — `views.default_detail.sections[*]`: each section's `fields` render as form controls per `display_type` (`input`, `textarea`, `select`, `checkbox`, `date_picker`, `json`-as-textarea, ...).
 - **Field values** — `system: true` fields read `record.<field>`; everything else reads `record.data.<field>` and is written back under `data`.
-- **Field permissions** — `fieldPermissions` from the record response gate which inputs are editable (field-level `read`/`write` from `fields.*.permissions` over the record grant).
+- **Field permissions** — `fieldPermissions` from the record response gate which inputs are editable (field-level `read`/`write` from `fields.*.permissions` over the record grant). System columns `status`/`is_active` additionally need an explicit `write` grant on the field (or a system principal) — a bare record-level `update` no longer covers them.
 - **Delete** — confirm → `admin-data` remove → back to the entity list.
 
 **Downstream effects**

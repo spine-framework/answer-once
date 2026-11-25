@@ -464,7 +464,7 @@ async function executeAction(
       return await executeIntegrationHandler(ctx, handlerName, mergedConfig)
     
     case 'custom':
-      throw new Error(`Custom handlers not yet implemented: ${handlerName}`)
+      return await executeCustomHandler(ctx, handlerName, mergedConfig)
     
     default:
       throw new Error(`Unknown handler module: ${handlerModule}`)
@@ -583,6 +583,54 @@ async function executeIntegrationHandler(
 ): Promise<any> {
   console.log(`[${ctx.requestId}] Integration handler: ${handlerName}`, config)
   return { executed: true, handler: handlerName }
+}
+
+/**
+ * Invokes a project `custom_*` function over the internal-invoke channel.
+ * The secret lives in env (INTERNAL_INVOKE_SECRET), not in action config,
+ * so scheduled project work needs no caller-published credential; the
+ * callee authenticates as an unbound internal machine principal. Only
+ * `custom_*` names are routed — schedules must not reach framework
+ * internals (admin-data, pipelines, invites) through this branch.
+ */
+async function executeCustomHandler(
+  ctx: RequestContext,
+  handlerName: string,
+  config: any
+): Promise<any> {
+  if (!/^custom_[a-z0-9][a-z0-9_-]{0,62}$/.test(handlerName || '')) {
+    throw new Error(`Custom handler names must match custom_<slug>: ${handlerName}`)
+  }
+
+  const secret = (globalThis as any).process?.env?.INTERNAL_INVOKE_SECRET
+  if (!secret) {
+    throw new Error('INTERNAL_INVOKE_SECRET not set — cannot invoke custom handlers')
+  }
+
+  const siteUrl = ((globalThis as any).process?.env?.SITE_URL ||
+                   (globalThis as any).process?.env?.URL ||
+                   'http://localhost:8888').replace(/\/$/, '')
+
+  const response = await fetch(`${siteUrl}/.netlify/functions/${handlerName}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Internal-Secret': secret,
+    },
+    body: JSON.stringify({ scheduled: true, ...config }),
+    signal: AbortSignal.timeout(55000),
+  })
+
+  const text = await response.text().catch(() => '')
+  if (!response.ok) {
+    throw new Error(`Custom handler ${handlerName} failed: HTTP ${response.status} — ${text.slice(0, 500)}`)
+  }
+
+  try {
+    return JSON.parse(text)
+  } catch {
+    return { executed: true, handler: handlerName, status: response.status }
+  }
 }
 
 

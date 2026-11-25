@@ -38,7 +38,7 @@
 
 
 
-import { createHandler } from './_shared/middleware'
+import { createHandler, createPublicHandler } from './_shared/middleware'
 import { adminDb } from './_shared/db'
 import { emitLog } from './_shared/audit'
 import { isSystemAdmin } from './_shared/principal'
@@ -351,7 +351,22 @@ export const updateVersion = createHandler(async (ctx, body) => {
 
   return { success: true }
 })
-export const handler = createHandler(async (ctx, body) => {
+// Anonymous app discovery — the SPA router mounts is_public custom apps
+// without an auth wall (decision 0034). Tight projection: only what the
+// router/mount resolver needs; config, metadata, and tenancy fields never
+// leave the service-role boundary.
+const listPublic = createPublicHandler(async () => {
+  const { data, error: err } = await adminDb
+    .from('apps')
+    .select('id, slug, name, description, icon, color, route_prefix, renderer, min_role, required_roles, nav_items, is_public, auth_required, is_active, preview_domain, prod_domain, prod_domains, preview_route_prefix, prod_route_prefix')
+    .eq('is_active', true)
+    .eq('is_public', true)
+    .eq('renderer', 'custom')
+
+  if (err) throw err
+  return data || []
+})
+const authedHandler = createHandler(async (ctx, body) => {
   const method = ctx.query?.method || 'GET'
 
   switch (method) {
@@ -381,3 +396,10 @@ export const handler = createHandler(async (ctx, body) => {
       throw new Error(`Unsupported method: ${method}`)
   }
 })
+// action=public must bypass the createHandler auth wall — dispatch on the
+// raw event first. Internal invokes ({requestId, principal}, no query
+// params) fall through to authedHandler's pass-through unchanged.
+export const handler = async (event: any, context: any) =>
+  event?.queryStringParameters?.action === 'public'
+    ? listPublic(event, context)
+    : authedHandler(event, context)

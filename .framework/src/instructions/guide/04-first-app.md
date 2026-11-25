@@ -2,8 +2,8 @@
 title: Build your first app
 audience: developers, agents
 kind: guide
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/types.ts
   - .framework/functions/apps.ts
@@ -43,7 +43,8 @@ Admin UI → **Configs → Types → New** (or `POST /api/types`). Set:
   "fields": {
     "title":    { "data_type": "text",   "label": "Title",    "required": true,  "system": true },
     "status":   { "data_type": "select", "label": "Status",   "required": true, "system": true,
-                  "options": ["todo", "doing", "done"] },
+                  "options": ["todo", "doing", "done"],
+                  "permissions": { "engineering": ["write"] } },
     "priority": { "data_type": "select", "label": "Priority", "required": false,
                   "options": ["low", "normal", "high"] },
     "notes":    { "data_type": "textarea", "label": "Notes",  "required": false }
@@ -88,7 +89,12 @@ The rules that matter here: `select` fields need `options`; `title` and
 `items.status` columns — a field named `status` *without* `system: true`
 lands in `items.data` while list/detail views still render the column's
 lifecycle value (`active`), so the flag is load-bearing for reserved column
-names — while `priority` and `notes` live in `items.data`;
+names — while `priority` and `notes` live in `items.data`. And because
+`status` is a protected system column, the record-level `update` grant is
+not enough to write it: the explicit
+`fields.status.permissions.engineering: ["write"]` is what lets the
+`engineering` role set and change status; without it member writes 403
+(decision `0032`);
 `record_permissions` is the base
 grant evaluated on every `/api/admin-data` call, and its keys are matched
 **verbatim** against `roles.slug` — so use real seeded slugs (`system_admin`,

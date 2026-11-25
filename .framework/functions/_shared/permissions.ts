@@ -15,6 +15,11 @@ export interface PermissionResult {
 
 type RequestContext = CoreContext
 
+// Record columns outside `data` that a record-level write grant does not
+// cover. `title` is intentionally absent: it is a required system field on
+// nearly every type and member creates legitimately set it.
+const PROTECTED_SYSTEM_COLUMNS = new Set(['status', 'is_active'])
+
 class _PermissionEngineInternal {
   private static instance: _PermissionEngineInternal
 
@@ -602,6 +607,15 @@ class _PermissionEngineInternal {
       return { valid: false, error: 'Insufficient permissions to update this record' }
     }
 
+    // Protected system columns are never implied by a record-level `update`
+    // grant — checked before any early return so a fields-less schema can't
+    // slip a `status` write through.
+    for (const key of Object.keys(updateData)) {
+      if (PROTECTED_SYSTEM_COLUMNS.has(key) && !this.canWriteSystemColumn(ctx, designSchema, key)) {
+        return { valid: false, error: `Insufficient permissions to update system column '${key}'` }
+      }
+    }
+
     // When no field definitions are provided, allow the whole update through at the record update level.
     if (Object.keys(designSchema.fields || {}).length === 0) {
       return { valid: true, sanitizedData: updateData }
@@ -657,14 +671,32 @@ class _PermissionEngineInternal {
       }
     }
 
-    // Copy non-data/metadata fields through
+    // Copy non-data/metadata fields through (protected system columns were
+    // already validated above).
     for (const [key, value] of Object.entries(updateData)) {
-      if (key !== 'data' && key !== 'metadata') {
-        sanitizedData[key] = value
-      }
+      if (key === 'data' || key === 'metadata') continue
+      sanitizedData[key] = value
     }
 
     return { valid: true, sanitizedData }
+  }
+
+  // Columns outside `data` whose writes are never implied by a record-level
+  // grant. `title` is intentionally absent: it is a required system field on
+  // nearly every type and member creates legitimately set it.
+  canWriteSystemColumn(ctx: RequestContext, designSchema: any, column: string): boolean {
+    const principal = ctx.principal
+    if (!principal) return false
+    if (principal.isInternal === true) return true
+    if (principal.roles?.includes('system_admin')) return true
+    if (principal.type === 'machine' && (principal.scopes || []).includes('*:*')) return true
+
+    const roleKeys = [...(principal.roles || []), 'all']
+    const grants = {
+      ...(designSchema?.fields?.[column]?.permissions || {}),
+      ...(designSchema?.system_fields?.[column] || {})
+    }
+    return roleKeys.some(r => Array.isArray(grants[r]) && grants[r].includes('write'))
   }
 
   async canPrincipalAccessRecord(
@@ -786,6 +818,13 @@ export const sanitizeRecordData = PermissionEngine.sanitizeRecordData.bind(Permi
 
 
 export const validateUpdatePermissions = PermissionEngine.validateUpdatePermissions.bind(PermissionEngine)
+
+
+
+
+
+
+export const canWriteSystemColumn = PermissionEngine.canWriteSystemColumn.bind(PermissionEngine)
 
 
 

@@ -368,6 +368,14 @@ export const completeRegistration = createHandler(async (ctx, body) => {
   })
 
   if (rpcError || !rpcResult) {
+    // Invite-less self-serve signups can still reach complete-registration:
+    // the auth.users trigger creates people rows only when it claims an
+    // invite stub, so a no-invite person has no row and nothing to place.
+    // 'Person not found' means exactly that — answer a no-op rather than an
+    // error. Policy/registration errors stay 400s.
+    if (/person not found/i.test(rpcError?.message || '')) {
+      return { status: 'noop' }
+    }
     const err: any = new Error(rpcError?.message || 'Registration placement failed')
     err.statusCode = 400
     throw err

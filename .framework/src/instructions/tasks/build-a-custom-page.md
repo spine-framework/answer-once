@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-new-app
-verified_against: 8a0dc59
-verified_on: 2026-10-30
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/src/components/CustomAppLoader.tsx
   - .framework/src/components/AppWrapper.tsx

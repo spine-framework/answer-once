@@ -2,8 +2,8 @@
 title: People
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-02
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/functions/auth.ts
@@ -52,7 +52,9 @@ You need a single identity table that works across accounts and integrates with 
 **Downstream effects**
 
 - `useAuth().user` (`@core/contexts/AuthContext`) is derived from this row +
-  role join: `roles: string[]`, `account_id`, `is_system_admin`, `status`.
+  role join: `roles: string[]` (a single-element array today — one `role_id`
+  per person, plural-shaped for future multi-role), `account_id`,
+  `is_system_admin`, `status`.
 - The registration lifecycle: register → (email confirm) → person row with
   `account_id` unset = unplaced → `/register?resume=1` finishes placement →
   `status: 'pending'` requires approval → `active`.
@@ -101,3 +103,16 @@ skipping the unplaced dance entirely.
   `fetchUserContext → apiFetch → getAuthHeaders → getSession` deadlocks
   until `SESSION_TIMEOUT_MS` (15 s of spinner on every expired-session
   visit). Defer the work (`setTimeout`) inside the callback.
+- `people_read` is **not** self-scoped: `account_id IN
+  get_accessible_accounts(actor) OR id = actor` (migration 045) — a member
+  reads every person in their accessible accounts. `design_schema` record
+  grants then gate *fields* per record — and they cannot distinguish
+  "self" from "other" rows, so a member-readable `person` type exposes
+  every account-mate's granted fields (email included) through
+  `entity=people` list. For a member directory/member-picker, prefer a
+  member-authenticated function returning a sanitized projection
+  (names, avatar, bio — not the raw people rows). Note the stamp trap:
+  people rows created **before** a `permissions_patch` lands carry the old
+  `record_permissions` — they read back as `{id, created_at, updated_at}`
+  placeholders to the new role, which can look like "RLS returned only my
+  row." Restamp or create the rows after patching.

@@ -23,7 +23,8 @@
       "@/*": ["../.assembled/src/*"],              // Assembled frontend
       "@core/*": ["../.framework/src/*"],          // Core source (same tree as .assembled/src base layer)
       "@custom/*": ["../custom/apps/*"],           // Custom app source (matches vite alias — decision 0025)
-      "@shared/*": ["../.framework/functions/_shared/*"] // Shared functions (resolved at runtime via assembly)
+      "@shared/*": ["../.framework/functions/_shared/*"], // Shared functions (resolved at runtime via assembly)
+      "@domain/*": ["../custom/shared/*"]          // Domain modules shared by frontend + functions (assembled to _shared/domain/)
     }
   },
   // NOTE: include/exclude paths are relative to THIS directory (config/), so
@@ -42,7 +43,8 @@
     "../.framework/src",
     "../custom/apps",
     "../custom/components",
-    "../custom/hooks"
+    "../custom/hooks",
+    "../custom/shared"
   ],
   "exclude": [
     "node_modules",

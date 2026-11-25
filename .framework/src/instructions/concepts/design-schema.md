@@ -2,8 +2,8 @@
 title: Design Schema
 audience: developers, agents
 kind: concept
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/types.ts
@@ -78,7 +78,11 @@ overrides — see [Permissions](permissions.md)).
 
 The `system` flag controls storage: `system: true` fields are top-level record
 columns; all others live under `record.data.<field>` — see
-[Runtime Records](runtime-records.md).
+[Runtime Records](runtime-records.md). Two record columns are additionally
+**write-guarded** regardless of declaration — `status` and `is_active` are
+writable only by system principals or through an explicit
+`fields.<col>.permissions` / `system_fields.<col>` grant (see
+[reference/design-schema](../reference/design-schema.md#protected-system-columns-status-is_active)).
 
 Known `data_type` values (the authoritative switch is `sanitizeFieldData` in
 `.framework/functions/_shared/schema-utils.ts`): `text`, `textarea`,

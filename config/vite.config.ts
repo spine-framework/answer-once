@@ -82,7 +82,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, '../.assembled/src'),
       '@shared': path.resolve(__dirname, '../.framework/functions/_shared'),
       '@core': path.resolve(__dirname, '../.assembled/src'),
-      '@custom': path.resolve(__dirname, '../custom/apps')
+      '@custom': path.resolve(__dirname, '../custom/apps'),
+      '@domain': path.resolve(__dirname, '../custom/shared')
     }
   },
   

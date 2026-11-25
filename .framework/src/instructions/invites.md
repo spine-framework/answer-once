@@ -2,8 +2,8 @@
 title: Invites & Access
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-16
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/src/pages/admin/InvitesPage.tsx
   - .framework/src/components/shared/InviteManager.tsx

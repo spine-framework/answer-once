@@ -23,7 +23,7 @@
 
 
 import { createHandler } from './_shared/middleware'
-import { sanitizeRecordData, resolveFirstSurfacePermissions, validateUpdatePermissions } from './_shared/permissions'
+import { sanitizeRecordData, resolveFirstSurfacePermissions, validateUpdatePermissions, canWriteSystemColumn } from './_shared/permissions'
 import { adminDb } from './_shared/db'
 import { isSystemAdmin, isSystemPrincipal, resolveAccessibleAccountIds } from './_shared/principal'
 import { applyAccountScope, assertRecordAccess, canAccessAccount, resolvePlatformAccountId, ENTITY_ACCOUNT_KEY } from './_shared/account-scope'
@@ -54,8 +54,8 @@ const PERMISSIONS_ALL = {
  * @stability   stable
  * @cil-generated
  */
-const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'links', 'attachments', 'watchers', 'item_progress', 'logs', 'test_runs', 'observability', 'test_cases', 'types', 'link_types', 'ai_agents', 'prompt_configs']
-const ENTITIES_WITHOUT_IS_ACTIVE = new Set(['links', 'attachments', 'watchers', 'logs', 'observability'])
+const VALID_ENTITIES = ['accounts', 'people', 'items', 'threads', 'messages', 'links', 'attachments', 'watchers', 'item_progress', 'logs', 'test_runs', 'observability', 'test_cases', 'notifications', 'types', 'link_types', 'ai_agents', 'prompt_configs']
+const ENTITIES_WITHOUT_IS_ACTIVE = new Set(['links', 'attachments', 'watchers', 'logs', 'observability', 'notifications'])
 
 /**
  * RAW_ENTITIES is a constant array that defines a set of entity names used in the admin data functions. It exists to provide a centralized reference for these entity types, ensuring consistency across the module.
@@ -64,7 +64,7 @@ const ENTITIES_WITHOUT_IS_ACTIVE = new Set(['links', 'attachments', 'watchers', 
  * @stability   stable
  * @cil-generated
  */
-const RAW_ENTITIES = ['logs', 'test_runs', 'observability', 'test_cases']
+const RAW_ENTITIES = ['logs', 'test_runs', 'observability', 'test_cases', 'notifications']
 // Entities with no created_by/updated_by columns — audit stamps must be
 // omitted or writes fail with schema-cache errors.
 const UNAUDITED_ENTITIES = ['types', 'link_types']
@@ -500,6 +500,13 @@ export const create = createHandler(async (ctx, body) => {
       }
 
       if (RAW_ENTITIES.includes(entity)) {
+        // Inbox rows are written by pipelines/agents via service_role — no
+        // client create surface (a caller-claimed delivery would be noise).
+        if (entity === 'notifications') {
+          const e: any = new Error('Notifications are created by pipelines — use send_notification')
+          e.statusCode = 405
+          throw e
+        }
         const allowed: Record<string, string[]> = {
           logs: ['level', 'message', 'context', 'source', 'source_type', 'source_id', 'person_id', 'account_id', 'app_id', 'created_by', 'metadata', 'created_at'],
           test_runs: ['suite', 'status', 'started_at', 'finished_at', 'duration_ms', 'total', 'passed', 'failed', 'skipped', 'triggered_by', 'account_id'],
@@ -650,6 +657,18 @@ export const create = createHandler(async (ctx, body) => {
         throw e
       }
 
+      // Protected system columns on create mirror the update-path guard:
+      // `create` on the type does not imply the caller may set record state.
+      if (!isSystemPrincipal(ctx)) {
+        for (const col of ['status', 'is_active']) {
+          if (recordData[col] !== undefined && !canWriteSystemColumn(ctx, designSchema, col)) {
+            const e: any = new Error(`Insufficient permissions to set system column '${col}' on create`)
+            e.statusCode = 403
+            throw e
+          }
+        }
+      }
+
       // Attachments: bytes arrive through a tmp quarantine upload — the
       // client supplies tmp_path and the commit validates actual bytes,
       // strips GPS per the type's file_policy, writes final storage, and
@@ -750,6 +769,31 @@ export const update = createHandler(async (ctx, body) => {
       }
 
       await assertRecordAccess(ctx, entity, existing)
+
+      // Inbox rows aren't typed records — the recipient flips their own read
+      // flag; system principals may mark any row (audit/support tooling).
+      if (entity === 'notifications') {
+        if (!isSystemPrincipal(ctx) && existing.person_id !== ctx.principal?.id) {
+          const e: any = new Error('Cannot update another person\'s notification')
+          e.statusCode = 403
+          throw e
+        }
+        const notifUpdate: Record<string, any> = {}
+        if (recordData.is_read !== undefined) notifUpdate.is_read = recordData.is_read === true || recordData.is_read === 'true'
+        if (recordData.read_at !== undefined) notifUpdate.read_at = recordData.read_at
+        if (notifUpdate.is_read === true && notifUpdate.read_at === undefined) {
+          notifUpdate.read_at = new Date().toISOString()
+        }
+        const { data: notif, error: notifErr } = await adminDb
+          .from('notifications')
+          .update(notifUpdate)
+          .eq('id', id)
+          .select()
+          .single()
+        if (notifErr) throw notifErr
+        await fireUpdateTriggers(entity, id, notif, ctx, existing).catch(console.error)
+        return await sanitizeRecordData(ctx, notif, entity)
+      }
 
       if (!isSystemPrincipal(ctx)) {
         // Privileged columns never come from the request for tenant callers —
@@ -961,7 +1005,8 @@ function getSearchField(entity: string): string {
     logs: 'message',
     test_runs: 'suite',
     observability: 'metric_name',
-    test_cases: 'name'
+    test_cases: 'name',
+    notifications: 'message'
   }
   return searchFields[entity] || 'id'
 }
@@ -1027,6 +1072,156 @@ export const stats = createHandler(async (ctx, _body) => {
  * @calls       list, get, stats, create, update, remove
  * @cil-generated
  */
+const ATOMIC_ENTITIES = ['items', 'threads', 'messages', 'watchers', 'item_progress']
+const ATOMIC_OPS = ['eq', 'neq', 'lt', 'lte', 'gt', 'gte']
+const ATOMIC_COLUMNS = new Set(['status', 'title', 'is_active', 'metadata'])
+const ATOMIC_PATH_RE = /^data\.[a-zA-Z_][a-zA-Z0-9_]{0,62}$/
+
+/**
+ * Conditional atomic update — the database decides the race. Conditions are
+ * evaluated inside one UPDATE (status transitions, counter moves, claims);
+ * a non-matching row returns 409 rather than a stale write. The patch is
+ * permission-checked exactly like `update` — atomicity narrows races, not
+ * grants (decision 0033).
+ */
+export const atomic = createHandler(async (ctx, body) => {
+  const { entity, id } = ctx.query || {}
+
+  return await withAdminLogging(
+    ctx,
+    { entity: entity || 'unknown', action: 'atomic', method: 'PATCH' },
+    async () => {
+      if (!entity || !ATOMIC_ENTITIES.includes(entity)) {
+        const e: any = new Error(`atomic requires entity: ${ATOMIC_ENTITIES.join('|')}`)
+        e.statusCode = 400; throw e
+      }
+      if (!id) {
+        const e: any = new Error('ID is required for atomic update'); e.statusCode = 400; throw e
+      }
+
+      const { data: existing, error: existingErr } = await ctx.db
+        .from(entity)
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (existingErr || !existing) {
+        const e: any = new Error('Record not found or access denied'); e.statusCode = 404; throw e
+      }
+      await assertRecordAccess(ctx, entity, existing)
+
+      const conditions: any[] = Array.isArray(body?.conditions) ? [...body.conditions] : []
+      const patch: Record<string, any> = { ...(body?.patch || {}) }
+      const delta: Record<string, number> = { ...(body?.delta || {}) }
+
+      // claim convenience: {from, to} is a status-transition condition+patch
+      if (body?.from !== undefined || body?.to !== undefined) {
+        conditions.push({ path: 'status', op: 'eq', value: body.from })
+        patch.status = body.to
+      }
+
+      for (const c of conditions) {
+        const ok = c && typeof c.path === 'string' && ATOMIC_OPS.includes(c.op) &&
+          c.value !== undefined && (ATOMIC_COLUMNS.has(c.path) || ATOMIC_PATH_RE.test(c.path))
+        if (!ok) {
+          const e: any = new Error('Invalid condition — expect {path, op: eq|neq|lt|lte|gt|gte, value}')
+          e.statusCode = 400; throw e
+        }
+      }
+      if (!Object.keys(patch).length && !Object.keys(delta).length) {
+        const e: any = new Error('patch or delta is required'); e.statusCode = 400; throw e
+      }
+      for (const k of Object.keys(patch)) {
+        if (k !== 'data' && !ATOMIC_COLUMNS.has(k)) {
+          const e: any = new Error(`Cannot patch column '${k}'`); e.statusCode = 400; throw e
+        }
+      }
+
+      const typeSlugForPermissions = ctx.query?.type_slug || ENTITY_TO_KIND[entity] || entity
+      const validation = await validateUpdatePermissions(ctx, patch, existing, typeSlugForPermissions)
+      if (!validation.valid && !isSystemAdmin(ctx.principal)) {
+        const e: any = new Error(validation.error || 'Insufficient permissions to update this record')
+        e.statusCode = 403; throw e
+      }
+      // delta fields ride the same field-write permission check as data writes
+      if (Object.keys(delta).length) {
+        const dv = await validateUpdatePermissions(ctx, { data: delta }, existing, typeSlugForPermissions)
+        if (!dv.valid && !isSystemAdmin(ctx.principal)) {
+          const e: any = new Error(dv.error || 'Insufficient permissions to update delta fields')
+          e.statusCode = 403; throw e
+        }
+      }
+
+      const { data: row, error: rpcErr } = await adminDb.rpc('record_atomic_update', {
+        p_table: entity,
+        p_id: id,
+        p_conditions: conditions,
+        p_patch: patch,
+        p_delta: delta
+      })
+      if (rpcErr) throw rpcErr
+      if (!row) {
+        const e: any = new Error('Atomic update conditions not met — record changed or race lost')
+        e.statusCode = 409; throw e
+      }
+
+      await fireUpdateTriggers(entity, id, row, ctx, existing).catch(console.error)
+      return await sanitizeRecordData(ctx, row, entity)
+    }
+  )
+})
+
+/**
+ * Idempotent create — `data.dedupe_key` carries the caller's dedupe value and
+ * a per-type unique index makes check+insert atomic. A collision returns the
+ * winning row marked deduplicated: true instead of an error.
+ */
+export const insertOnce = createHandler(async (ctx, body) => {
+  const { entity } = ctx.query || {}
+
+  return await withAdminLogging(
+    ctx,
+    { entity: entity || 'unknown', action: 'insert_once', method: 'POST', typeSlug: body?.type_slug },
+    async () => {
+      if (entity !== 'items') {
+        const e: any = new Error('insert_once supports entity=items')
+        e.statusCode = 400; throw e
+      }
+      const dedupe = body?.dedupe_key
+      if (typeof dedupe !== 'string' || !dedupe || dedupe.length > 200) {
+        const e: any = new Error('dedupe_key (string, ≤200 chars) is required')
+        e.statusCode = 400; throw e
+      }
+
+      let typeId: string | undefined = body?.type_id
+      if (!typeId && body?.type_slug) {
+        typeId = (await resolveTypeRecord('item', body.type_slug)).id
+      }
+      if (!typeId) {
+        const e: any = new Error('type_id or type_slug is required'); e.statusCode = 400; throw e
+      }
+
+      const { dedupe_key: _dk, ...createBody } = body
+      try {
+        return await create(ctx, {
+          ...createBody,
+          type_id: typeId,
+          data: { ...(body.data || {}), dedupe_key: dedupe }
+        })
+      } catch (err: any) {
+        if (err?.code !== '23505' && !/items_dedupe_key/.test(err?.message || '')) throw err
+        const { data: existing } = await adminDb
+          .from('items')
+          .select('*')
+          .eq('type_id', typeId)
+          .eq('data->>dedupe_key', dedupe)
+          .maybeSingle()
+        if (!existing) throw err
+        return { ...(await sanitizeRecordData(ctx, existing, entity)), deduplicated: true }
+      }
+    }
+  )
+})
+
 export const handler = createHandler(async (ctx, body) => {
   const { action } = ctx.query || {}
   const method = ctx.query?.method || 'GET'
@@ -1049,6 +1244,12 @@ export const handler = createHandler(async (ctx, body) => {
       break
     case 'remove':
       if (method === 'DELETE') return await remove(ctx, body)
+      break
+    case 'atomic':
+      if (method === 'PATCH') return await atomic(ctx, body)
+      break
+    case 'insert_once':
+      if (method === 'POST') return await insertOnce(ctx, body)
       break
     default:
       if (method === 'GET' && ctx.query?.id) {

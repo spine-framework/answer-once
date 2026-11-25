@@ -2,8 +2,8 @@
 title: Seeds Reference
 audience: developers, agents
 kind: reference
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/migrate.ts
@@ -87,7 +87,9 @@ Each record is upserted into `entry.table` with `onConflict: entry.conflict`.
   `design_schema.record_permissions` on an existing type after a
   `[R]eplace / [K]eep` prompt; grant lists may only contain
   `create`/`read`/`update`/`delete`. A `seed/type_permissions.json` file is
-  auto-declared when no patch entry exists.
+  auto-declared when no patch entry exists. Patching changes **grants only**
+  — adding or altering fields on a shipped type requires a `types` seed
+  entry plus `owned_types` + `--reconcile-owned-types` (the merge above).
 - **`-y`/`--yes` auto-accepts both prompts** on `install-app` and
   `seed-app` — required for non-interactive (agent/CI) runs, which
   otherwise hang waiting for input.

@@ -29,12 +29,13 @@ const DISPLAY_TYPES = new Set([
 export function validateDesignSchema(
   schema: any,
   opts: { checkViews?: boolean } = {},
-): { ok: boolean; errors: string[] } {
+): { ok: boolean; errors: string[]; warnings: string[] } {
   const checkViews = opts.checkViews ?? true
   const errors: string[] = []
+  const warnings: string[] = []
   if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
     errors.push('design_schema must be an object')
-    return { ok: false, errors }
+    return { ok: false, errors, warnings }
   }
 
   const scope = schema.scope ?? 'account'
@@ -146,7 +147,32 @@ export function validateDesignSchema(
     }
   }
 
-  return { ok: errors.length === 0, errors }
+  // system_fields grants — the record layer enforces writes on protected
+  // system columns (status, is_active) against this map or
+  // fields.<col>.permissions. Warn on keys it will never read and on grants
+  // to roles the record_permissions map never reaches.
+  const PROTECTED_COLS = new Set(['status', 'is_active', 'title', 'metadata'])
+  const recordRoles = new Set(Object.keys(schema.record_permissions || {}))
+  for (const [col, grant] of Object.entries(schema.system_fields || {})) {
+    if (!PROTECTED_COLS.has(col)) {
+      warnings.push(`system_fields.${col} — not a protected column (${[...PROTECTED_COLS].join('/')}); the guard never reads this key`)
+    }
+    for (const role of Object.keys((grant as object) || {})) {
+      if (role !== 'all' && !recordRoles.has(role)) {
+        warnings.push(`system_fields.${col}.${role} grants a role with no record_permissions entry — dead grant unless '${role}' is a real seeded role slug used elsewhere`)
+      }
+    }
+  }
+  for (const col of ['status', 'is_active']) {
+    const perms = schema.fields?.[col]?.permissions
+    for (const role of Object.keys(perms || {})) {
+      if ((perms[role] || []).includes('write') && role !== 'all' && !recordRoles.has(role)) {
+        warnings.push(`fields.${col}.permissions.${role} grants write to a role with no record_permissions entry — dead grant`)
+      }
+    }
+  }
+
+  return { ok: errors.length === 0, errors, warnings }
 }
 
 export function registerValidateSchemaCommands(program: Command) {
@@ -173,9 +199,10 @@ export function registerValidateSchemaCommands(program: Command) {
       const result = validateDesignSchema(schema, { checkViews: opts.views })
 
       if (opts.json) {
-        console.log(JSON.stringify({ ok: result.ok, error_count: result.errors.length, errors: result.errors }, null, 2))
+        console.log(JSON.stringify({ ok: result.ok, error_count: result.errors.length, errors: result.errors, warnings: result.warnings }, null, 2))
       } else if (result.ok) {
         console.log(`✅ ${file}: design_schema is valid`)
+        for (const w of result.warnings || []) console.warn(`   ⚠ ${w}`)
       } else {
         console.error(`❌ ${file}: ${result.errors.length} design_schema error(s)`)
         for (const e of result.errors) console.error(`   - ${e}`)

@@ -2,8 +2,8 @@
 title: "Auth: sessions, API keys, and invites"
 audience: developers, agents
 kind: concept
-verified_against: 3ff4b85
-verified_on: 2026-11-17
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/_shared/principal.ts
   - .framework/functions/_shared/middleware.ts

@@ -66,6 +66,15 @@ npx spine-framework init             # refuses if .framework/ already exists
 it scaffolds the directory and runs `init` inside it. If the project
 arrived that way, start at step 1 below.
 
+**Order matters on a local stack:** `supabase start` produces the keys —
+write `.env` *from its output*, never before it runs. Local sequence:
+`supabase init` → `supabase start` → then step 1. On macOS, the default
+ports (54321–54329) sit inside the OS ephemeral range — if start fails on
+port availability or unhealthy containers, move the published ports below
+49152 in `supabase/config.toml`, mirror them in `.env`, and retry with
+`--debug` (the guide covers both; failed containers' logs are reaped on
+teardown, so debug first, not second).
+
 1. **Write `.env`.** `cp .env.example .env`, then fill the required vars
    (`.framework/src/instructions/reference/env-vars.md`):
    `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`,

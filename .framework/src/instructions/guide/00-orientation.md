@@ -2,8 +2,8 @@
 title: Orientation — what Spine Framework is
 audience: developers, agents
 kind: guide
-verified_against: fd571fc
-verified_on: 2026-11-23
+verified_against: 3d78d8d
+verified_on: 2026-11-24
 source_files:
   - package.json
   - netlify.toml

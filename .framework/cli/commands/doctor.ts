@@ -4,7 +4,7 @@ import type { Command } from 'commander'
 import { buildCliContext, handleError } from '../context.ts'
 import { adminDb } from '../../functions/_shared/index.ts'
 import { collectMigrations } from './migrate.ts'
-import { readFileSync, existsSync } from 'fs'
+import { readFileSync, existsSync, readdirSync } from 'fs'
 import { resolve, dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { findAgentsBlock, agentsBlockVersion } from '../lib/project-files.ts'
@@ -306,6 +306,36 @@ async function checkAgentFiles(): Promise<CheckResult> {
 }
 
 
+// public/ is served verbatim to anonymous visitors — config, env, and
+// secret-bearing files must never land there (a stray copy once exposed a
+// project's spine.config.json at /spine.config.json).
+function checkPublicSurface(): CheckResult {
+  const root = process.cwd()
+  const publicDir = join(root, 'public')
+  const problems: string[] = []
+  if (existsSync(publicDir)) {
+    const SUSPECT = /^(\.env|spine\.config\.|netlify\.toml|package(-lock)?\.json|tsconfig|secrets?\.|credentials?\.|.*\.(pem|key|p12|pfx))/
+    const walk = (dir: string, rel = ''): void => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const p = rel ? `${rel}/${entry.name}` : entry.name
+        if (entry.isDirectory()) walk(join(dir, entry.name), p)
+        else if (SUSPECT.test(entry.name)) problems.push(`public/${p}`)
+      }
+    }
+    walk(publicDir)
+  }
+  if (problems.length) {
+    return {
+      name: 'public_surface',
+      status: 'warn',
+      message: `Files in public/ look like config/secrets and are served to everyone: ${problems.join('; ')}`,
+      details: { problems },
+      fixable: false,
+    }
+  }
+  return { name: 'public_surface', status: 'pass', message: 'public/ contains no config or secret-shaped files', fixable: false }
+}
+
 async function checkTestRuns(): Promise<CheckResult> {
   try {
     const { data, error } = await adminDb
@@ -543,6 +573,7 @@ export function registerDoctorCommands(program: Command) {
 
         checks.push(await checkIntegrity())
         checks.push(await checkAgentFiles())
+        checks.push(checkPublicSurface())
 
         
         const failed = checks.filter(c => c.status === 'fail').length

@@ -43,21 +43,7 @@ function App() {
   return (
     <AppsRegistryProvider>
       {!user ? (
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/auth/confirm" element={<AuthConfirmPage />} />
-          <Route
-            path="/"
-            element={
-              import.meta.env.VITE_SETUP_MODE === 'true'
-                ? <SetupPage />
-                : <Navigate to="/login" replace />
-            }
-          />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+        <PublicRouter />
       ) : user.status === 'pending' ? (
         <Routes>
           <Route path="*" element={<PendingApprovalPage />} />
@@ -77,6 +63,76 @@ function App() {
         <AuthenticatedRouter />
       )}
     </AppsRegistryProvider>
+  )
+}
+
+// Anonymous routing: auth pages plus is_public custom apps mounted at
+// their prefixes (decision 0034). The public app list comes from
+// /api/apps?action=public via AppsRegistryProvider — the same sorted,
+// host-resolved route shape as the authenticated router so prefixes and
+// root mounts behave identically.
+function PublicRouter() {
+  const { routableApps: apps, loading } = useAppsRegistry()
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <LoadingSpinner className="w-8 h-8 mx-auto mb-4" />
+        </div>
+      </div>
+    )
+  }
+
+  const publicApps = [...apps]
+    .filter(app => app.is_public === true && app.renderer === 'custom' && !app.route_prefix?.startsWith('/spine-framework'))
+    .sort((a, b) => {
+      if (a.route_prefix === '/') return 1
+      if (b.route_prefix === '/') return -1
+      return (b.route_prefix?.length || 0) - (a.route_prefix?.length || 0)
+    })
+
+  const toRoutePath = (prefix: string) => prefix === '/' ? '/*' : `${prefix}/*`
+
+  const rootApp = publicApps.find(a => a.route_prefix === '/')
+  const firstPrefix = publicApps.find(a => a.route_prefix && a.route_prefix !== '/')?.route_prefix
+  // A root-mounted public app renders through its own '/*' route (an exact
+  // '/' route would match without a splat and break nested <Routes>).
+  const rootElement = import.meta.env.VITE_SETUP_MODE === 'true'
+    ? <SetupPage />
+    : rootApp
+      ? null
+      : <Navigate to={firstPrefix ?? '/login'} replace />
+
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/auth/confirm" element={<AuthConfirmPage />} />
+        <Route path="/auth/pending-approval" element={<PendingApprovalPage />} />
+
+        {/* Framework paths never fall into a root-mounted public app */}
+        <Route path="/spine-framework/*" element={<Navigate to="/login" replace />} />
+
+        {rootElement && <Route path="/" element={rootElement} />}
+
+        {publicApps.map(app => (
+          <Route
+            key={app.slug}
+            path={toRoutePath(app.route_prefix!)}
+            element={
+              <AppWrapper app={app}>
+                <CustomAppLoader slug={app.slug} />
+              </AppWrapper>
+            }
+          />
+        ))}
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Suspense>
   )
 }
 
@@ -141,16 +197,18 @@ function AuthenticatedRouter() {
     return null
   }
 
-  // '/' landing: system_admin → admin; a root-mounted app renders directly;
-  // otherwise first sorted app prefix; nothing routable → neutral NoAppPage
-  // instead of Navigate-to-'/' falling through to NotFoundPage.
+  // '/' landing: system_admin → admin; a root-mounted app renders via its
+  // own '/*' route below (an exact '/' route here would match without a
+  // splat and break nested <Routes> in the app); otherwise first sorted
+  // app prefix; nothing routable → neutral NoAppPage instead of
+  // Navigate-to-'/' falling through to NotFoundPage.
   const rootApp = sorted.find(a => a.route_prefix === '/')
   const firstAppPrefix = sorted.find(a => a.route_prefix && a.route_prefix !== '/')?.route_prefix
   const rootElement =
     user?.is_system_admin || user?.roles?.includes('system_admin')
       ? <Navigate to="/spine-framework/admin" replace />
       : rootApp
-        ? renderAppElement(rootApp)
+        ? null
         : firstAppPrefix
           ? <Navigate to={firstAppPrefix} replace />
           : <NoAppPage />
@@ -169,7 +227,7 @@ function AuthenticatedRouter() {
         <Route path="/auth/confirm" element={<AuthConfirmPage />} />
         <Route path="/auth/pending-approval" element={<PendingApprovalPage />} />
 
-        <Route path="/" element={rootElement} />
+        {rootElement && <Route path="/" element={rootElement} />}
 
         {sorted.map(app => {
           const prefix = app.route_prefix!

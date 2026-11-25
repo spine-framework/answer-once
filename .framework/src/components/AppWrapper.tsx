@@ -12,7 +12,12 @@ interface AppWrapperProps {
 export function AppWrapper({ app, children }: AppWrapperProps) {
   const { user } = useAuth()
 
+  // is_public mounts render for anonymous principals — the app's own
+  // components decide what anonymous sees (decision 0034).
   if (!user) {
+    if (app.is_public) {
+      return <AppProvider app={app}>{children}</AppProvider>
+    }
     return <Navigate to="/login" replace />
   }
 

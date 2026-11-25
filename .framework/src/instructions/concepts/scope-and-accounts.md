@@ -2,8 +2,8 @@
 title: Scope and Accounts
 audience: developers, agents
 kind: concept
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/002_core_rls_and_functions.sql

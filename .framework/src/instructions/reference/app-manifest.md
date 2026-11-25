@@ -2,8 +2,8 @@
 title: App Manifest Reference
 audience: developers, agents
 kind: reference
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/_shared/app-manifest.ts
   - .framework/cli/commands/install-app.ts
@@ -49,15 +49,15 @@ Read by `.framework/functions/_shared/app-manifest.ts` and mirrored onto the
 | `description` | string | `''` |
 | `version` | string | `'1.0.0'` |
 | `required_roles` | string[] | `[]`; `min_role` column becomes `required_roles[0]` (or legacy `min_role`) |
-| `route_prefix` | string | `'/' + slug` — the SPA mount point. `"/"` mounts at the site root (**one app only**; its `/*` shadows the global not-found, so root apps must render their own not-found); nested prefixes (`/crm/sales`) sort longest-first. **Reserved — `validate-app` errors:** `/admin` (seeded core admin app), `/login`, `/register`, `/forgot-password`, `/auth/*`, `/api` (functions path), `/spine-framework/*` (sealed admin/API/CLI pages); the same set applies to `preview_route_prefix`/`prod_route_prefix`, and a root-mounted app's `routes` entries that claim one warn. Avoid first segments Vite can resolve to project files (`/app`, `/src`, `/api`, `/assets`…) — on case-insensitive filesystems `/app` collides with `App.tsx` and the request never reaches the SPA; `validate-app` warns. Change post-install via `update-db-app` or admin — see [Mounting](../concepts/apps-and-renderers.md#mounting-directory-or-root) |
+| `route_prefix` | string | `'/' + slug` — the SPA mount point. `"/"` mounts at the site root (**one app only**; its `/*` shadows the global not-found, so root apps must render their own not-found); nested prefixes (`/crm/sales`) sort longest-first. **Reserved — `validate-app` errors:** `/admin` (seeded core admin app), `/login`, `/register`, `/forgot-password`, `/auth/*`, `/api` (functions path), `/spine-framework/*` (sealed admin/API/CLI pages); the same set applies to `preview_route_prefix`/`prod_route_prefix`, and a root-mounted app's `routes` entries that claim one warn. Avoid first segments Vite can resolve to project files (`/app`, `/src`, `/api`, `/assets`…) — on case-insensitive filesystems `/app` collides with `App.tsx` and the request never reaches the SPA; `validate-app` warns. **A root-mounted app does not render at bare `/` for `system_admin`** — the router redirects them to `/spine-framework/admin` (`App.tsx`); admins still reach the app through its routes (e.g. `/activities`), so test with a subpath. Change post-install via `update-db-app` or admin — see [Mounting](../concepts/apps-and-renderers.md#mounting-directory-or-root) |
 | `renderer` | `'generic' \| 'custom' \| 'none'` | `'custom'` — matches the `apps.renderer` CHECK constraint. Also sets the `nav_items` path convention enforced by `validate-app` |
 | `routes` | string[] | app route paths; `:param` segments supported |
 | `nav_items` | `NavItem[]` | `[]` — `{title, path, icon?, order?, type_slug?, view?, children?}`. **`path` convention depends on `renderer`** (`validate-app` enforces): with `generic`, absolute paths must include `route_prefix` (`/taskboard/tasks`, not `/tasks`) — the shell navigates absolute paths verbatim, so a bare path escapes the app and 404s; relative paths (`tasks`) are prefixed automatically. With `custom` (default) or `none`, paths are root-relative and must NOT include `route_prefix`. `view` is **one slug consumed by both the list and the detail page** — naming `default_list` makes the detail page resolve a list view (which has `fields`, not `sections`) and render empty. Omit `view` to get `default_list` + `default_detail`; a nav item cannot pick list and detail views independently |
 | `features` | string[] | `[]` |
 | `dependencies` | string[] | `[]` |
 | `entry_point` | string | e.g. `"./index.tsx"` |
-| `is_public` | boolean | `false` — reachable without auth when true |
-| `auth_required` | boolean | `true` |
+| `is_public` | boolean | `false` — `true` mounts the app for anonymous visitors inside the SPA at its `route_prefix` (custom renderers only; `validate-app` warns otherwise). Rendering only — anonymous data still comes through `createPublicHandler`; see [Serve public content](../tasks/serve-public-content.md) |
+| `auth_required` | boolean | `true` — advisory flag the app reads for component-level gating; the anonymous mount keys on `is_public` alone, so `auth_required: false` without `is_public` is a dead flag (`validate-app` warns) |
 | `preview_domain` | string | `null` |
 | `prod_domain` | string | `null` |
 | `prod_domains` | string[] | `null` — extra production hosts; either `prod_domain` or a non-empty `prod_domains` satisfies a `prod_route_prefix` override |
@@ -157,7 +157,7 @@ instructions at `custom/apps/<slug>/src/instructions/`; stage them under
   "redirect_path": "/my-app",
   "account_strategy": "new",
   "parent_account": "spine-system",
-  "target_account": "<account-id>",
+  "target_account": "<account-slug>",
   "allow_domain_join": false,
   "default_workspace_name": "Team"
 }
@@ -171,6 +171,12 @@ non-empty strings. The resolved entry is written to both
 [spine.config.json](spine-config.md). `account_strategy` is `new` or
 `existing`; `parent_account`/`target_account` select where new accounts/users
 land.
+
+Key mapping into `registration.apps.<slug>`: `redirect_path` becomes `path`;
+`roles` is derived from the manifest's `required_roles` (or `[default_role]`
+when unset); every other key keeps its name. `target_account` is an account
+**slug** — the placement RPC matches `accounts.slug` (e.g. `spine-system`), so
+a uuid target fails with "Target account '…' not found".
 
 ## App-row mapping
 

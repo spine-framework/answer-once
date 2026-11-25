@@ -68,6 +68,32 @@ Every migration must be safe to run twice:
 - `adminDb` bypasses RLS — use it only where bypass is intended.
 - Idempotency model: `.framework/src/instructions/concepts/concurrency-and-idempotency.md`.
 
+## Function grant hygiene (mandatory)
+
+Every function a migration creates — especially `SECURITY DEFINER` RPCs —
+ships with `EXECUTE` granted to `PUBLIC` by default, and PostgREST exposes
+it at `/rest/v1/rpc/<name>` under the **anon key**. Always end the file
+with:
+
+```sql
+REVOKE ALL ON FUNCTION public.<name>(<arg types>) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.<name>(<arg types>) TO service_role;
+```
+
+Only exceptions: helpers RLS policies themselves evaluate as the querying
+role (the `current_actor_id` / `get_accessible_accounts` pattern) —
+revoking those breaks isolation everywhere.
+
+## RPCs on runtime tables — the escape hatch, not the pattern
+
+Before writing a project RPC that mutates `items`/`threads`/etc., check
+whether `admin-data`'s atomic actions express it
+(`reference/api/admin-data.md#atomic-updates`: conditional update, claim,
+counter delta, `insert_once`). RPCs that bypass the record layer skip
+`validation_schema`, field permissions, triggers, and audit — acceptable
+only for atomic shapes the grammar genuinely can't express, and each one
+gets the REVOKE/GRANT block above. Record why in `custom/decisions/`.
+
 ## Steps
 
 1. Confirm the change cannot be expressed as `design_schema` or seed data —

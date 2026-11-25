@@ -2,8 +2,8 @@
 title: Notifications
 audience: both
 kind: entity
-verified_against: 7529771
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/050_notifications.sql
   - .framework/functions/_shared/notify.ts
@@ -38,7 +38,7 @@ Automation needs a way to reach humans that survives the request — a send rece
 
 | Column | Notes |
 |---|---|
-| `person_id` | required — the recipient (`people.id`). RLS has **two** SELECT policies: `notifications_recipient_read` scopes to `person_id = current_actor_id()`, but `notifications_account_read` additionally grants every member `account_id IN get_accessible_accounts(...)` — **account members can read each other's notifications**. The account-wide grant exists for admin/audit surfaces; app UIs must filter `person_id = <caller>` in the query — relying on RLS alone leaks everyone's inbox. Tightening this to a dedicated admin/audit policy is an open follow-up. |
+| `person_id` | required — the recipient (`people.id`). RLS: `notifications_recipient_read` scopes SELECT to `person_id = current_actor_id()`; `notifications_admin_read` (migration 085) adds a system-admin-only account view for admin/audit surfaces — members no longer see each other's rows. |
 | `account_id` | required — tenant scope; service role writes across accounts. |
 | `source_type` / `source_id` | what produced it — default `'pipeline_execution'`; `source_id` is a text request/execution id (not always a uuid). |
 | `target_type` / `target_id` | the record the notification concerns — the deep link. |
@@ -79,8 +79,20 @@ Two behaviors to design around:
   they receive a notification for their own action. There is no
   `exclude_actor` option on this stage (`send_email` handles this
   separately); filter in the stage config or accept the self-notification.
-- **RLS doesn't hide a recipient's rows from peers** — see the `person_id`
-  note above; person-scoping is the app's query responsibility today.
+
+**Read API.** `notifications` is an `admin-data` raw entity — inbox reads
+and mark-read go through `/api/admin-data`, no custom function needed:
+
+```bash
+GET   /api/admin-data?action=list&entity=notifications&person_id=<caller>&is_read=false&sort_field=created_at
+GET   /api/admin-data?action=get&entity=notifications&id=<uuid>
+PATCH /api/admin-data?action=update&entity=notifications&id=<uuid>
+      {"is_read": true}            # stamps read_at when omitted
+```
+
+The recipient-scope rules: `update` accepts only `is_read`/`read_at` and
+only on the caller's own rows (403 otherwise); `create` is rejected —
+deliveries are written by `send_notification` stages and agents.
 
 ## Core files
 

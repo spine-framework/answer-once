@@ -2,8 +2,8 @@
 title: Apps
 audience: both
 kind: entity
-verified_against: 9f90999
-verified_on: 2026-11-16
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/apps.ts
   - .framework/src/pages/admin/AppsPage.tsx

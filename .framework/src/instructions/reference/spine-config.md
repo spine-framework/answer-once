@@ -2,8 +2,8 @@
 title: spine.config.json Reference
 audience: developers, agents
 kind: reference
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/schemas/spine.config.schema.json
   - .framework/templates/spine.config.neutral.json
@@ -101,7 +101,7 @@ DB write lands first, then the file).
 | `enabled` | boolean | `true` opens self-service registration for this app; explicit `false` persists a disabled policy |
 | `account_strategy` | `"new" \| "existing"` | create a new account or join `target_account` |
 | `parent_account` | string | account slug new accounts are parented under (e.g. `spine-system`) |
-| `target_account` | string (uuid) | account to join under `existing` strategy |
+| `target_account` | string (account **slug**) | account to join under `existing` strategy — the placement RPC matches `accounts.slug`, not the id (e.g. `spine-system`) |
 | `default_workspace_name` | string | name for the workspace created at registration |
 | `allow_domain_join` | boolean | allow signups whose email domain matches an existing account to join it |
 

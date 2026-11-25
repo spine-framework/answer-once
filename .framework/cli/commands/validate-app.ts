@@ -57,6 +57,8 @@ interface Manifest {
   }
   route_prefix?: string
   renderer?: 'generic' | 'custom' | 'none'
+  is_public?: boolean
+  auth_required?: boolean
   preview_domain?: string
   prod_domain?: string
   prod_domains?: string[]
@@ -374,6 +376,22 @@ function validateManifestComponents(appPath: string, manifest: Manifest): void {
   if (manifest.registration?.account_strategy === 'existing' && !manifest.registration?.target_account) {
     throw new ValidationError(`❌ manifest.json registration.account_strategy is "existing" but target_account is not set`)
   }
+
+  // is_public mounts the app for anonymous visitors; only custom renderers
+  // can run without an authenticated account context (generic shells call
+  // member APIs). auth_required:false alone is a dead flag — the anonymous
+  // mount decision keys on is_public.
+  const renderer = manifest.renderer ?? 'custom'
+  if (manifest.is_public === true && renderer !== 'custom') {
+    console.warn(
+      `⚠️  manifest.json is_public: true with renderer "${renderer}" — only custom apps mount anonymously; this flag has no effect for a ${renderer} renderer.`
+    )
+  }
+  if (manifest.auth_required === false && manifest.is_public !== true) {
+    console.warn(
+      `⚠️  manifest.json auth_required: false without is_public: true — the anonymous router mounts on is_public alone; this flag currently has no effect.`
+    )
+  }
 }
 
 function validateSeedBlock(appPath: string, manifest: Manifest): void {
@@ -628,6 +646,46 @@ function validateAgentDirectory(appPath: string, manifest: Manifest): void {
   }
 }
 
+// The instruction book carries the same contract as the core book:
+// README index, frontmatter on every page (title/kind/verified_* /
+// source_files for drift checks), and a `## Why it exists` chain on
+// entity pages. Missing frontmatter is an error — a page without it
+// can't be drift-checked. Missing why-chains warn: structure without
+// rationale is half the value.
+function validateInstructionBook(dirPath: string, label: string): void {
+  if (!existsSync(dirPath)) return
+  const problems: string[] = []
+  const whyMissing: string[] = []
+  const REQUIRED_FM = ['title', 'kind', 'verified_against', 'verified_on', 'source_files']
+  const walk = (dir: string, rel = ''): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const p = rel ? `${rel}/${entry.name}` : entry.name
+      if (entry.isDirectory()) { walk(join(dir, entry.name), p); continue }
+      if (!entry.name.endsWith('.md')) continue
+      const text = readFileSync(join(dir, entry.name), 'utf8')
+      const fm = /^---\n([\s\S]*?)\n---/.exec(text)?.[1] || ''
+      for (const key of REQUIRED_FM) {
+        if (!new RegExp(`^${key}:`, 'm').test(fm)) {
+          problems.push(`${p} missing frontmatter '${key}'`)
+        }
+      }
+      if (rel.startsWith('entities') && !/^## Why it exists/m.test(text)) {
+        whyMissing.push(p)
+      }
+    }
+  }
+  walk(dirPath)
+  if (!existsSync(join(dirPath, 'README.md'))) {
+    problems.push('README.md missing — the book needs an index page')
+  }
+  if (problems.length) {
+    throw new ValidationError(`❌ ${label} contract violations:\n   - ${problems.join('\n   - ')}`)
+  }
+  if (whyMissing.length) {
+    console.warn(`⚠️  ${label} entity pages missing '## Why it exists': ${whyMissing.join(', ')}`)
+  }
+}
+
 export function validateAppStructure(appPath: string): void {
   const manifest = validateManifest(appPath)
   validatePackageJson(appPath, manifest)
@@ -635,6 +693,8 @@ export function validateAppStructure(appPath: string): void {
   validateAllowedDirectories(appPath)
   validateDevinDirectory(appPath)
   validateAgentDirectory(appPath, manifest)
+  validateInstructionBook(join(appPath, 'src', 'instructions'), 'src/instructions')
+  validateInstructionBook(join(appPath, 'agent', 'instructions'), 'agent/instructions')
   validateRoutes(appPath, manifest)
   validateManifestComponents(appPath, manifest)
   validateSeedBlock(appPath, manifest)

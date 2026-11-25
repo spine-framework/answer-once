@@ -2,8 +2,8 @@
 title: The Spine domain model
 audience: developers, agents
 kind: guide
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/003_core_system_data.sql

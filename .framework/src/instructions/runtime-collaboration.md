@@ -2,8 +2,8 @@
 title: Collaboration records (threads, messages, links, attachments, watchers)
 audience: both
 kind: entity
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/083_attachment_link_type.sql

@@ -169,6 +169,15 @@ else
   echo "  ○ Custom: (empty)"
 fi
 
+# 3d. Domain modules shared by both trees: custom/shared/ is staged under
+# _shared/domain/ so function code imports './_shared/domain/*' — the
+# frontend reaches the same sources through the '@domain/*' vite alias.
+if [ -d "$CUSTOM_DIR/shared" ]; then
+  mkdir -p "$TMP_DIR/_shared/domain"
+  cp -R "$CUSTOM_DIR/shared/." "$TMP_DIR/_shared/domain/"
+  echo "  ✓ Shared: $(find "$CUSTOM_DIR/shared" -type f ! -name '.*' | wc -l | tr -d ' ') files → _shared/domain/"
+fi
+
 # 3c. Emit stubs for dynamic-import specifiers in staged subdirs (e.g.
 # _shared/webhook-registry's INBOUND_MODULE_LOADERS) that reference modules
 # absent from this deployment's function set. Standalone exports only ship

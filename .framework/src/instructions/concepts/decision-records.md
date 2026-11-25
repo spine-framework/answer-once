@@ -4,8 +4,8 @@ audience: developers, agents
 kind: concept
 skills:
   - spine-decision-capture
-verified_against: main
-verified_on: 2026-11-06
+verified_against: eb49fb4
+verified_on: 2026-11-24
 source_files:
   - .framework/decisions/
   - .framework/cli/lib/decision-records.ts

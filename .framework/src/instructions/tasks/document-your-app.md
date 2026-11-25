@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-new-app
-verified_against: 11191b1
-verified_on: 2026-11-23
+verified_against: 90c7e6d
+verified_on: 2026-11-24
 source_files:
   - .framework/cli/commands/install-app.ts
   - .framework/cli/commands/validate-app.ts
@@ -44,6 +44,12 @@ capture rule as the core book.
    `audience`, `kind`, `verified_against`, `verified_on`, and
    `source_files` pointing at **the app's own** functions/seeds/pages. That
    frontmatter is what makes your docs drift-checkable later.
+
+   Entity pages follow the same contract as the core book: the 7-section
+   template plus a `## Why it exists` chain — capture *why* the type and
+   its fields exist (the rejected alternatives live in
+   `custom/decisions/`), not just what they are. See
+   `internal/docs-contract.md`.
 
 2. **Author skills where they live.** App skills go in
    `custom/.devin/skills/<prefix>_<kebab-name>/SKILL.md` — the discovered,
@@ -105,6 +111,10 @@ capture rule as the core book.
 - **`src/` for code** — `src/` inside an app is *instructions-only*; the
   loader only globs `custom/apps/*/index.tsx`. App code stays in
   `pages/`, `components/`, `hooks/`, `utils/`, `lib/`.
+- **Same-session skill tests** — skills scaffolded mid-session may not
+  appear in the agent's skill list until the skill index is re-listed or a
+  fresh session starts. If a just-installed skill isn't invocable, verify
+  via a new session before assuming the sync failed.
 - **Docs written once and abandoned** — the capture contract applies to
   your app too: every change to the app updates its `src/instructions/`
   in the same commit.

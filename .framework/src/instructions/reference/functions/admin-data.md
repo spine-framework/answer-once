@@ -2,8 +2,8 @@
 title: admin-data
 audience: both
 kind: reference
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/middleware.ts
@@ -27,11 +27,13 @@ rather than wrapping it.
 The allowlist (`VALID_ENTITIES` in the function source) is `accounts`,
 `people`, `items`, `threads`, `messages`, `links`, `attachments`,
 `watchers`, `item_progress`, `logs`, `test_runs`, `observability`,
-`test_cases`, `types`, `link_types`, `ai_agents`, and `prompt_configs`.
-Tables not on it are deliberately elsewhere: `roles` is managed by the
-dedicated `/api/roles` endpoint, and `notifications` is written by
-pipeline/agent-runner notification actions and read by the signed-in
-recipient under RLS — neither is an admin-data entity.
+`test_cases`, `notifications`, `types`, `link_types`, `ai_agents`, and
+`prompt_configs`. Tables not on it are deliberately elsewhere: `roles`
+is managed by the dedicated `/api/roles` endpoint. `notifications`
+is a **raw read/mark-read entity** — list/get scope to the caller's
+accounts under RLS, and `update` accepts only `is_read`/`read_at` on the
+caller's own rows; create is rejected (pipeline/agent-runner actions
+write notifications).
 
 ## Route and methods
 
@@ -48,7 +50,9 @@ handler):
 | `GET /api/admin-data?action=get&entity=…&id=…` | `get` |
 | `GET /api/admin-data?action=stats&entity=…` | `stats` |
 | `POST /api/admin-data?action=create` | `create` |
+| `POST /api/admin-data?action=insert_once` | `insert_once` |
 | `PATCH /api/admin-data?action=update&entity=…&id=…` | `update` |
+| `PATCH /api/admin-data?action=atomic&entity=…&id=…` | `atomic` |
 | `DELETE /api/admin-data?action=remove&entity=…&id=…` | `remove` |
 
 Without a recognized `action` (absent or unmatched), the HTTP method alone
@@ -141,6 +145,38 @@ non-system callers additionally lose `storage_path`, `storage_provider`,
 `metadata` merges over the existing map with commit-stamped keys
 preserved.
 
+**System-column write guard** — `status` and `is_active` are never
+implied by a record-level grant: writing them needs a system principal
+(internal/machine/`system_admin`) or an explicit
+`fields.<col>.permissions.<role>: ["write"]` /
+`system_fields.<col>.<role>: ["write"]` on the record's `design_schema`.
+Denied on both create and update (`Insufficient permissions` → 403).
+`title` is exempt — it stays a normal `system: true` field members write
+on create (decision `0032`).
+
+**atomic** (`PATCH action=atomic`, query `entity` + `id`): a conditional
+update the database decides inside one statement (migration
+`086_atomic_record_ops` → `record_atomic_update` RPC). Entities: `items`,
+`threads`, `messages`, `watchers`, `item_progress`. Body:
+
+- `conditions` — `[{path, op, value}]` where `op` ∈ `eq|neq|lt|lte|gt|gte`
+  and `path` ∈ `status|title|is_active|metadata` or `data.<field>`
+- `patch` — column set (`status`, `title`, `is_active`, `metadata`,
+  `data`) — permission-checked exactly like `update`
+- `delta` — `{data.<field>: ±n}` counter moves; data-write permission applies
+- `from`/`to` — claim shorthand: appends `{path:'status', op:'eq', value:from}`
+  plus `patch.status = to`
+
+Non-matching conditions → **409** `Atomic update conditions not met`.
+Atomicity narrows races, not grants (decision `0033`).
+
+**insert_once** (`POST action=insert_once`): idempotent create on
+`entity=items`. Body carries `dedupe_key` (string ≤200) plus normal create
+fields (`type_id`/`type_slug` required); the key is stored at
+`data.dedupe_key` where a per-type partial unique index makes
+check+insert atomic. A collision returns the winning row with
+`deduplicated: true` instead of an error.
+
 **remove** (query params): `entity`, `id`, `soft` (default `'true'`).
 `attachments` always hard-deletes and also removes the stored object
 (best-effort — a storage failure does not fail the row delete).
@@ -180,11 +216,14 @@ HTTP `err.statusCode || 500`.
   `fireUpdateTriggers` after every update; trigger errors are logged, not
   raised. **`fireDeleteTriggers` is imported but never called** — removing
   a record fires no triggers.
-- `logs`, `test_runs`, `observability`, `test_cases` (`RAW_ENTITIES`)
-  bypass type resolution entirely: create inserts a fixed column whitelist
-  (e.g. `level`+`message` required for `logs`, `suite` for `test_runs`,
-  `metric_name`+`metric_value` for `observability`, `slug`+`name` for
-  `test_cases`) and update skips the `updated_by`/`updated_at` stamps.
+- `logs`, `test_runs`, `observability`, `test_cases`, `notifications`
+  (`RAW_ENTITIES`) bypass type resolution entirely: create inserts a fixed
+  column whitelist (e.g. `level`+`message` required for `logs`, `suite`
+  for `test_runs`, `metric_name`+`metric_value` for `observability`,
+  `slug`+`name` for `test_cases`) and update skips the
+  `updated_by`/`updated_at` stamps. `notifications` further restricts
+  update to `is_read`/`read_at` on the caller's own rows and rejects
+  create outright.
 - `checkTypeSlugRateLimit` enforces the app's `rate_limits.<type_slug>_create`
   policies on create.
 - Every action is wrapped in `withAdminLogging`, which writes

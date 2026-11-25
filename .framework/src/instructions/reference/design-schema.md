@@ -2,8 +2,8 @@
 title: Design Schema Reference
 audience: developers, agents
 kind: reference
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/src/types/types.ts
   - .framework/functions/_shared/schema-utils.ts
@@ -167,8 +167,35 @@ grant or to re-restrict a `system: true` field.
 all others under `record.data.<name>` — see
 [Runtime Records](../concepts/runtime-records.md). Writers split payloads the
 same way (`useEntityRecord` / the update path). Conventionally `title` is
-system; flag `system: true` fields that humans must not edit with a
-`permissions` override restricting `write` to `system_admin`.
+system.
+
+### Protected system columns (`status`, `is_active`)
+
+Two record columns are guarded **at the record layer**, independent of any
+`fields` entry: `status` and `is_active`. A record-level `update` or `create`
+grant never covers them — they drive record state machines, and letting any
+writer set them would bypass transition rules entirely. Writes succeed only
+for system principals (system_admin, internal/machine `*:*`) or when the
+schema grants the caller's role explicitly:
+
+```json
+"fields": {
+  "status": { "data_type": "select", "label": "Status", "required": false,
+              "system": true, "options": ["open","closed"],
+              "permissions": { "member_admin": ["read","write"] } }
+}
+```
+
+or via the `system_fields` map (top-level, same role→actions shape):
+
+```json
+"system_fields": { "status": { "member_admin": ["write"] } }
+```
+
+Both grant checks accept the caller's role slugs plus the `all` wildcard.
+`title` is deliberately exempt — it is required on nearly every type and
+member creates legitimately set it. (Decision
+`spine-framework:0032-system-column-write-model`.)
 
 ## `views`
 

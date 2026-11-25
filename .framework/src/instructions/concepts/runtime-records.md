@@ -2,8 +2,8 @@
 title: Runtime Records
 audience: developers, agents
 kind: concept
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/admin-data.ts
   - .framework/functions/_shared/resolve-ids.ts
@@ -82,7 +82,12 @@ Consumers split on the flag — this is the authoritative convention:
   (`.framework/src/components/app-shell/GenericDetailPage.tsx`).
 - The permission engine's write gate evaluates every key inside `data`
   against `fieldPermissions[name].write` and sanitizes through
-  `validation_schema` (`.framework/functions/_shared/permissions.ts`).
+  `validation_schema` (`.framework/functions/_shared/permissions.ts`), and
+  the system columns `status`/`is_active` carry their own guard: a
+  record-level `update` grant does not cover them — the type must grant
+  `fields.<col>.permissions.<role>: ["write"]` (or `system_fields.<col>`)
+  or the caller must be a system principal (decision `0032`). `title` is
+  exempt.
 
 **Fact:** send system fields as top-level keys and non-system fields inside a
 `data` object. A non-system field sent top-level is stored but invisible to

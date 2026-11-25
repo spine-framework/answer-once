@@ -2,8 +2,8 @@
 title: "Concurrency and idempotency"
 audience: developers, agents
 kind: concept
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/_shared/message-sequence.ts
   - .framework/functions/_shared/agent-runner.ts
@@ -110,6 +110,28 @@ by content hash in `_shared/kb.ts`.
   a window.
 - `record_trigger_fire` (migration `064`) bumps trigger bookkeeping atomically
   on each fire.
+
+## Atomic mutations on runtime records (admin-data)
+
+The doctrine extends to app records: `admin-data?action=atomic` executes a
+conditional UPDATE on `items`/`threads`/`messages`/`watchers`/`item_progress`
+in one statement — `conditions` (`status`, `data.<field>` with
+`eq|neq|lt|lte|gt|gte`) gate a `patch` and numeric `delta`, so
+`reserved_qty + n <= capacity` and claim-if-status are race-free (a non-match
+returns `409`, never a stale write). `action=insert_once` makes create
+idempotent through a per-type unique index on `data.dedupe_key` — the winner
+inserts, losers get the existing row back with `deduplicated: true`
+(migration `086`, `record_atomic_update`). Permission checks are identical
+to `update`/`create` — atomicity narrows races, not grants. See
+[admin-data](../reference/api/admin-data.md#atomic-updates); decision
+`spine-framework:0033`.
+
+When an atomic shape the grammar can't express is genuinely needed,
+a project `SECURITY DEFINER` RPC in `custom/migrations/` remains the
+documented escape hatch — but grant hygiene is mandatory: `REVOKE ALL ON
+FUNCTION … FROM PUBLIC, anon, authenticated` + `GRANT EXECUTE … TO
+service_role`, or PostgREST exposes it at `/rest/v1/rpc/` under the anon
+key (enforced for core functions by `security-definer-grants.test.ts`).
 
 ## Migrations: ordered, transactional, ledgered
 

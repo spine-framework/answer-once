@@ -2,8 +2,8 @@
 title: Versioning and compatibility
 audience: developers, agents
 kind: reference
-verified_against: fd571fc
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - package.json
   - .framework/cli/commands/upgrade.ts

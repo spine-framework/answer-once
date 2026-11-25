@@ -70,7 +70,17 @@ governs how runtime records validate, render, and authorize.
 - `validation_schema` is generated — never author it by hand.
 - Changing `data_type` on a field with existing records does not migrate data.
 - `system: true` fields restrict `write` to `system_admin` when the
-  record-level grant would otherwise allow it.
+  record-level grant would otherwise allow it — and `status`/`is_active`
+  are enforced at the record layer: a bare `update` grant can never write
+  them. To let a non-admin role drive state, grant it explicitly
+  (`fields.status.permissions.<role>: ["write"]` or
+  `system_fields.status.<role>: ["write"]`); to keep state machine-owned,
+  grant nothing and move transitions server-side (pipeline/function or the
+  `admin-data?action=atomic` claim for the operator role).
+- Lifecycle design: model state transitions in a pure module under
+  `custom/shared/` (importable as `@domain/*` by pages and
+  `./_shared/domain/*` by functions) so the same transition table drives
+  the UI affordances and the write path.
 - Verification: `validate-schema` clean + a created record reads back with
   the expected `data` shape.
 

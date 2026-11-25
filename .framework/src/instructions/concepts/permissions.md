@@ -2,8 +2,8 @@
 title: Permission Model
 audience: developers, agents
 kind: concept
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/_shared/permissions.ts
   - .framework/functions/_shared/principal.ts
@@ -125,6 +125,18 @@ and is the contract that actually binds:
   `design_schema` (which becomes the record's stamp) before insert;
   `type_id`/`type_slug` is required. A machine principal with `*:*` scope
   bypasses the create check.
+
+## Protected system columns
+
+One enforcement sits **above** the grant model: `status` and `is_active`
+on runtime records are writable only by system principals or through an
+explicit `fields.<col>.permissions.<role>: ["write"]` /
+`system_fields.<col>.<role>: ["write"]` grant on the stamped
+`design_schema`. A record-level `update`/`create` grant never covers them
+— otherwise any writer could bypass a record's state machine by patching
+`status` directly. `title` is exempt. (Decision
+`spine-framework:0032-system-column-write-model`;
+`canWriteSystemColumn` in `.framework/functions/_shared/permissions.ts`.)
 
 ## `system_admin` bypass
 

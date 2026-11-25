@@ -2,8 +2,8 @@
 title: Apps and Renderers
 audience: developers, agents
 kind: concept
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/migrations/001_core_schema.sql
   - .framework/migrations/013_get_account_apps_role_filter.sql
@@ -103,11 +103,12 @@ Rules that are easy to get wrong:
   there ahead of app routes), and `/api` (the Netlify functions path).
   `validate-app` rejects a `route_prefix` that claims one — never pick a
   colliding prefix.
-- **Apps are always behind login.** `is_public`/`auth_required` exist on
-  the manifest, but the unauthenticated router only serves auth pages —
-  a root-mounted app is not a public site mechanism. The supported
-  anonymous pattern is static `public/` files + `createPublicHandler`
-  reads: [tasks/serve-public-content](../tasks/serve-public-content.md).
+- **Apps are behind login unless `is_public`.** A `custom` app with
+  `is_public: true` mounts for anonymous visitors inside the SPA — its
+  routes, params, and components work; member APIs still 401 and data
+  comes through `createPublicHandler` only (decision `0034`). For
+  document-scale pages the static `public/` pattern remains:
+  [tasks/serve-public-content](../tasks/serve-public-content.md).
 - **`system_admin` is routed to the framework console.** On login a
   `system_admin` is sent to `/spine-framework/admin` rather than the
   app at `/` (`App.tsx`) — even for a root-mounted app, `/` is not a

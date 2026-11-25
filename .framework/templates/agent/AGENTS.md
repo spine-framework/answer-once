@@ -1,8 +1,8 @@
 ---
 title: "Spine Framework — agent rules (template)"
 kind: index
-verified_against: bba1da2
-verified_on: 2026-11-23
+verified_against: 2b10c7e
+verified_on: 2026-11-24
 source_files:
   - .framework/src/instructions/internal/docs-contract.md
 ---
@@ -126,7 +126,12 @@ actions are `read` and `write` only; `create`/`delete` are record-level.
   `attachment`, `watcher`, `person`, `account`).
 - `system: true` fields live at `record.<field>`; non-system fields at
   `record.data.<field>`. `system: true` fields restrict `write` to
-  `system_admin` when the record-level grant would allow writes.
+  `system_admin` when the record-level grant would allow writes — and the
+  record layer **enforces** it for `status`/`is_active`: those columns
+  need `system_admin` or an explicit
+  `fields.<col>.permissions.<role>: ["write"]` /
+  `system_fields.<col>.<role>: ["write"]` grant; a bare `update`/`create`
+  grant never covers them. (`title` is exempt — member creates set it.)
 - `ownership`, `is_active`, `icon`, `color` are set on the `types` row.
 - Validate the JSON before saving: `npx spine-framework validate-schema <file>`.
 
@@ -139,7 +144,8 @@ The package ships a markdown instruction book at
 - `guide/` — walkthroughs (`00-orientation.md` → `05-glossary.md`;
   `03-domain-model.md` covers types/records/apps).
 - `concepts/` — `spine-way.md` (the rules), `core-vs-custom.md`,
-  `design-schema.md`, `permissions.md`, `runtime-records.md`.
+  `design-schema.md`, `permissions.md`, `runtime-records.md`,
+  `state-machine-records.md`.
 - `reference/` — `design-schema.md`, `cli.md`, `api/admin-data.md`,
   `env-vars.md`, `app-manifest.md`, `functions/`.
 - `tasks/` — single-goal procedures. `operations/` — admin-UI runbooks.

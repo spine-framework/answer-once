@@ -2,8 +2,8 @@
 title: Timers
 audience: both
 kind: entity
-verified_against: 6c7c604
-verified_on: 2026-11-22
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/timers.ts
   - .framework/functions/system-cron.ts
@@ -115,3 +115,4 @@ A support app keeps an `interval` timer with `interval_minutes: 360` to re-check
 - Trigger dispatch requires `INTERNAL_INVOKE_SECRET` set **and a dev-server restart** — a queued execution that never runs usually means the secret is missing (see [Add a trigger](tasks/add-a-trigger.md)).
 - The API arms `next_execution` automatically when the interval resolves; for timers created before F-056 (or with unparseable config), set `next_execution` in the DB (e.g. `now() + interval`). After the first successful run, the interval keeps it rescheduling.
 - "Success Rate" is `success_count / execution_count`; failures still reschedule — a broken pipeline does not stop the cadence.
+- To run **project code** on a schedule, prefer a `schedules` row whose action uses `handler_module: 'custom'` + `handler: 'custom_<fn>'` — the cron invokes your function in-place over `x-internal-secret` (internal machine principal, no published endpoint, no secret in config; see `reference/functions/system-cron.md`). The older timer → `http_request` pipeline → loopback URL path still works but publishes a guarded endpoint and needs `SPINE_ALLOW_PRIVATE_OUTBOUND` locally.

@@ -2,8 +2,8 @@
 title: Frontend SDK Reference (@core)
 audience: developers, agents
 kind: reference
-verified_against: 6c7c604
-verified_on: 2026-11-22
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - config/vite.config.ts
   - config/tsconfig.json
@@ -42,6 +42,7 @@ Defined in `config/vite.config.ts` (build/dev) and `config/tsconfig.json`
 | `@core/*` | `.assembled/src/*` (types: `.framework/src/*`) | **Frontend core.** All imports below. |
 | `@/*` | `.assembled/src/*` | Same tree as `@core` — prefer `@core` in custom apps for clarity. |
 | `@custom/*` | `custom/apps/*` | Cross-app imports; rare. |
+| `@domain/*` | `custom/shared/*` | Pure domain modules shared by frontend and functions — functions import the same sources as `./_shared/domain/*` after assembly. Keep them free of DOM, env, and db imports. |
 | `@shared/*` | `.framework/functions/_shared/*` | **Server-side only** (Netlify/Deno functions). Never import from a React page — it pulls server-only deps into the frontend bundle. |
 
 The loader mounts custom apps via `import.meta.glob('../../../custom/apps/*/index.tsx')`

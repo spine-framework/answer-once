@@ -2,8 +2,8 @@
 title: Anatomy of an installed project
 audience: developers, agents
 kind: guide
-verified_against: a65afb1
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/init.ts

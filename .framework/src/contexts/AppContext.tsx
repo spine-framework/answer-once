@@ -69,18 +69,15 @@ export function AppsRegistryProvider({ children }: AppsRegistryProviderProps) {
   const loadedForUserRef = useRef<string | null>(null)
 
   const fetchApps = useCallback(async (signal?: AbortSignal) => {
-    if (!user) {
-      setApps([])
-      setLoading(false)
-      loadedForUserRef.current = null
-      return
-    }
+    // Anonymous visitors get only the public app set — the router mounts
+    // is_public custom apps without an auth wall (decision 0034).
+    const url = user ? '/api/apps?action=list' : '/api/apps?action=public'
 
     try {
       setLoading(true)
       setError(null)
 
-      const response = await apiFetch('/api/apps?action=list', { signal })
+      const response = await apiFetch(url, { signal })
 
       if (signal?.aborted) return
 
@@ -93,7 +90,7 @@ export function AppsRegistryProvider({ children }: AppsRegistryProviderProps) {
       // Resolve the host-keyed mount up front so every consumer sees the
       // effective route_prefix ('/' on the app's own prod/preview domain).
       setApps(allApps.map(app => ({ ...app, route_prefix: resolveAppMount(app).route_prefix })))
-      loadedForUserRef.current = user.id
+      loadedForUserRef.current = user?.id ?? 'anonymous'
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') return
       setError(err instanceof Error ? err.message : 'Failed to load apps')

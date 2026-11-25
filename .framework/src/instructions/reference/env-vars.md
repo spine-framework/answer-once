@@ -2,8 +2,8 @@
 title: Environment Variables
 audience: developers, agents
 kind: reference
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .env.example
   - .framework/functions/_shared/principal.ts

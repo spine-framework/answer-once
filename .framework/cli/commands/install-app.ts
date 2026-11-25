@@ -1236,6 +1236,9 @@ function appRowPayload(manifest: Record<string, any>, appSlug: string, existingC
 
     required_roles: manifest.required_roles ?? (manifest.min_role ? [manifest.min_role] : []),
 
+    is_public: manifest.is_public ?? false,
+    auth_required: manifest.auth_required ?? true,
+
     min_role: manifest.required_roles?.[0] ?? manifest.min_role ?? null,
     preview_domain: manifest.preview_domain ?? null,
     prod_domain: manifest.prod_domain ?? null,

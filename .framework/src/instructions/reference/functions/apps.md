@@ -2,8 +2,8 @@
 title: apps
 audience: both
 kind: reference
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/apps.ts
   - .framework/functions/_shared/middleware.ts
@@ -31,6 +31,7 @@ is by method plus `?action=`/`?id`/`?slug`:
 | Call | Handler |
 |---|---|
 | `GET /api/apps` | `list` (also `?action=list`) |
+| `GET /api/apps?action=public` | `listPublic` — **unauthenticated** |
 | `GET /api/apps?id=<uuid>` or `?slug=<s>` or `?action=get` | `get` |
 | `GET /api/apps?action=schema&slug=<s>` | `getSchema` → RPC `get_app_schema` |
 | `GET /api/apps?action=available&slug=<s>` | `checkAvailability` → RPC `is_app_available` |
@@ -43,7 +44,14 @@ is by method plus `?action=`/`?id`/`?slug`:
 
 Standard `createHandler` auth: `x-api-key` → machine principal,
 `x-internal-secret` → internal principal, `Bearer <jwt>` → human;
-anonymous → 401.
+anonymous → 401 — **except** `?action=public`, which dispatches on the
+raw event to a `createPublicHandler` before the auth wall. It returns a
+mount-only projection of `is_active AND is_public AND renderer='custom'`
+apps (slug, name, description, icon, color, route_prefix, renderer,
+min_role, required_roles, nav_items, domain-mount fields) — `config`,
+`metadata`, and tenancy columns never leave the service-role boundary.
+This is what the anonymous SPA router consumes to mount `is_public`
+apps (decision `0034`).
 
 - `list` requires an account context (`ctx.accountId` or an explicit
   `account_id` query param). A non-system caller asking for another

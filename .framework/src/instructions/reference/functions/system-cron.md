@@ -2,8 +2,8 @@
 title: system-cron
 audience: developers, agents
 kind: reference
-verified_against: 3ff4b85
-verified_on: 2026-11-22
+verified_against: 5f7c326
+verified_on: 2026-11-24
 source_files:
   - .framework/functions/system-cron.ts
   - .framework/functions/trigger-scheduler.ts
@@ -89,7 +89,17 @@ log files — headers do not.
   console-log stubs returning success-shaped objects; `run_pipeline`
   invokes `runPipeline` for real.
 - `integrations` — stub returning `{ executed: true, handler }`.
-- `custom` — throws `Custom handlers not yet implemented`.
+- `custom` — invokes the project function named by `action.handler` over
+  the internal-invoke channel: `POST <site>/.netlify/functions/<handler>`
+  with `X-Internal-Secret: $INTERNAL_INVOKE_SECRET` and a body of
+  `{ scheduled: true, ...mergedConfig }`. The handler name must match
+  `custom_<slug>` — schedules cannot reach framework internals through
+  this branch. The callee authenticates as an unbound internal machine
+  principal (`isInternal`), so scheduled project work needs no published
+  endpoint, no shared secret stored in pipeline config, and no
+  `SPINE_ALLOW_PRIVATE_OUTBOUND` exemption. Requires
+  `INTERNAL_INVOKE_SECRET` in env (same precondition as trigger dispatch)
+  and a ≤55 s handler — sync Netlify functions cap the wait.
 - anything else — throws `Unknown handler module`.
 
 ## Response contract

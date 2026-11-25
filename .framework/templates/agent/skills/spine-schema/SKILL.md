@@ -8,8 +8,8 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
-verified_against: ba57738
-verified_on: 2026-11-23
+verified_against: ab73809
+verified_on: 2026-11-24
 depends_on:
   files:
     - .framework/src/instructions/concepts/design-schema.md
