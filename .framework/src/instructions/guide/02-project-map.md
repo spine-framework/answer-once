@@ -2,8 +2,8 @@
 title: Anatomy of an installed project
 audience: developers, agents
 kind: guide
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/init.ts
@@ -137,7 +137,9 @@ Customer-owned; `init` seeds the neutral template
 
 - `netlify.toml`: framework blocks are rewritten on upgrade, but
   `[functions."custom_*"]` sections are treated as app-owned and preserved
-  verbatim (`.framework/cli/lib/project-files.ts` → `splitNetlifyToml` /
+  verbatim, and `connect-src` origins you added (e.g. local-stack loopback
+  entries) are unioned into the rendered CSP
+  (`.framework/cli/lib/project-files.ts` → `splitNetlifyToml` /
   `renderNetlifyToml`). Scheduled custom functions belong there.
 - `package.json`: framework-owned scripts and dependencies are merged in and
   `spine-framework` pinned exactly; your own scripts and deps are preserved.

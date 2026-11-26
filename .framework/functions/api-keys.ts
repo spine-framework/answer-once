@@ -221,6 +221,7 @@ export const create = createHandler(async (ctx, body) => {
   const {
     integration_id,
     app_id,
+    account_id,
     name,
     key_type,
     permissions,
@@ -236,7 +237,30 @@ export const create = createHandler(async (ctx, body) => {
     throw new Error('name is required')
   }
 
-  if (!ctx.accountId) {
+  // S-011 (extended): account_id is privilege-bearing like scopes/is_internal
+  // — binding a key to another account is a system-principal operation.
+  // Without it there is no API path to mint a scoped key for a different
+  // account (e.g. provisioning an environment's worker key); callers were
+  // forced to direct SQL.
+  const isSystem = isSystemPrincipal(ctx)
+  let effectiveAccountId = ctx.accountId
+  if (account_id && account_id !== ctx.accountId) {
+    if (!isSystem) {
+      const e: any = new Error('Insufficient permissions to bind an API key to another account')
+      e.statusCode = 403
+      throw e
+    }
+    const { data: acct } = await adminDb
+      .from('accounts').select('id').eq('id', account_id).maybeSingle()
+    if (!acct) {
+      const e: any = new Error(`account_id not found: ${account_id}`)
+      e.statusCode = 404
+      throw e
+    }
+    effectiveAccountId = account_id
+  }
+
+  if (!effectiveAccountId) {
     throw new Error('Account context required')
   }
 
@@ -247,7 +271,6 @@ export const create = createHandler(async (ctx, body) => {
   // wildcard scope or an internal key — for everyone else those are hard
   // denials, other requested scopes are clipped to the scopes the caller
   // itself holds, and an omitted scopes list inherits the caller's own.
-  const isSystem = isSystemPrincipal(ctx)
   let effectiveScopes: string[] = scopes || []
   let effectiveIsInternal = is_internal || false
 
@@ -277,7 +300,7 @@ export const create = createHandler(async (ctx, body) => {
   const insertData = {
     integration_id: integration_id || null,
     app_id: (await resolveAppUuid(app_id || ctx.appId)) || null,
-    account_id: ctx.accountId,
+    account_id: effectiveAccountId,
     slug,
     name,
     key_prefix,

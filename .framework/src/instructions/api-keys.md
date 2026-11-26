@@ -2,8 +2,8 @@
 title: API Keys
 audience: both
 kind: entity
-verified_against: 3ff4b85
-verified_on: 2026-11-17
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts
@@ -58,7 +58,7 @@ Companion of `api_keys` — its full reasoning is level 4 of the chain in api-ke
 - The gateway validates `key_prefix` + `key_hash` on every call — inactive, expired, or over-limit keys are rejected.
 - The raw key is returned **once** at create (`raw_key` in the response envelope). It is never stored or returned again — `key_value`/`key_hash` are stripped from all API responses (S-001/F-040).
 - The API has no update action (list/get/create plus `validate`, `revoke`, `usage-logs`) — rotate = create new + revoke old.
-- **Who can create/revoke:** any authenticated, account-bound principal — `create`, `revoke`, `list`, `get`, and `usage-logs` are scoped to `ctx.accountId` for non-system callers. Non-system callers are denied `is_internal` keys and `*:*` scope (403), and requested `scopes` are clipped to the caller's own — a `cli` key can mint replacements carrying at most its own scopes. Only `system_admin` or an unbound internal machine can mint wildcard/internal keys or operate across accounts (S-011).
+- **Who can create/revoke:** any authenticated, account-bound principal — `create`, `revoke`, `list`, `get`, and `usage-logs` are scoped to `ctx.accountId` for non-system callers. Non-system callers are denied `is_internal` keys and `*:*` scope (403), and requested `scopes` are clipped to the caller's own — a `cli` key can mint replacements carrying at most its own scopes. Only `system_admin` or an unbound internal machine can mint wildcard/internal keys, pass an `account_id` naming another account (create binds the key there; a machine principal bound to it then reads/writes within that account's RLS scope), or otherwise operate across accounts (S-011).
 - Keys still referenced in local MCP configs or scripts fail immediately when revoked/deactivated.
 
 ## Minimal configuration

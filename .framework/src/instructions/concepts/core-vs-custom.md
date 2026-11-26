@@ -2,8 +2,8 @@
 title: Core vs Custom Boundary
 audience: developers, agents
 kind: concept
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/templates/project.json
   - .framework/cli/commands/upgrade.ts
@@ -56,9 +56,10 @@ own hand-written apps are untouched by everything.
 
 **Shared but owned:** `config/` (Vite + tsconfig), `netlify.toml`, and the
 `scripts/` assembly-and-integrity scripts ship with the framework and are
-synced on upgrade, with one carve-out — `netlify.toml`
-`[functions."custom_*"]` sections belong to apps and are re-appended verbatim
-by `renderNetlifyToml` in `.framework/cli/lib/project-files.ts`.
+synced on upgrade, with carve-outs — `netlify.toml`
+`[functions."custom_*"]` sections belong to apps and are re-appended verbatim,
+and custom `connect-src` origins are unioned into the rendered CSP, by
+`renderNetlifyToml` in `.framework/cli/lib/project-files.ts`.
 
 ## Why the boundary exists: upgrade safety
 

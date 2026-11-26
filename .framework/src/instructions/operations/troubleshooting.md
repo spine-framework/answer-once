@@ -4,8 +4,8 @@ audience: both
 kind: guide
 skills:
   - spine-troubleshoot
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/functions/_shared/trigger-engine.ts
   - .framework/functions/_shared/pipeline-runner.ts

@@ -20,7 +20,7 @@ depends_on:
     - "npx spine-framework doctor"
     - "npx spine-framework init"
     - "npx spine-framework migrate"
-verified_against: 699d419
+verified_against: eb8a2fe
 ---
 
 You install Spine into an empty directory and bring it to a working,
@@ -52,7 +52,10 @@ skill is the no-browser sequence.
   do when `supabase start` fails on an unhealthy container (optional
   services can be disabled; a required service like `storage` just
   needs `supabase stop && supabase start` again — healthcheck flakes
-  are a known Supabase CLI quirk, more common on 2.x).
+  are a known Supabase CLI quirk, more common on 2.x). If a *different*
+  container fails on every retry while its own logs read healthy, the
+  CLI healthcheck is the flaky part — `supabase start
+  --ignore-health-check` and probe Kong directly instead.
   Choose this only when the developer wants throwaway local data.
 
 ## Sequence

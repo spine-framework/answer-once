@@ -38,6 +38,7 @@ vi.mock('../../functions/_shared/logging.ts', () => ({
 }))
 
 import { create } from '../../functions/api-keys.ts'
+import { adminDb } from '../../functions/_shared/db.ts'
 
 // Chainable query-builder stub — filter/chain methods return the builder;
 // single/maybeSingle/await resolve to the queued result.
@@ -155,6 +156,46 @@ describe('api-keys create privilege gate (S-011)', () => {
     expect(b.insert).toHaveBeenCalledWith(expect.objectContaining({
       scopes: ['*:*'],
       is_internal: true,
+    }))
+  })
+
+  it('denies a non-system caller binding a key to another account (403)', async () => {
+    const ctx = makeCtx(scopedMachine())
+    await expect(
+      create(ctx, { name: 'cross-account', account_id: 'acct-2' })
+    ).rejects.toMatchObject({ statusCode: 403 })
+    expect(ctx.db.from).not.toHaveBeenCalled()
+  })
+
+  it('lets a system principal bind a key to another existing account', async () => {
+    ;(adminDb.from as any).mockImplementation(() => q({ data: { id: 'acct-2' } }))
+    const b = queueInsert()
+    const ctx = makeCtx(systemAdmin())
+    await create(ctx, { name: 'worker-key', account_id: 'acct-2' })
+    expect(b.insert).toHaveBeenCalledWith(expect.objectContaining({ account_id: 'acct-2' }))
+  })
+
+  it('rejects a system principal binding to a nonexistent account (404)', async () => {
+    ;(adminDb.from as any).mockImplementation(() => q({ data: null }))
+    const ctx = makeCtx(systemAdmin())
+    await expect(
+      create(ctx, { name: 'ghost', account_id: 'acct-missing' })
+    ).rejects.toMatchObject({ statusCode: 404 })
+  })
+
+  it('lets an internal machine principal (no accountId) mint an account-bound key', async () => {
+    ;(adminDb.from as any).mockImplementation(() => q({ data: { id: 'acct-2' } }))
+    const b = queueInsert()
+    const machine = {
+      id: 'key-1', type: 'machine', accountId: null, roles: [],
+      scopes: ['*:*'], isInternal: true, machineType: 'integration',
+      provenance: { sourceType: 'api_key' },
+    }
+    const ctx = makeCtx(machine)
+    await create(ctx, { name: 'env-worker', account_id: 'acct-2', scopes: ['factory:worker'] })
+    expect(b.insert).toHaveBeenCalledWith(expect.objectContaining({
+      account_id: 'acct-2',
+      scopes: ['factory:worker'],
     }))
   })
 })

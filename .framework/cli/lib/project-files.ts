@@ -195,13 +195,34 @@ export function splitNetlifyToml(toml: string): { base: string; customSections: 
   }
 }
 
+const CONNECT_SRC_RE = /connect-src\s+([^;"]+)/
+
+function connectSrcOrigins(toml: string): string[] {
+  const m = toml.match(CONNECT_SRC_RE)
+  return m ? m[1].trim().split(/\s+/).filter(Boolean) : []
+}
+
 /**
  * Render a project netlify.toml: framework-owned blocks from the package,
  * app-owned [functions."custom_*"] sections preserved from the existing file.
+ * Custom `connect-src` origins in the existing CSP (e.g. local-Supabase
+ * loopback entries added for `supabase start`) are unioned into the rendered
+ * output — upgrades must not silently drop them.
  */
 export function renderNetlifyToml(frameworkToml: string, existingToml?: string): string {
-  const { base } = splitNetlifyToml(frameworkToml)
+  let { base } = splitNetlifyToml(frameworkToml)
   const { customSections } = existingToml ? splitNetlifyToml(existingToml) : { customSections: [] }
+
+  if (existingToml) {
+    const frameworkOrigins = new Set(connectSrcOrigins(frameworkToml))
+    const extras = connectSrcOrigins(existingToml).filter((o) => !frameworkOrigins.has(o))
+    if (extras.length > 0 && CONNECT_SRC_RE.test(base)) {
+      base = base.replace(CONNECT_SRC_RE, (_m, origins: string) =>
+        `connect-src ${origins.trimEnd()} ${extras.join(' ')}`,
+      )
+    }
+  }
+
   return customSections.length > 0
     ? `${base}\n\n${customSections.join('\n\n')}\n`
     : `${base}\n`

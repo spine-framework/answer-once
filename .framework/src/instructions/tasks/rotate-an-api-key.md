@@ -4,8 +4,8 @@ audience: developers, agents
 kind: task
 skills:
   - spine-operate
-verified_against: 1ceeac5
-verified_on: 2026-11-17
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/src/instructions/reference/functions/api-keys.md

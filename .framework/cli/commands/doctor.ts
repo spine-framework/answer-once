@@ -204,6 +204,33 @@ async function checkIntegrity(): Promise<CheckResult> {
     const content = readFileSync(manifestPath, 'utf8')
     const manifest = JSON.parse(content)
 
+    // format_version: 1 — the current shape written by writeFrozenManifest
+    // (init/upgrade) and checksum-manifest.mts: tree_digest + files map.
+    // `integrity.src` belongs to the retired v2 manifest format and must not
+    // be required — nothing writes it anymore (was a permanent DEGRADED on
+    // every clean install).
+    if (manifest.format_version === 1) {
+      const fileCount = manifest.files && typeof manifest.files === 'object'
+        ? Object.keys(manifest.files).length
+        : 0
+      const digestOk = typeof manifest.tree_digest === 'string'
+        && manifest.tree_digest.startsWith('sha256:')
+      if (!digestOk || fileCount === 0) {
+        return {
+          name: 'integrity',
+          status: 'warn',
+          message: 'Manifest exists but is malformed (missing tree_digest or files)',
+          fixable: true
+        }
+      }
+      return {
+        name: 'integrity',
+        status: 'pass',
+        message: `Integrity manifest present and well-formed (v1, ${fileCount} files)`,
+        details: { framework_version: manifest.framework_version, files: fileCount }
+      }
+    }
+
     if (!manifest.integrity?.src) {
       return {
         name: 'integrity',
@@ -213,7 +240,7 @@ async function checkIntegrity(): Promise<CheckResult> {
       }
     }
 
-    
+
     return {
       name: 'integrity',
       status: 'pass',
@@ -486,7 +513,7 @@ async function tryFix(check: CheckResult): Promise<string> {
       return 'Run `npx spine-framework migrate` to apply pending migrations'
 
     case 'integrity':
-      return 'Run `npm run manifest` to regenerate the integrity manifest'
+      return 'Run `npx spine-framework upgrade` to regenerate the integrity manifest (or `npm run manifest` for a project-local regen)'
 
     case 'test_runs':
       return 'Run `npm run test` to execute test suites'

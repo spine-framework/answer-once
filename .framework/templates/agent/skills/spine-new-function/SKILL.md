@@ -8,8 +8,8 @@ allowed-tools:
   - exec
   - grep
   - find_file_by_name
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 depends_on:
   files:
     - .framework/src/instructions/api-keys.md

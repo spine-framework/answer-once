@@ -4,8 +4,8 @@ audience: both
 kind: reference
 skills:
   - spine-upgrade
-verified_against: a672d6b
-verified_on: 2026-11-23
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/cli/commands/upgrade.ts
   - .framework/cli/lib/project-files.ts
@@ -69,7 +69,10 @@ Before writing anything, upgrade re-hashes every manifest entry:
 6. Re-renders `netlify.toml`: framework blocks come from the package;
    `[functions."custom_*"]` sections in the existing file (with their
    attached comments) are re-appended verbatim — that's where app-owned
-   scheduled functions live. A changed render leaves `netlify.toml.bak`.
+   scheduled functions live. Extra `connect-src` origins the package
+   didn't ship (e.g. local-stack loopback entries added for browser
+   auth) are unioned into the rendered CSP, so that edit survives
+   upgrade. A changed render leaves `netlify.toml.bak`.
 7. Regenerates `.spine-manifest.json` at the new version.
 8. Lists new `.framework/migrations/*.sql` files — reported, **never run**.
    `npx spine-framework migrate` applies them.

@@ -2,8 +2,8 @@
 title: api-keys
 audience: both
 kind: reference
-verified_against: 761dfb9
-verified_on: 2026-11-17
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/functions/api-keys.ts
   - .framework/functions/_shared/hash-api-key.ts
@@ -67,8 +67,13 @@ slugified `name`), `key_type` (default `'inbound'`), `permissions`,
 `scopes`, `rate_limit` (default `100`), `expires_at`, `metadata`,
 `integration_id`, `app_id` (resolved via `resolveAppUuid`, falling back
 to the `x-app-id` header's app), `machine_type` (default `'integration'`),
-`is_internal` (default `false`). `account_id` and `is_active: true` are
-stamped from context; `created_by` is the principal id.
+`is_internal` (default `false`), `account_id`. `is_active: true` is
+stamped; `created_by` is the principal id. `account_id` defaults to
+`ctx.accountId` — specifying a **different** account is allowed only for
+system principals (`isSystemAdmin`, or an internal machine principal with
+no `accountId`), and the target account must exist (404 otherwise).
+Non-system callers passing another `account_id` get 403 — an
+`account_id` matching the caller's own is always fine.
 
 **validate** (body): `key_value` required; `required_permissions`
 optional array.

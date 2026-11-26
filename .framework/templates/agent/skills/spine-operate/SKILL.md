@@ -1,8 +1,8 @@
 ---
 name: spine-operate
 description: "Operate a deployed Spine project — health checks (doctor, system health, executions, deliveries, logs), access-hygiene audit (roles, invites, API-key scopes), key rotation, and escalation to spine-troubleshoot / doctor --ticket."
-verified_against: eb49fb4
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 allowed-tools:
   - read
   - exec

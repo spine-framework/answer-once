@@ -2,8 +2,8 @@
 title: Install and first run
 audience: developers, agents
 kind: guide
-verified_against: 85b2802
-verified_on: 2026-11-25
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 source_files:
   - .framework/cli/commands/init.ts
   - .framework/cli/lib/project-files.ts
@@ -162,10 +162,10 @@ Three local-only adjustments the installer can't make for you:
   fetch". Add the loopback origins
   `http://127.0.0.1:54321 http://localhost:54321 ws://127.0.0.1:54321
   ws://localhost:54321`. `netlify.toml` is not in `.spine-manifest.json`,
-  so `npm run verify` won't flag the edit — but it is **regenerated on
-  every upgrade** (`renderNetlifyToml` keeps only
-  `[functions."custom_*"]` sections), so re-apply this CSP change after
-  each `npx spine-framework upgrade`. `netlify dev` does NOT
+  so `npm run verify` won't flag the edit. Upgrades regenerate the file
+  but `renderNetlifyToml` preserves both `[functions."custom_*"]`
+  sections **and** extra `connect-src` origins it didn't ship — this CSP
+  edit survives `npx spine-framework upgrade`. `netlify dev` does NOT
   hot-reload headers — restart `dev:netlify` after editing. The same holds
   for `.env`: `netlify dev` injects env vars when each function process
   spawns — edits are not re-injected into already-loaded functions, so
@@ -182,8 +182,15 @@ Three local-only adjustments the installer can't make for you:
   `supabase_storage` reporting unhealthy while its own logs read
   "Started Successfully" — don't reconfigure anything: `supabase stop &&
   supabase start` again. These flakes are a known Supabase CLI quirk
-  (more common on 2.x; `supabase --version` vs the latest 3.x). One
-  caveat: `inbucket` is the local SMTP capture — with it off,
+  (more common on 2.x; `supabase --version` vs the latest 3.x).
+  **When retries don't converge** — a *different* container fails each
+  attempt while its own logs read healthy — that signature means the
+  CLI's time-boxed healthcheck is lying on a resource-starved Docker VM,
+  not that the services are broken. The durable fallback:
+  `supabase start --ignore-health-check`, then verify the stack is
+  actually serving by probing Kong directly (`curl
+  http://127.0.0.1:<api.port>/rest/v1/` should respond, not hang).
+  One caveat: `inbucket` is the local SMTP capture — with it off,
   invite/registration emails go nowhere locally. Bootstrap still works
   (`email_confirm: true`), but to exercise email flows keep `inbucket` on
   or set `RESEND_API_KEY`.
@@ -221,6 +228,10 @@ jumps between the tarball-only install and the full post-init install. The
 shipped `package-lock.json` template is the verified set: do **not** run
 `npm audit fix`, which moves pinned versions the manifest was generated
 against. Findings are tracked upstream, not per-project.
+
+If `npm run verify` reports a missing `node_modules/.bin/*` (e.g.
+`tsx not found`) after a partial or interrupted install, run `npm rebuild`
+to recreate bin links before debugging further.
 
 ## Step 4 — migrate the database
 

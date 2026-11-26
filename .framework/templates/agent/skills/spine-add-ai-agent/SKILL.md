@@ -1,8 +1,8 @@
 ---
 name: spine-add-ai-agent
 description: "Configure a Spine AI agent — model, tools, guardrails — plus the prompt configs it invokes at runtime."
-verified_against: ab73809
-verified_on: 2026-11-24
+verified_against: eb8a2fe
+verified_on: 2026-11-26
 allowed-tools:
   - read
   - write

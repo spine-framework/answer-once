@@ -161,8 +161,19 @@ export function gitUntrackedFiles(root: string): Set<string> | null {
 }
 
 function getFrameworkVersion(root: string): string | null {
+  // framework_version must be the *framework* version — reading the project's
+  // own package.json.version stamps 1.0.0-style placeholders and triggers
+  // doctor's agent-asset drift warning (FRAMEWORK-GAPS G-002/G-004).
+  try {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(root, 'node_modules/spine-framework/package.json'), 'utf8'),
+    )
+    if (typeof pkg.version === 'string' && pkg.version) return pkg.version
+  } catch { /* spine-framework not installed under node_modules */ }
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
+    const spec = pkg?.dependencies?.['spine-framework'] ?? pkg?.devDependencies?.['spine-framework']
+    if (typeof spec === 'string' && /^\d+\.\d+\.\d+/.test(spec)) return spec.replace(/^[^\d]*/, '')
     return typeof pkg.version === 'string' ? pkg.version : null
   } catch {
     return null
@@ -238,6 +249,20 @@ function main(): void {
   const files: Record<string, string> = {}
   for (const [rel, hash] of pairs) files[rel] = hash
 
+  // Preserve the fields this writer cannot recompute — `agent_files` is
+  // produced by writeFrozenManifest (init/upgrade, which owns the agent
+  // asset sync), and `framework_dependencies` is recorded there too.
+  // Dropping them on regenerate degraded the manifest: doctor's agent_files
+  // check flipped to "predates agent_files" (FRAMEWORK-GAPS G-002). If the
+  // carried entries go stale, doctor warns and `upgrade` resyncs.
+  let carried: Record<string, unknown> = {}
+  try {
+    const prev = JSON.parse(fs.readFileSync(output, 'utf8'))
+    for (const k of ['agent_files', 'framework_dependencies']) {
+      if (prev[k] !== undefined) carried[k] = prev[k]
+    }
+  } catch { /* no prior manifest to carry from */ }
+
   const manifest = {
     format_version: 1,
     frozen: true,
@@ -247,6 +272,7 @@ function main(): void {
     node: '>=22.13.0',
     npm: '>=10.0.0',
     files,
+    ...carried,
   }
 
   fs.writeFileSync(output, JSON.stringify(manifest, null, 2) + '\n', 'utf8')
